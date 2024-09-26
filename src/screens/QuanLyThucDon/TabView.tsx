@@ -1,6 +1,21 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
-import {TabView, SceneMap, TabBar, TabBarProps} from 'react-native-tab-view';
+import {
+  TabView,
+  SceneMap,
+  TabBar,
+  TabBarProps,
+  TabBarItem,
+} from 'react-native-tab-view';
+import MonAnComponent from './Hoa/components/DanhMucComponent';
+import DanhMucComponent from './Hoa/components/DanhMucComponent';
+import NhomToppingComponent from './Hoa/components/NhomToppingComponent';
+import InputComponent from './Hoa/components/InputComponent';
+import {hoaStyles} from './Hoa/styles/hoaStyles';
+import TextComponent from './Hoa/components/TextComponent';
+import SpaceComponent from './Hoa/components/SpaceComponent';
+import {colors} from './Hoa/contants/hoaColors';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 // Định nghĩa kiểu cho các route của TabView
 interface Route {
@@ -12,20 +27,15 @@ interface Route {
 interface State {
   index: number;
   routes: Route[];
+  searchQuery: string;
 }
 
 // Tạo các Scene (giao diện của các Tab)
-const MonRoute = () => (
-  <View style={styles.scene}>
-    <Text>Bữa chính và danh sách món ăn</Text>
-    {/* Danh sách các món ăn sẽ hiển thị ở đây */}
-  </View>
-);
+const MonRoute = () => <View style={styles.scene}>{<DanhMucComponent />}</View>;
 
-const NhomToppingRoute = () => (
+const NhomToppingRoute = ({searchQuery}: {searchQuery: string}) => (
   <View style={styles.scene}>
-    <Text>Danh sách nhóm Topping</Text>
-    {/* Danh sách topping sẽ hiển thị ở đây */}
+    {<NhomToppingComponent searchQuery={searchQuery} />}
   </View>
 );
 
@@ -39,11 +49,12 @@ export default function MyTabs() {
       {key: 'mon', title: 'Món'},
       {key: 'nhomTopping', title: 'Nhóm Topping'},
     ],
+    searchQuery: '',
   });
 
   const renderScene = SceneMap({
     mon: MonRoute,
-    nhomTopping: NhomToppingRoute,
+    nhomTopping: () => <NhomToppingRoute searchQuery={state.searchQuery} />,
   });
 
   // renderTabBar được định nghĩa với kiểu dữ liệu TabBarProps
@@ -57,25 +68,49 @@ export default function MyTabs() {
           {route.title}
         </Text>
       )}
+      renderTabBarItem={({key, ...restProps}) => (
+        <TabBarItem key={key} {...restProps} />
+      )}
     />
   );
 
   return (
-    <TabView
-      navigationState={state}
-      renderScene={renderScene}
-      renderTabBar={renderTabBar}
-      onIndexChange={index => setState(prevState => ({...prevState, index}))}
-      initialLayout={{width: layout.width}}
-      style={styles.container}
-    />
+    <View style={[styles.container, {flex: 1}]}>
+      <InputComponent
+        value={state.searchQuery}
+        onChangeText={val =>
+          setState(prevState => ({...prevState, searchQuery: val}))
+        }
+        placeholder="Tìm kiếm"
+        styles={{
+          backgroundColor: colors.search,
+        }}
+        leftIcon={
+          <Icon
+            name="search"
+            size={17}
+            color={colors.desc}
+            style={{alignSelf: 'center', paddingLeft: 5}}
+          />
+        }
+        allowClear
+        styleIconX={{alignSelf: 'center', paddingRight: 8}}
+      />
+      <TabView
+        navigationState={state}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
+        onIndexChange={index => setState(prevState => ({...prevState, index}))}
+        initialLayout={{width: layout.width}}
+      />
+    </View>
   );
 }
 
 // Các kiểu style cho component
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 20,
   },
   scene: {
     flex: 1,
