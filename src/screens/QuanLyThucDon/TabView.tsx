@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
+import { Image } from 'react-native-reanimated/lib/typescript/Animated';
 import {TabView, SceneMap, TabBar, TabBarProps} from 'react-native-tab-view';
 
 // Định nghĩa kiểu cho các route của TabView
