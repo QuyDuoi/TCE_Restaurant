@@ -161,13 +161,13 @@ const AddEmployeeScreen = () => {
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <TouchableOpacity onPress={openCamera} style={styles.modalButton}>
-                <Text>Chụp ảnh</Text>
+                <Text style={styles.textButImage}>Chụp ảnh</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={openGallery} style={styles.modalButton}>
-                <Text>Chọn từ thư viện</Text>
+                <Text style={styles.textButImage}>Chọn từ thư viện</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={viewImage} style={styles.modalButton}>
-                <Text>Xem ảnh</Text>
+                <Text style={styles.textButImage}>Xem ảnh</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -203,14 +203,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f8f8f8',
+    justifyContent: 'center'
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'black',
+    right: 15
+    
   },
   backButton: {
     marginRight: 8,
-    left: -10
+    left: -100
   },
   label: {
     fontSize: 16,
@@ -298,6 +302,9 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     width: '100%',
     alignItems: 'center',
+  },
+  textButImage: {
+    fontSize: 18
   },
   imageViewContainer: {
     justifyContent: 'center',
