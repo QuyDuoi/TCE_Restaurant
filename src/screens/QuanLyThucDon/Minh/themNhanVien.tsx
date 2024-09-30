@@ -1,355 +1,320 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-  Image,
-  TouchableWithoutFeedback,
-  Alert,
-  Platform,
-  PermissionsAndroid,
-} from 'react-native';
-import * as ImagePicker from 'react-native-image-picker';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Bạn có thể dùng bất kỳ thư viện icon nào
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-const positions = [
-  { label: 'Quản lý', value: 'manager' },
-  { label: 'Đầu bếp', value: 'chef' },
-  { label: 'Nhân viên phục vụ', value: 'waiter' },
-  { label: 'Nhân viên thu ngân', value: 'cashier' },
-
-
-];
 
 const AddEmployeeScreen = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [idNumber, setIdNumber] = useState('');
-  const [position, setPosition] = useState(null);
-  const [photo, setPhoto] = useState(null);
+  const [citizenID, setCitizenID] = useState('');
+  const [role, setRole] = useState(null);
+  const [imageUri, setImageUri] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showImage, setShowImage] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Mở modal
-  const openModal = () => setModalVisible(true);
-  const closeModal = () => setModalVisible(false);
 
-  // Hỏi quyền truy cập máy ảnh
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Cấp quyền truy cập camera',
-          message: 'Ứng dụng cần quyền truy cập camera để chụp ảnh.',
-          buttonNeutral: 'Để sau',
-          buttonNegative: 'Từ chối',
-          buttonPositive: 'Đồng ý',
-        },
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } else {
-      const result = await check(PERMISSIONS.IOS.CAMERA);
-      if (result === RESULTS.GRANTED) return true;
-      return request(PERMISSIONS.IOS.CAMERA) === RESULTS.GRANTED;
-    }
+  const roles = [
+    { label: 'Quản lý', value: 'quanly' },
+    { label: 'Đầu bếp', value: 'daubep' },
+    { label: 'Nhân viên thu ngân', value: 'thungan' },
+    { label: 'Nhân viên phục vụ', value: 'phucvu' },
+  ];
+
+  const handleValidation = () => {
+    const newErrors = {};
+    const phoneRegex = /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
+    const citizenIDRegex = /^[0-9]{9,12}$/;
+
+    if (!name) newErrors.name = 'Họ tên là bắt buộc';
+    if (!phone || !phoneRegex.test(phone)) newErrors.phone = 'Số điện thoại không hợp lệ';
+    if (!citizenID || !citizenIDRegex.test(citizenID)) newErrors.citizenID = 'Số CCCD không hợp lệ';
+    if (!role) newErrors.role = 'Vui lòng chọn vai trò';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Hỏi quyền truy cập thư viện ảnh
-  const requestGalleryPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'Cấp quyền truy cập thư viện ảnh',
-          message: 'Ứng dụng cần quyền truy cập thư viện ảnh.',
-          buttonNeutral: 'Để sau',
-          buttonNegative: 'Từ chối',
-          buttonPositive: 'Đồng ý',
-        },
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } else {
-      const result = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
-      if (result === RESULTS.GRANTED) return true;
-      return request(PERMISSIONS.IOS.PHOTO_LIBRARY) === RESULTS.GRANTED;
-    }
-  };
-
-  // Chụp ảnh
-  const handleTakePhoto = async () => {
-    const hasCameraPermission = await requestCameraPermission();
-    if (hasCameraPermission) {
-      ImagePicker.launchCamera({}, response => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else {
-          setPhoto(response.assets[0].uri);
-          closeModal();
-        }
-      });
-    } else {
-      Alert.alert('Cảnh báo', 'Bạn chưa cấp quyền truy cập camera.');
-    }
-  };
-
-  // Chọn ảnh từ thư viện
-  const handleChoosePhoto = async () => {
-    const hasGalleryPermission = await requestGalleryPermission();
-    if (hasGalleryPermission) {
-      ImagePicker.launchImageLibrary({}, response => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else {
-          setPhoto(response.assets[0].uri);
-          closeModal();
-        }
-      });
-    } else {
-      Alert.alert('Cảnh báo', 'Bạn chưa cấp quyền truy cập thư viện.');
-    }
-  };
-
-  // Lưu thông tin nhân viên
   const handleSave = () => {
-    // Code logic lưu thông tin nhân viên
-    console.log('Lưu thông tin', { name, phone, idNumber, position });
+    if (handleValidation()) {
+      Alert.alert('Thành công', 'Nhân viên đã được thêm');
+    } else {
+      Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
+    }
+  };
+
+  const openCamera = () => {
+    launchCamera({}, response => {
+      if (response.assets) {
+        setImageUri(response.assets[0].uri);
+        setModalVisible(false);
+      }
+    });
+  };
+
+  const openGallery = () => {
+    launchImageLibrary({}, response => {
+      if (response.assets) {
+        setImageUri(response.assets[0].uri);
+        setModalVisible(false);
+      }
+    });
+  };
+
+  const viewImage = () => {
+    if (imageUri) {
+      setShowImage(true);
+      setModalVisible(false);
+    } else {
+      Alert.alert('Chưa có ảnh', 'Vui lòng chọn ảnh trước');
+    }
+  };
+
+
+  const handleImagePress = () => {
+    setModalVisible(true);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header với nút Back */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color="black" />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        {/* Header với nút Back */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton}>
+            <Icon name="arrow-back" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Thêm nhân viên</Text>
+        </View>
+        <View style={{ bottom: -26 }}>
+          {/* Khu vực bấm vào ảnh để chọn */}
+          <Text style={styles.label}>Ảnh đại diện</Text>
+          <TouchableOpacity onPress={handleImagePress} style={styles.imageContainer}>
+            <TouchableOpacity onPress={handleImagePress} style={styles.imageContainer1}>           
+                <Text style={styles.uploadStatus}><Image source={require('./image/camera.png')} />{imageUri ? '' : ''}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleImagePress} style={{ bottom: 32, left: 90 }}>
+              <Text style={styles.uploadStatus}>{imageUri ? 'Đã có ảnh tải lên' : 'Tải ảnh lên'}</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.label}>Tên nhân viên</Text>
+        <TextInput
+          style={[styles.input, errors.name && styles.errorBorder]}
+          placeholder="Nhập họ tên"
+          value={name}
+          onChangeText={setName}
+        />
+        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+
+        <Text style={styles.label}>Số điện thoại</Text>
+        <TextInput
+          style={[styles.input, errors.phone && styles.errorBorder]}
+          placeholder="Nhập số điện thoại"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="numeric"
+        />
+        {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+
+        <Text style={styles.label}>Số Căn cước công dân</Text>
+        <TextInput
+          style={[styles.input, errors.citizenID && styles.errorBorder]}
+          placeholder="Nhập số CCCD"
+          value={citizenID}
+          onChangeText={setCitizenID}
+          keyboardType="numeric"
+        />
+        {errors.citizenID && <Text style={styles.errorText}>{errors.citizenID}</Text>}
+
+        <Text style={styles.label}>Chỉ định vị trí</Text>
+        <Dropdown
+          style={[styles.dropdown, errors.role && styles.errorBorder]}
+          data={roles}
+          labelField="label"
+          valueField="value"
+          placeholder="Chọn vai trò"
+          value={role}
+          onChange={item => setRole(item.value)}
+        />
+        {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
+
+
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Lưu thông tin</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Thêm nhân viên</Text>
-      </View>
 
-      {/* Ảnh đại diện */}
-      <Text style={styles.label}>Ảnh đại diện</Text>
-      <TouchableOpacity style={styles.photoButton} onPress={openModal}>
-        {photo ? (
-          <Image source={{ uri: photo }} style={styles.photo} />
-        ) : (
-          <Text style={styles.photoText}>Tải ảnh lên</Text>
-        )}
-      </TouchableOpacity>
-
-      {/* Họ tên nhân viên */}
-      <Text style={styles.label}>Họ tên nhân viên</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập họ tên"
-        value={name}
-        onChangeText={setName}
-      />
-
-      {/* Số điện thoại */}
-      <Text style={styles.label}>Số điện thoại</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập số điện thoại"
-        keyboardType="phone-pad"
-        value={phone}
-        onChangeText={setPhone}
-      />
-
-      {/* Số căn cước công dân */}
-      <Text style={styles.label}>Số Căn cước công dân</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập số"
-        keyboardType="numeric"
-        value={idNumber}
-        onChangeText={setIdNumber}
-      />
-
-      {/* Chỉ định vị trí */}
-      <Text style={styles.label}>Chỉ định vị trí</Text>
-      <Dropdown
-        style={styles.dropdown}
-        data={positions}
-        labelField="label"
-        valueField="value"
-        placeholder="Chọn vị trí"
-        value={position}
-        onChange={item => setPosition(item.value)}
-        selectedTextStyle={styles.selectedTextStyle}
-        placeholderStyle={styles.placeholderStyle}
-      />
-
-      {/* Nút Lưu thông tin */}
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Lưu thông tin</Text>
-      </TouchableOpacity>
-
-      {/* Modal Chụp ảnh hoặc Chọn ảnh */}
-      <Modal
-        transparent={true}
-        animationType="slide"
-        visible={modalVisible}
-        onRequestClose={closeModal}
-      >
-        <TouchableWithoutFeedback onPress={closeModal}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalContainer}>
-                {/* Các nút sẽ nằm ở phía dưới màn hình */}
-                <View style={styles.buttonContainer}>
-                  {/* Nút Chụp ảnh */}
-                  <TouchableOpacity
-                    style={styles.modalButton}
-                    onPress={handleTakePhoto}
-                  >
-                    <Text style={styles.modalButtonText}>Chụp ảnh</Text>
-                  </TouchableOpacity>
-
-                  {/* Nút Chọn ảnh */}
-                  <TouchableOpacity
-                    style={styles.modalButton}
-                    onPress={handleChoosePhoto}
-                  >
-                    <Text style={styles.modalButtonText}>Chọn ảnh</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
+        {/* Modal lựa chọn ảnh */}
+        <Modal
+          transparent={true}
+          visible={modalVisible}
+          animationType="slide"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            onPress={() => setModalVisible(false)}
+          />
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <TouchableOpacity onPress={openCamera} style={styles.modalButton}>
+                <Text>Chụp ảnh</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openGallery} style={styles.modalButton}>
+                <Text>Chọn từ thư viện</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={viewImage} style={styles.modalButton}>
+                <Text>Xem ảnh</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </View>
+        </Modal>
+
+        {/* Modal xem ảnh */}
+        <Modal
+          transparent={true}
+          visible={showImage}
+          animationType="slide"
+          onRequestClose={() => setShowImage(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            onPress={() => setShowImage(false)}
+          >
+            {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
+    paddingLeft: 20,
+    paddingRight: 20
   },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: 'black',
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f8f8',
   },
-  placeholderStyle: {
-    fontSize: 16,
-    color: 'gray',
-  },
-  title: {
-    fontSize: 24,
+  headerTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+  },
+  backButton: {
+    marginRight: 8,
+    left: -10
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: 'black'
   },
   input: {
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   dropdown: {
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 10,
   },
-  photoButton: {
-    width: 100,
-    height: 100,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+  imageContainer: {
+    borderColor: '#ccc',
     borderRadius: 5,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    height: 100,
+    width: '100%'
   },
-  photoText: {
-    color: '#888',
+  imageContainer1: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+    width: '15%'
   },
-  photo: {
+  selectedImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 5,
+  },
+  uploadStatus: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    height: '90%',
+    width: '90%',
+    fontSize: 18
+
   },
   saveButton: {
     backgroundColor: '#007bff',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 30
   },
   saveButtonText: {
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Đây là phần làm nền mờ
   },
   modalContainer: {
-    width: '100%',
     backgroundColor: 'white',
-    borderRadius: 10,
     padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
     width: '100%',
+  },
+  modalBackground: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
   modalButton: {
     padding: 15,
-    backgroundColor: 'white',
-    alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderColor: '#ccc',
     width: '100%',
-  },
-  modalButtonText: {
-    color: 'black',
-    fontSize: 16,
-  },
-  header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderBottomColor: '#ddd',
   },
-  backButton: {
-    marginRight: 8,
-    marginLeft: -10
+  imageViewContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 70
+  image: {
+
+    width: 300,
+    height: 300,
+  },
+  errorBorder: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 
