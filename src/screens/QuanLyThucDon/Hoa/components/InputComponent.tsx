@@ -22,6 +22,8 @@ interface Props {
   numberOfLines?: number;
   styles?: StyleProp<ViewStyle>;
   styleIconX?: StyleProp<ViewStyle>;
+  fontSize?: number;
+  elevation?: number;
 }
 
 const InputComponent = (props: Props) => {
@@ -35,11 +37,19 @@ const InputComponent = (props: Props) => {
     numberOfLines,
     styles,
     styleIconX,
+    elevation,
+    fontSize,
   } = props;
 
   return (
     <View style={[{paddingHorizontal: 15}]}>
-      <RowComponent styles={[hoaStyles.inputContainer, styles]}>
+      {/* / lay out cua input / */}
+      <RowComponent
+        styles={[
+          hoaStyles.inputContainer,
+          styles,
+          {elevation: elevation ? elevation : 0},
+        ]}>
         {leftIcon ?? leftIcon}
         <View
           style={{
@@ -47,7 +57,7 @@ const InputComponent = (props: Props) => {
             paddingLeft: leftIcon ? 5 : 0,
           }}>
           <TextInput
-            style={[{color: colors.black}]}
+            style={[{color: colors.black, fontSize: fontSize}]}
             placeholder={placeholder ?? ''}
             placeholderTextColor={colors.desc}
             onChangeText={val => onChangeText(val)}
