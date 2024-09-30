@@ -7,12 +7,13 @@ import MyTabs from './src/screens/QuanLyThucDon/TabView';
 import DanhMucComponent from './src/screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
 import NhomToppingComponent from './src/screens/QuanLyThucDon/Hoa/components/NhomToppingComponent';
 import NhanVienComponent from './src/screens/QuanLyNhanVien/Hoa/NhanVienComponent';
+import EditEmployeeInfo from './src/screens/QuanLyNhanVien/Duc/EditEmployeeInfo';
 
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>
-        <NhanVienComponent />
+        <EditEmployeeInfo />
       </View>
     </Provider>
   );
