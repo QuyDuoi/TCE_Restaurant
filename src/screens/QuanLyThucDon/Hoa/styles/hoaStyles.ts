@@ -36,4 +36,24 @@ export const hoaStyles = StyleSheet.create({
     backgroundColor: colors.desc,
     borderRadius: 10,
   },
+  section: {
+    paddingHorizontal: 8,
+    marginVertical: 8,
+  },
+  card: {
+    borderRadius: 8,
+  },
+  modelContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modelContent: {
+    width: '85%',
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    alignItems: 'center',
+    padding: 5,
+  },
 });

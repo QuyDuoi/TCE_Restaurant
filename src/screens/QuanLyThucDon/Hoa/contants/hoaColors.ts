@@ -9,4 +9,7 @@ export const colors = {
   gray: '#797979',
   desc: '#727272',
   search: '#EDF2F7',
+  white: '#FFFFFF',
+  desc2: '#D9D9D9',
+  orange: '#FF784B',
 };

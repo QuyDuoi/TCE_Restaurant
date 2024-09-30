@@ -35,6 +35,7 @@ const ItemNhomTopping = (props: Props) => {
             text={nhomTopping.title}
             color={colors.text2}
             size={15}
+            minHeight={28}
           />
           <TextComponent
             text={nhomTopping.toppings.map(item => item.name).join(', ')}
@@ -42,6 +43,7 @@ const ItemNhomTopping = (props: Props) => {
             ellipsizeMode="tail"
             color={colors.desc}
             size={15}
+            minHeight={28}
           />
         </View>
         <View
@@ -57,6 +59,7 @@ const ItemNhomTopping = (props: Props) => {
               styles={{marginHorizontal: 10}}
               opacity={0.9}
               size={15}
+              minHeight={28}
             />
             <Icon
               name={'chevron-right'}

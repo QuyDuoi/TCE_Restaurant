@@ -53,6 +53,7 @@ const ItemDanhMuc = (props: Props) => {
           fontWeight="bold"
           size={16}
           opacity={0.9}
+          minHeight={28}
         />
         <RowComponent onPress={onPress ? () => onPress() : undefined}>
           <TextComponent
@@ -61,6 +62,7 @@ const ItemDanhMuc = (props: Props) => {
             fontWeight="bold"
             styles={{marginHorizontal: 10}}
             opacity={0.8}
+            minHeight={28}
           />
           <Icon
             name={isExpanded ? 'chevron-down' : 'chevron-right'}

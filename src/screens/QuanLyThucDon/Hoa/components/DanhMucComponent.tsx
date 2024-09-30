@@ -205,6 +205,7 @@ const DanhMucComponent = () => {
                     alignSelf: 'center',
                     paddingTop: 10,
                   }}
+                  minHeight={28}
                 />
               )}
 

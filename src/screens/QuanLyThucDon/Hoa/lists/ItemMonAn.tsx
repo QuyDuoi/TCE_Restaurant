@@ -53,6 +53,7 @@ const ItemMonAn = (props: Props) => {
                 fontWeight="bold"
                 color={colors.text2}
                 size={15}
+                minHeight={28}
               />
               <SpaceComponent width={10} />
               <Icon
@@ -65,7 +66,7 @@ const ItemMonAn = (props: Props) => {
               />
             </RowComponent>
 
-            <TextComponent text={`${price.toLocaleString()}đ`} />
+            <TextComponent text={`${price.toLocaleString()}đ`} minHeight={28} />
           </View>
         </View>
 
@@ -73,6 +74,7 @@ const ItemMonAn = (props: Props) => {
           <TextComponent
             text={status ? 'Còn Hàng' : 'Hết Hàng'}
             color={colors.status}
+            minHeight={28}
           />
           <Switch
             value={status}
