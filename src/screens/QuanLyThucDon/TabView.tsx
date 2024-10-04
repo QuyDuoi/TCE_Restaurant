@@ -18,8 +18,6 @@ import TextComponent from './Hoa/components/TextComponent';
 import SpaceComponent from './Hoa/components/SpaceComponent';
 import {colors} from './Hoa/contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import KhongGianComponent from '../KhuVuc/Hoa/KhongGianComponent';
-import ThongTinKhuVuc from '../KhuVuc/Hoa/ThongTinKhuVuc';
 
 // Định nghĩa kiểu cho các route của TabView
 interface Route {
