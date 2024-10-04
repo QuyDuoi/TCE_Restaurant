@@ -8,12 +8,13 @@ import DanhMucComponent from './src/screens/QuanLyThucDon/Hoa/components/DanhMuc
 import NhomToppingComponent from './src/screens/QuanLyThucDon/Hoa/components/NhomToppingComponent';
 import NhanVienComponent from './src/screens/QuanLyNhanVien/Hoa/NhanVienComponent';
 import EditEmployeeInfo from './src/screens/QuanLyNhanVien/Duc/EditEmployeeInfo';
+import Modals from './src/screens/Component/modal';
 
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>
-        <EditEmployeeInfo />
+        <Modals />
       </View>
     </Provider>
   );
