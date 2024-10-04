@@ -14,15 +14,17 @@ interface Props {
     | undefined;
   onPress?: () => void;
   styles?: StyleProp<ViewStyle>;
+  onLongPress?: () => void;
 }
 
 const RowComponent = (props: Props) => {
-  const {children, justify, onPress, styles} = props;
+  const {children, justify, onPress, styles, onLongPress} = props;
 
   return (
     <TouchableOpacity
       style={[hoaStyles.row, {justifyContent: justify ?? 'center'}, styles]}
       onPress={onPress ? () => onPress() : undefined}
+      onLongPress={onLongPress ? () => onLongPress() : undefined}
       activeOpacity={1}>
       {children}
     </TouchableOpacity>

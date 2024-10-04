@@ -1,9 +1,7 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
-<<<<<<< HEAD
-import { Image } from 'react-native-reanimated/lib/typescript/Animated';
-import {TabView, SceneMap, TabBar, TabBarProps} from 'react-native-tab-view';
-=======
+
+import {Image} from 'react-native-reanimated/lib/typescript/Animated';
 import {
   TabView,
   SceneMap,
@@ -11,7 +9,7 @@ import {
   TabBarProps,
   TabBarItem,
 } from 'react-native-tab-view';
-import MonAnComponent from './Hoa/components/DanhMucComponent';
+
 import DanhMucComponent from './Hoa/components/DanhMucComponent';
 import NhomToppingComponent from './Hoa/components/NhomToppingComponent';
 import InputComponent from './Hoa/components/InputComponent';
@@ -20,7 +18,8 @@ import TextComponent from './Hoa/components/TextComponent';
 import SpaceComponent from './Hoa/components/SpaceComponent';
 import {colors} from './Hoa/contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
->>>>>>> 5f17b3331dbef33b3a5af035f713f59fffa0ee63
+import KhongGianComponent from '../KhuVuc/Hoa/KhongGianComponent';
+import ThongTinKhuVuc from '../KhuVuc/Hoa/ThongTinKhuVuc';
 
 // Định nghĩa kiểu cho các route của TabView
 interface Route {
@@ -36,10 +35,12 @@ interface State {
 }
 
 // Tạo các Scene (giao diện của các Tab)
-const MonRoute = () => <View style={styles.scene}>{<DanhMucComponent />}</View>;
+const MonRoute = () => (
+  <View style={hoaStyles.tabViewScene}>{<DanhMucComponent />}</View>
+);
 
 const NhomToppingRoute = ({searchQuery}: {searchQuery: string}) => (
-  <View style={styles.scene}>
+  <View style={hoaStyles.tabViewScene}>
     {<NhomToppingComponent searchQuery={searchQuery} />}
   </View>
 );
@@ -80,7 +81,7 @@ export default function MyTabs() {
   );
 
   return (
-    <View style={[styles.container, {flex: 1}]}>
+    <View style={[hoaStyles.tabViewContainer]}>
       <InputComponent
         value={state.searchQuery}
         onChangeText={val =>
@@ -111,15 +112,3 @@ export default function MyTabs() {
     </View>
   );
 }
-
-// Các kiểu style cho component
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-  },
-  scene: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

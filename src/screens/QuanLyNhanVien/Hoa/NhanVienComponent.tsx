@@ -288,9 +288,9 @@ const NhanVienComponent = () => {
           onPress={() => {
             setIsVisibleDialog(false);
           }}>
-          <View style={[hoaStyles.modelContainer]}>
+          <View style={[hoaStyles.modalContainer]}>
             <TouchableWithoutFeedback>
-              <View style={[hoaStyles.modelContent]}>
+              <View style={[hoaStyles.modalContent]}>
                 <TitleComponent
                   text="Loc danh sach"
                   styles={{marginVertical: 5}}

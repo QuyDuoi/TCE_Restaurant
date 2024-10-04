@@ -9,12 +9,25 @@ interface Props {
   evlation?: number;
   borderWidth?: number;
   onPress?: () => void;
+  onLongPress?: () => void;
 }
 
 const CardComponent = (props: Props) => {
-  const {children, bgrColor, styles, evlation, borderWidth, onPress} = props;
+  const {
+    children,
+    bgrColor,
+    styles,
+    evlation,
+    borderWidth,
+    onPress,
+    onLongPress,
+  } = props;
   return (
-    <TouchableOpacity onPress={onPress} style={{flex: 1}} activeOpacity={1}>
+    <TouchableOpacity
+      onPress={onPress}
+      onLongPress={onLongPress ? () => onLongPress() : undefined}
+      style={{flex: 1}}
+      activeOpacity={1}>
       <View
         style={[
           hoaStyles.card,

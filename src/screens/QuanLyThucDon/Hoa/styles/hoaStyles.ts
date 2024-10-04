@@ -8,6 +8,7 @@ export const hoaStyles = StyleSheet.create({
     width: '93%',
     height: '95%',
     margin: 5,
+    alignSelf: 'center',
   },
   containerTopping: {
     width: '98%',
@@ -43,17 +44,26 @@ export const hoaStyles = StyleSheet.create({
   card: {
     borderRadius: 8,
   },
-  modelContainer: {
+  modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  modelContent: {
+  modalContent: {
     width: '85%',
     backgroundColor: colors.white,
     borderRadius: 10,
     alignItems: 'center',
     padding: 5,
+  },
+  tabViewContainer: {
+    marginTop: 20,
+    flex: 1,
+  },
+  tabViewScene: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
