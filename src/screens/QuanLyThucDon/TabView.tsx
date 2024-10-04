@@ -1,9 +1,6 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
-<<<<<<< HEAD
-import { Image } from 'react-native-reanimated/lib/typescript/Animated';
-import {TabView, SceneMap, TabBar, TabBarProps} from 'react-native-tab-view';
-=======
+import {Image} from 'react-native-reanimated/lib/typescript/Animated';
 import {
   TabView,
   SceneMap,
@@ -20,7 +17,6 @@ import TextComponent from './Hoa/components/TextComponent';
 import SpaceComponent from './Hoa/components/SpaceComponent';
 import {colors} from './Hoa/contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
->>>>>>> 5f17b3331dbef33b3a5af035f713f59fffa0ee63
 
 // Định nghĩa kiểu cho các route của TabView
 interface Route {
