@@ -69,7 +69,7 @@ const AddEmployeeScreen = () => {
       setShowImage(true);
       setModalVisible(false);
     } else {
-      Alert.alert('Chưa có ảnh', 'Vui lòng chọn ảnh trước');
+      Alert.alert('Vui lòng tải ảnh lên');
     }
   };
 
