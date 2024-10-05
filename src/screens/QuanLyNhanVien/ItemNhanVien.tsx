@@ -1,9 +1,9 @@
 import {View, Text, Image} from 'react-native';
 import React from 'react';
-import CardComponent from '../components/CardComponent';
-import RowComponent from '../components/RowComponent';
-import TextComponent from '../components/TextComponent';
-import {colors} from '../contants/hoaColors';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 
 interface Props {
   status?: boolean;

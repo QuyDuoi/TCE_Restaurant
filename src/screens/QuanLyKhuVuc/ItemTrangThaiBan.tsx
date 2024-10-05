@@ -8,11 +8,11 @@ import {
   ViewStyle,
 } from 'react-native';
 import React from 'react';
-import {hoaStyles} from '../styles/hoaStyles';
-import CardComponent from '../components/CardComponent';
-import {colors} from '../contants/hoaColors';
-import TextComponent from '../components/TextComponent';
-import SpaceComponent from '../components/SpaceComponent';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 
 interface Props {
   nameBan: string;

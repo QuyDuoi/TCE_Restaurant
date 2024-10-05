@@ -7,17 +7,17 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
-import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
-import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
-import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
-import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
-import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
-import ItemNhanVien from '../../QuanLyThucDon/Hoa/lists/ItemNhanVien';
-import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
-import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
-import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
-import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import ItemNhanVien from './ItemNhanVien';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
+import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 
 interface nhanVienModelTest {
   id: number;

@@ -10,16 +10,16 @@ import {
   ToastAndroid,
 } from 'react-native';
 import React, {useState} from 'react';
-import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
-import ItemTrangThaiBan from '../../QuanLyThucDon/Hoa/lists/ItemTrangThaiBan';
-import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
-import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
-import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
-import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
-import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
-import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import ItemTrangThaiBan from './ItemTrangThaiBan';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 
 interface KhuVucModelTest {
   id: string;

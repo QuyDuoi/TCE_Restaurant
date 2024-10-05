@@ -7,15 +7,15 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
-import ItemKhuVuc from '../../QuanLyThucDon/Hoa/lists/ItemKhuVuc';
-import ItemBan from '../../QuanLyThucDon/Hoa/lists/ItemBan';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import ItemKhuVuc from './ItemKhuVuc';
+import ItemBan from './ItemBan';
 
-import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
-import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
-import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
-import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
-import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
 
 interface KhuVucModelTest {
   id: string;

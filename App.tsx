@@ -6,7 +6,7 @@ import {store} from './src/store/store';
 import MyTabs from './src/screens/QuanLyThucDon/TabView';
 import DanhMucComponent from './src/screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
 import NhomToppingComponent from './src/screens/QuanLyThucDon/Hoa/components/NhomToppingComponent';
-import NhanVienComponent from './src/screens/QuanLyNhanVien/Hoa/NhanVienComponent';
+import NhanVienComponent from './src/screens/QuanLyNhanVien/NhanVienComponent';
 
 function App(): React.JSX.Element {
   return (
