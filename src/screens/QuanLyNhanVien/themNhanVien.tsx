@@ -3,14 +3,19 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Image, Aler
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { useNavigation } from '@react-navigation/native';
+import { addEmployee } from '../../store/EmployeeSlice'; // Import hành động từ EmployeeSlice
+import { useDispatch } from 'react-redux';
 
 
 const AddEmployeeScreen = () => {
+  const navigation = useNavigation();  // Lấy đối tượng navigation để điều hướng
+  const dispatch = useDispatch();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [citizenID, setCitizenID] = useState('');
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState('');
   const [imageUri, setImageUri] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showImage, setShowImage] = useState(false);
@@ -18,10 +23,10 @@ const AddEmployeeScreen = () => {
 
 
   const roles = [
-    { label: 'Quản lý', value: 'quanly' },
-    { label: 'Đầu bếp', value: 'daubep' },
-    { label: 'Nhân viên thu ngân', value: 'thungan' },
-    { label: 'Nhân viên phục vụ', value: 'phucvu' },
+    { label: 'Quản lý', value: 'quan ly' },
+    { label: 'Đầu bếp', value: 'dau bep' },
+    { label: 'Nhân viên thu ngân', value: 'thu ngan' },
+    { label: 'Nhân viên phục vụ', value: 'phuc vu' },
   ];
 
   const handleValidation = () => {
@@ -38,14 +43,29 @@ const AddEmployeeScreen = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Hàm xử lý khi nhấn "Lưu thông tin"
   const handleSave = () => {
     if (handleValidation()) {
+      const newEmployee = {
+        id: Date.now(),  // Tạo một id giả lập
+        nameNhanVien: name,
+        position: role,
+        status: true,  // Mặc định trạng thái là hoạt động
+        phone: phone,
+        idNumber: citizenID,
+        avatar: imageUri ? imageUri : 'https://example.com/default-avatar.png',  // Ảnh đại diện mặc định nếu không tải ảnh lên
+      };
+
+      // Điều hướng về màn hình NhanVienComponent và truyền dữ liệu nhân viên mới
+      navigation.navigate('NhanVienList', { newEmployee });
+
       Alert.alert('Thành công', 'Nhân viên đã được thêm');
     } else {
       Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
     }
   };
 
+  
   const openCamera = () => {
     launchCamera({}, response => {
       if (response.assets) {
@@ -54,6 +74,7 @@ const AddEmployeeScreen = () => {
       }
     });
   };
+
 
   const openGallery = () => {
     launchImageLibrary({}, response => {
@@ -82,18 +103,18 @@ const AddEmployeeScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* Header với nút Back */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <TouchableOpacity style={styles.backButton}>
             <Icon name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Thêm nhân viên</Text>
-        </View>
+        </View> */}
         <View style={{ bottom: -26 }}>
           {/* Khu vực bấm vào ảnh để chọn */}
           <Text style={styles.label}>Ảnh đại diện</Text>
           <TouchableOpacity onPress={handleImagePress} style={styles.imageContainer}>
             <TouchableOpacity onPress={handleImagePress} style={styles.imageContainer1}>           
-                <Text style={styles.uploadStatus}><Image source={require('./image/camera.png')} />{imageUri ? '' : ''}</Text>
+                <Text style={styles.uploadStatus}><Image source={require('../../image/camera.png')} />{imageUri ? '' : ''}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleImagePress} style={{ bottom: 32, left: 90 }}>
               <Text style={styles.uploadStatus}>{imageUri ? 'Đã có ảnh tải lên' : 'Tải ảnh lên'}</Text>
