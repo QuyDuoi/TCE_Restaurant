@@ -1,33 +1,39 @@
+
 export const IPV4 = '192.168.1.52';  // Địa chỉ IP giả định của server
 
 export const ipAddress = `http://${IPV4}:3000/api/`;  // Địa chỉ cơ sở API
 
-import  NhomTopping  from './models/NhomToppingModel';
-import  Topping  from './models/ToppingModel';
-import  HoaDon  from './models/HoaDonModel';
-import  ChiTietHoaDon  from './models/ChiTietHoaDonModel';
+import NhomTopping from './models/NhomToppingModel';
+import Topping from './models/ToppingModel';
+import HoaDon from './models/HoaDonModel';
+import ChiTietHoaDon from './models/ChiTietHoaDonModel';
+import Ban from './models/BanModel';
+import DanhMuc from './models/DanhMucModel';
+import KhuVuc from './models/KhuVucModel';
+import MonAn from './models/MonAnModel';
+import NhanVien from './models/NhanVienModel';
 
 export const themDanhMuc = async () => {
   try {
-    
+
   } catch (error) {
-    
+
   }
 };
 
 export const suaDanhMuc = async () => {
   try {
-    
+
   } catch (error) {
-    
+
   }
 };
 
 export const layDsDanhMuc = async () => {
   try {
-    
+
   } catch (error) {
-    
+
   }
 };
 
@@ -255,6 +261,274 @@ export const updateChiTietHoaDon = async (id: string, formData: ChiTietHoaDon): 
     return data;
   } catch (error) {
     console.log('Lỗi cập nhật Chi Tiết Hóa Đơn: ', error);
+    throw error;
+  }
+};
+
+/**
+ *  API cho Ban
+ */
+// Lấy danh sách Ban
+export const getListBan = async (): Promise<Ban[]> => {
+  try {
+    const response = await fetch(`${ipAddress}getListBan`);
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Bàn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách Bàn: ', error);
+    return [];
+  }
+};
+
+// Thêm mới Bàn
+export const addBan = async (formData: Ban): Promise<Ban> => {
+  try {
+    const response = await fetch(`${ipAddress}addBan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thêm mới Bàn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thêm mới Bàn: ', error);
+    throw error;
+  }
+};
+
+// Cập nhật Bàn
+export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
+  try {
+    const response = await fetch(`${ipAddress}updateBan/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi cập nhật Bàn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi cập nhật bàn: ', error);
+    throw error;
+  }
+};
+
+/**
+ *  API cho Danh Mục
+ */
+export const getListDanhMuc = async (): Promise<DanhMuc[]> => {
+  try {
+    const response = await fetch(`${ipAddress}getListDanhMuc`);
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Danh mục');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách danh mục: ', error);
+    return [];
+  }
+};
+
+export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
+  try {
+    const response = await fetch(`${ipAddress}addDanhMuc`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thêm mới danh mục');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thêm mới danh mục: ', error);
+    throw error;
+  }
+};
+
+export const updateDanhMuc = async (id: string, formData: DanhMuc): Promise<DanhMuc> => {
+  try {
+    const response = await fetch(`${ipAddress}updateDanhMuc/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi cập nhật danh mục');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi cập nhật danh mục: ', error);
+    throw error;
+  }
+};
+
+
+/**
+ *  API cho Khu Vực
+ */
+export const getListKhuVuc = async (): Promise<KhuVuc[]> => {
+  try {
+    const response = await fetch(`${ipAddress}getListKhuVuc`);
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Khu Vực');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách khu vực: ', error);
+    return [];
+  }
+};
+
+export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
+  try {
+    const response = await fetch(`${ipAddress}addKhuVuc`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thêm mới Khu Vực');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thêm mới khu vực: ', error);
+    throw error;
+  }
+};
+
+export const updateKhuVuc = async (id: string, formData: KhuVuc): Promise<KhuVuc> => {
+  try {
+    const response = await fetch(`${ipAddress}updateKhuVuc/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi cập nhật khu vực');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi cập nhật khu vực: ', error);
+    throw error;
+  }
+};
+
+/**
+ *  API cho Món Ăn
+ */
+export const getListMonAn = async (): Promise<MonAn[]> => {
+  try {
+    const response = await fetch(`${ipAddress}getListMonAn`);
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Món ăn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách Món ăn: ', error);
+    return [];
+  }
+};
+
+export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
+  try {
+    const response = await fetch(`${ipAddress}addMonAn`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thêm mới Món ăn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thêm mới món ăn: ', error);
+    throw error;
+  }
+};
+
+export const updateMonAn = async (id: string, formData: MonAn): Promise<MonAn> => {
+  try {
+    const response = await fetch(`${ipAddress}updateMonAn/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi cập nhật Mon Ăn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi cập nhật Mon ăn: ', error);
+    throw error;
+  }
+};
+/**
+ *  API cho Nhân Viên
+ */
+export const getListNhanVien = async (): Promise<NhanVien[]> => {
+  try {
+    const response = await fetch(`${ipAddress}getListNhanVien`);
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Nhan Vien');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách Nhân Viên: ', error);
+    return [];
+  }
+};
+
+export const addNhanVien = async (formData: MonAn): Promise<MonAn> => {
+  try {
+    const response = await fetch(`${ipAddress}addNhanVien`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thêm mới Nhân viên');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thêm mới Nhân viên: ', error);
+    throw error;
+  }
+};
+
+export const updateNhanVien = async (id: string, formData: MonAn): Promise<MonAn> => {
+  try {
+    const response = await fetch(`${ipAddress}updateNhanVien/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi cập nhật Nhân viên');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi cập nhật Nhân viên: ', error);
     throw error;
   }
 };
