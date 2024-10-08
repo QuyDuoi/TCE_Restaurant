@@ -1,6 +1,6 @@
 import {View, Text, useWindowDimensions} from 'react-native';
 import React, {useState} from 'react';
-import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {
   SceneMap,
   TabBar,
@@ -8,10 +8,10 @@ import {
   TabBarProps,
   TabView,
 } from 'react-native-tab-view';
-import KhongGianComponent from './KhongGianComponent';
-import ThongTinKhuVuc from './ThongTinKhuVuc';
-import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
-import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
+import KhongGianComponent from '../KhongGianComponent';
+import ThongTinKhuVuc from '../ThongTinKhuVuc';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface Route {

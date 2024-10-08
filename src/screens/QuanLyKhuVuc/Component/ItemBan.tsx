@@ -1,8 +1,8 @@
 import {View, Text, TouchableOpacity, StyleProp, ViewStyle} from 'react-native';
 import React from 'react';
-import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
-import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
-import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 
 interface Props {
   name: string;

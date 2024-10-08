@@ -7,6 +7,7 @@ import MyTabs from './src/screens/QuanLyThucDon/TabView';
 import DanhMucComponent from './src/screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
 import NhomToppingComponent from './src/screens/QuanLyThucDon/Hoa/components/NhomToppingComponent';
 import NhanVienComponent from './src/screens/QuanLyNhanVien/NhanVienComponent';
+<<<<<<< HEAD
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AddEmployeeScreen from './src/screens/QuanLyNhanVien/themNhanVien';  // Màn hình thêm nhân viên
@@ -57,6 +58,17 @@ function App(): React.JSX.Element {
       </Stack.Navigator>
     </NavigationContainer>
   </Provider>
+=======
+import KhuVucTabView from './src/screens/QuanLyKhuVuc/Component/KhuVucTabView';
+
+function App(): React.JSX.Element {
+  return (
+    <Provider store={store}>
+      <View style={{flex: 1}}>
+        <KhuVucTabView/>
+      </View>
+    </Provider>
+>>>>>>> 4d6408fa544e86de3d65218f0291ae6964bc678f
   );
 };
 

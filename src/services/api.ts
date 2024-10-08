@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.50.30';  // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.52';  // Địa chỉ IP giả định của server
 
 export const ipAddress = `http://${IPV4}:3000/api/`;  // Địa chỉ cơ sở API
 
