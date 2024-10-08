@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
-import ItemKhuVuc from './ItemKhuVuc';
-import ItemBan from './ItemBan';
+import ItemKhuVuc from './Component/ItemKhuVuc';
+import ItemBan from './Component/ItemBan';
 
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
@@ -173,7 +173,7 @@ const ThongTinKhuVuc = (props: Props) => {
               ) : (
                 <View style={{}}>
                   <TextComponent
-                    text="Chua co ban nao duoc tao"
+                    text="Chưa có bàn được tạo"
                     color={colors.text2}
                     styles={{
                       alignSelf: 'center',
@@ -216,7 +216,7 @@ const ThongTinKhuVuc = (props: Props) => {
     </View>
   ) : (
     <View style={[hoaStyles.containerTopping]}>
-      <TitleComponent text="Chua co khu vuc nao duoc tao" color={colors.desc} />
+      <TitleComponent text="Chưa có khu vực được tạo" color={colors.desc} />
     </View>
   );
 };
