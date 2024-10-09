@@ -1,5 +1,5 @@
 
-export const IPV4 = '192.168.1.52';  // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.10';  // Địa chỉ IP giả định của server
 
 export const ipAddress = `http://${IPV4}:3000/api/`;  // Địa chỉ cơ sở API
 
@@ -12,34 +12,6 @@ import DanhMuc from './models/DanhMucModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
-
-export const themDanhMuc = async () => {
-  try {
-
-  } catch (error) {
-
-  }
-};
-
-export const suaDanhMuc = async () => {
-  try {
-
-  } catch (error) {
-
-  }
-};
-
-export const layDsDanhMuc = async () => {
-  try {
-
-  } catch (error) {
-
-  }
-};
-
-/**
- *  API cho NhomTopping
- */
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -94,10 +66,6 @@ export const updateNhomTopping = async (id: string, formData: NhomTopping): Prom
   }
 };
 
-/**
- *  API cho Topping
- */
-
 // Lấy danh sách Topping
 export const getListTopping = async (): Promise<Topping[]> => {
   try {
@@ -150,10 +118,6 @@ export const updateTopping = async (id: string, formData: Topping): Promise<Topp
     throw error;
   }
 };
-
-/**
- *  API cho HoaDon
- */
 
 // Lấy danh sách HoaDon
 export const getListHoaDon = async (): Promise<HoaDon[]> => {
@@ -208,10 +172,6 @@ export const updateHoaDon = async (id: string, formData: HoaDon): Promise<HoaDon
   }
 };
 
-/**
- *  API cho ChiTietHoaDon
- */
-
 // Lấy danh sách ChiTietHoaDon
 export const getListChiTietHoaDon = async (): Promise<ChiTietHoaDon[]> => {
   try {
@@ -265,9 +225,6 @@ export const updateChiTietHoaDon = async (id: string, formData: ChiTietHoaDon): 
   }
 };
 
-/**
- *  API cho Ban
- */
 // Lấy danh sách Ban
 export const getListBan = async (): Promise<Ban[]> => {
   try {
@@ -321,9 +278,6 @@ export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   }
 };
 
-/**
- *  API cho Danh Mục
- */
 export const getListDanhMuc = async (): Promise<DanhMuc[]> => {
   try {
     const response = await fetch(`${ipAddress}getListDanhMuc`);
@@ -374,10 +328,6 @@ export const updateDanhMuc = async (id: string, formData: DanhMuc): Promise<Danh
   }
 };
 
-
-/**
- *  API cho Khu Vực
- */
 export const getListKhuVuc = async (): Promise<KhuVuc[]> => {
   try {
     const response = await fetch(`${ipAddress}getListKhuVuc`);
@@ -428,9 +378,6 @@ export const updateKhuVuc = async (id: string, formData: KhuVuc): Promise<KhuVuc
   }
 };
 
-/**
- *  API cho Món Ăn
- */
 export const getListMonAn = async (): Promise<MonAn[]> => {
   try {
     const response = await fetch(`${ipAddress}getListMonAn`);
@@ -485,7 +432,7 @@ export const updateMonAn = async (id: string, formData: MonAn): Promise<MonAn> =
  */
 export const getListNhanVien = async (): Promise<NhanVien[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListNhanVien`);
+    const response = await fetch(`${ipAddress}layDsNhanVien`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Nhan Vien');
     }
@@ -497,7 +444,7 @@ export const getListNhanVien = async (): Promise<NhanVien[]> => {
   }
 };
 
-export const addNhanVien = async (formData: MonAn): Promise<MonAn> => {
+export const addNhanVien = async (formData: NhanVien): Promise<NhanVien> => {
   try {
     const response = await fetch(`${ipAddress}addNhanVien`, {
       method: 'POST',

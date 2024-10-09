@@ -5,13 +5,14 @@ import { vaiTroNhanVien } from '../enum/enum';
 
 // Định nghĩa interface cho NhanVien
 export interface NhanVien {
-    _id?: string;
+    _id: string;    
     hoTen: string;
     hinhAnh: string;
     soDienThoai: string;
     cccd: string;
     vaiTro: string;
-    id_NhaHang: string;
+    trangThai: boolean;
+    id_nhaHang?: string;
 }
 
 // Định nghĩa state cho NhanVien
