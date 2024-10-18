@@ -1,7 +1,8 @@
+export const IPV4 = '192.168.1.56'; // Địa chỉ IP giả định của server
 
-export const IPV4 = '192.168.1.10';  // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.10'; // Địa chỉ IP giả định của server
 
-export const ipAddress = `http://${IPV4}:3000/api/`;  // Địa chỉ cơ sở API
+export const ipAddress = `http://${IPV4}:3000/api/`; // Địa chỉ cơ sở API
 
 import NhomTopping from './models/NhomToppingModel';
 import Topping from './models/ToppingModel';
@@ -29,11 +30,13 @@ export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
 };
 
 // Thêm mới NhomTopping
-export const addNhomTopping = async (formData: NhomTopping): Promise<NhomTopping> => {
+export const addNhomTopping = async (
+  formData: NhomTopping,
+): Promise<NhomTopping> => {
   try {
     const response = await fetch(`${ipAddress}addNhomTopping`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -48,11 +51,14 @@ export const addNhomTopping = async (formData: NhomTopping): Promise<NhomTopping
 };
 
 // Cập nhật NhomTopping
-export const updateNhomTopping = async (id: string, formData: NhomTopping): Promise<NhomTopping> => {
+export const updateNhomTopping = async (
+  id: string,
+  formData: NhomTopping,
+): Promise<NhomTopping> => {
   try {
     const response = await fetch(`${ipAddress}updateNhomTopping/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -86,7 +92,7 @@ export const addTopping = async (formData: Topping): Promise<Topping> => {
   try {
     const response = await fetch(`${ipAddress}addTopping`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -101,11 +107,14 @@ export const addTopping = async (formData: Topping): Promise<Topping> => {
 };
 
 // Cập nhật Topping
-export const updateTopping = async (id: string, formData: Topping): Promise<Topping> => {
+export const updateTopping = async (
+  id: string,
+  formData: Topping,
+): Promise<Topping> => {
   try {
     const response = await fetch(`${ipAddress}updateTopping/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -139,7 +148,7 @@ export const addHoaDon = async (formData: HoaDon): Promise<HoaDon> => {
   try {
     const response = await fetch(`${ipAddress}addHoaDon`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -154,11 +163,14 @@ export const addHoaDon = async (formData: HoaDon): Promise<HoaDon> => {
 };
 
 // Cập nhật HoaDon
-export const updateHoaDon = async (id: string, formData: HoaDon): Promise<HoaDon> => {
+export const updateHoaDon = async (
+  id: string,
+  formData: HoaDon,
+): Promise<HoaDon> => {
   try {
     const response = await fetch(`${ipAddress}updateHoaDon/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -188,11 +200,13 @@ export const getListChiTietHoaDon = async (): Promise<ChiTietHoaDon[]> => {
 };
 
 // Thêm mới ChiTietHoaDon
-export const addChiTietHoaDon = async (formData: ChiTietHoaDon): Promise<ChiTietHoaDon> => {
+export const addChiTietHoaDon = async (
+  formData: ChiTietHoaDon,
+): Promise<ChiTietHoaDon> => {
   try {
     const response = await fetch(`${ipAddress}addChiTietHoaDon`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -207,11 +221,14 @@ export const addChiTietHoaDon = async (formData: ChiTietHoaDon): Promise<ChiTiet
 };
 
 // Cập nhật ChiTietHoaDon
-export const updateChiTietHoaDon = async (id: string, formData: ChiTietHoaDon): Promise<ChiTietHoaDon> => {
+export const updateChiTietHoaDon = async (
+  id: string,
+  formData: ChiTietHoaDon,
+): Promise<ChiTietHoaDon> => {
   try {
     const response = await fetch(`${ipAddress}updateChiTietHoaDon/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -226,9 +243,9 @@ export const updateChiTietHoaDon = async (id: string, formData: ChiTietHoaDon): 
 };
 
 // Lấy danh sách Ban
-export const getListBan = async (): Promise<Ban[]> => {
+export const getListBan = async (idKhuVuc: string): Promise<Ban[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListBan`);
+    const response = await fetch(`${ipAddress}layDsBan?id_khuVuc=${idKhuVuc}`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Bàn');
     }
@@ -245,7 +262,7 @@ export const addBan = async (formData: Ban): Promise<Ban> => {
   try {
     const response = await fetch(`${ipAddress}addBan`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -264,7 +281,7 @@ export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   try {
     const response = await fetch(`${ipAddress}updateBan/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -296,7 +313,7 @@ export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
   try {
     const response = await fetch(`${ipAddress}addDanhMuc`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -310,11 +327,14 @@ export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
   }
 };
 
-export const updateDanhMuc = async (id: string, formData: DanhMuc): Promise<DanhMuc> => {
+export const updateDanhMuc = async (
+  id: string,
+  formData: DanhMuc,
+): Promise<DanhMuc> => {
   try {
     const response = await fetch(`${ipAddress}updateDanhMuc/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -328,9 +348,15 @@ export const updateDanhMuc = async (id: string, formData: DanhMuc): Promise<Danh
   }
 };
 
-export const getListKhuVuc = async (): Promise<KhuVuc[]> => {
+/**
+ *  API cho Khu Vực
+ */
+
+export const getListKhuVuc = async (idNhaHang: string): Promise<KhuVuc[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListKhuVuc`);
+    const response = await fetch(
+      `${ipAddress}layDsKhuVuc?id_nhaHang=${idNhaHang}`,
+    );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Khu Vực');
     }
@@ -346,7 +372,7 @@ export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
   try {
     const response = await fetch(`${ipAddress}addKhuVuc`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -360,11 +386,14 @@ export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
   }
 };
 
-export const updateKhuVuc = async (id: string, formData: KhuVuc): Promise<KhuVuc> => {
+export const updateKhuVuc = async (
+  id: string,
+  formData: KhuVuc,
+): Promise<KhuVuc> => {
   try {
     const response = await fetch(`${ipAddress}updateKhuVuc/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -396,7 +425,7 @@ export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}addMonAn`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -410,11 +439,14 @@ export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
   }
 };
 
-export const updateMonAn = async (id: string, formData: MonAn): Promise<MonAn> => {
+export const updateMonAn = async (
+  id: string,
+  formData: MonAn,
+): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}updateMonAn/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -448,7 +480,7 @@ export const addNhanVien = async (formData: NhanVien): Promise<NhanVien> => {
   try {
     const response = await fetch(`${ipAddress}addNhanVien`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -462,11 +494,14 @@ export const addNhanVien = async (formData: NhanVien): Promise<NhanVien> => {
   }
 };
 
-export const updateNhanVien = async (id: string, formData: MonAn): Promise<MonAn> => {
+export const updateNhanVien = async (
+  id: string,
+  formData: MonAn,
+): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}updateNhanVien/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
     });
     if (!response.ok) {

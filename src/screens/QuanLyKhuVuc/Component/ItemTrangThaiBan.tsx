@@ -31,6 +31,7 @@ const ItemTrangThaiBan = (props: Props) => {
       <View style={[styles.content]}>
         <View style={[styles.imageContainer]}>
           <CardComponent
+            flex={1}
             bgrColor={colors.desc2}
             styles={[{padding: 10}]}
             onLongPress={onPress}>

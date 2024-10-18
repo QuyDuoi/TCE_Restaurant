@@ -66,4 +66,12 @@ export const hoaStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  indicator2: {
+    width: '100%',
+    borderWidth: 1,
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 5,
+    borderColor: colors.desc2,
+  },
 });

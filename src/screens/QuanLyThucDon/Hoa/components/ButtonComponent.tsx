@@ -14,6 +14,7 @@ interface Props {
   evalation?: number;
   borderColor?: string;
   boederWidth?: number;
+  disabled?: boolean;
 }
 
 const ButtonComponent = (props: Props) => {
@@ -28,12 +29,14 @@ const ButtonComponent = (props: Props) => {
     evalation,
     borderColor,
     boederWidth,
+    disabled,
   } = props;
 
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
+      disabled={disabled ? disabled : false}
       style={[
         {
           backgroundColor: bgrColor ? bgrColor : colors.white,

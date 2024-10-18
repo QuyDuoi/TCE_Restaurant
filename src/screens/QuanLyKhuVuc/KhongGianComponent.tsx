@@ -1,55 +1,94 @@
-import React, { useState } from 'react';
-import { View, ScrollView, FlatList, StyleSheet } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, ScrollView, FlatList, StyleSheet} from 'react-native';
 import ItemTrangThaiBan from './Component/ItemTrangThaiBan';
 import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
 import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
-import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import ModalComponent from './ComponentModal/ModalComponent';
-import { testKhuVucData, KhuVucModelTest, BanModelTest } from './testData';
+import {testKhuVucData, KhuVucModelTest, BanModelTest} from './testData';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
+import {fetchKhuVucs} from '../../store/KhuVucSlice';
+import {fetchBans, Ban} from '../../store/BanSlice';
 
 interface Props {
   searchQuery: string;
 }
 
 const KhongGianComponent = (props: Props) => {
-  const { searchQuery } = props;
+  const idNhaHang = '66fab50fa28ec489c7137537';
+
+  const dispatch = useDispatch();
+
+  const {searchQuery} = props;
+
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
-  const [selectedBan, setSelectedBan] = useState<BanModelTest | null>(null);
+  const [selectedBan, setSelectedBan] = useState<Ban | null>(null);
+  const [bans, setBans] = useState<(Ban & {maKhuVuc: string})[]>([]);
 
-  // Sử dụng dữ liệu test cố định từ testData.ts
-  const [khuVuc, setKhuVuc] = useState<KhuVucModelTest[]>(testKhuVucData);
+  const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
 
-  const filteredBan = khuVuc.flatMap(kv =>
-    kv.ban
-      .filter(ban => ban.name.toLowerCase().includes(searchQuery.toLowerCase()))
-      .map(ban => ({ ...ban, maKhuVuc: kv.name })),
-  );
+  useEffect(() => {
+    dispatch(fetchKhuVucs(idNhaHang) as any);
+  }, []);
 
-  const banTrong = filteredBan.filter(ban => ban.status === 'Trong');
-  const banDaDat = filteredBan.filter(ban => ban.status === 'Da dat');
-  const banDangSuDung = filteredBan.filter(ban => ban.status === 'Dang su dung');
+  useEffect(() => {
+    if (khuvucs.length > 0) {
+      const fetchAllBan = async () => {
+        const allBans: (Ban & {maKhuVuc: string})[] = [];
+        for (const kv of khuvucs) {
+          const response = await dispatch(fetchBans(kv._id ?? '') as any);
+          //console.log(response);
+
+          if (response.payload) {
+            const bansByKhuVuc = response.payload.map((ban: Ban) => {
+              return {
+                ...ban,
+                maKhuVuc: kv.tenKhuVuc,
+              };
+            });
+            allBans.push(...bansByKhuVuc);
+          }
+        }
+        setBans(allBans);
+      };
+      fetchAllBan();
+    }
+    //console.log('bans', bans);
+  }, [khuvucs]);
+
+  // const filteredBan = khuVuc.flatMap(kv =>
+  //   kv.ban
+  //     .filter(ban => ban.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  //     .map(ban => ({...ban, maKhuVuc: kv.name})),
+  // );
+
+  const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
+  const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');
+  const banDangSuDung = bans.filter(ban => ban.trangThai === 'Đang sử dụng');
+  //console.log('banTrong--------------------------------------', banTrong);
 
   const getImageBan = (status: string) => {
     switch (status) {
-      case 'Trong':
+      case 'Trống':
         return require('../../image/bantrong.png');
-      case 'Dang su dung':
+      case 'Đang sử dụng':
         return require('../../image/bansudung.png');
-      case 'Da dat':
+      case 'Đã đặt':
         return require('../../image/bandat.png');
     }
   };
 
-  const renderItem = ({ item }: { item: BanModelTest & { maKhuVuc: string } }) => {
+  const renderItem = ({item}: {item: Ban & {maKhuVuc: string}}) => {
     return (
       <ItemTrangThaiBan
-        nameBan={item.name}
+        nameBan={item.tenBan}
         nameKhuVuc={item.maKhuVuc}
-        image={getImageBan(item.status)}
+        image={getImageBan(item.trangThai)}
         onPress={() => {
-          setSelectedBan(item);
+          //setSelectedBan(item);
           setIsVisibleDialog(true);
         }}
       />
@@ -62,7 +101,9 @@ const KhongGianComponent = (props: Props) => {
 
   return (
     <>
-      {banTrong.length > 0 || banDaDat.length > 0 || banDangSuDung.length > 0 ? (
+      {banTrong.length > 0 ||
+      banDaDat.length > 0 ||
+      banDangSuDung.length > 0 ? (
         <ScrollView
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
@@ -72,19 +113,19 @@ const KhongGianComponent = (props: Props) => {
               backgroundColor: '#F7FAFC',
             },
           ]}>
-          <View>
+          <View style={[]}>
             <SectionComponent
               styles={{
                 height: banTrong.length > 0 ? undefined : '20%',
               }}>
               <TitleComponent text="Bàn trống" size={18} />
               <SpaceComponent height={10} />
-              <View style={{ justifyContent: 'center', flex: 1 }}>
+              <View style={{justifyContent: 'center', flex: 1}}>
                 {banTrong.length > 0 ? (
                   <FlatList
                     data={banTrong}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item._id as any}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                   />
@@ -103,12 +144,12 @@ const KhongGianComponent = (props: Props) => {
               }}>
               <TitleComponent text="Bàn đang sử dụng" size={18} />
               <SpaceComponent height={10} />
-              <View style={{ justifyContent: 'center', flex: 1 }}>
+              <View style={{justifyContent: 'center', flex: 1}}>
                 {banDangSuDung.length > 0 ? (
                   <FlatList
                     data={banDangSuDung}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item._id as any}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                   />
@@ -127,12 +168,12 @@ const KhongGianComponent = (props: Props) => {
               }}>
               <TitleComponent text="Bàn đã đặt" size={18} />
               <SpaceComponent height={10} />
-              <View style={{ justifyContent: 'center', flex: 1 }}>
+              <View style={{justifyContent: 'center', flex: 1}}>
                 {banDaDat.length > 0 ? (
                   <FlatList
                     data={banDaDat}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item._id as any}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                   />
@@ -150,7 +191,7 @@ const KhongGianComponent = (props: Props) => {
           <ModalComponent
             isVisible={isVisibleDialog}
             onClose={handleCloseModal}
-            selectedBan={selectedBan?.name || ''}
+            selectedBan={selectedBan?.tenBan || ''}
           />
         </ScrollView>
       ) : (
