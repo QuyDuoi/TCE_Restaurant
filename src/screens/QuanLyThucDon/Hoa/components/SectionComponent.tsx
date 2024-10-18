@@ -9,7 +9,7 @@ interface Props {
 
 const SectionComponent = (props: Props) => {
   const {children, styles} = props;
-  return <View style={[styles, hoaStyles.section]}>{children}</View>;
+  return <View style={[hoaStyles.section, styles]}>{children}</View>;
 };
 
 export default SectionComponent;

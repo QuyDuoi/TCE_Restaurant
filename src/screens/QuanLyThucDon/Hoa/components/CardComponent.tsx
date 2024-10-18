@@ -10,6 +10,7 @@ interface Props {
   borderWidth?: number;
   onPress?: () => void;
   onLongPress?: () => void;
+  flex?: number;
 }
 
 const CardComponent = (props: Props) => {
@@ -21,12 +22,13 @@ const CardComponent = (props: Props) => {
     borderWidth,
     onPress,
     onLongPress,
+    flex,
   } = props;
   return (
     <TouchableOpacity
       onPress={onPress}
       onLongPress={onLongPress ? () => onLongPress() : undefined}
-      style={{flex: 1}}
+      style={{flex: flex ? flex : undefined}}
       activeOpacity={1}>
       <View
         style={[
