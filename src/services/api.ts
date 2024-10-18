@@ -11,7 +11,6 @@ import DanhMuc from './models/DanhMucModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
-import CaLam from './models/CaLamModel';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -495,8 +494,8 @@ export const addNhanVien = async (formData: NhanVien): Promise<NhanVien> => {
 
 export const updateNhanVien = async (
   id: string,
-  formData: MonAn,
-): Promise<MonAn> => {
+  formData: NhanVien,
+): Promise<NhanVien> => {
   try {
     const response = await fetch(`${ipAddress}updateNhanVien/${id}`, {
       method: 'PUT',
