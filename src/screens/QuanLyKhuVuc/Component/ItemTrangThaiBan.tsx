@@ -44,7 +44,7 @@ const ItemTrangThaiBan = (props: Props) => {
           <SpaceComponent height={2} />
           <TextComponent
             color={colors.desc}
-            text={nameBan}
+            text={nameBan.length == 1 ? `Bàn ${nameBan}` : nameBan}
             styles={{
               alignSelf: 'center',
             }}

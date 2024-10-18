@@ -30,15 +30,7 @@ export const fetchKhuVucs = createAsyncThunk(
   async (idNhaHang: string, {dispatch, rejectWithValue}) => {
     try {
       const data = await getListKhuVuc(idNhaHang); // Gọi API để lấy danh sách khu vực
-      // await Promise.all(
-      //   data.map(async (khuVuc: KhuVuc) => {
-      //     const bans = await dispatch(fetchBans(khuVuc._id ?? '') as any);
-      //     return {
-      //       ...khuVuc,
-      //       bans: bans.payload,
-      //     };
-      //   }),
-      // );
+
       return data; // Trả về dữ liệu
     } catch (error: any) {
       return rejectWithValue(error.message || 'Error fetching KhuVuc');

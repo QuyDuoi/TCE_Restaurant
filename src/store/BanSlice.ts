@@ -1,7 +1,9 @@
+import {getListKhuVuc} from './../services/api';
 // slices/BanSlice.ts
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
 import {getListBan, addBan, updateBan} from '../services/api'; // Đường dẫn tới API tương ứng
-
+import {KhuVuc} from './KhuVucSlice';
+const idNhaHang = '66fab50fa28ec489c7137537';
 // Định nghĩa interface cho Ban
 export interface Ban {
   _id?: string;
@@ -27,13 +29,31 @@ const initialState: BanState = {
 };
 
 // Thunk để fetch danh sách bàn
-export const fetchBans = createAsyncThunk(
-  'bans/fetchBans',
-  async (idKhuVuc: string) => {
-    const data = await getListBan(idKhuVuc); // Gọi API để lấy danh sách bàn
-    return data; // Trả về dữ liệu
-  },
-);
+export const fetchBans = createAsyncThunk('bans/fetchBans', async () => {
+  //const data = await getListBan(idKhuVuc); // Gọi API để lấy danh sách bàn
+  const khuVucs = await getListKhuVuc(idNhaHang);
+
+  const allBansResponse = await Promise.all(
+    khuVucs.map(kv => {
+      return getListBan(kv._id as string);
+    }),
+  );
+
+  const allBansWithKhuVuc = allBansResponse.flatMap(
+    (response: any, index: number) => {
+      return response.map((ban: Ban) => {
+        return {
+          ...ban,
+          kv: khuVucs[index],
+        };
+      });
+    },
+  );
+
+  //console.log(allBansWithKhuVuc);
+
+  return allBansWithKhuVuc as any;
+});
 // Async thunk để thêm mới Bàn
 export const addNewBan = createAsyncThunk(
   'bans/addBans',
@@ -89,14 +109,17 @@ const banSlice = createSlice({
         state.status = 'failed';
         state.error = (action.payload as string) || 'Error adding Bàn';
       })
+      .addCase(updateBanThunk.pending, state => {
+        state.status = 'loading';
+      })
       .addCase(
         updateBanThunk.fulfilled,
         (state, action: PayloadAction<Ban>) => {
           const index = state.bans.findIndex(
-            cthd => cthd._id === action.payload._id,
+            ban => ban._id === action.payload._id,
           );
           if (index !== -1) {
-            state.bans[index] = action.payload;
+            state.bans[index] = {...state.bans[index], ...action.payload};
           }
           state.status = 'succeeded';
         },

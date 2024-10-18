@@ -29,20 +29,20 @@ const ItemBan = (props: Props) => {
         ]}>
         <RowComponent justify="flex-start">
           <TextComponent
-            text={`${name.length == 1 ? 'Ban ' : ''}`}
+            text={`${name.length == 1 ? 'Bàn ' : ''}`}
             color={colors.black}
             fontWeight="bold"
             size={16}
           />
           <TextComponent
-            text={`${name ? name : 'ngoai duong'}`}
+            text={`${name ? name : 'Ngoài đường'}`}
             size={16}
             color={colors.black}
             fontWeight="bold"
           />
         </RowComponent>
         <TextComponent
-          text={`Suc chua: ${capacity ? capacity : '100'} nguoi`}
+          text={`Sức chứa: ${capacity ? capacity : '100'} người`}
           size={15}
           color={colors.desc}
         />

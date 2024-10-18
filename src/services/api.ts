@@ -1,6 +1,4 @@
-export const IPV4 = '192.168.1.56'; // Địa chỉ IP giả định của server
-
-export const IPV4 = '192.168.1.10'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.4'; // Địa chỉ IP giả định của server
 
 export const ipAddress = `http://${IPV4}:3000/api/`; // Địa chỉ cơ sở API
 
@@ -13,6 +11,7 @@ import DanhMuc from './models/DanhMucModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
+import CaLam from './models/CaLamModel';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -131,7 +130,7 @@ export const updateTopping = async (
 // Lấy danh sách HoaDon
 export const getListHoaDon = async (): Promise<HoaDon[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListHoaDon`);
+    const response = await fetch(`${ipAddress}layDsHoaDon`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Hóa Đơn');
     }
@@ -279,7 +278,7 @@ export const addBan = async (formData: Ban): Promise<Ban> => {
 // Cập nhật Bàn
 export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   try {
-    const response = await fetch(`${ipAddress}updateBan/${id}`, {
+    const response = await fetch(`${ipAddress}capNhatBan/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -512,5 +511,21 @@ export const updateNhanVien = async (
   } catch (error) {
     console.log('Lỗi cập nhật Nhân viên: ', error);
     throw error;
+  }
+};
+
+export const getListCalam = async (id_nhanVien: string): Promise<CaLam[]> => {
+  try {
+    const response = await fetch(
+      `${ipAddress}layDsCaLamViec?id_nhanVien=${id_nhanVien}`,
+    );
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Ca Làm');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách Ca Làm: ', error);
+    return [];
   }
 };

@@ -5,6 +5,8 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -37,41 +39,32 @@ if (
 const ThongTinKhuVuc = (props: Props) => {
   const {searchQuery} = props;
 
-  const idNhaHang = '66fab50fa28ec489c7137537';
+  console.log('render thong tin khu vuc');
 
-  const [bansByKhuVuc, setBansByKhuVuc] = useState<{[key: string]: Ban[]}>({});
+  //const idNhaHang = '66fab50fa28ec489c7137537';
+
+  const [bansKhuVuc, setBansKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
 
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
-
   const bans = useSelector((state: RootState) => state.ban.bans);
-  //console.log(' --------------------------------', bans);
 
   const [expandKhuVuc, setExpandKhuVuc] = useState<string[]>([]);
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    dispatch(fetchKhuVucs(idNhaHang) as any);
-  }, []);
+    if (bans.length > 0) {
+      setBansKhuVuc(bans as any);
+    }
+  }, [bans]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expandKhuVuc]);
 
-  //fetch ban, khu vuc
   useEffect(() => {
     if (khuVucs.length > 0) {
-      const allKhuVucIds = khuVucs.map(item => item._id as string);
-      //console.log('allKhuVucIds', allKhuVucIds);
-      setExpandKhuVuc(allKhuVucIds);
-
-      allKhuVucIds.forEach(id => {
-        dispatch(fetchBans(id) as any).then((response: any) => {
-          if (response.payload) {
-            setBansByKhuVuc(prev => ({...prev, [id]: response.payload}));
-          }
-        });
-      });
+      setTimeout(() => {
+        setExpandKhuVuc(khuVucs.map(item => item._id as string));
+      }, 1000);
     }
   }, [khuVucs]);
 
@@ -81,13 +74,6 @@ const ThongTinKhuVuc = (props: Props) => {
       setExpandKhuVuc(expandKhuVuc.filter(item => item !== id));
     } else {
       setExpandKhuVuc([...expandKhuVuc, id]);
-
-      const response = await dispatch(fetchBans(id) as any);
-      if (response.payload) {
-        //console.log('response.payload', response.payload);
-
-        setBansByKhuVuc(prev => ({...prev, [id]: response.payload}));
-      }
     }
   };
 
@@ -108,7 +94,7 @@ const ThongTinKhuVuc = (props: Props) => {
   const renderItem = ({item}: {item: KhuVuc}) => {
     const isExpand = expandKhuVuc.includes(item._id as string);
 
-    const banList = bansByKhuVuc[item._id as string] || [];
+    const banList = bansKhuVuc.filter(ban => ban.kv._id === item._id);
     //console.log('banList', banList);
 
     return (
@@ -141,7 +127,7 @@ const ThongTinKhuVuc = (props: Props) => {
                 padding: 20,
               }}>
               <TextComponent
-                text="Khu vuc nay chua co ban"
+                text="Khu vực này chưa có bàn"
                 color={colors.desc}
               />
             </View>
@@ -161,10 +147,20 @@ const ThongTinKhuVuc = (props: Props) => {
       }
     </View>
   ) : (
-    <View style={[hoaStyles.containerTopping]}>
-      <TitleComponent text="Chưa có khu vực được tạo" color={colors.desc} />
+    <View
+      style={[
+        hoaStyles.containerTopping,
+        {
+          justifyContent: 'center',
+        },
+      ]}>
+      <TitleComponent
+        text="Chưa có khu vực được tạo"
+        color={colors.desc}
+        styles={{alignSelf: 'center'}}
+      />
     </View>
   );
 };
 
-export default ThongTinKhuVuc;
+export default React.memo(ThongTinKhuVuc);
