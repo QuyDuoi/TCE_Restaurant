@@ -1,4 +1,4 @@
-export default class NhanVien {
+export default class NhanVienModel {
     _id?: string;
     hoTen: string;
     hinhAnh: string;
