@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Switch, Button, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
-import { styles } from './EditEmployeeInfoStyles.tsx';
-import UnsavedChangesModal from '../../customcomponent/modalSave.tsx';
+import { styles } from './EditEmployeeInfoStyles';
+import UnsavedChangesModal from '../../customcomponent/modalSave';
 import { useDispatch } from 'react-redux';
-import { updateEmployee } from '../../store/EmployeeSlice'; // Import Redux action để cập nhật nhân viên
+import { updateNhanVienThunk } from '../../store/NhanVienSlice'; // Import Redux action để cập nhật nhân viên
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const EditEmployeeInfo = () => {
@@ -14,15 +14,14 @@ const EditEmployeeInfo = () => {
     // Nhận dữ liệu nhân viên từ route.params
     const { nhanVien } = route.params;
 
-    const [name, setName] = useState(nhanVien.nameNhanVien || '');
-    const [status, setStatus] = useState(nhanVien.status || true);
-    const [phone, setPhone] = useState(nhanVien.phone || '');
-    const [idNumber, setIdNumber] = useState(nhanVien.idNumber || '');
-    const [position, setPosition] = useState(nhanVien.position || 'Nhân viên');
-    const [location, setLocation] = useState(nhanVien.location || ''); // Vị trí cửa hàng
+    // State quản lý các trường thông tin
+    const [name, setName] = useState(nhanVien.hoTen || '');
+    const [status, setStatus] = useState(nhanVien.trangThai || false); // Chuyển trạng thái về boolean
+    const [phone, setPhone] = useState(nhanVien.soDienThoai || '');
+    const [idNumber, setIdNumber] = useState(nhanVien.cccd || '');
+    const [position, setPosition] = useState(nhanVien.vaiTro || 'Nhân viên');
     const [isPickerVisible, setPickerVisible] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
-
     const [isModalVisible, setModalVisible] = useState(false); // State cho modal xác nhận
 
     const positions = ["Nhân viên", "Quản lý", "Admin", "Bếp"];
@@ -30,10 +29,10 @@ const EditEmployeeInfo = () => {
     // Kiểm tra nếu thông tin đã bị thay đổi so với dữ liệu ban đầu
     useEffect(() => {
         if (
-            name !== nhanVien.nameNhanVien ||
-            status !== nhanVien.status ||
-            phone !== nhanVien.phone ||
-            position !== nhanVien.position
+            name !== nhanVien.hoTen ||
+            status !== nhanVien.trangThai ||
+            phone !== nhanVien.soDienThoai ||
+            position !== nhanVien.vaiTro
         ) {
             setIsEdited(true);
         } else {
@@ -52,32 +51,24 @@ const EditEmployeeInfo = () => {
 
         const updatedEmployee = {
             ...nhanVien,
-            nameNhanVien: name,
-            status: status,
-            phone: phone,
-            idNumber: idNumber,
-            position: position,
+            hoTen: name,
+            trangThai: status, // Đảm bảo lưu trạng thái hoạt động (true/false)
+            soDienThoai: phone,
+            cccd: idNumber,
+            vaiTro: position, // Lưu vai trò đã chọn
         };
 
         try {
-            // Cập nhật dữ liệu lên Backend
-            const response = await fetch(`http://your-api-url.com/employees/${nhanVien.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedEmployee),
-            });
-
-            if (response.ok) {
-                // Cập nhật lên Store Redux sau khi API thành công
-                dispatch(updateEmployee(updatedEmployee));
-
-                Alert.alert('Thành công', 'Cập nhật thông tin nhân viên thành công');
-                navigation.goBack(); // Quay về trang danh sách
-            } else {
-                Alert.alert('Lỗi', 'Cập nhật thông tin không thành công');
-            }
+            // Cập nhật dữ liệu lên Backend thông qua Redux Thunk
+            dispatch(updateNhanVienThunk({ id: nhanVien._id, formData: updatedEmployee }))
+                .unwrap()
+                .then(() => {
+                    Alert.alert('Thành công', 'Cập nhật thông tin nhân viên thành công');
+                    navigation.goBack(); // Quay về trang danh sách
+                })
+                .catch(error => {
+                    Alert.alert('Lỗi', 'Cập nhật thông tin không thành công');
+                });
         } catch (error) {
             console.error('Lỗi khi cập nhật nhân viên:', error);
             Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin');
@@ -86,12 +77,7 @@ const EditEmployeeInfo = () => {
 
     // Chuyển đổi trạng thái hoạt động
     const toggleStatus = () => {
-        setStatus(!status);
-    };
-
-    // Định dạng số điện thoại
-    const formatPhoneNumber = (inputNumber: string) => {
-        return inputNumber.length === 10 ? `+84 ${inputNumber.substring(1)}` : inputNumber;
+        setStatus(!status); // Đảo ngược trạng thái khi chuyển đổi
     };
 
     return (
@@ -105,7 +91,12 @@ const EditEmployeeInfo = () => {
 
             <View style={styles.formGroup}>
                 <Text style={styles.label}>Tên nhân viên</Text>
-                <TextInput style={styles.input} value={name} onChangeText={setName} />
+                <TextInput
+                    style={styles.input}
+                    value={name}
+                    onChangeText={setName}
+                    placeholder="Nhập tên nhân viên"
+                />
             </View>
 
             <View style={styles.formGroupRow}>
@@ -127,15 +118,21 @@ const EditEmployeeInfo = () => {
                 <Text style={styles.label}>Số điện thoại</Text>
                 <TextInput
                     style={styles.input}
-                    value={formatPhoneNumber(phone)}
+                    value={phone}
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
+                    placeholder="Nhập số điện thoại"
                 />
             </View>
 
             <View style={styles.formGroup}>
-                <Text style={styles.label}>Căn cước công dân số</Text>
-                <TextInput style={styles.input} value={idNumber} editable={false} />
+                <Text style={styles.label}>Số Căn cước công dân</Text>
+                <TextInput
+                    style={styles.input}
+                    value={idNumber}
+                    editable={true}
+                    placeholder="Nhập số CCCD"
+                />
             </View>
 
             <View style={styles.fr2}>
@@ -166,8 +163,8 @@ const EditEmployeeInfo = () => {
                                         key={index}
                                         style={styles.item}
                                         onPress={() => {
-                                            setPosition(item);
-                                            setPickerVisible(false);
+                                            setPosition(item); // Cập nhật vai trò khi người dùng chọn
+                                            setPickerVisible(false); // Đóng modal sau khi chọn
                                         }}
                                     >
                                         <Text style={styles.itemText}>{item}</Text>
@@ -176,14 +173,13 @@ const EditEmployeeInfo = () => {
                             </View>
                         </View>
                     </Modal>
-                    <TextInput style={styles.input} value={location} editable={false} />
                 </View>
             </View>
 
             <Button
                 title="Lưu"
                 onPress={handleSave}
-                disabled={!isEdited}
+                disabled={!isEdited} // Chỉ kích hoạt nút Lưu nếu có thay đổi
                 color={isEdited ? 'blue' : 'gray'}
             />
 

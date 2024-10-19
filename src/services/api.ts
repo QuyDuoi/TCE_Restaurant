@@ -1,5 +1,5 @@
 
-export const IPV4 = '192.168.1.10';  // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
 export const ipAddress = `http://${IPV4}:3000/api/`;  // Địa chỉ cơ sở API
 
@@ -11,7 +11,8 @@ import Ban from './models/BanModel';
 import DanhMuc from './models/DanhMucModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
-import NhanVien from './models/NhanVienModel';
+import { NhanVienSlice, NhanVienState } from '../store/NhanVienSlice';
+import NhanVienModel from './models/NhanVienModel';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -412,7 +413,7 @@ export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
 
 export const updateMonAn = async (id: string, formData: MonAn): Promise<MonAn> => {
   try {
-    const response = await fetch(`${ipAddress}updateMonAn/${id}`, {
+    const response = await fetch(`${ipAddress}/updateMonAn/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
@@ -430,9 +431,9 @@ export const updateMonAn = async (id: string, formData: MonAn): Promise<MonAn> =
 /**
  *  API cho Nhân Viên
  */
-export const getListNhanVien = async (): Promise<NhanVien[]> => {
+export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
   try {
-    const response = await fetch(`${ipAddress}layDsNhanVien`);
+    const response = await fetch(`${ipAddress}/layDsNhanVien`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Nhan Vien');
     }
@@ -444,15 +445,18 @@ export const getListNhanVien = async (): Promise<NhanVien[]> => {
   }
 };
 
-export const addNhanVien = async (formData: NhanVien): Promise<NhanVien> => {
+export const addNhanVien = async (formData: NhanVienSlice): Promise<NhanVienSlice> => {
   try {
-    const response = await fetch(`${ipAddress}addNhanVien`, {
+    const response = await fetch(`${ipAddress}themNhanVien`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
+      console.log(formData);
       throw new Error('Lỗi khi thêm mới Nhân viên');
+      
+      
     }
     const data = await response.json();
     return data;
@@ -462,9 +466,9 @@ export const addNhanVien = async (formData: NhanVien): Promise<NhanVien> => {
   }
 };
 
-export const updateNhanVien = async (id: string, formData: MonAn): Promise<MonAn> => {
+export const updateNhanVien = async (id: string, formData: NhanVienSlice): Promise<NhanVienSlice> => {
   try {
-    const response = await fetch(`${ipAddress}updateNhanVien/${id}`, {
+    const response = await fetch(`${ipAddress}/capNhatNhanVien/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
@@ -477,5 +481,22 @@ export const updateNhanVien = async (id: string, formData: MonAn): Promise<MonAn
   } catch (error) {
     console.log('Lỗi cập nhật Nhân viên: ', error);
     throw error;
+  }
+};
+
+export const deleteNhanVien = async (id: string): Promise<void> => {
+  try {
+    const response = await fetch(`${ipAddress}xoaNhanVien/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Lỗi khi xóa nhân viên');
+    }
+
+    console.log('Xóa nhân viên thành công');
+  } catch (error) {
+    console.log('Lỗi khi xóa nhân viên: ', error);
+    throw new Error('Lỗi khi xóa nhân viên');
   }
 };

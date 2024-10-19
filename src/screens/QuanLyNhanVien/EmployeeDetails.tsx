@@ -2,42 +2,63 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Alert, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import DeletePostModal from '../../customcomponent/modalDelete'; // Your custom delete modal
+import { deleteNhanVienThunk } from '../../store/NhanVienSlice';
+import { AppDispatch } from '../../store/store';
+import { useDispatch } from 'react-redux';
+import { IPV4 } from '../../services/api';
+import NhanVien from '../../services/models/NhanVienModel';
 
 const EmployeeDetails = () => {
+  const route = useRoute();
+
+  const dispatch: AppDispatch = useDispatch(); 
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
+  const { nhanVien } = route.params;
 
-  const phoneNumber = '+1 (415) 432-1234';
+
+if (!nhanVien) {
+  console.log('No nhanVien found in params');
+  // Xử lý khi không có nhanVien
+}
+
+  const employeeImage = nhanVien.hinhAnh
+    ? nhanVien.hinhAnh.replace('localhost', IPV4)  // Thay đổi IP theo cấu hình server
+    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
   const copyToClipboard = () => {
-    Clipboard.setString(phoneNumber);
-    Alert.alert('Copied', 'Phone number copied to clipboard');
+    Clipboard.setString(nhanVien.soDienThoai);
+    Alert.alert('Copied', 'Số điện thoại đã được sao chép vào bộ nhớ tạm');
   };
 
   const handleDelete = () => {
-
-    setModalVisible(false); // Close the modal
+    dispatch(deleteNhanVienThunk(nhanVien._id))  // Gọi action xóa nhân viên
+      .unwrap()
+      .then(() => {
+        Alert.alert('Thành công', 'Đã xóa nhân viên');  // Thông báo thành công
+        navigation.goBack();  // Quay lại màn hình trước đó
+      })
+      .catch((error) => {
+        Alert.alert('Lỗi', `Xóa nhân viên không thành công: ${error}`);
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Employee Details</Text>
+      <Text style={styles.headerTitle}>TCE_RESTAURANT</Text>
 
-      <Image
-        style={styles.avatar}
-        source={{ uri: 'https://i.pinimg.com/564x/25/f8/8e/25f88ecb0498095bd0fafcc1ad5c1c1e.jpg' }}
-      />
+      <Image style={styles.avatar} source={{ uri: employeeImage }} />
 
-      <Text style={styles.employeeName}>Natalie Coleman</Text>
-      <Text style={styles.employeeStatus}>Active now</Text>
+      <Text style={styles.employeeName}>{nhanVien.hoTen}</Text>
+      <Text style={styles.employeeStatus}>{nhanVien.trangThai}</Text>
 
       <View style={styles.infoRow}>
         <Icon name="phone" size={24} color="#777" />
         <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>Phone number</Text>
-          <Text style={styles.infoSubtitle}>{phoneNumber}</Text>
+          <Text style={styles.infoTitle}>Số điện thoại</Text>
+          <Text style={styles.infoSubtitle}>{nhanVien.soDienThoai}</Text>
         </View>
 
         <TouchableOpacity onPress={copyToClipboard}>
@@ -48,24 +69,23 @@ const EmployeeDetails = () => {
       <View style={styles.infoRow}>
         <Icon name="credit-card" size={24} color="#777" />
         <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>ID card</Text>
-          <Text style={styles.infoSubtitle}>SFO - 123</Text>
+          <Text style={styles.infoTitle}>Số CCCD</Text>
+          <Text style={styles.infoSubtitle}>{nhanVien.cccd}</Text>
         </View>
       </View>
 
       <View style={styles.infoRow}>
         <Icon name="work" size={24} color="#777" />
         <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>Manager</Text>
-          <Text style={styles.infoSubtitle}>Department: Home & Kitchen</Text>
-          <Text style={styles.infoSubtitle}>Store: Union Square</Text>
+          <Text style={styles.infoTitle}>Vai trò</Text>
+          <Text style={styles.infoSubtitle}>{nhanVien.vaiTro}</Text>
         </View>
       </View>
 
       {/* Other employee details (ID card, manager info, etc.) */}
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.updateButton} onPress={() => navigation.navigate('editEmployeeInfo')}>
+        <TouchableOpacity style={styles.updateButton} onPress={() => navigation.navigate('editEmployeeInfo', { nhanVien })}>
           <Text style={styles.buttonText}>Update Information</Text>
         </TouchableOpacity>
 
@@ -76,8 +96,8 @@ const EmployeeDetails = () => {
 
       {isModalVisible && (
         <DeletePostModal
-          title="Delete Employee"
-          content="Are you sure you want to delete this employee account?"
+          title="Xóa thông tin nhân viên"
+          content="Bạn có muốn xóa thông tin nhân viên không?"
           onDelete={handleDelete}
           onCancel={() => setModalVisible(false)}
         />
@@ -110,6 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: 'black'
   },
   employeeStatus: {
     fontSize: 16,

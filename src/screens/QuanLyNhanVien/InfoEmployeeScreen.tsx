@@ -1,52 +1,80 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Linking, Alert, Modal } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, Alert, Modal, Linking } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-
-
-//handles
-import {
-    handleCall,
-    handleCopy,
-    handleDelete,
-    marsePhoneNumber,
-} from './Khai/Controller/EmployeeController'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteNhanVienThunk, fetchNhanViens, updateNhanVienThunk } from '../../store/NhanVienSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from './Khai/Styles/EmployeeDetailStyles';
-
-
-const isActive = true;
-
-const phoneNumber = '0382315208';
+import { IPV4 } from '../../services/api';
+import DeletePostModal from '../../customcomponent/modalDelete';
+import { RootState } from '../../store/store';
 
 
 const EmployeeDetailsScreen = () => {
-    const [modalVisible, setModalVisible] = useState(false);
+    const route = useRoute();
+    const { nhanVien } = route.params; // Lấy thông tin nhân viên từ route params
+    const [modalVisible, setModalVisible] = useState(false);  // Điều khiển modal
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+    const status = useSelector((state: RootState) => state.nhanVien.status);
+    const updatedNhanVien = useSelector((state: RootState) =>
+        state.nhanVien.nhanViens.find(nv => nv._id === nhanVien._id)
+    );
+
+    // Đặt trạng thái hoạt động dựa trên nhanVien.trangThai
+    const isActive = updatedNhanVien?.trangThai || nhanVien.trangThai; 
+
+    const employeeImage = updatedNhanVien?.hinhAnh
+        ? updatedNhanVien.hinhAnh.replace('localhost', IPV4) // Thay đổi IP nếu cần
+        : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+
+    const handleCopy = (value) => {
+        Clipboard.setString(value);
+        Alert.alert('Đã sao chép', `${value} đã được sao chép vào clipboard`);
+    };
+    
+
+    const handleDelete = () => {
+        dispatch(deleteNhanVienThunk(nhanVien._id))
+            .then(() => {
+                Alert.alert('Xóa thành công', 'Nhân viên đã được xóa thành công');
+                setModalVisible(false);
+                navigation.goBack(); // Quay về màn hình trước sau khi xóa
+            })
+            .catch((error) => {
+                Alert.alert('Lỗi', 'Không thể xóa nhân viên');
+            });
+    };
+     // Sử dụng useFocusEffect để lấy lại dữ liệu khi màn hình focus
+     useFocusEffect(
+        useCallback(() => {
+            // Fetch lại dữ liệu nhân viên khi quay lại màn hình này
+            dispatch(updateNhanVienThunk());
+        }, [dispatch])
+    );
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.backButton}>{'<'}</Text>
                 </TouchableOpacity>
                 <Text style={styles.title}>Thông tin nhân viên</Text>
             </View>
 
-            <View
-                style={isActive ? styles.avatarContainerGreen : styles.avatarContainerRed}
-            >
-                <Image
-                    source={{ uri: 'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg' }}
-                    style={styles.avatar}
-                />
+            <View style={isActive ? styles.avatarContainerGreen : styles.avatarContainerRed}>
+                <Image source={{ uri: employeeImage }} style={styles.avatar} />
             </View>
 
-            <Text style={styles.name}>Quang Khải</Text>
+            <Text style={styles.name}>{nhanVien.hoTen}</Text>
             <Text style={[styles.status, { color: isActive ? 'green' : 'red' }]}>
                 {isActive ? 'Active now' : 'Not Active'}
             </Text>
 
             <View style={styles.infoContainer}>
                 <View style={styles.infoRow}>
-                    <TouchableOpacity onPress={() => handleCall(phoneNumber)}>
+                    <TouchableOpacity onPress={() => Linking.openURL(`tel:${nhanVien.soDienThoai}`)}>
                         <View style={styles.iconContainer}>
                             <Text style={styles.icon}>📞</Text>
                         </View>
@@ -54,10 +82,10 @@ const EmployeeDetailsScreen = () => {
                     <View style={styles.infoTextContainer}>
                         <Text style={styles.infoLabel}>Số điện thoại</Text>
                         <Text style={styles.phoneContainer}>
-                            <Text style={styles.phoneCode}>{marsePhoneNumber(phoneNumber)}</Text> {/* Mã vùng */}
+                            <Text style={styles.phoneCode}>{nhanVien.soDienThoai}</Text>
                         </Text>
                     </View>
-                    <TouchableOpacity onPress={() => handleCopy(phoneNumber)}>
+                    <TouchableOpacity onPress={() => handleCopy(nhanVien.soDienThoai)}>
                         <Text style={styles.copyIcon}>📋</Text>
                     </TouchableOpacity>
                 </View>
@@ -68,7 +96,7 @@ const EmployeeDetailsScreen = () => {
                     </View>
                     <View style={styles.infoTextContainer}>
                         <Text style={styles.infoLabel}>Căn cước công dân</Text>
-                        <Text style={styles.infoValue}>PH25638</Text>
+                        <Text style={styles.infoValue}>{nhanVien.cccd}</Text>
                     </View>
                 </View>
 
@@ -78,56 +106,32 @@ const EmployeeDetailsScreen = () => {
                     </View>
                     <View style={styles.infoTextContainer}>
                         <Text style={styles.infoLabel}>Vai trò</Text>
-                        <Text style={styles.infoValue}>Nhà hàng</Text>
-                        <Text style={styles.infoValue}>Địa chỉ</Text>
+                        <Text style={styles.infoValue}>{nhanVien.vaiTro}</Text>
                     </View>
                 </View>
             </View>
 
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.buttonUpdate}>
-                    <Text style={styles.buttonTextUpdate}>Cập nhập thông tin</Text>
+                <TouchableOpacity style={styles.buttonUpdate} onPress={() => navigation.navigate('editEmployeeInfo', { nhanVien })}>
+                    <Text style={styles.buttonTextUpdate}>Cập nhật thông tin</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.buttonDelete}>
                     <Text style={styles.buttonTextDelete}>Xóa nhân viên</Text>
                 </TouchableOpacity>
             </View>
-            {/* Modal xác nhận xóa tài khoản */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Thông báo</Text>
-                        <Text style={styles.modalMessage}>
-                            Bạn có chắc chắn xóa nhân viên này không?
-                        </Text>
-                        <Text style={styles.modalWarning}>
-                            Lưu ý: Mọi thông tin của nhân viên sẽ bị xóa và không thể khôi phục.
-                        </Text>
 
-                        <View style={styles.buttonContainerModal}>
-                            <TouchableOpacity
-                                onPress={() => setModalVisible(false)}
-                                style={[styles.button, styles.cancelButton]}
-                            >
-                                <Text style={styles.buttonText}>Hủy</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => handleDelete(modalVisible)}
-                                style={[styles.button, styles.confirmButton]}
-                            >
-                                <Text style={styles.buttonText}>Xác nhận</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+            {/* Sử dụng DeletePostModal khi nhấn nút xóa */}
+            {modalVisible && (
+                <DeletePostModal
+                    title="Xác nhận xóa"
+                    content="Bạn có chắc chắn muốn xóa nhân viên này? Tất cả thông tin sẽ không thể khôi phục."
+                    onDelete={handleDelete}
+                    onCancel={() => setModalVisible(false)}
+                />
+            )}
         </View>
     );
 };
+
 export default EmployeeDetailsScreen;
