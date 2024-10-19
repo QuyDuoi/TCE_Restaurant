@@ -28,7 +28,7 @@ const ItemKhuVuc = (props: Props) => {
           paddingHorizontal: 5,
         }}>
         <TextComponent
-          text={`Khu vuc: ${name ? name : 'ngoai duong'}`}
+          text={`Khu vực: ${name ? name : 'Tầng 1'}`}
           size={17}
           color={colors.black}
         />

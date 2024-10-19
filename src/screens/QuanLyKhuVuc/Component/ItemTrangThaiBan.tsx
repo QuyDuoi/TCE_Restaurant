@@ -31,6 +31,7 @@ const ItemTrangThaiBan = (props: Props) => {
       <View style={[styles.content]}>
         <View style={[styles.imageContainer]}>
           <CardComponent
+            flex={1}
             bgrColor={colors.desc2}
             styles={[{padding: 10}]}
             onLongPress={onPress}>
@@ -43,7 +44,7 @@ const ItemTrangThaiBan = (props: Props) => {
           <SpaceComponent height={2} />
           <TextComponent
             color={colors.desc}
-            text={nameBan}
+            text={nameBan.length == 1 ? `Bàn ${nameBan}` : nameBan}
             styles={{
               alignSelf: 'center',
             }}

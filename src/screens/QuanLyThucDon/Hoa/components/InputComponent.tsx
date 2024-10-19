@@ -11,6 +11,7 @@ import RowComponent from './RowComponent';
 import {hoaStyles} from '../styles/hoaStyles';
 import {colors} from '../contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import TextComponent from './TextComponent';
 
 interface Props {
   value: string;
@@ -24,6 +25,12 @@ interface Props {
   styleIconX?: StyleProp<ViewStyle>;
   fontSize?: number;
   elevation?: number;
+  type?: 'normal' | any;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  autoFocus?: boolean;
+  readonly?: boolean;
+  flex?: number;
+  onPress?: () => void;
 }
 
 const InputComponent = (props: Props) => {
@@ -39,9 +46,49 @@ const InputComponent = (props: Props) => {
     styleIconX,
     elevation,
     fontSize,
+    type,
+    keyboardType,
+    autoFocus,
+    readonly,
+    flex,
+    onPress,
   } = props;
 
-  return (
+  return type === 'normal' ? (
+    <View style={[{flex: flex ?? undefined}]}>
+      {leftIcon || rightIcon ? (
+        <View style={[styles]}>
+          <RowComponent justify="space-between" styles={[]} onPress={onPress}>
+            {leftIcon && leftIcon}
+            <TextInput
+              style={[{paddingVertical: 0, color: colors.black}]}
+              numberOfLines={numberOfLines ?? undefined}
+              placeholder={placeholder ?? ''}
+              placeholderTextColor={colors.desc}
+              onChangeText={val => onChangeText(val)}
+              value={value}
+              keyboardType={keyboardType ?? 'default'}
+              readOnly={readonly ?? false}
+              onPress={onPress}
+            />
+            {rightIcon && rightIcon}
+          </RowComponent>
+        </View>
+      ) : (
+        <TextInput
+          style={[styles]}
+          numberOfLines={numberOfLines ?? undefined}
+          placeholder={placeholder ?? ''}
+          placeholderTextColor={colors.desc}
+          onChangeText={val => onChangeText(val)}
+          value={value}
+          keyboardType={keyboardType ?? 'default'}
+          autoFocus={autoFocus ?? false}
+          readOnly={readonly ?? false}
+        />
+      )}
+    </View>
+  ) : (
     <View style={[{paddingHorizontal: 15}]}>
       {/* / lay out cua input / */}
       <RowComponent
