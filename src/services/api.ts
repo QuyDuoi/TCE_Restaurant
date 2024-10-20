@@ -11,6 +11,7 @@ import DanhMuc from './models/DanhMucModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
+import CaLam from './models/CaLamModel';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
