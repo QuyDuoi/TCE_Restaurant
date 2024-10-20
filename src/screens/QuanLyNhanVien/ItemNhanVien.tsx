@@ -1,9 +1,11 @@
-import {View, Text, Image} from 'react-native';
+import { View, Text, Image } from 'react-native';
 import React from 'react';
 import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
-import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import { IPV4 } from '../../services/api';
+import NhanVienModel from '../../services/models/NhanVienModel';
 
 interface Props {
   status?: boolean;
@@ -14,11 +16,14 @@ interface Props {
   avatar: string;
 }
 
-const urlImage =
-  'https://i.pinimg.com/236x/8a/df/6d/8adf6d438e833a8423021c06510c9049.jpg';
-
 const ItemNhanVien = (props: Props) => {
-  const {status, colorStatus, nameNhanVien, position, onPress, avatar} = props;
+  const { status, colorStatus, nameNhanVien, position, onPress, avatar } = props;
+
+  // Handle avatar URL replacement if it's coming from localhost
+  const employeeImage = avatar
+    ? avatar.replace('localhost', IPV4)
+    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+
   return (
     <CardComponent
       bgrColor={colorStatus ? colorStatus : '#C4E4FF'}
@@ -41,7 +46,7 @@ const ItemNhanVien = (props: Props) => {
             paddingVertical: 16,
           }}>
           <Image
-            source={{uri: avatar ? avatar : urlImage}}
+            source={{ uri: employeeImage }}
             style={{
               width: 50,
               height: 50,
@@ -51,7 +56,6 @@ const ItemNhanVien = (props: Props) => {
           <View
             style={{
               marginLeft: 12,
-
               flex: 1,
             }}>
             <TextComponent

@@ -2,25 +2,25 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import { addEmployee } from '../../store/EmployeeSlice'; // Import hành động từ EmployeeSlice
 import { useDispatch } from 'react-redux';
-
+import { addNewNhanVien } from '../../store/NhanVienSlice';
+import NhanVien from '../../services/models/NhanVienModel';
+import {RootState} from '../../store/store';
+import type {AppDispatch} from '../../store/store';
 
 const AddEmployeeScreen = () => {
   const navigation = useNavigation();  // Lấy đối tượng navigation để điều hướng
-  const dispatch = useDispatch();
-
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [citizenID, setCitizenID] = useState('');
-  const [role, setRole] = useState('');
-  const [imageUri, setImageUri] = useState(null);
+  const dispatch = useDispatch<AppDispatch>(); // Dispatch kiểu AppDispatch
+  
+  const [employee, setEmployee] = useState<NhanVien>(new NhanVien('', '', '', '', '', true,''));
+  const [errors, setErrors] = useState<Partial<Record<keyof NhanVien, string>>>(
+    {},
+  );
+ 
   const [modalVisible, setModalVisible] = useState(false);
   const [showImage, setShowImage] = useState(false);
-  const [errors, setErrors] = useState({});
-
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   const roles = [
     { label: 'Quản lý', value: 'quan ly' },
@@ -29,16 +29,30 @@ const AddEmployeeScreen = () => {
     { label: 'Nhân viên phục vụ', value: 'phuc vu' },
   ];
 
+  const handleInputChange = (field: keyof NhanVien, value: string) => {
+    setEmployee(prevState => ({
+      ...prevState,
+      [field]: value,
+    }));
+  };
+
+  const handleRoleSelect = (role: string) => {
+    setEmployee(prevState => ({
+      ...prevState,
+      userRole: role,
+    }));
+  };
+
   const handleValidation = () => {
-    const newErrors = {};
+    const newErrors : Partial<Record<keyof NhanVien, string>> = {};
     const phoneRegex = /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
-    const citizenIDRegex = /^[0-9]{9,12}$/;
+    const citizenIDRegex = /^[0-9]{9}$|^[0-9]{12}$/;
 
-    if (!name) newErrors.name = 'Họ tên là bắt buộc';
-    if (!phone || !phoneRegex.test(phone)) newErrors.phone = 'Số điện thoại không hợp lệ';
-    if (!citizenID || !citizenIDRegex.test(citizenID)) newErrors.citizenID = 'Số CCCD không hợp lệ';
-    if (!role) newErrors.role = 'Vui lòng chọn vai trò';
-
+    if (!employee.hoTen) newErrors.hoTen = 'Tên nhân viên không được bỏ trống';
+    if (!employee.soDienThoai || !phoneRegex.test(employee.soDienThoai)) newErrors.soDienThoai = 'Số điện thoại không hợp lệ';
+    if (!employee.cccd || !citizenIDRegex.test(employee.cccd)) newErrors.cccd = 'Số CCCD không hợp lệ';
+    // if (!employee.vaiTro) newErrors.vaiTro = 'Vui lòng chọn vai trò';
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -46,44 +60,88 @@ const AddEmployeeScreen = () => {
   // Hàm xử lý khi nhấn "Lưu thông tin"
   const handleSave = () => {
     if (handleValidation()) {
-      const newEmployee = {
-        id: Date.now(),  // Tạo một id giả lập
-        nameNhanVien: name,
-        position: role,
-        status: true,  // Mặc định trạng thái là hoạt động
-        phone: phone,
-        idNumber: citizenID,
-        avatar: imageUri ? imageUri : 'https://example.com/default-avatar.png',  // Ảnh đại diện mặc định nếu không tải ảnh lên
-      };
+      const formData = new FormData();
+      formData.append('hoTen', employee.hoTen);
+      formData.append('soDienThoai', employee.soDienThoai);
+      formData.append('cccd', employee.cccd);
+      formData.append('vaiTro', employee.vaiTro || 'Nhân viên thu ngân');
+      formData.append('trangThai', true);
+      formData.append('id_nhaHang', '66fab50fa28ec489c7137537');
+    
+      // Thêm ảnh vào formData nếu có
+      if (employee.hinhAnh) {
+  const imageUri = employee.hinhAnh;
+  const fileName = imageUri.split('/').pop(); // Lấy tên file từ đường dẫn
 
-      // Điều hướng về màn hình NhanVienComponent và truyền dữ liệu nhân viên mới
-      navigation.navigate('NhanVienList', { newEmployee });
-
-      Alert.alert('Thành công', 'Nhân viên đã được thêm');
+  // Tạo đối tượng file từ hình ảnh
+  formData.append('hinhAnh', {
+    uri: imageUri,
+    type: 'image/jpeg', // Đảm bảo đúng loại file
+    name: fileName,
+  });
+  
+  console.log('Thêm ảnh vào formData:', { uri: imageUri, type: 'image/jpeg', name: fileName });
+} else {
+  console.log('Không có ảnh để thêm vào FormData');
+}
+    
+      // Log dữ liệu FormData trước khi gửi đi
+      console.log('FormData:', formData);
+    
+      dispatch(addNewNhanVien(formData)) // Gọi dispatch thêm nhân viên mới
+        .unwrap()
+        .then(() => {
+          Alert.alert('Thành công', 'Nhân viên đã được thêm');
+          navigation.goBack(); // Điều hướng về màn hình danh sách nhân viên sau khi thêm thành công
+        })
+        .catch((error) => {
+          Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
+        });
     } else {
       Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
     }
   };
-
   
-  const openCamera = () => {
-    launchCamera({}, response => {
-      if (response.assets) {
-        setImageUri(response.assets[0].uri);
+  
+  
+  const openCamera = async () => {
+    await launchCamera(
+      {
+        mediaType: 'photo',
+        saveToPhotos: true,
+      },
+      response => {
+        if (response.assets && response.assets.length > 0) {
+          const uri = response.assets[0].uri;
+          console.log('Ảnh được chụp: ', uri); // Kiểm tra đường dẫn ảnh
+          setImageUri(uri); // Cập nhật imageUri
+          setEmployee(prevState => ({
+            ...prevState,
+            hinhAnh: uri || undefined, // Lưu đường dẫn ảnh vào state
+          }));
+        }
         setModalVisible(false);
+      },
+    );
+  };
+  
+  const openImageLibrary = () => {
+    launchImageLibrary({ mediaType: 'photo' }, response => {
+      if (response.assets && response.assets.length > 0) {
+        const uri = response.assets[0].uri;
+        console.log('Ảnh được chọn: ', uri); // Kiểm tra đường dẫn ảnh
+        setImageUri(uri); // Cập nhật imageUri
+        setEmployee(prevState => ({
+          ...prevState,
+          hinhAnh: uri || undefined, // Lưu đường dẫn ảnh vào state
+        }));
       }
+      setModalVisible(false);
     });
   };
+  
+  
 
-
-  const openGallery = () => {
-    launchImageLibrary({}, response => {
-      if (response.assets) {
-        setImageUri(response.assets[0].uri);
-        setModalVisible(false);
-      }
-    });
-  };
 
   const viewImage = () => {
     if (imageUri) {
@@ -124,44 +182,44 @@ const AddEmployeeScreen = () => {
 
         <Text style={styles.label}>Tên nhân viên</Text>
         <TextInput
-          style={[styles.input, errors.name && styles.errorBorder]}
+          style={[styles.input, errors.hoTen && styles.errorBorder]}
           placeholder="Nhập họ tên"
-          value={name}
-          onChangeText={setName}
+          value={employee.hoTen}
+          onChangeText={text => handleInputChange('hoTen', text)}
         />
-        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+        {errors.hoTen && <Text style={styles.errorText}>{errors.hoTen}</Text>}
 
         <Text style={styles.label}>Số điện thoại</Text>
         <TextInput
-          style={[styles.input, errors.phone && styles.errorBorder]}
+          style={[styles.input, errors.soDienThoai && styles.errorBorder]}
           placeholder="Nhập số điện thoại"
-          value={phone}
-          onChangeText={setPhone}
+          value={employee.soDienThoai}
+          onChangeText={text => handleInputChange('soDienThoai', text)}
           keyboardType="numeric"
         />
-        {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+        {errors.soDienThoai && <Text style={styles.errorText}>{errors.soDienThoai}</Text>}
 
         <Text style={styles.label}>Số Căn cước công dân</Text>
         <TextInput
-          style={[styles.input, errors.citizenID && styles.errorBorder]}
+          style={[styles.input, errors.hoTen && styles.errorBorder]}
           placeholder="Nhập số CCCD"
-          value={citizenID}
-          onChangeText={setCitizenID}
+          value={employee.cccd}
+          onChangeText={text => handleInputChange('cccd', text)}
           keyboardType="numeric"
         />
-        {errors.citizenID && <Text style={styles.errorText}>{errors.citizenID}</Text>}
+        {errors.cccd && <Text style={styles.errorText}>{errors.cccd}</Text>}
 
         <Text style={styles.label}>Chỉ định vị trí</Text>
         <Dropdown
-          style={[styles.dropdown, errors.role && styles.errorBorder]}
+          style={[styles.dropdown, errors.vaiTro && styles.errorBorder]}
           data={roles}
           labelField="label"
           valueField="value"
           placeholder="Chọn vai trò"
-          value={role}
-          onChange={item => setRole(item.value)}
+          value={employee.vaiTro}
+          onChange={item => handleInputChange('vaiTro', item.value)}
         />
-        {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
+        {errors.vaiTro && <Text style={styles.errorText}>{errors.vaiTro}</Text>}
 
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -184,7 +242,7 @@ const AddEmployeeScreen = () => {
               <TouchableOpacity onPress={openCamera} style={styles.modalButton}>
                 <Text style={styles.textButImage}>Chụp ảnh</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={openGallery} style={styles.modalButton}>
+              <TouchableOpacity onPress={openImageLibrary} style={styles.modalButton}>
                 <Text style={styles.textButImage}>Chọn từ thư viện</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={viewImage} style={styles.modalButton}>

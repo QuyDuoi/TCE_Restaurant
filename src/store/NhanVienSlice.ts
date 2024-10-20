@@ -1,11 +1,13 @@
 // slices/NhanVienSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { addNhanVien, getListNhanVien, updateNhanVien } from '../services/api'; // Đường dẫn tới API tương ứng
+import { addNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien } from '../services/api'; // Đường dẫn tới API tương ứng
 import { vaiTroNhanVien } from '../enum/enum';
+import NhanVienModel from '../services/models/NhanVienModel';
+
 
 // Định nghĩa interface cho NhanVien
-export interface NhanVien {
-    _id: string;    
+export interface NhanVienSlice {
+    _id?: string;
     hoTen: string;
     hinhAnh: string;
     soDienThoai: string;
@@ -17,7 +19,7 @@ export interface NhanVien {
 
 // Định nghĩa state cho NhanVien
 export interface NhanVienState {
-    nhanViens: NhanVien[];
+    nhanViens: NhanVienSlice[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
 }
@@ -35,7 +37,7 @@ export const fetchNhanViens = createAsyncThunk('nhanViens/fetchNhanViens', async
     return data; // Trả về dữ liệu
 });
 
-export const addNewNhanVien = createAsyncThunk('nhanViens/addNhanVien', async (formData: NhanVien, thunkAPI) => {
+export const addNewNhanVien = createAsyncThunk('NhanVienSlice/addNhanVien', async (formData: NhanVienSlice, thunkAPI) => {
     try {
         const data = await addNhanVien(formData);
         return data;
@@ -47,7 +49,7 @@ export const addNewNhanVien = createAsyncThunk('nhanViens/addNhanVien', async (f
 
 export const updateNhanVienThunk = createAsyncThunk(
     'nhanViens/updateNhanVien',
-    async ({ id, formData }: { id: string, formData: NhanVien }, thunkAPI) => {
+    async ({ id, formData }: { id: string, formData: NhanVienSlice }, thunkAPI) => {
         try {
             const data = await updateNhanVien(id, formData);
             return data;
@@ -58,19 +60,33 @@ export const updateNhanVienThunk = createAsyncThunk(
     }
 );
 
+export const deleteNhanVienThunk = createAsyncThunk(
+    'nhanViens/deleteNhanVien',
+    async (id: string, thunkAPI) => {
+      try {
+        const deletedId = await deleteNhanVien(id); // Gọi hàm API để xóa
+        return deletedId; // Trả về id nhân viên đã xóa
+      } catch (error: any) {
+        console.log('Lỗi khi xóa:', error);
+        return thunkAPI.rejectWithValue(error.message || 'Error deleting NhanVien');
+      }
+    }
+  );
+
 // Tạo NhanVienSlice
 const nhanVienSlice = createSlice({
     name: 'nhanViens',
     initialState,
     reducers: {
         // Các reducers tùy chỉnh (nếu cần)
+
     },
     extraReducers: (builder) => {
         builder
             .addCase(fetchNhanViens.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(fetchNhanViens.fulfilled, (state, action: PayloadAction<NhanVien[]>) => {
+            .addCase(fetchNhanViens.fulfilled, (state, action: PayloadAction<NhanVienSlice[]>) => {
                 state.status = 'succeeded';
                 state.nhanViens = action.payload; // Cập nhật danh sách nhân viên khi fetch thành công
             })
@@ -78,7 +94,7 @@ const nhanVienSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message || 'Could not fetch nhân viên'; // Lỗi khi fetch thất bại
             })
-            .addCase(addNewNhanVien.fulfilled, (state, action: PayloadAction<NhanVien>) => {
+            .addCase(addNewNhanVien.fulfilled, (state, action: PayloadAction<NhanVienSlice>) => {
                 state.nhanViens.unshift(action.payload);
                 state.status = 'succeeded';
             })
@@ -86,7 +102,7 @@ const nhanVienSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string || 'Error adding NhanVien';
             })
-            .addCase(updateNhanVienThunk.fulfilled, (state, action: PayloadAction<NhanVien>) => {
+            .addCase(updateNhanVienThunk.fulfilled, (state, action: PayloadAction<NhanVienSlice>) => {
                 const index = state.nhanViens.findIndex(cthd => cthd._id === action.payload._id);
                 if (index !== -1) {
                     state.nhanViens[index] = action.payload;
@@ -96,7 +112,16 @@ const nhanVienSlice = createSlice({
             .addCase(updateNhanVienThunk.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload as string || 'Error updating NhanVien';
-            });
+            })
+            .addCase(deleteNhanVienThunk.fulfilled, (state, action: PayloadAction<string>) => {
+                state.nhanViens = state.nhanViens.filter(nv => nv._id !== action.payload); // Xóa nhân viên khỏi danh sách
+                state.status = 'succeeded';
+              })
+              // Xử lý khi xóa thất bại
+              .addCase(deleteNhanVienThunk.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string || 'Error deleting NhanVien';
+              });
     },
 });
 

@@ -17,12 +17,13 @@ import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ItemNhanVien from './ItemNhanVien';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useFocusEffect, useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchNhanViens, NhanVien} from '../../store/NhanVienSlice';
+import {fetchNhanViens, NhanVienSlice} from '../../store/NhanVienSlice';
 import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {applyFilters} from './hamTimKiem';
+import { IPV4 } from '../../services/api';
 
 export interface FiltersModelTest {
   hoatDong: boolean;
@@ -42,31 +43,42 @@ const defaultFilters: FiltersModelTest = {
   dauBep: false,
 };
 
-const NhanVienComponent = () => {
+const NhanVienComponent = (props) => {
   const navigation = useNavigation();
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FiltersModelTest>(defaultFilters);
-  const [filterNhanVienList, setFilterNhanVienList] = useState<NhanVien[]>([]);
+  const [filterNhanVienList, setFilterNhanVienList] = useState<NhanVienSlice[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const dsNhanVien = useSelector(
     (state: RootState) => state.nhanVien.nhanViens,
   );
   const status = useSelector((state: RootState) => state.nhanVien.status);
+  const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
 
   // **Lấy dữ liệu nhân viên từ API**
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchNhanViens());
-      setIsLoading(true);
-    } else if (status === 'succeeded') {
-      setFilterNhanVienList(dsNhanVien || []); // Đảm bảo dsNhanVien không undefined
-      setIsLoading(false); // Dữ liệu đã load xong
-    } else if (status === 'failed') {
-      setIsLoading(false); // Nếu thất bại, cũng dừng loading
+  // Sử dụng useEffect để cập nhật danh sách nhân viên khi Redux store thay đổi
+useEffect(() => {
+  if (status === 'idle') {
+    dispatch(fetchNhanViens());
+    setIsLoading(true);
+  } else if (status === 'succeeded') {
+    setFilterNhanVienList(dsNhanVien || []); // Cập nhật danh sách nhân viên từ store
+    setIsLoading(false);
+  } else if (status === 'failed') {
+    setIsLoading(false);
+  }
+}, [dispatch, status, dsNhanVien]);
+
+ // Reload dữ liệu mỗi khi màn hình được focus lại
+ useFocusEffect(
+  React.useCallback(() => {
+    if (status !== 'loading') {
+      dispatch(fetchNhanViens()); // Fetch lại danh sách nhân viên khi màn hình được focus lại
     }
-  }, [dispatch, status, dsNhanVien]);
+  }, [dispatch])
+);
 
   // Cập nhật danh sách nhân viên khi tìm kiếm hoặc bộ lọc thay đổi
   useEffect(() => {
@@ -89,16 +101,21 @@ const NhanVienComponent = () => {
     setFilters(defaultFilters);
   };
 
-  const renderItem = ({item}: {item: NhanVien}) => {
+  const renderItem = ({item}: {item: NhanVienSlice}) => {
+    // Kiểm tra và thay thế localhost bằng địa chỉ IP hợp lệ
+  const employeeImage = item.hinhAnh 
+  ? item.hinhAnh.replace('localhost', IPV4)  // Đổi 192.168.x.x thành IP của server của bạn
+  : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+
     return (
       <ItemNhanVien
-        onPress={() => navigation.navigate('employeeDetails', {nhanVien: item})}
-        nameNhanVien={item.hoTen}
-        position={item.vaiTro}
-        status={item.trangThai}
-        colorStatus={item.trangThai ? '#E7F4FF' : '#FFD2CD'}
-        avatar={item.hinhAnh}
-      />
+      onPress={() => props.navigation.navigate('employeeDetails', {nhanVien: item})}
+      nameNhanVien={item.hoTen}
+      position={item.vaiTro}
+      status={item.trangThai}
+      colorStatus={item.trangThai ? '#E7F4FF' : '#FFD2CD'}
+      avatar={employeeImage}  // Truyền đúng trường đại diện cho avatar
+    />
     );
   };
 
@@ -141,7 +158,7 @@ const NhanVienComponent = () => {
           }}>
           <ButtonComponent
             title="Thêm nhân viên mới"
-            onPress={() => navigation.navigate('AddEmployee')}
+            onPress={() => props.navigation.navigate('AddEmployee')}
             bgrColor="#5664F5"
             styles={{width: '52%', height: 48}}
             boderRadius={8}
