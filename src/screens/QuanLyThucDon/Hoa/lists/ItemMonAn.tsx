@@ -1,14 +1,17 @@
 import {View, Text, StyleProp, ViewStyle, Image, Switch} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import RowComponent from '../components/RowComponent';
 import TextComponent from '../components/TextComponent';
 import {hoaStyles} from '../styles/hoaStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
+import {useDispatch} from 'react-redux';
+import {updateMonAnThunk} from '../../../../store/MonAnSlice';
+import {ipAddress, IPV4} from '../../../../services/api';
 
 interface Props {
-  id?: number;
+  id?: string;
   nameFood: string;
   price: number;
   status: boolean;
@@ -19,15 +22,28 @@ interface Props {
 }
 
 const ItemMonAn = (props: Props) => {
-  const {styles, nameFood, price, status, image, onStatusChange, onPress, id} =
-    props;
+  const {styles, nameFood, price, status, image, onPress, id} = props;
 
-  const urlImage: string =
-    image ||
-    'https://beptueu.vn/hinhanh/tintuc/top-15-hinh-anh-mon-an-ngon-viet-nam-khien-ban-khong-the-roi-mat-1.jpg';
+  const anhMonAn = image
+    ? image.replace('localhost', `${IPV4}`)
+    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
-  const handleStatusChange = (value: boolean) => {
-    onStatusChange?.(value);
+  const dispatch = useDispatch();
+
+  // Khởi tạo state cho trạng thái món ăn
+  const [localStatus, setLocalStatus] = useState<boolean>(status);
+
+  const handleStatusChange = async (value: boolean) => {
+    if (id) {
+      const formData = {
+        trangThai: value,
+      };
+      // Gọi thunk để cập nhật trạng thái món ăn
+      await dispatch(updateMonAnThunk({id, formData} as any) as any);
+      setLocalStatus(value); // Cập nhật trạng thái địa phương sau khi gọi API thành công
+    } else {
+      console.error('ID của món ăn không tồn tại.');
+    }
   };
 
   return (
@@ -39,7 +55,12 @@ const ItemMonAn = (props: Props) => {
         },
       ]}>
       <RowComponent justify="space-between" onPress={onPress}>
-        <Image source={{uri: urlImage}} style={[hoaStyles.image]} />
+        <Image
+          source={{
+            uri: anhMonAn,
+          }}
+          style={[hoaStyles.image]}
+        />
 
         <View
           style={{
@@ -72,12 +93,12 @@ const ItemMonAn = (props: Props) => {
 
         <View>
           <TextComponent
-            text={status ? 'Còn Hàng' : 'Hết Hàng'}
+            text={localStatus ? 'Còn Hàng' : 'Hết Hàng'}
             color={colors.status}
             minHeight={28}
           />
           <Switch
-            value={status}
+            value={localStatus}
             onValueChange={handleStatusChange}
             trackColor={{false: colors.status2, true: colors.status}}
           />

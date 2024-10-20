@@ -6,6 +6,7 @@ import {
   StyleProp,
   ViewStyle,
   TouchableOpacity,
+  TextStyle,
 } from 'react-native';
 import React, {ReactNode} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -19,20 +20,18 @@ interface Props {
   visible: boolean;
   onClose?: () => void;
   title?: string;
-  stylesTitle?: StyleProp<ViewStyle>;
-  onPress?: () => void;
+  stylesTitle?: StyleProp<TextStyle>;
   isClose?: boolean;
 }
 const ModalComponent = (props: Props) => {
-  const {children, visible, onClose, title, onPress, isClose, stylesTitle} =
-    props;
+  const {children, visible, onClose, title, isClose, stylesTitle} = props;
   return (
     <Modal visible={visible} transparent={true} animationType="fade">
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={[hoaStyles.modalContainer]}>
           <TouchableWithoutFeedback>
             <View style={[hoaStyles.modalContent]}>
-              {isClose ? (
+              {isClose && title ? (
                 <RowComponent
                   activeOpacity={1}
                   justify="space-between"
@@ -42,24 +41,24 @@ const ModalComponent = (props: Props) => {
                     text={title ? title : ''}
                     size={19}
                     styles={[
-                      stylesTitle,
                       {
                         paddingTop: 10,
                       },
+                      stylesTitle,
                     ]}
                   />
                   <TouchableOpacity onPress={onClose}>
                     <Icon name="close" size={18} />
                   </TouchableOpacity>
                 </RowComponent>
-              ) : (
+              ) : !isClose && title ? (
                 <TitleComponent
                   text={title ? title : ''}
                   size={20}
                   styles={{paddingTop: 10}}
                 />
-              )}
-              <SpaceComponent height={10} />
+              ) : null}
+
               <SectionComponent styles={{width: '100%'}}>
                 {children}
               </SectionComponent>

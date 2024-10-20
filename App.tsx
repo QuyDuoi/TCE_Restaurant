@@ -15,6 +15,7 @@ import EditEmployeeInfo from './src/screens/QuanLyNhanVien/EditEmployeeInfo';
 import EmployeeDetails from './src/screens/QuanLyNhanVien/EmployeeDetails';
 import KhuVucTabView from './src/screens/QuanLyKhuVuc/Component/KhuVucTabView';
 import QuanLyCaLam from './src/screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
+import ProductDetailScreen from './src/screens/QuanLyThucDon/xemCTMonAn';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>
-        <KhuVucTabView />
+        <DrawerNavigator />
       </View>
     </Provider>
     // <Provider store={store}>

@@ -1,5 +1,5 @@
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
-import React from 'react';
+import {View, Text, TouchableOpacity, FlatList, TextInput} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import TextComponent from './TextComponent';
 import {colors} from '../contants/hoaColors';
@@ -7,53 +7,110 @@ import RowComponent from './RowComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from './SpaceComponent';
 import ItemNhomTopping from '../lists/ItemNhomTopping';
-import {NhomTopping} from '../modelTests/NhomTopping';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
+import {
+  fetchNhomTopping,
+  NhomTopping,
+} from '../../../../store/NhomToppingSlice';
+import {fetchTopping, Topping} from '../../../../store/ToppingSlice';
+import unorm from 'unorm';
 
 interface Props {
-  searchQuery: string;
+  searchQueryNhomTopping: string;
 }
 
-const modelTest: NhomTopping[] = [
-  {
-    id: 1,
-    title: 'Chon nuoc dung',
-    toppings: [
-      {id: 1, name: 'Lau thai'},
-      {id: 2, name: 'Lau thao moc'},
-      {id: 3, name: 'Lau lau'},
-      {id: 4, name: 'Lau thai'},
-      {id: 5, name: 'Lau tao moc'},
-      {id: 6, name: 'Lau lau'},
-    ],
-  },
-  {
-    id: 2,
-    title: 'Chon nuoc dung',
-    toppings: [
-      {id: 4, name: 'Lau thai'},
-      {id: 5, name: 'Lau thao moc'},
-      {id: 6, name: 'Lau lau'},
-      {id: 7, name: 'Lau thai'},
-      {id: 8, name: 'Lau tao moc'},
-      {id: 9, name: 'Lau lau'},
-    ],
-  },
-  {
-    id: 3,
-    title: 'chon com',
-    toppings: [
-      {id: 10, name: 'com tam'},
-      {id: 11, name: 'com rang'},
-      {id: 12, name: 'com commm'},
-    ],
-  },
-];
-
 const NhomToppingComponent = (props: Props) => {
-  const {searchQuery} = props;
+  const {searchQueryNhomTopping} = props;
+  const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(true);
+  const dsNhomTopping = useSelector(
+    (state: RootState) => state.nhomToppings.nhomToppings,
+  );
+  const statusNhomTopping = useSelector(
+    (state: RootState) => state.nhomToppings.status,
+  );
+  const [filterNhomToppingList, setFilterNhomToppingList] = useState<
+    NhomTopping[]
+  >([]);
+  // const dsToppings = useSelector((state: RootState) => state.toppings.toppings);
+  // console.log(dsToppings);
 
-  const filterData = modelTest.filter(item => {
-    return item.title.toLowerCase().includes(searchQuery.toLowerCase());
+  const [filterToppingList, setFilterToppingList] = useState<Topping[]>([]);
+  const [listScreen, setListScreen] = useState<
+    {id: string; name: string; toppings: Topping[]}[]
+  >([]);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      if (statusNhomTopping === 'idle') {
+        dispatch(fetchNhomTopping());
+        setIsLoading(true);
+      } else if (statusNhomTopping === 'succeeded') {
+        setFilterNhomToppingList(dsNhomTopping || []);
+        setIsLoading(false);
+      } else if (statusNhomTopping === 'failed') {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [dispatch, statusNhomTopping, dsNhomTopping]);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      if (statusNhomTopping === 'succeeded' && dsNhomTopping.length > 0) {
+        setIsLoading(true);
+        try {
+          const allToppings: Topping[] = [];
+          for (const nhomTopping of dsNhomTopping) {
+            const action = await dispatch(fetchTopping(nhomTopping._id));
+            if (fetchTopping.fulfilled.match(action)) {
+              allToppings.push(...(action.payload as any));
+            }
+          }
+          setFilterToppingList(allToppings);
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Lỗi khi lấy danh sách topping:', error);
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchAllData();
+  }, [dsNhomTopping, statusNhomTopping, dispatch]);
+
+  useEffect(() => {
+    if (filterNhomToppingList.length && filterToppingList.length) {
+      const listNhomToppingScreen = filterNhomToppingList.map(
+        (nhomTopping: NhomTopping) => {
+          const toppingsForNhom = filterToppingList.filter(
+            (topping: Topping) => topping.id_nhomTopping === nhomTopping._id,
+          );
+
+          return {
+            id: nhomTopping._id,
+            name: nhomTopping.tenNhomTopping,
+            toppings: toppingsForNhom,
+          };
+        },
+      );
+
+      setListScreen(listNhomToppingScreen);
+    }
+  }, [filterNhomToppingList, filterToppingList]);
+
+  const filterData = listScreen.filter(item => {
+    const normalizedSearchQuery = unorm
+      .nfd(searchQueryNhomTopping)
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+    const normalizedName = unorm
+      .nfd(item.name)
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+    return normalizedName.includes(normalizedSearchQuery);
   });
 
   return (
@@ -63,11 +120,9 @@ const NhomToppingComponent = (props: Props) => {
         {
           backgroundColor: '#EAEAEA',
           alignSelf: 'center',
+          flex: 1, // Đảm bảo chiếm toàn bộ chiều cao của container
         },
       ]}>
-      <RowComponent justify="flex-start" styles={{padding: 5}}>
-        <SpaceComponent width={10} />
-      </RowComponent>
       <FlatList
         data={filterData}
         renderItem={({item}: any) => <ItemNhomTopping nhomTopping={item} />}

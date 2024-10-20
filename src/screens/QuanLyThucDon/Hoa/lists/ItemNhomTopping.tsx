@@ -5,11 +5,15 @@ import TextComponent from '../components/TextComponent';
 import {colors} from '../contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from '../components/SpaceComponent';
-import {Topping} from '../modelTests/Topping';
-import {NhomTopping} from '../modelTests/NhomTopping';
+import {NhomTopping} from '../../../../store/NhomToppingSlice';
+import {Topping} from '../../../../store/ToppingSlice';
 
 interface Props {
-  nhomTopping: NhomTopping;
+  nhomTopping: {
+    id: string;
+    name: string;
+    toppings: Topping[];
+  };
 }
 
 const ItemNhomTopping = (props: Props) => {
@@ -32,13 +36,13 @@ const ItemNhomTopping = (props: Props) => {
             paddingVertical: 10,
           }}>
           <TextComponent
-            text={nhomTopping.title}
+            text={nhomTopping.name}
             color={colors.text2}
             size={15}
             minHeight={28}
           />
           <TextComponent
-            text={nhomTopping.toppings.map(item => item.name).join(', ')}
+            text={nhomTopping.toppings.map(item => item.tenTopping).join(', ')}
             numberOfLines={1}
             ellipsizeMode="tail"
             color={colors.desc}

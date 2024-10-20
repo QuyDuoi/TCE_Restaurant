@@ -1,8 +1,8 @@
-export const IPV4 = '192.168.1.4'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.35'; // Địa chỉ IP giả định của server
 
-export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
+// export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
-export const ipAddress = `http://${IPV4}:3000/api/`;  // Địa chỉ cơ sở API
+export const ipAddress = `http://${IPV4}:3000/api/`; // Địa chỉ cơ sở API
 
 import NhomTopping from './models/NhomToppingModel';
 import Topping from './models/ToppingModel';
@@ -18,7 +18,7 @@ import CaLam from './models/CaLamModel';
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListNhomTopping`);
+    const response = await fetch(`${ipAddress}layDsNhomTopping`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Nhóm Topping');
     }
@@ -35,7 +35,7 @@ export const addNhomTopping = async (
   formData: NhomTopping,
 ): Promise<NhomTopping> => {
   try {
-    const response = await fetch(`${ipAddress}addNhomTopping`, {
+    const response = await fetch(`${ipAddress}themNhomTopping`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -57,7 +57,7 @@ export const updateNhomTopping = async (
   formData: NhomTopping,
 ): Promise<NhomTopping> => {
   try {
-    const response = await fetch(`${ipAddress}updateNhomTopping/${id}`, {
+    const response = await fetch(`${ipAddress}capNhatNhomTopping/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -74,9 +74,13 @@ export const updateNhomTopping = async (
 };
 
 // Lấy danh sách Topping
-export const getListTopping = async (): Promise<Topping[]> => {
+export const getListTopping = async (
+  id_nhomTopping: string,
+): Promise<Topping[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListTopping`);
+    const response = await fetch(
+      `${ipAddress}layDsTopping?id_nhomTopping=${id_nhomTopping}`,
+    );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Topping');
     }
@@ -91,7 +95,7 @@ export const getListTopping = async (): Promise<Topping[]> => {
 // Thêm mới Topping
 export const addTopping = async (formData: Topping): Promise<Topping> => {
   try {
-    const response = await fetch(`${ipAddress}addTopping`, {
+    const response = await fetch(`${ipAddress}themTopping`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -113,7 +117,7 @@ export const updateTopping = async (
   formData: Topping,
 ): Promise<Topping> => {
   try {
-    const response = await fetch(`${ipAddress}updateTopping/${id}`, {
+    const response = await fetch(`${ipAddress}capNhatTopping/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -296,13 +300,19 @@ export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   }
 };
 
-export const getListDanhMuc = async (): Promise<DanhMuc[]> => {
+export const getListDanhMuc = async (
+  id_nhaHang: string,
+): Promise<DanhMuc[]> => {
   try {
-    const response = await fetch(`${ipAddress}getListDanhMuc`);
+    const response = await fetch(
+      `${ipAddress}layDsDanhMuc?id_nhaHang=${id_nhaHang}`,
+    );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Danh mục');
     }
     const data = await response.json();
+    console.log('Lấy danh mục thành công');
+    //console.log(data);
     return data;
   } catch (error) {
     console.log('Lỗi khi lấy danh sách danh mục: ', error);
@@ -312,7 +322,7 @@ export const getListDanhMuc = async (): Promise<DanhMuc[]> => {
 
 export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
   try {
-    const response = await fetch(`${ipAddress}addDanhMuc`, {
+    const response = await fetch(`${ipAddress}themDanhMuc`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -333,7 +343,7 @@ export const updateDanhMuc = async (
   formData: DanhMuc,
 ): Promise<DanhMuc> => {
   try {
-    const response = await fetch(`${ipAddress}updateDanhMuc/${id}`, {
+    const response = await fetch(`${ipAddress}capNhatDanhMuc/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -345,6 +355,21 @@ export const updateDanhMuc = async (
     return data;
   } catch (error) {
     console.log('Lỗi cập nhật danh mục: ', error);
+    throw error;
+  }
+};
+export const deleteDanhMuc = async (id: string): Promise<void> => {
+  try {
+    const response = await fetch(`${ipAddress}xoaDanhMuc/${id}`, {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi xóa danh mục');
+    }
+    console.log(`Danh mục với ID ${id} đã được xóa thành công.`);
+  } catch (error) {
+    console.log('Lỗi khi xóa danh mục: ', error);
     throw error;
   }
 };
@@ -408,13 +433,20 @@ export const updateKhuVuc = async (
   }
 };
 
-export const getListMonAn = async (): Promise<MonAn[]> => {
+export const getListMonAn = async (id_danhMuc?: String): Promise<MonAn[]> => {
+  let response: Response | null = null; // Khai báo biến response
   try {
-    const response = await fetch(`${ipAddress}getListMonAn`);
+    if (id_danhMuc) {
+      response = await fetch(`${ipAddress}layDsMonAn?id_danhMuc=${id_danhMuc}`);
+    } else {
+      response = await fetch(`${ipAddress}layDsMonAn`);
+    }
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Món ăn');
     }
+    console.log('Lấy món ăn thành công');
     const data = await response.json();
+    //console.log(data);
     return data;
   } catch (error) {
     console.log('Lỗi khi lấy danh sách Món ăn: ', error);
@@ -424,7 +456,7 @@ export const getListMonAn = async (): Promise<MonAn[]> => {
 
 export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
   try {
-    const response = await fetch(`${ipAddress}addMonAn`, {
+    const response = await fetch(`${ipAddress}themMonAn`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -445,7 +477,7 @@ export const updateMonAn = async (
   formData: MonAn,
 ): Promise<MonAn> => {
   try {
-    const response = await fetch(`${ipAddress}/updateMonAn/${id}`, {
+    const response = await fetch(`${ipAddress}capNhatMonAn/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData),
@@ -454,6 +486,7 @@ export const updateMonAn = async (
       throw new Error('Lỗi khi cập nhật Mon Ăn');
     }
     const data = await response.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.log('Lỗi cập nhật Mon ăn: ', error);
@@ -477,7 +510,9 @@ export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
   }
 };
 
-export const addNhanVien = async (formData: NhanVienSlice): Promise<NhanVienSlice> => {
+export const addNhanVien = async (
+  formData: NhanVienSlice,
+): Promise<NhanVienSlice> => {
   try {
     const response = await fetch(`${ipAddress}themNhanVien`, {
       method: 'POST',
@@ -487,8 +522,6 @@ export const addNhanVien = async (formData: NhanVienSlice): Promise<NhanVienSlic
     if (!response.ok) {
       console.log(formData);
       throw new Error('Lỗi khi thêm mới Nhân viên');
-      
-      
     }
     const data = await response.json();
     return data;
@@ -498,7 +531,10 @@ export const addNhanVien = async (formData: NhanVienSlice): Promise<NhanVienSlic
   }
 };
 
-export const updateNhanVien = async (id: string, formData: NhanVienSlice): Promise<NhanVienSlice> => {
+export const updateNhanVien = async (
+  id: string,
+  formData: NhanVienSlice,
+): Promise<NhanVienSlice> => {
   try {
     const response = await fetch(`${ipAddress}/capNhatNhanVien/${id}`, {
       method: 'PUT',
@@ -530,5 +566,21 @@ export const deleteNhanVien = async (id: string): Promise<void> => {
   } catch (error) {
     console.log('Lỗi khi xóa nhân viên: ', error);
     throw new Error('Lỗi khi xóa nhân viên');
+  }
+};
+
+export const getListCaLam = async (id_nhanVien: string): Promise<CaLam[]> => {
+  try {
+    const response = await fetch(
+      `${ipAddress}layDsCaLamViec?id_nhanVien=${id_nhanVien}`,
+    );
+    if (!response.ok) {
+      throw new Error('Lỗi khi lấy danh sách Ca Lam');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách Ca Lam: ', error);
+    return [];
   }
 };

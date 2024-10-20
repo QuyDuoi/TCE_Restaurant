@@ -7,6 +7,7 @@ import {
   UIManager,
   LayoutAnimation,
   useWindowDimensions,
+  TextInput,
 } from 'react-native';
 import React, {ReactNode, useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -14,22 +15,13 @@ import ItemDanhMuc from '../lists/ItemDanhMuc';
 import ItemMonAn from '../lists/ItemMonAn';
 import TextComponent from './TextComponent';
 import {colors} from '../contants/hoaColors';
-
-interface DanhMucModelTest {
-  id: string;
-  nameCategory: string;
-  quantityCurrent: number;
-  totalFood: number;
-  monAn: MonAnModelTest[];
-}
-
-interface MonAnModelTest {
-  id: string;
-  nameFood: string;
-  price: number;
-  status: boolean;
-  image?: string;
-}
+import SettingModaDanhMuc from '../caLam/SettingModaDanhMuc';
+import {fetchMonAns, MonAn} from '../../../../store/MonAnSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
+import {useNavigation} from '@react-navigation/native';
+import {DanhMuc, fetchDanhMucs} from '../../../../store/DanhMucSlice';
+import unorm from 'unorm';
 
 if (
   Platform.OS === 'android' &&
@@ -38,212 +30,159 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const DanhMucComponent = () => {
-  const [expandedDanhMuc, setExpandedDanhMuc] = useState<string[]>([]);
+interface Props {
+  searchQueryMonAn: string;
+}
 
-  const [danhMucList, setDanhMucList] = useState<DanhMucModelTest[]>([
-    {
-      id: '1',
-      nameCategory: 'Bữa chính',
-      quantityCurrent: 3,
-      totalFood: 3,
-      monAn: [
-        {id: '1', nameFood: 'Cơm gà', price: 50000, status: true},
-        {id: '2', nameFood: 'Phở bò', price: 55000, status: true},
-        {id: '3', nameFood: 'Bún chả', price: 45000, status: true},
-      ],
-    },
-    {
-      id: '2',
-      nameCategory: 'Tráng miệng',
-      quantityCurrent: 2,
-      totalFood: 2,
-      monAn: [
-        {id: '4', nameFood: 'Chè thái', price: 25000, status: true},
-        {id: '5', nameFood: 'Trái cây', price: 20000, status: true},
-      ],
-    },
-    {
-      id: '3',
-      nameCategory: 'Tráng miệng',
-      quantityCurrent: 2,
-      totalFood: 2,
-      monAn: [
-        {id: '6', nameFood: 'Chè thái', price: 25000, status: true},
-        {id: '7', nameFood: 'Trái cây', price: 20000, status: true},
-      ],
-    },
-    {
-      id: '4',
-      nameCategory: 'Tráng miệng',
-      quantityCurrent: 0,
-      totalFood: 0,
-      monAn: [],
-    },
-    {
-      id: '5',
-      nameCategory: 'Tráng miệng',
-      quantityCurrent: 2,
-      totalFood: 2,
-      monAn: [
-        {id: '8', nameFood: 'Chè thái', price: 25000, status: true},
-        {id: '9', nameFood: 'Trái cây', price: 20000, status: true},
-      ],
-    },
-  ]);
+const DanhMucComponent = (props: Props) => {
+  const {searchQueryMonAn} = props;
+  console.log('render danh muc component');
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [filterDanhMucList, setFilterDanhMucList] = useState<DanhMuc[]>([]);
+  const [expandedDanhMuc, setExpandedDanhMuc] = useState<string[]>([]);
+  const [monAnList, setMonAnList] = useState<{[key: string]: MonAn[]}>({});
+  const [monAnCounts, setMonAnCounts] = useState<{[key: string]: number}>({});
+
+  const dispatch = useDispatch<AppDispatch>();
+  const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
+  const statusDanhMuc = useSelector((state: RootState) => state.danhMuc.status);
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
-    const expanded = danhMucList
-      .filter(danhMuc => danhMuc.monAn.length > 0)
-      .map(danhMuc => danhMuc.id);
-    setExpandedDanhMuc(expanded);
-  }, []);
+    const id_NhaHang = '66fab50fa28ec489c7137537';
+    if (statusDanhMuc === 'idle') {
+      dispatch(fetchDanhMucs(id_NhaHang));
+      setIsLoading(true);
+    } else if (statusDanhMuc === 'succeeded') {
+      setFilterDanhMucList(dsDanhMuc || []);
+      setIsLoading(false);
+
+      // Mở rộng tất cả danh mục
+      const expandedIds = dsDanhMuc.map(item => item._id);
+      setExpandedDanhMuc(expandedIds);
+
+      // Tải món ăn cho tất cả danh mục
+      dsDanhMuc.forEach(item => {
+        dispatch(fetchMonAns(item._id)).then(action => {
+          if (fetchMonAns.fulfilled.match(action)) {
+            setMonAnCounts(prev => ({
+              ...prev,
+              [item._id]: action.payload.length,
+            }));
+            // Cập nhật danh sách món ăn
+            setMonAnList(prev => ({...prev, [item._id]: action.payload}));
+          }
+        });
+      });
+    } else if (statusDanhMuc === 'failed') {
+      setIsLoading(false);
+    }
+  }, [dispatch, dsDanhMuc]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expandedDanhMuc]);
 
-  const handleExpandDanhMuc = (danhMucId: string) => {
+  const handleExpandDanhMuc = async (danhMucId: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedDanhMuc(prev => {
-      if (prev.includes(danhMucId)) {
-        return prev.filter(id => id !== danhMucId);
-      } else {
-        return [...prev, danhMucId];
-      }
-    });
+    if (expandedDanhMuc.includes(danhMucId)) {
+      setExpandedDanhMuc(prev => prev.filter(id => id !== danhMucId));
+    } else {
+      setExpandedDanhMuc(prev => [...prev, danhMucId]);
+    }
   };
 
-  const handleStatusChange = (
-    danhMucId: string,
-    monAnId: string,
-    newStatus: boolean,
-  ) => {
-    const updateDanhMucList = danhMucList.map(danhMuc =>
-      danhMuc.id === danhMucId
-        ? {
-            ...danhMuc,
-            monAn: danhMuc.monAn.map(monAn =>
-              monAn.id === monAnId ? {...monAn, status: newStatus} : monAn,
-            ),
-            quantityCurrent: danhMuc.quantityCurrent + (newStatus ? 1 : -1),
-          }
-        : danhMuc,
-    ) as DanhMucModelTest[];
-    setDanhMucList(updateDanhMucList);
-  };
-
-  /* FlatList lồng
-
-  const renderMonAn = ({item}: {item: MonAnModelTest}) => {
-    return (
-      <ItemMonAn
-        nameFood={item.nameFood}
-        price={item.price}
-        status={item.status}
-        image={item.image ?? ''}
-      />
+  const filterMonAnByName = (monAnList: MonAn[]) => {
+    return monAnList.filter(monAn =>
+      unorm
+        .nfkd(monAn.tenMon)
+        .toLowerCase()
+        .includes(unorm.nfkd(searchQueryMonAn).toLowerCase()),
     );
   };
 
-  const renderDanhMuc = ({item}: {item: DanhMucModelTest}) => {
+  // const filterDanhMucByName = (danhMucList: DanhMuc[]) => {
+  //   return danhMucList.filter(danhMuc =>
+  //     unorm
+  //       .nfkd(danhMuc.tenDanhMuc)
+  //       .toLowerCase()
+  //       .includes(unorm.nfkd(searchQueryMonAn).toLowerCase()),
+  //   );
+  // };
+
+  //console.log(monAnList['66fac699ec29d76397011e6d'][0].anhMonAn);
+
+  const renderItem = ({item}: {item: DanhMuc}) => {
+    const isExpanded = expandedDanhMuc.includes(item._id);
+    const filteredMonAn = filterMonAnByName(monAnList[item._id] || []);
+    //console.log(filteredMonAn);
+
     return (
       <View>
         <ItemDanhMuc
-          nameCategory={item.nameCategory}
-          quantityCurrent={item.quantityCurrent}
-          totalFood={item.totalFood}
-          isExpanded={expanded === item.id}
-          onPress={() => handleExpandDanhMuc(item.id)}
+          nameCategory={item.tenDanhMuc}
+          quantityCurrent={monAnCounts[item._id] || 0}
+          totalFood={monAnCounts[item._id] || 0}
+          isExpanded={isExpanded}
+          onPress={() => handleExpandDanhMuc(item._id)}
         />
-        {expanded === item.id && (
-          <FlatList
-            data={item.monAn}
-            renderItem={renderMonAn}
-            keyExtractor={item => item.id}
-            scrollEnabled={false}
-          />
+        {isExpanded && (
+          <View>
+            {filteredMonAn.length > 0 ? (
+              filteredMonAn.map(monAn => (
+                <ItemMonAn
+                  id={monAn._id}
+                  key={monAn._id}
+                  nameFood={monAn.tenMon}
+                  price={monAn.giaMonAn}
+                  status={monAn.trangThai}
+                  image={monAn.anhMonAn}
+                  onPress={() => {
+                    navigation.navigate('ProductDetailScreen', {
+                      monAn: monAn,
+                    });
+                  }}
+                />
+              ))
+            ) : (
+              <TextComponent
+                text="Chưa có món ăn nào trong nàyyy"
+                color={colors.text}
+                styles={{
+                  alignSelf: 'center',
+                  paddingTop: 10,
+                }}
+                minHeight={28}
+              />
+            )}
+            <View
+              style={{
+                width: '80%',
+                backgroundColor: 'white',
+                borderWidth: 1,
+                alignSelf: 'center',
+                marginTop: 10,
+              }}
+            />
+          </View>
         )}
       </View>
     );
-  };
-  */
-
-  const renderItem = ({item}: {item: DanhMucModelTest | MonAnModelTest}) => {
-    if ('monAn' in item) {
-      const isExpanded = expandedDanhMuc.includes(item.id);
-      return (
-        <View>
-          <ItemDanhMuc
-            nameCategory={item.nameCategory}
-            quantityCurrent={item.monAn.length > 0 ? item.quantityCurrent : 0}
-            totalFood={item.monAn.length > 0 ? item.totalFood : 0}
-            isExpanded={isExpanded}
-            onPress={() => handleExpandDanhMuc(item.id)}
-          />
-          {isExpanded && (
-            <View>
-              {item.monAn.length > 0 ? (
-                item.monAn.map(monAn => (
-                  <ItemMonAn
-                    key={monAn.id}
-                    nameFood={monAn.nameFood}
-                    price={monAn.price}
-                    status={monAn.status}
-                    image={monAn.image ?? ''}
-                    onStatusChange={newStatus =>
-                      handleStatusChange(item.id, monAn.id, newStatus)
-                    }
-                    onPress={() => console.log(monAn.id)}
-                  />
-                ))
-              ) : (
-                <TextComponent
-                  text="Chưa có món ăn nào trong nàyyy"
-                  color={colors.text}
-                  styles={{
-                    alignSelf: 'center',
-                    paddingTop: 10,
-                  }}
-                  minHeight={28}
-                />
-              )}
-
-              <View
-                style={{
-                  width: '80%',
-                  backgroundColor: 'white',
-                  borderWidth: 1,
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}
-              />
-            </View>
-          )}
-        </View>
-      );
-    } else {
-      return null;
-    }
   };
 
   return (
     <View
       style={[
         hoaStyles.container,
-        {
-          justifyContent: 'center',
-          alignSelf: 'center',
-        },
+        {justifyContent: 'center', alignSelf: 'center'},
       ]}>
-      {
-        <FlatList
-          data={danhMucList}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
-        />
-      }
+      <FlatList
+        data={dsDanhMuc}
+        renderItem={renderItem}
+        keyExtractor={item => item._id}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };

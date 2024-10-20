@@ -1,21 +1,31 @@
 export default class MonAn {
-    _id?: string;
-    tenMonAn: string;
-    anhMonAn: string;
-    moTa: string;
-    giaMonAn: number;
-    trangThai: boolean;
-    id_DanhMuc: string;
-    id_NhomTopping: string;
+  _id: string;
+  tenMon: string;
+  anhMonAn: string;
+  moTa: string;
+  giaMonAn: number;
+  trangThai: boolean;
+  id_danhMuc: string;
+  id_nhomTopping: string;
 
-    constructor(tenMonAn: string, anhMonAn: string, moTa: string, giaMonAn: number, trangThai: boolean, id_DanhMuc: string, id_NhomTopping: string, _id?: string) {
-        this.tenMonAn = tenMonAn;
-        this.anhMonAn = anhMonAn;
-        this.moTa = moTa;
-        this.giaMonAn = giaMonAn;
-        this.trangThai = trangThai;
-        this.id_DanhMuc = id_DanhMuc;
-        this.id_NhomTopping = id_NhomTopping;
-        this._id = _id;
-    }
+  constructor(
+    tenMon: string,
+    anhMonAn: string,
+    moTa: string,
+    giaMonAn: number,
+    trangThai: boolean,
+    image: string,
+    id_danhMuc: string,
+    id_nhomTopping: string,
+    _id: string,
+  ) {
+    this.tenMon = tenMon;
+    this.anhMonAn = anhMonAn;
+    this.moTa = moTa;
+    this.giaMonAn = giaMonAn;
+    this.trangThai = trangThai;
+    this.id_danhMuc = id_danhMuc;
+    this.id_nhomTopping = id_nhomTopping;
+    this._id = _id;
+  }
 }

@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {getListCalam, getListNhanVien} from '../services/api';
+import {getListCaLam, getListNhanVien} from '../services/api';
 
 export interface CaLam {
   _id?: string;
@@ -32,10 +32,10 @@ export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
   const nhanViens = await getListNhanVien();
   const allCaLamResponse = await Promise.all(
     nhanViens.map(nv => {
-      return getListCalam(nv._id as string);
+      return getListCaLam(nv._id as string);
     }),
   );
-  const allCaLams = allCaLamResponse.flatMap((response, index) => {
+  const allCaLams = allCaLamResponse.flatMap((response: any, index: number) => {
     return response.map((caLam: CaLam) => {
       return {
         ...caLam,

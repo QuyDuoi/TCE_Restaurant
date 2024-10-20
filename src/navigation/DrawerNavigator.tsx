@@ -3,7 +3,12 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationContainer,
 } from '@react-navigation/native';
-import {createDrawerNavigator, DrawerItem} from '@react-navigation/drawer';
+import {
+  createDrawerNavigator,
+  DrawerContent,
+  DrawerContentScrollView,
+  DrawerItem,
+} from '@react-navigation/drawer';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import App from '../../App';
 import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
@@ -17,9 +22,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {TabView} from 'react-native-tab-view';
 import DanhMucComponent from '../screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
+import ProductDetailScreen from '../screens/QuanLyThucDon/xemCTMonAn';
 
 const Drawer = createDrawerNavigator();
 const CaLamStack = createNativeStackNavigator();
+const ThucDonStack = createNativeStackNavigator();
+
 function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
   const [filterHandler, setFilterHandler] = useState<null | (() => void)>(null);
 
@@ -28,7 +36,7 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'QuanLyCaLam';
     if (routeName === 'ChiTietCaLam') {
       navigation.setOptions({headerShown: false, swipeEnabled: false});
-    } else {
+    } else if (routeName === 'QuanLyCaLam') {
       navigation.setOptions({
         headerShown: true,
         swipeEnabled: true,
@@ -75,13 +83,73 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
   );
 }
 
+function ThucDonStackScreen({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
+  const [dialogSettingHandler, setDialogSettingHandler] = useState<
+    null | (() => void)
+  >(null);
+  useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'TabsThucDon';
+    if (routeName === 'TabsThucDon') {
+      navigation.setOptions({
+        headerShown: true,
+        headerRight: () => (
+          <ButtonComponent
+            title="Thiết lập"
+            titleSize={14}
+            titleColor={colors.price}
+            onPress={() => {
+              if (dialogSettingHandler) {
+                dialogSettingHandler();
+              }
+            }}
+            styles={{
+              paddingHorizontal: 8,
+              marginRight: 10,
+            }}
+          />
+        ),
+      });
+    } else if (routeName === 'ProductDetailScreen') {
+      navigation.setOptions({headerShown: false});
+    }
+  }, [navigation, route, dialogSettingHandler]);
+
+  return (
+    <ThucDonStack.Navigator>
+      <ThucDonStack.Screen
+        name="TabsThucDon"
+        options={{
+          headerShown: false,
+        }}>
+        {props => (
+          <MyTabs
+            {...props}
+            setDialogSettingHandler={setDialogSettingHandler}
+          />
+        )}
+      </ThucDonStack.Screen>
+      <ThucDonStack.Screen
+        name="ProductDetailScreen"
+        component={ProductDetailScreen}
+        options={{headerShown: true}}
+      />
+    </ThucDonStack.Navigator>
+  );
+}
+
 function DrawerNavigator(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="CaLam">
+      <Drawer.Navigator initialRouteName="ThucDon">
         <Drawer.Screen
-          name="Home"
-          component={App}
+          name="ThucDon"
+          component={ThucDonStackScreen}
           options={{title: 'Quản lý thực đơn'}}
         />
         <Drawer.Screen

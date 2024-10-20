@@ -5,6 +5,7 @@ import {
   FlatList,
   Modal,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from 'react-native';
 import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -26,7 +27,7 @@ import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {CaLam, fetchCaLam} from '../../../../store/CaLamSlice';
-import {fetchNhanViens, NhanVien} from '../../../../store/NhanVienSlice';
+import {fetchNhanViens, NhanVienSlice} from '../../../../store/NhanVienSlice';
 import {formatDate} from '../utils/formatUtils';
 import {fetchHoaDon} from '../../../../store/HoaDonSlice';
 import ModalDate from './ModalDate';
@@ -47,10 +48,11 @@ const QuanLyCaLam = (props: Props) => {
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
 
-  const [caLamFilter, setCaLamFilter] = useState<(CaLam & {nv: NhanVien})[]>(
-    [],
-  );
+  const [caLamFilter, setCaLamFilter] = useState<
+    (CaLam & {nv: NhanVienSlice})[]
+  >([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [refreshing, setRefreshing] = useState(false);
 
   //////////
   const caLams = useSelector((state: RootState) => state.calam.caLams);
@@ -62,8 +64,10 @@ const QuanLyCaLam = (props: Props) => {
   }, [setFilterHandler]);
 
   useEffect(() => {
+    dispatch(fetchNhanViens() as any);
     dispatch(fetchCaLam() as any);
   }, []);
+
   // useEffect(() => {
   //   const fetchAllCaLams = async () => {
   //     const allCaLamsPromise = nhanViens.map(nv =>
@@ -127,7 +131,7 @@ const QuanLyCaLam = (props: Props) => {
     setCaLamFilter(sortedCaLam as any);
   }, [date]);
 
-  const renderItem = ({item}: {item: CaLam & {nv: NhanVien}}) => {
+  const renderItem = ({item}: {item: CaLam & {nv: NhanVienSlice}}) => {
     return (
       <ItemCaLam
         batDau={item.batDau.toLocaleString('vi-VN')}
@@ -140,6 +144,14 @@ const QuanLyCaLam = (props: Props) => {
         }}
       />
     );
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setDate(null);
+      setRefreshing(false);
+    }, 2000);
   };
 
   const closeFilterDialog = () => {
@@ -158,6 +170,12 @@ const QuanLyCaLam = (props: Props) => {
                 renderItem={renderItem}
                 keyExtractor={item => item._id as string}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
               />
             ) : caLams.length > 0 && !date ? (
               <FlatList
@@ -165,19 +183,36 @@ const QuanLyCaLam = (props: Props) => {
                 renderItem={renderItem}
                 keyExtractor={item => item._id as string}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
               />
             ) : (
-              <View
-                style={{
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+                contentContainerStyle={{
                   flex: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <TitleComponent
-                  text="Không có ca làm nào trong ngày này"
-                  color={colors.desc}
-                />
-              </View>
+                <View>
+                  <TitleComponent
+                    text="Không có ca làm nào trong ngày này"
+                    color={colors.desc}
+                    styles={{
+                      textAlign: 'center',
+                    }}
+                  />
+                </View>
+              </ScrollView>
             )}
           </View>
         </View>

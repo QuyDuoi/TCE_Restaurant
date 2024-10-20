@@ -58,8 +58,8 @@ export const hoaStyles = StyleSheet.create({
     padding: 5,
   },
   tabViewContainer: {
-    marginTop: 20,
     flex: 1,
+    marginTop: 10,
   },
   tabViewScene: {
     flex: 1,
