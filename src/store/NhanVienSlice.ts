@@ -1,9 +1,6 @@
 // slices/NhanVienSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { addNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien } from '../services/api'; // Đường dẫn tới API tương ứng
-import { vaiTroNhanVien } from '../enum/enum';
-import NhanVienModel from '../services/models/NhanVienModel';
-
+import { themNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien } from '../services/api'; // Đường dẫn tới API tương ứng
 
 // Định nghĩa interface cho NhanVien
 export interface NhanVienSlice {
@@ -37,9 +34,9 @@ export const fetchNhanViens = createAsyncThunk('nhanViens/fetchNhanViens', async
     return data; // Trả về dữ liệu
 });
 
-export const addNewNhanVien = createAsyncThunk('NhanVienSlice/addNhanVien', async (formData: NhanVienSlice, thunkAPI) => {
+export const addNewNhanVien = createAsyncThunk('NhanVienSlice/addNhanVien', async (formData: FormData, thunkAPI) => {
     try {
-        const data = await addNhanVien(formData);
+        const data = await themNhanVien(formData);
         return data;
     } catch (error: any) {
         console.log('Lỗi thêm mới:', error);
@@ -47,17 +44,21 @@ export const addNewNhanVien = createAsyncThunk('NhanVienSlice/addNhanVien', asyn
     }
 });
 
-export const updateNhanVienThunk = createAsyncThunk(
-    'nhanViens/updateNhanVien',
-    async ({ id, formData }: { id: string, formData: NhanVienSlice }, thunkAPI) => {
-        try {
-            const data = await updateNhanVien(id, formData);
-            return data;
-        } catch (error: any) {
-            console.log('Lỗi cập nhật:', error);
-            return thunkAPI.rejectWithValue(error.message || 'Error updating NhanVien');
-        }
+export const updateNhanVienThunk = createAsyncThunk<
+  NhanVienSlice, // Kiểu dữ liệu trả về khi thành công
+  { id: string, formData: FormData }, // Kiểu dữ liệu tham số truyền vào
+  { rejectValue: string } // Kiểu dữ liệu trả về khi thất bại
+>(
+  'nhanViens/updateNhanVien',
+  async ({ id, formData }, thunkAPI) => {
+    try {
+      const data = await updateNhanVien(id, formData);
+      return data;
+    } catch (error: any) {
+      console.log('Lỗi cập nhật:', error);
+      return thunkAPI.rejectWithValue(error.message || 'Error updating NhanVien');
     }
+  }
 );
 
 export const deleteNhanVienThunk = createAsyncThunk(
@@ -116,12 +117,12 @@ const nhanVienSlice = createSlice({
             .addCase(deleteNhanVienThunk.fulfilled, (state, action: PayloadAction<string>) => {
                 state.nhanViens = state.nhanViens.filter(nv => nv._id !== action.payload); // Xóa nhân viên khỏi danh sách
                 state.status = 'succeeded';
-              })
-              // Xử lý khi xóa thất bại
-              .addCase(deleteNhanVienThunk.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload as string || 'Error deleting NhanVien';
-              });
+            })
+            // Xử lý khi xóa thất bại
+            .addCase(deleteNhanVienThunk.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload as string || 'Error deleting NhanVien';
+            });
     },
 });
 

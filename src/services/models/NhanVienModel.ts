@@ -1,7 +1,7 @@
 export default class NhanVienModel {
     _id?: string;
     hoTen: string;
-    hinhAnh: string;
+    hinhAnh?: string;
     soDienThoai: string;
     cccd: string;
     vaiTro: string;

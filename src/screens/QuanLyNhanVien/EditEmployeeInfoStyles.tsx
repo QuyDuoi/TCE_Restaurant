@@ -1,6 +1,6 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
-const { width, height } = Dimensions.get('window'); // Lấy kích thước màn hình để thiết lập chiều rộng cho modalView
+const {width, height} = Dimensions.get('window'); // Lấy kích thước màn hình để thiết lập chiều rộng cho modalView
 
 export const styles = StyleSheet.create({
   container: {
@@ -29,17 +29,18 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     paddingLeft: 10,
+    margin: 5
   },
-  fr2:{
-    borderTopColor:'gray',
-    borderTopWidth:10,
-    paddingLeft:10,
-
+  fr2: {
+    borderTopColor: 'gray',
+    borderTopWidth: 10,
+    paddingLeft: 10,
   },
   vtr: {
-    borderWidth:2,
-    marginRight:10,
-    marginBottom:30,
+    borderWidth: 2,
+    marginRight: 10,
+    marginBottom: 30,
+    marginTop: 10,
     borderColor: 'gray',
     paddingLeft: 10,
   },
@@ -47,12 +48,13 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     flexDirection: 'row',
-
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   formGroupRow1: {
-    width:"80%",
+    width: '80%',
     flexDirection: 'row',
-    justifyContent:'flex-end'
+    justifyContent: 'flex-end',
   },
   formGroup1: {
     padding: 5,
@@ -62,8 +64,9 @@ export const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   label: {
-    marginTop:5,
-    fontSize: 14,
+    color: 'black',
+    marginTop: 5,
+    fontSize: 16,
     paddingLeft: 3,
   },
   input: {
@@ -91,27 +94,27 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalView: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: -2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
     width: width, // Modal chiếm toàn bộ chiều rộng màn hình
   },
   item: {
-    backgroundColor: "gray",
+    backgroundColor: 'gray',
     margin: 2,
     padding: 4,
     width: '100%', // Đảm bảo mỗi item chiếm toàn bộ chiều rộng của modal
   },
   itemText: {
-    color: "black",
-    textAlign: "center",
+    color: 'black',
+    textAlign: 'center',
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -120,9 +123,9 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   iconStyle: {
-    marginLeft:160,
+    marginLeft: 20,
     fontSize: 12,
-  color:'red',
+    color: 'blue',
     padding: 10,
   },
   positionDisplay: {
@@ -130,10 +133,10 @@ export const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: '#f0f0f0', // Light background for visibility
     borderRadius: 5,
-},
+  },
 
-positionText: {
+  positionText: {
     fontSize: 16,
     color: 'black',
-}
+  },
 });

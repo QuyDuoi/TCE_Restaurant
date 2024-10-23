@@ -39,7 +39,7 @@ const DeletePostModal = ({ title, content, onDelete, onCancel }) => {
                                     setModalVisible(!modalVisible);
                                 }}
                             >
-                                <Text style={styles.cancelTextStyle}>Cancel</Text>
+                                <Text style={styles.cancelTextStyle}>Hủy</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.button, styles.buttonDelete]}
@@ -50,7 +50,7 @@ const DeletePostModal = ({ title, content, onDelete, onCancel }) => {
                                     setModalVisible(!modalVisible);
                                 }}
                             >
-                                <Text style={styles.deleteTextStyle}>Delete</Text>
+                                <Text style={styles.deleteTextStyle}>Xác nhận</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.35'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.6'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -14,6 +14,7 @@ import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
 import CaLam from './models/CaLamModel';
+import { NhanVienSlice } from '../store/NhanVienSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -510,36 +511,32 @@ export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
   }
 };
 
-export const addNhanVien = async (
-  formData: NhanVienSlice,
-): Promise<NhanVienSlice> => {
+export const themNhanVien = async (formData: FormData) => {
   try {
     const response = await fetch(`${ipAddress}themNhanVien`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: formData,
     });
     if (!response.ok) {
-      console.log(formData);
-      throw new Error('Lỗi khi thêm mới Nhân viên');
+      const errorData = await response.json();  // Nhận thông báo lỗi từ backend
+      throw new Error(errorData.msg || 'Lỗi không xác định');
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log('Lỗi thêm mới Nhân viên: ', error);
+    console.log('Lỗi thêm mới Nhân viên: ', error.message);
     throw error;
   }
 };
 
 export const updateNhanVien = async (
   id: string,
-  formData: NhanVienSlice,
-): Promise<NhanVienSlice> => {
+  formData: FormData,
+) => {
   try {
     const response = await fetch(`${ipAddress}/capNhatNhanVien/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: formData,
     });
     if (!response.ok) {
       throw new Error('Lỗi khi cập nhật Nhân viên');
