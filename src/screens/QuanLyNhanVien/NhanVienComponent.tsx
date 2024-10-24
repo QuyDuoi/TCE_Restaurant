@@ -109,7 +109,7 @@ useEffect(() => {
 
     return (
       <ItemNhanVien
-      onPress={() => props.navigation.navigate('employeeDetails', {nhanVien: item})}
+      onPress={() => props.navigation.navigate('EmployeeDetails', {nhanVien: item})}
       nameNhanVien={item.hoTen}
       position={item.vaiTro}
       status={item.trangThai}

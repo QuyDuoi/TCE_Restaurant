@@ -23,6 +23,7 @@ import {TabView} from 'react-native-tab-view';
 import DanhMucComponent from '../screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
 import ProductDetailScreen from '../screens/QuanLyThucDon/xemCTMonAn';
+import NhanVienStackScreen from './NhanVienScreen';
 
 const Drawer = createDrawerNavigator();
 const CaLamStack = createNativeStackNavigator();
@@ -146,7 +147,14 @@ function ThucDonStackScreen({
 function DrawerNavigator(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="ThucDon">
+      <Drawer.Navigator initialRouteName="NhanVien">
+        <Drawer.Screen
+          name="NhanVien"
+          component={NhanVienStackScreen}
+          options={{
+            title: 'Quản lý nhân viên',
+          }}
+        />
         <Drawer.Screen
           name="ThucDon"
           component={ThucDonStackScreen}

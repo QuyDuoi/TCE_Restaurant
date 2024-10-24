@@ -53,6 +53,8 @@ export const updateNhanVienThunk = createAsyncThunk<
   async ({ id, formData }, thunkAPI) => {
     try {
       const data = await updateNhanVien(id, formData);
+      console.log("Da duoc tien hanh");
+      
       return data;
     } catch (error: any) {
       console.log('Lỗi cập nhật:', error);

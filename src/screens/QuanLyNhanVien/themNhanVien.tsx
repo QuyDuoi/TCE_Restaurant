@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,7 @@ import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {taoFormDataNhanVien} from './NhanVienRespository';
 import {styles} from './styleThem';
+import { openCamera, openImageLibrary } from '../../respositorys/CameraRespository';
 
 const AddEmployeeScreen = () => {
   const navigation = useNavigation(); // Lấy đối tượng navigation để điều hướng
@@ -43,18 +44,6 @@ const AddEmployeeScreen = () => {
     {label: 'Nhân viên thu ngân', value: 'Nhân viên thu ngân'},
     {label: 'Nhân viên phục vụ', value: 'Nhân viên phục vụ'},
   ];
-
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  };
 
   const handleInputChange = (field: keyof NhanVien, value: string) => {
     setNhanVien(prevState => ({
@@ -101,48 +90,30 @@ const AddEmployeeScreen = () => {
     }
   };
 
-  const openCamera = async () => {
-    const hasCameraPermission = await requestCameraPermission();
-    if (!hasCameraPermission) {
-      Alert.alert('Lỗi', 'Ứng dụng cần quyền truy cập camera');
-      return;
+  // Sử dụng hàm `openCamera` từ repository
+  const handleOpenCamera = async () => {
+    const uri = await openCamera();
+    if (uri) {
+      console.log('Ảnh được chụp: ', uri);
+      setNhanVien(prevState => ({
+        ...prevState,
+        hinhAnh: uri || undefined, // Lưu đường dẫn ảnh vào state
+      }));
     }
-    await launchCamera(
-      {
-        mediaType: 'photo',
-        saveToPhotos: true,
-      },
-      response => {
-        if (response.assets && response.assets.length > 0) {
-          const uri = response.assets[0].uri;
-          console.log('Ảnh được chụp: ', uri); // Kiểm tra đường dẫn ảnh
-          setNhanVien(prevState => ({
-            ...prevState,
-            hinhAnh: uri || undefined, // Lưu đường dẫn ảnh vào state
-          }));
-        } else {
-          setNhanVien(prevState => ({
-            ...prevState,
-            hinhAnh: undefined,
-          }));
-        }
-        setModalVisible(false);
-      },
-    );
+    setModalVisible(false);
   };
 
-  const openImageLibrary = () => {
-    launchImageLibrary({mediaType: 'photo'}, response => {
-      if (response.assets && response.assets.length > 0) {
-        const uri = response.assets[0].uri;
-        console.log('Ảnh được chọn: ', uri); // Kiểm tra đường dẫn ảnh
-        setNhanVien(prevState => ({
-          ...prevState,
-          hinhAnh: uri || undefined, // Lưu đường dẫn ảnh vào state
-        }));
-      }
-      setModalVisible(false);
-    });
+  // Sử dụng hàm `openImageLibrary` từ repository
+  const handleOpenImageLibrary = async () => {
+    const uri = await openImageLibrary();
+    if (uri) {
+      console.log('Ảnh được chọn: ', uri);
+      setNhanVien(prevState => ({
+        ...prevState,
+        hinhAnh: uri || undefined, // Lưu đường dẫn ảnh vào state
+      }));
+    }
+    setModalVisible(false);
   };
 
   const viewImage = () => {
@@ -157,6 +128,21 @@ const AddEmployeeScreen = () => {
   const handleImagePress = () => {
     setModalVisible(true);
   };
+  
+  useEffect(() => {
+    // Ẩn thanh Drawer khi vào màn hình thêm nhân viên
+    navigation.setOptions({
+      drawerLockMode: 'locked-closed',  // Khóa Drawer
+      headerShown: true,  // Hiện header của Stack
+    });
+
+    return () => {
+      // Mở khóa Drawer khi thoát khỏi màn hình này
+      navigation.setOptions({
+        drawerLockMode: 'unlocked',
+      });
+    };
+  }, [navigation]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -244,11 +230,11 @@ const AddEmployeeScreen = () => {
           />
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
-              <TouchableOpacity onPress={openCamera} style={styles.modalButton}>
+              <TouchableOpacity onPress={handleOpenCamera} style={styles.modalButton}>
                 <Text style={styles.textButImage}>Chụp ảnh</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={openImageLibrary}
+                onPress={handleOpenImageLibrary}
                 style={styles.modalButton}>
                 <Text style={styles.textButImage}>Chọn từ thư viện</Text>
               </TouchableOpacity>
