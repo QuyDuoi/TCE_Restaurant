@@ -24,10 +24,11 @@ import DanhMucComponent from '../screens/QuanLyThucDon/Hoa/components/DanhMucCom
 import MyTabs from '../screens/QuanLyThucDon/TabView';
 import ProductDetailScreen from '../screens/QuanLyThucDon/xemCTMonAn';
 import NhanVienStackScreen from './NhanVienScreen';
+import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
+import ThucDonStackScreen from './ThucDonScreen';
 
 const Drawer = createDrawerNavigator();
 const CaLamStack = createNativeStackNavigator();
-const ThucDonStack = createNativeStackNavigator();
 
 function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
   const [filterHandler, setFilterHandler] = useState<null | (() => void)>(null);
@@ -81,66 +82,6 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
         options={{headerShown: false}}
       />
     </CaLamStack.Navigator>
-  );
-}
-
-function ThucDonStackScreen({
-  navigation,
-  route,
-}: {
-  navigation: any;
-  route: any;
-}) {
-  const [dialogSettingHandler, setDialogSettingHandler] = useState<
-    null | (() => void)
-  >(null);
-  useLayoutEffect(() => {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'TabsThucDon';
-    if (routeName === 'TabsThucDon') {
-      navigation.setOptions({
-        headerShown: true,
-        headerRight: () => (
-          <ButtonComponent
-            title="Thiết lập"
-            titleSize={14}
-            titleColor={colors.price}
-            onPress={() => {
-              if (dialogSettingHandler) {
-                dialogSettingHandler();
-              }
-            }}
-            styles={{
-              paddingHorizontal: 8,
-              marginRight: 10,
-            }}
-          />
-        ),
-      });
-    } else if (routeName === 'ProductDetailScreen') {
-      navigation.setOptions({headerShown: false});
-    }
-  }, [navigation, route, dialogSettingHandler]);
-
-  return (
-    <ThucDonStack.Navigator>
-      <ThucDonStack.Screen
-        name="TabsThucDon"
-        options={{
-          headerShown: false,
-        }}>
-        {props => (
-          <MyTabs
-            {...props}
-            setDialogSettingHandler={setDialogSettingHandler}
-          />
-        )}
-      </ThucDonStack.Screen>
-      <ThucDonStack.Screen
-        name="ProductDetailScreen"
-        component={ProductDetailScreen}
-        options={{headerShown: true}}
-      />
-    </ThucDonStack.Navigator>
   );
 }
 

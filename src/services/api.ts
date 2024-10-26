@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.7'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.3'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -455,15 +455,15 @@ export const getListMonAn = async (id_danhMuc?: String): Promise<MonAn[]> => {
   }
 };
 
-export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
+export const themMonAn = async (formData: FormData): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}themMonAn`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: formData
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Món ăn');
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Lỗi không xác định');
     }
     const data = await response.json();
     return data;
@@ -520,9 +520,10 @@ export const themNhanVien = async (formData: FormData) => {
     if (!response.ok) {
       const errorData = await response.json();  // Nhận thông báo lỗi từ backend
       throw new Error(errorData.msg || 'Lỗi không xác định');
+    } else {
+        const data = await response.json();
+        return data;
     }
-    const data = await response.json();
-    return data;
   } catch (error) {
     console.log('Lỗi thêm mới Nhân viên: ', error.message);
     throw error;

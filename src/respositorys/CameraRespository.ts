@@ -2,21 +2,39 @@ import { PermissionsAndroid, Alert } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 export const requestCameraPermission = async (): Promise<boolean> => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA
-    );
-    return granted === PermissionsAndroid.RESULTS.GRANTED;
-  } catch (err) {
-    console.warn(err);
-    return false;
+  let permissionGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
+
+  if (!permissionGranted) {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA
+      );
+
+      // Kiểm tra trạng thái quyền
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        permissionGranted = true;
+      } else if (granted === PermissionsAndroid.RESULTS.DENIED) {
+        Alert.alert('Lỗi', 'Bạn đã từ chối cấp quyền truy cập camera');
+        permissionGranted = false;
+      } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        Alert.alert(
+          'Quyền bị từ chối vĩnh viễn',
+          'Bạn đã chọn không hỏi lại. Vui lòng vào cài đặt để cấp quyền truy cập camera.',
+        );
+        permissionGranted = false;
+      }
+    } catch (err) {
+      console.warn(err);
+      permissionGranted = false;
+    }
   }
+
+  return permissionGranted;
 };
 
 export const openCamera = async (): Promise<string | undefined> => {
   const hasCameraPermission = await requestCameraPermission();
   if (!hasCameraPermission) {
-    Alert.alert('Lỗi', 'Ứng dụng cần quyền truy cập camera');
     return;
   }
 

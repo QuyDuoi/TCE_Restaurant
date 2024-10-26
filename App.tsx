@@ -27,39 +27,6 @@ function App(): React.JSX.Element {
         <DrawerNavigator />
       </View>
     </Provider>
-    // <Provider store={store}>
-    //   <NavigationContainer>
-    //     <Stack.Navigator initialRouteName="NhanVienList">
-    //       {/* Màn hình danh sách nhân viên */}
-    //       <Stack.Screen
-    //         name="NhanVienList"
-    //         component={NhanVienComponent}
-    //         options={{title: 'Danh sách nhân viên'}}
-    //       />
-
-    //       {/* Màn hình thêm nhân viên */}
-    //       <Stack.Screen
-    //         name="AddEmployee"
-    //         component={AddEmployeeScreen}
-    //         options={{title: 'Thêm nhân viên mới'}}
-    //       />
-
-    //       {/* Màn hình CT thông tin nhân viên */}
-    //       <Stack.Screen
-    //         name="employeeDetails"
-    //         component={EmployeeDetails}
-    //         options={{title: 'Thông tin nhân viên'}}
-    //       />
-
-    //       {/* Màn hình update thông tin nhân viên */}
-    //       <Stack.Screen
-    //         name="editEmployeeInfo"
-    //         component={EditEmployeeInfo}
-    //         options={{title: 'Cập nhật thông tin nhân viên'}}
-    //       />
-    //     </Stack.Navigator>
-    //   </NavigationContainer>
-    // </Provider>
   );
 }
 
