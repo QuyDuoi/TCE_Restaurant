@@ -10,9 +10,7 @@ import {
   Alert,
   Keyboard,
   TouchableWithoutFeedback,
-  PermissionsAndroid,
 } from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
