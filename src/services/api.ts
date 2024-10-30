@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.7'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.20'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -38,7 +38,7 @@ export const addNhomTopping = async (
   try {
     const response = await fetch(`${ipAddress}themNhomTopping`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -60,7 +60,7 @@ export const updateNhomTopping = async (
   try {
     const response = await fetch(`${ipAddress}capNhatNhomTopping/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -98,7 +98,7 @@ export const addTopping = async (formData: Topping): Promise<Topping> => {
   try {
     const response = await fetch(`${ipAddress}themTopping`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -120,7 +120,7 @@ export const updateTopping = async (
   try {
     const response = await fetch(`${ipAddress}capNhatTopping/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -154,7 +154,7 @@ export const addHoaDon = async (formData: HoaDon): Promise<HoaDon> => {
   try {
     const response = await fetch(`${ipAddress}addHoaDon`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -176,7 +176,7 @@ export const updateHoaDon = async (
   try {
     const response = await fetch(`${ipAddress}updateHoaDon/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -212,7 +212,7 @@ export const addChiTietHoaDon = async (
   try {
     const response = await fetch(`${ipAddress}addChiTietHoaDon`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -234,7 +234,7 @@ export const updateChiTietHoaDon = async (
   try {
     const response = await fetch(`${ipAddress}updateChiTietHoaDon/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -268,7 +268,7 @@ export const addBan = async (formData: Ban): Promise<Ban> => {
   try {
     const response = await fetch(`${ipAddress}addBan`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -287,7 +287,7 @@ export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   try {
     const response = await fetch(`${ipAddress}capNhatBan/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -325,7 +325,7 @@ export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
   try {
     const response = await fetch(`${ipAddress}themDanhMuc`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -346,7 +346,7 @@ export const updateDanhMuc = async (
   try {
     const response = await fetch(`${ipAddress}capNhatDanhMuc/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -363,7 +363,7 @@ export const deleteDanhMuc = async (id: string): Promise<void> => {
   try {
     const response = await fetch(`${ipAddress}xoaDanhMuc/${id}`, {
       method: 'DELETE',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {
       throw new Error('Lỗi khi xóa danh mục');
@@ -399,7 +399,7 @@ export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
   try {
     const response = await fetch(`${ipAddress}addKhuVuc`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -420,7 +420,7 @@ export const updateKhuVuc = async (
   try {
     const response = await fetch(`${ipAddress}updateKhuVuc/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -459,7 +459,7 @@ export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}themMonAn`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -480,7 +480,7 @@ export const updateMonAn = async (
   try {
     const response = await fetch(`${ipAddress}capNhatMonAn/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
