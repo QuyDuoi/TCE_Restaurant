@@ -1,6 +1,11 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import auth from '@react-native-firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
+import { fetchNhanViens, NhanVienSlice } from '../../store/NhanVienSlice';
+
+
 
 const logout = async () => {
     try {
@@ -11,11 +16,26 @@ const logout = async () => {
     }
 };
 
+
+const getIdToken = async (user: any) => {
+    const idToken = await user.getIdToken(); // Lấy access token
+    // const refreshToken = user.refreshToken; // Lấy refresh token
+    console.log('------------------ID Token Firebase ----------------');
+    console.log(idToken);
+    // console.log(refreshToken);
+}
+
+
+
 const Detail = ({ user }) => {
+
+
+    getIdToken(user)
 
     return (
         <View>
-            {user.phoneNumber && <Text>Số điện thoại: {user.phoneNumber}</Text>}
+            {/* {user.phoneNumber && <Text>Số điện thoại: {user.phoneNumber}</Text>} */}
+
             <TouchableOpacity
                 onPress={logout}
             >

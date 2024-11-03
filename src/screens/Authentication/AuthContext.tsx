@@ -1,26 +1,16 @@
-import React, { createContext, useContext, useState } from 'react';
+// firebaseConfig.js
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 
-interface UserContextType {
-    user: any;
-    setUser: (user: any) => void;
-}
-
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<any>(null);
-
-    return (
-        <UserContext.Provider value={{ user, setUser }}>
-            {children}
-        </UserContext.Provider>
-    );
+const firebaseConfig = {
+    apiKey: "AIzaSyBjev1aJF2rQ6dn76nAa1bYv2dTYI5A5hE",
+    authDomain: "tce-firebase-main-74c1b.firebaseapp.com",
+    projectId: "tce-firebase-main-74c1b",
+    messagingSenderId: "290015602869",
+    appId: "1:290015602869:android:2a02d99d84a73ad8f7f6fc",
 };
 
-export const useUser = () => {
-    const context = useContext(UserContext);
-    if (context === undefined) {
-        throw new Error('useUser must be used within a UserProvider');
-    }
-    return context;
-};
+const app = initializeApp(firebaseConfig);
+const authcn = getAuth(app);
+
+export { authcn };

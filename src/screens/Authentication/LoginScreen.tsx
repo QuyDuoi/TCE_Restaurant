@@ -1,51 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity, ImageBackground, Image } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
-import { fetchNhanViens, NhanVienSlice } from '../../store/NhanVienSlice';
+import { checkLoginThunk, fetchNhanViens, loginNhanVienThunk, NhanVienSlice } from '../../store/NhanVienSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
+import { WebView } from 'react-native-webview';
+import { RecaptchaVerifier } from 'firebase/auth';
+import { authcn } from './AuthContext'; // Đảm bảo đường dẫn chính xác
+
 
 const LoginScreen = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [code, setCode] = useState('');
-    const [confirm, setConfirm] = useState(null);
+    const [confirm, setConfirm] = useState<any>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const webviewRef = useRef(null);
 
     const navigation = useNavigation();
-
-    const [isLoading, setIsLoading] = useState(true);
-    const [filterNhanVienList, setFilterNhanVienList] = useState<NhanVienSlice[]>([]);
-
     const dispatch = useDispatch<AppDispatch>();
-    const dsNhanVien = useSelector((state: RootState) => state.nhanVien.nhanViens);
-    const statusNhanVien = useSelector((state: RootState) => state.nhanVien.status);
-
-    useEffect(() => {
-        if (statusNhanVien === 'idle') {
-            dispatch(fetchNhanViens());
-            setIsLoading(true);
-        } else if (statusNhanVien === 'succeeded') {
-            setFilterNhanVienList(dsNhanVien || []);
-            setIsLoading(false);
-        } else if (statusNhanVien === 'failed') {
-            setIsLoading(false);
-        }
-    }, [dispatch, dsNhanVien]);
-
-
 
     const handleLoginOTP = async () => {
-        // Kiểm tra số điện thoại có trong danh sách không
-        const isPhoneNumberRegistered = filterNhanVienList.some((nv) => nv.soDienThoai === phoneNumber);
-        if (!isPhoneNumberRegistered) {
-            setErrorMessage('Số điện thoại chưa đăng ký. Vui lòng liên hệ admin.');
-            return;
-        }
         try {
-            const formattedPhoneNumber = phoneNumber.startsWith('0') ? `+84${phoneNumber.substring(1)}` : `+84${phoneNumber}`;
-            const confirmation = await auth().signInWithPhoneNumber(formattedPhoneNumber);
-            setConfirm(confirmation);
+            const resultAction = await dispatch(checkLoginThunk(phoneNumber));
+            if (checkLoginThunk.fulfilled.match(resultAction)) {
+                const response = resultAction.payload;
+                if (response.statusError === "404") {
+                    // setErrorMessage(response.massage)
+                    setErrorMessage(response.message);
+                    return;
+                }
+                if (response.statusError === "403") {
+                    setErrorMessage(response.message);
+                }
+                else {
+                    const formattedPhoneNumber = phoneNumber.startsWith('0') ? `+84${phoneNumber.substring(1)}` : `+84${phoneNumber}`;
+                    const confirmation = await auth().signInWithPhoneNumber(formattedPhoneNumber);
+                    setConfirm(confirmation);
+                }
+            }
         } catch (error) {
             console.log('Error code: ', error);
             setErrorMessage('Có lỗi xảy ra khi gửi OTP.');
@@ -56,9 +49,11 @@ const LoginScreen = () => {
         try {
             if (confirm) {
                 const userCredential = await confirm.confirm(code);
-                const user = userCredential.user;
-                console.log('Đăng nhập thành công!', user);
-                navigation.navigate('Detail'); // Điều hướng sau khi đăng nhập thành công
+                const idToken = await userCredential.user.getIdToken();
+                console.log('Token: ', idToken);
+                console.log('Đăng nhập thành công!');
+                dispatch(loginNhanVienThunk(idToken));
+                navigation.navigate('Detail');
             }
         } catch (error) {
             console.log('Error code: ', error);
@@ -70,7 +65,6 @@ const LoginScreen = () => {
         <ImageBackground source={{ uri: 'https://indieground.net/wp-content/uploads/2023/03/Freebie-GradientTextures-Preview-06.jpg' }} style={styles.backgroundImage}>
             <View style={styles.container}>
                 <Image source={{ uri: 'https://png.pngtree.com/png-clipart/20240618/original/pngtree-restaurant-logo-vector-png-image_15358605.png' }} style={styles.logo} />
-
                 {confirm == null ? (
                     <>
                         <View style={styles.phoneInputContainer}>
@@ -79,7 +73,7 @@ const LoginScreen = () => {
                                 style={styles.input}
                                 placeholder="Nhập số điện thoại"
                                 value={phoneNumber}
-                                onChangeText={setPhoneNumber} // Cập nhật giá trị số điện thoại
+                                onChangeText={setPhoneNumber}
                                 autoCapitalize="none"
                                 placeholderTextColor="#aaa"
                                 keyboardType="phone-pad"
@@ -159,7 +153,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 50,
-        flex: 1, // Chiếm toàn bộ không gian còn lại
+        flex: 1,
         paddingHorizontal: 10,
         borderRadius: 25,
         backgroundColor: '#f9f9f9',
@@ -172,25 +166,23 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         backgroundColor: '#f9f9f9',
         fontSize: 16,
+        marginBottom: 10,
     },
     loginButton: {
-        backgroundColor: '#007bff',
-        height: 50,
         width: '100%',
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#007bff',
         borderRadius: 25,
-        marginBottom: 10,
-        elevation: 2,
     },
     loginButtonText: {
         color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 16,
     },
     message: {
         color: 'red',
-        width: '90%',
+        marginTop: 10,
         textAlign: 'center',
     },
 });
