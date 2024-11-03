@@ -1,60 +1,48 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import DrawerNavigator from './src/navigation/DrawerNavigator';
 import {Provider} from 'react-redux';
 import {store} from './src/store/store';
-import MyTabs from './src/screens/QuanLyThucDon/TabView';
-import DanhMucComponent from './src/screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
-import NhomToppingComponent from './src/screens/QuanLyThucDon/Hoa/components/NhomToppingComponent';
-import NhanVienComponent from './src/screens/QuanLyNhanVien/NhanVienComponent';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import AddEmployeeScreen from './src/screens/QuanLyNhanVien/themNhanVien'; // Màn hình thêm nhân viên
-import ItemNhanVien from './src/screens/QuanLyNhanVien/ItemNhanVien';
-import EditEmployeeInfo from './src/screens/QuanLyNhanVien/EditEmployeeInfo';
-import EmployeeDetails from './src/screens/QuanLyNhanVien/EmployeeDetails';
-import KhuVucTabView from './src/screens/QuanLyKhuVuc/Component/KhuVucTabView';
-import QuanLyCaLam from './src/screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
-import ProductDetailScreen from './src/screens/QuanLyThucDon/xemCTMonAn';
+// import NhanVienComponent from './src/screens/QuanLyNhanVien/NhanVienComponent';
+// import AddEmployeeScreen from './src/screens/QuanLyNhanVien/themNhanVien';
+// import ItemNhanVien from './src/screens/QuanLyNhanVien/ItemNhanVien';
+// import EditEmployeeInfo from './src/screens/QuanLyNhanVien/EditEmployeeInfo';
+// import EmployeeDetails from './src/screens/QuanLyNhanVien/EmployeeDetails';
+import ThongKeDoanhThu from './src/screens/ThongKe/ThongKeDoanhThu';
+import ThongKeTop5MonAn from './src/screens/ThongKe/ThongKeTop5MonAn';
+import ThongKeNguonDoanhThu from './src/screens/ThongKe/ThongKeNguonDoanhThu';
+import ThongKeHinhThucThanhToan from './src/screens/ThongKe/ThongKeHinhThucThanhToan';
 
 const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
   return (
-    // <Provider store={store}>
-    //   <View style={{flex: 1}}>
-    //     <KhuVucTabView />
-    //   </View>
-    // </Provider>
     <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="NhanVienList">
-          {/* Màn hình danh sách nhân viên */}
-          <Stack.Screen
-            name="NhanVienList"
-            component={NhanVienComponent}
-            options={{title: 'Danh sách nhân viên'}}
+      <NavigationContainer >
+        
+        <Stack.Navigator initialRouteName="ThongKeDoanhThu">
+        
+         
+         <Stack.Screen
+            name="ThongKeDoanhThu"
+            component={ThongKeDoanhThu}
+            options={{title: 'Thống kê doanh thu', headerTitleAlign: 'center'}}
           />
-
-          {/* Màn hình thêm nhân viên */}
           <Stack.Screen
-            name="AddEmployee"
-            component={AddEmployeeScreen}
-            options={{title: 'Thêm nhân viên mới'}}
+            name="ThongKeTop5MonAn"
+            component={ThongKeTop5MonAn}
+            options={{title: 'Thống Kê Top 5 món ăn', headerTitleAlign: 'center'}}
           />
-
-          {/* Màn hình CT thông tin nhân viên */}
           <Stack.Screen
-            name="employeeDetails"
-            component={EmployeeDetails}
-            options={{title: 'Thông tin nhân viên'}}
+            name="ThongKeNguonDoanhThu"
+            component={ThongKeNguonDoanhThu}
+            options={{title: 'Thống Kê Nguồn doanh thu', headerTitleAlign: 'center'}}
           />
-
-          {/* Màn hình update thông tin nhân viên */}
           <Stack.Screen
-            name="editEmployeeInfo"
-            component={EditEmployeeInfo}
-            options={{title: 'Cập nhật thông tin nhân viên'}}
+            name="ThongKeHinhThucThanhToan"
+            component={ThongKeHinhThucThanhToan}
+            options={{title: 'Thống Kê Hình thức thanh toán', headerTitleAlign: 'center'}}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -63,3 +51,9 @@ function App(): React.JSX.Element {
 }
 
 export default App;
+
+
+
+
+
+

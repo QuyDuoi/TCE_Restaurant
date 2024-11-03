@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.6'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.123.207'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -15,6 +15,39 @@ import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
 import CaLam from './models/CaLamModel';
 import { NhanVienSlice } from '../store/NhanVienSlice';
+
+
+//Thong Ke
+// export const getThongKeTongDoanhThu = async (timeRange: string, startDate?: Date, endDate?: Date): Promise<{ tongDoanhThu: number; tongKhuyenMai: number }> => {
+//   try {
+//     // Chuyển đổi startDate và endDate thành chuỗi ISO nếu có
+//     const startDateString = startDate ? startDate.toISOString() : '';
+//     const endDateString = endDate ? endDate.toISOString() : '';
+
+//     // Gửi yêu cầu đến API thống kê doanh thu
+//     const response = await fetch(`${ipAddress}thongKeDoanhThu?type=${timeRange}${startDateString ? `&startDate=${startDateString}` : ''}${endDateString ? `&endDate=${endDateString}` : ''}`);
+
+//     if (!response.ok) {
+//       throw new Error('Lỗi khi lấy thống kê doanh thu');
+//     }
+
+//     const data = await response.json();
+    
+//     // Kiểm tra dữ liệu trả về để đảm bảo là số hợp lệ
+//     return {
+//       tongDoanhThu: typeof data.tongDoanhThu === 'number' ? data.tongDoanhThu : 0,
+//       tongKhuyenMai: typeof data.tongKhuyenMai === 'number' ? data.tongKhuyenMai : 0,
+//     };
+//   } catch (error) {
+//     console.log('Lỗi khi lấy thống kê doanh thu: ', error);
+//     // Trả về giá trị mặc định trong trường hợp lỗi
+//     return {
+//       tongDoanhThu: 0,
+//       tongKhuyenMai: 0,
+//     };
+//   }
+// };
+
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
