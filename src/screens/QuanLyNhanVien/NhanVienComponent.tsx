@@ -24,6 +24,7 @@ import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {applyFilters} from './hamTimKiem';
 import { IPV4 } from '../../services/api';
+import { fetchDanhMucs } from '../../store/DanhMucSlice';
 
 export interface FiltersModelTest {
   hoatDong: boolean;
@@ -60,8 +61,10 @@ const NhanVienComponent = (props) => {
   // **Lấy dữ liệu nhân viên từ API**
   // Sử dụng useEffect để cập nhật danh sách nhân viên khi Redux store thay đổi
 useEffect(() => {
+  const id_NhaHang = '66fab50fa28ec489c7137537';
   if (status === 'idle') {
     dispatch(fetchNhanViens());
+    dispatch(fetchDanhMucs(id_NhaHang));
     setIsLoading(true);
   } else if (status === 'succeeded') {
     setFilterNhanVienList(dsNhanVien || []); // Cập nhật danh sách nhân viên từ store
@@ -109,7 +112,7 @@ useEffect(() => {
 
     return (
       <ItemNhanVien
-      onPress={() => props.navigation.navigate('employeeDetails', {nhanVien: item})}
+      onPress={() => props.navigation.navigate('EmployeeDetails', {nhanVien: item})}
       nameNhanVien={item.hoTen}
       position={item.vaiTro}
       status={item.trangThai}

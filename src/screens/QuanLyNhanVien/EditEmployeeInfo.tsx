@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -10,22 +10,22 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-import { styles } from './EditEmployeeInfoStyles';
+import {styles} from './EditEmployeeInfoStyles';
 import UnsavedChangesModal from '../../customcomponent/modalSave';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import type {AppDispatch} from '../../store/store';
-import { updateNhanVienThunk } from '../../store/NhanVienSlice';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {updateNhanVienThunk} from '../../store/NhanVienSlice';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import NhanVienModel from '../../services/models/NhanVienModel';
-import { taoFormDataNhanVien } from './NhanVienRespository';
+import {taoFormDataNhanVien} from './NhanVienRespository';
 
-const EditEmployeeInfo = () => {
+function EditEmployeeInfo(): React.JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
   const route = useRoute();
 
   // Nhận dữ liệu nhân viên từ route.params
-  const { nhanVien } = route.params;
+  const {nhanVien} = route.params;
 
   // State quản lý các trường thông tin
   const [infoNhanVien, setInfoNhanVien] = useState<NhanVienModel>(nhanVien); // Sử dụng model
@@ -34,7 +34,12 @@ const EditEmployeeInfo = () => {
   const [isEdited, setIsEdited] = useState(false); // Kiểm tra xem thông tin đã bị chỉnh sửa chưa
   const [isModalVisible, setModalVisible] = useState(false); // State cho modal xác nhận
 
-  const positions = ['Nhân viên phục vụ', 'Quản lý', 'Nhân viên thu ngân', 'Đầu bếp']; // Các vai trò có thể chọn
+  const positions = [
+    'Nhân viên phục vụ',
+    'Quản lý',
+    'Nhân viên thu ngân',
+    'Đầu bếp',
+  ]; // Các vai trò có thể chọn
 
   // Hàm xử lý thay đổi giá trị trong infoNhanVien
   const handleInputChange = (field: keyof NhanVienModel, value: any) => {
@@ -61,13 +66,22 @@ const EditEmployeeInfo = () => {
   // Hàm xác nhận lưu dữ liệu
   const handleConfirmSave = async () => {
     setModalVisible(false);
-  
+
     try {
-      const formData = taoFormDataNhanVien(infoNhanVien);
-      console.log(infoNhanVien.trangThai);
-      
-      const resultAction = await dispatch(updateNhanVienThunk({ id: nhanVien._id, formData }));
-  
+      const nhanVienToSave = {...infoNhanVien}; // Tạo bản sao của infoNhanVien
+
+      // Nếu hình ảnh không thay đổi (nghĩa là nó vẫn giữ giá trị cũ), thì loại bỏ nó khỏi formData
+      if (nhanVienToSave.hinhAnh === nhanVien.hinhAnh) {
+        delete nhanVienToSave.hinhAnh; // Loại bỏ hình ảnh để không gửi lên backend
+      }
+
+      const formData = taoFormDataNhanVien(nhanVienToSave);
+      console.log(nhanVienToSave.trangThai);
+
+      const resultAction = await dispatch(
+        updateNhanVienThunk({id: nhanVien._id, formData}),
+      );
+
       if (updateNhanVienThunk.fulfilled.match(resultAction)) {
         Alert.alert('Thành công', 'Cập nhật thông tin nhân viên thành công');
         navigation.navigate('NhanVienList'); // Quay về trang danh sách
@@ -83,7 +97,6 @@ const EditEmployeeInfo = () => {
       Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin');
     }
   };
-  
 
   // Chuyển đổi trạng thái hoạt động
   const toggleStatus = () => {
@@ -119,7 +132,7 @@ const EditEmployeeInfo = () => {
             value={infoNhanVien.trangThai}
             onValueChange={toggleStatus}
             thumbColor={infoNhanVien.trangThai ? 'green' : 'gray'}
-            trackColor={{ false: '#d3d3d3', true: '#81b0ff' }}
+            trackColor={{false: '#d3d3d3', true: '#81b0ff'}}
           />
         </View>
       </View>
@@ -130,7 +143,7 @@ const EditEmployeeInfo = () => {
           style={styles.input}
           value={infoNhanVien.soDienThoai}
           onChangeText={text => handleInputChange('soDienThoai', text)}
-          keyboardType='numeric'
+          keyboardType="numeric"
           placeholder="Nhập số điện thoại"
         />
       </View>
@@ -201,6 +214,6 @@ const EditEmployeeInfo = () => {
       )}
     </ScrollView>
   );
-};
+}
 
 export default EditEmployeeInfo;

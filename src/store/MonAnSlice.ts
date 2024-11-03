@@ -1,17 +1,17 @@
 // slices/MonAnSlice.ts
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
-import {getListMonAn, addMonAn, updateMonAn} from '../services/api'; // Đường dẫn tới API tương ứng
+import {getListMonAn, themMonAn, updateMonAn} from '../services/api'; // Đường dẫn tới API tương ứng
 
 // Định nghĩa interface cho MonAn
 export interface MonAn {
-  _id: string;
+  _id?: string;
   tenMon: string;
   anhMonAn: string;
   moTa: string;
   giaMonAn: number;
   trangThai: boolean;
   id_danhMuc: string;
-  id_nhomTopping: string;
+  id_nhomTopping?: string;
 }
 
 // Định nghĩa state cho MonAn
@@ -37,11 +37,11 @@ export const fetchMonAns = createAsyncThunk(
   },
 );
 
-export const addNewMonAn = createAsyncThunk(
-  'monAns/addMonAn',
-  async (formData: MonAn, thunkAPI) => {
+export const themMonAnMoi = createAsyncThunk(
+  'monAns/themMonAn',
+  async (formData: FormData, thunkAPI) => {
     try {
-      const data = await addMonAn(formData);
+      const data = await themMonAn(formData);
       return data;
     } catch (error: any) {
       console.log('Lỗi thêm mới:', error);
@@ -86,11 +86,11 @@ const monAnSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message || 'Could not fetch món ăn'; // Lỗi khi fetch thất bại
       })
-      .addCase(addNewMonAn.fulfilled, (state, action: PayloadAction<MonAn>) => {
+      .addCase(themMonAnMoi.fulfilled, (state, action: PayloadAction<MonAn>) => {
         state.monAns.unshift(action.payload);
         state.status = 'succeeded';
       })
-      .addCase(addNewMonAn.rejected, (state, action) => {
+      .addCase(themMonAnMoi.rejected, (state, action) => {
         state.status = 'failed';
         state.error = (action.payload as string) || 'Error adding MonAn';
       })

@@ -1,4 +1,5 @@
-export const IPV4 = '192.168.123.207'; // Địa chỉ IP giả định của server
+
+export const IPV4 = '192.168.1.20'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -71,7 +72,7 @@ export const addNhomTopping = async (
   try {
     const response = await fetch(`${ipAddress}themNhomTopping`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -93,7 +94,7 @@ export const updateNhomTopping = async (
   try {
     const response = await fetch(`${ipAddress}capNhatNhomTopping/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -131,7 +132,7 @@ export const addTopping = async (formData: Topping): Promise<Topping> => {
   try {
     const response = await fetch(`${ipAddress}themTopping`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -153,7 +154,7 @@ export const updateTopping = async (
   try {
     const response = await fetch(`${ipAddress}capNhatTopping/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -187,7 +188,7 @@ export const addHoaDon = async (formData: HoaDon): Promise<HoaDon> => {
   try {
     const response = await fetch(`${ipAddress}addHoaDon`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -209,7 +210,7 @@ export const updateHoaDon = async (
   try {
     const response = await fetch(`${ipAddress}updateHoaDon/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -245,7 +246,7 @@ export const addChiTietHoaDon = async (
   try {
     const response = await fetch(`${ipAddress}addChiTietHoaDon`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -267,7 +268,7 @@ export const updateChiTietHoaDon = async (
   try {
     const response = await fetch(`${ipAddress}updateChiTietHoaDon/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -301,7 +302,7 @@ export const addBan = async (formData: Ban): Promise<Ban> => {
   try {
     const response = await fetch(`${ipAddress}addBan`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -320,7 +321,7 @@ export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   try {
     const response = await fetch(`${ipAddress}capNhatBan/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -358,7 +359,7 @@ export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
   try {
     const response = await fetch(`${ipAddress}themDanhMuc`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -379,7 +380,7 @@ export const updateDanhMuc = async (
   try {
     const response = await fetch(`${ipAddress}capNhatDanhMuc/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -396,7 +397,7 @@ export const deleteDanhMuc = async (id: string): Promise<void> => {
   try {
     const response = await fetch(`${ipAddress}xoaDanhMuc/${id}`, {
       method: 'DELETE',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {
       throw new Error('Lỗi khi xóa danh mục');
@@ -432,7 +433,7 @@ export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
   try {
     const response = await fetch(`${ipAddress}addKhuVuc`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -453,7 +454,7 @@ export const updateKhuVuc = async (
   try {
     const response = await fetch(`${ipAddress}updateKhuVuc/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -488,15 +489,16 @@ export const getListMonAn = async (id_danhMuc?: String): Promise<MonAn[]> => {
   }
 };
 
-export const addMonAn = async (formData: MonAn): Promise<MonAn> => {
+export const themMonAn = async (formData: FormData): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}themMonAn`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Món ăn');
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Lỗi không xác định');
     }
     const data = await response.json();
     return data;
@@ -513,7 +515,7 @@ export const updateMonAn = async (
   try {
     const response = await fetch(`${ipAddress}capNhatMonAn/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -553,9 +555,10 @@ export const themNhanVien = async (formData: FormData) => {
     if (!response.ok) {
       const errorData = await response.json();  // Nhận thông báo lỗi từ backend
       throw new Error(errorData.msg || 'Lỗi không xác định');
+    } else {
+      const data = await response.json();
+      return data;
     }
-    const data = await response.json();
-    return data;
   } catch (error) {
     console.log('Lỗi thêm mới Nhân viên: ', error.message);
     throw error;
@@ -598,6 +601,52 @@ export const deleteNhanVien = async (id: string): Promise<void> => {
     throw new Error('Lỗi khi xóa nhân viên');
   }
 };
+
+export const checkLogin = async (phoneNumber: string) => {
+  try {
+    const response = await fetch(`${ipAddress}auth/checkLogin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Lỗi khi check login');
+    }
+
+    const data = await response.json();
+
+    if (data.status === "404" || data.status === "403") {
+      throw new Error(data.message); // Ném lỗi nếu có vấn đề
+    }
+
+    return data; // Trả về dữ liệu thành công
+  } catch (error: any) {
+    return { message: error.message || 'Đã xảy ra lỗi.' }; // Trả về thông điệp lỗi
+  }
+};
+
+export const loginNhanVien = async (idToken: string) => {
+  try {
+    const response = await fetch(`${ipAddress}auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`, // Thêm token vào header
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Đăng nhập thất bại');
+    }
+    const data = await response.json();
+    return data; // Trả về token và thông tin nhân viên
+  } catch (error: any) {
+    return error;
+  }
+};
+
 
 export const getListCaLam = async (id_nhanVien: string): Promise<CaLam[]> => {
   try {

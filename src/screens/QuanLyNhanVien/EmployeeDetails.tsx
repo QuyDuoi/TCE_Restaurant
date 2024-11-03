@@ -109,7 +109,7 @@ const EmployeeDetails = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.updateButton}
-          onPress={() => navigation.navigate('editEmployeeInfo', {nhanVien})}>
+          onPress={() => navigation.navigate('EditEmployeeInfo', {nhanVien})}>
           <Text style={styles.buttonText}>Cập nhật thông tin nhân viên</Text>
         </TouchableOpacity>
 

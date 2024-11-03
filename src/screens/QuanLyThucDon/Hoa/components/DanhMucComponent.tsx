@@ -50,9 +50,7 @@ const DanhMucComponent = (props: Props) => {
   const navigation = useNavigation<any>();
 
   useEffect(() => {
-    const id_NhaHang = '66fab50fa28ec489c7137537';
     if (statusDanhMuc === 'idle') {
-      dispatch(fetchDanhMucs(id_NhaHang));
       setIsLoading(true);
     } else if (statusDanhMuc === 'succeeded') {
       setFilterDanhMucList(dsDanhMuc || []);

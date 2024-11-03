@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -29,24 +29,25 @@ const categories: Category[] = [
     id: 1,
     name: 'Pizza',
     items: [
-      {id: 1, name: 'Cheese', price: 666},
-      {id: 2, name: 'Pepperoni', price: 666},
-      {id: 3, name: 'Vegetable', price: 666},
+      { id: 1, name: 'Cheese', price: 666 },
+      { id: 2, name: 'Pepperoni', price: 666 },
+      { id: 3, name: 'Vegetable', price: 666 },
     ],
   },
   {
     id: 2,
     name: 'Burger',
     items: [
-      {id: 4, name: 'Beef', price: 666},
-      {id: 5, name: 'Chicken', price: 666},
-      {id: 6, name: 'Vegan', price: 666},
+      { id: 4, name: 'Beef', price: 666 },
+      { id: 5, name: 'Chicken', price: 666 },
+      { id: 6, name: 'Vegan', price: 666 },
     ],
   },
-  {id: 3, name: 'Salad', items: []},
+  { id: 3, name: 'Salad', items: [] },
 ];
 
-const CategoryScreen = () => {
+const CategoryScreen = ({ user }: { user: any }) => {
+  const idUser = user.email;
   //state lưu danh mục khi chọn
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
@@ -79,7 +80,7 @@ const CategoryScreen = () => {
       setIsAddingNewCategory(false);
     } else {
       // setSelectedCategory(null);
-      setSelectedCategory({id: Date.now(), name: '', items: []}); // Tạo danh mục mới với id duy nhất
+      setSelectedCategory({ id: Date.now(), name: '', items: [] }); // Tạo danh mục mới với id duy nhất
       setIsAddingNewCategory(true);
       console.log('adding new category');
     }
@@ -89,13 +90,14 @@ const CategoryScreen = () => {
   // Hàm đóng modal
   const closeModal = () => {
     setModalVisible(false); // Ẩn modal
+    console.log(user.uid);
   };
 
   const addNew = () => {
     Alert.alert('Đã lưu');
   };
 
-  const renderItem = ({item}: {item: Item}) => (
+  const renderItem = ({ item }: { item: Item }) => (
     <View style={styles.itemContainer}>
       <Text style={styles.itemText}>{item.name}</Text>
     </View>
@@ -105,7 +107,7 @@ const CategoryScreen = () => {
   //     setModalVisible(true); // Mở modal
   // };
 
-  const renderCategory = ({item}: {item: Category}) => {
+  const renderCategory = ({ item }: { item: Category }) => {
     const isExpanded = expandedCategories.includes(item.id);
 
     return (
@@ -130,6 +132,8 @@ const CategoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={styles.categoryTitle}>{idUser}</Text>
+
       <FlatList
         data={categories}
         renderItem={renderCategory}

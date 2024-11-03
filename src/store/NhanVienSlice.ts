@@ -1,6 +1,6 @@
 // slices/NhanVienSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { themNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien } from '../services/api'; // Đường dẫn tới API tương ứng
+import { themNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien, loginNhanVien, checkLogin } from '../services/api'; // Đường dẫn tới API tương ứng
 
 // Định nghĩa interface cho NhanVien
 export interface NhanVienSlice {
@@ -19,6 +19,10 @@ export interface NhanVienState {
     nhanViens: NhanVienSlice[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
+    token: string | null; // Thêm thuộc tính token
+    refreshToken: string | null;
+    message: string | null; // Thêm thuộc tính message để hiển thị thông báo
+    statusError: string | null;
 }
 
 // Trạng thái ban đầu cho NhanVienSlice
@@ -26,6 +30,10 @@ const initialState: NhanVienState = {
     nhanViens: [],
     status: 'idle',
     error: null,
+    token: null, // Khởi tạo token là null
+    refreshToken: null,
+    message: null,
+    statusError: null,
 };
 
 // Thunk để fetch danh sách nhân viên
@@ -45,34 +53,67 @@ export const addNewNhanVien = createAsyncThunk('NhanVienSlice/addNhanVien', asyn
 });
 
 export const updateNhanVienThunk = createAsyncThunk<
-  NhanVienSlice, // Kiểu dữ liệu trả về khi thành công
-  { id: string, formData: FormData }, // Kiểu dữ liệu tham số truyền vào
-  { rejectValue: string } // Kiểu dữ liệu trả về khi thất bại
+    NhanVienSlice, // Kiểu dữ liệu trả về khi thành công
+    { id: string, formData: FormData }, // Kiểu dữ liệu tham số truyền vào
+    { rejectValue: string } // Kiểu dữ liệu trả về khi thất bại
 >(
-  'nhanViens/updateNhanVien',
-  async ({ id, formData }, thunkAPI) => {
-    try {
-      const data = await updateNhanVien(id, formData);
-      return data;
-    } catch (error: any) {
-      console.log('Lỗi cập nhật:', error);
-      return thunkAPI.rejectWithValue(error.message || 'Error updating NhanVien');
+    'nhanViens/updateNhanVien',
+    async ({ id, formData }, thunkAPI) => {
+        try {
+            const data = await updateNhanVien(id, formData);
+            console.log("Da duoc tien hanh");
+
+            return data;
+        } catch (error: any) {
+            console.log('Lỗi cập nhật:', error);
+            return thunkAPI.rejectWithValue(error.message || 'Error updating NhanVien');
+        }
     }
-  }
 );
 
 export const deleteNhanVienThunk = createAsyncThunk(
     'nhanViens/deleteNhanVien',
     async (id: string, thunkAPI) => {
-      try {
-        const deletedId = await deleteNhanVien(id); // Gọi hàm API để xóa
-        return deletedId; // Trả về id nhân viên đã xóa
-      } catch (error: any) {
-        console.log('Lỗi khi xóa:', error);
-        return thunkAPI.rejectWithValue(error.message || 'Error deleting NhanVien');
-      }
+        try {
+            const deletedId = await deleteNhanVien(id); // Gọi hàm API để xóa
+            return deletedId; // Trả về id nhân viên đã xóa
+        } catch (error: any) {
+            console.log('Lỗi khi xóa:', error);
+            return thunkAPI.rejectWithValue(error.message || 'Error deleting NhanVien');
+        }
     }
-  );
+);
+// Tạo async thunk cho việc đăng nhập
+export const loginNhanVienThunk = createAsyncThunk(
+    'nhanViens/login',
+    async (idToken: string, thunkAPI) => {
+        try {
+            const data = await loginNhanVien(idToken); // Gọi hàm loginNhanVien từ api.ts
+            console.log('logined');
+            console.log('---------------------------------');
+            console.log(data);
+            console.log('---------------------------------');
+
+            return data; // Trả về dữ liệu
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message || 'Đăng nhập thất bại');
+        }
+    }
+);
+
+
+export const checkLoginThunk = createAsyncThunk(
+    'nhanViens/checkLogin',
+    async (phoneNumber: string, thunkAPI) => {
+        try {
+            const data = await checkLogin(phoneNumber);
+            return data; // Trả về dữ liệu
+        } catch (error) {
+            // Giả định error là một đối tượng với một thuộc tính message
+            return thunkAPI.rejectWithValue(error.message || 'Check login failed');
+        }
+    }
+);
 
 // Tạo NhanVienSlice
 const nhanVienSlice = createSlice({
@@ -120,8 +161,39 @@ const nhanVienSlice = createSlice({
             })
             // Xử lý khi xóa thất bại
             .addCase(deleteNhanVienThunk.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.payload as string || 'Error deleting NhanVien';
+                state.status = 'failed';
+                state.error = action.payload as string || 'Error deleting NhanVien';
+            })
+            .addCase(loginNhanVienThunk.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(loginNhanVienThunk.fulfilled, (state, action: PayloadAction<{ token: string; refreshToken: string; nhanVien: NhanVienSlice }>) => {
+                state.status = 'succeeded';
+                state.token = action.payload.token; // Lưu token vào state
+                state.refreshToken = action.payload.refreshToken;
+                const existingNhanVien = state.nhanViens.find(nv => nv._id === action.payload.nhanVien._id);
+                if (!existingNhanVien) {
+                    state.nhanViens.push(action.payload.nhanVien);
+                }
+            })
+            .addCase(loginNhanVienThunk.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string || 'Đăng nhập thất bại';
+            })
+            .addCase(checkLoginThunk.pending, (state) => {
+                state.status = 'loading';
+                state.message = null;
+                state.error = null; // Đặt lại lỗi khi bắt đầu quá trình
+            })
+            .addCase(checkLoginThunk.fulfilled, (state, action: PayloadAction<{ status: string; message: string; statusError: string }>) => {
+                state.status = 'succeeded';
+                // Lưu message từ phản hồi
+                state.message = action.payload.message;
+                state.statusError = action.payload.statusError;
+            })
+            .addCase(checkLoginThunk.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string || 'Check login failed';
             });
     },
 });
