@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.3'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.10'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -9,12 +9,12 @@ import Topping from './models/ToppingModel';
 import HoaDon from './models/HoaDonModel';
 import ChiTietHoaDon from './models/ChiTietHoaDonModel';
 import Ban from './models/BanModel';
-import DanhMuc from './models/DanhMucModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
 import CaLam from './models/CaLamModel';
 import { NhanVienSlice } from '../store/NhanVienSlice';
+import { DanhMuc } from '../store/DanhMucSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -321,15 +321,16 @@ export const getListDanhMuc = async (
   }
 };
 
-export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
+export const themDanhMuc = async (danhMuc: DanhMuc): Promise<DanhMuc> => {
   try {
     const response = await fetch(`${ipAddress}themDanhMuc`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(danhMuc),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới danh mục');
+      const errorMsg = await response.json();
+      throw { msg: errorMsg.msg || 'Lỗi không xác định' };
     }
     const data = await response.json();
     return data;
@@ -339,18 +340,19 @@ export const addDanhMuc = async (formData: DanhMuc): Promise<DanhMuc> => {
   }
 };
 
-export const updateDanhMuc = async (
+export const capNhatDanhMuc = async (
   id: string,
-  formData: DanhMuc,
+  danhMuc: DanhMuc,
 ): Promise<DanhMuc> => {
   try {
     const response = await fetch(`${ipAddress}capNhatDanhMuc/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(danhMuc),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật danh mục');
+      const errorMsg = await response.json();
+      throw { msg: errorMsg.msg || 'Lỗi không xác định' };
     }
     const data = await response.json();
     return data;
@@ -359,7 +361,7 @@ export const updateDanhMuc = async (
     throw error;
   }
 };
-export const deleteDanhMuc = async (id: string): Promise<void> => {
+export const xoaDanhMuc = async (id: string): Promise<void> => {
   try {
     const response = await fetch(`${ipAddress}xoaDanhMuc/${id}`, {
       method: 'DELETE',
@@ -475,22 +477,22 @@ export const themMonAn = async (formData: FormData): Promise<MonAn> => {
 
 export const updateMonAn = async (
   id: string,
-  formData: MonAn,
+  formData: FormData,
 ): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}capNhatMonAn/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: formData,
     });
+    
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật Mon Ăn');
+      throw new Error('Lỗi khi cập nhật món Ăn');
     }
     const data = await response.json();
     console.log(data);
     return data;
   } catch (error) {
-    console.log('Lỗi cập nhật Mon ăn: ', error);
+    console.log('Lỗi cập nhật món ăn: ', error);
     throw error;
   }
 };

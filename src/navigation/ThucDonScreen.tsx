@@ -1,12 +1,12 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import { createStackNavigator } from "@react-navigation/stack";
+import React, {useLayoutEffect, useState} from 'react';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
-import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
-import { colors } from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
-import ProductDetailScreen from '../screens/QuanLyThucDon/xemCTMonAn';
+import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
+import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
+import CapNhatDanhMuc from '../screens/QuanLyThucDon/CapNhatDanhMuc';
 
 const ThucDonStack = createNativeStackNavigator();
 
@@ -20,6 +20,7 @@ function ThucDonStackScreen({
   const [dialogSettingHandler, setDialogSettingHandler] = useState<
     null | (() => void)
   >(null);
+
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'TabsThucDon';
     if (routeName === 'TabsThucDon') {
@@ -27,7 +28,7 @@ function ThucDonStackScreen({
         headerShown: true,
         headerRight: () => (
           <ButtonComponent
-            title="Thiết lập"
+            title="Thêm mới"
             titleSize={14}
             titleColor={colors.price}
             onPress={() => {
@@ -38,22 +39,22 @@ function ThucDonStackScreen({
             styles={{
               paddingHorizontal: 8,
               marginRight: 10,
+              borderWidth: 1,
+              paddingVertical: 6,
+              borderRadius: 6,
+              borderColor: 'orange'
             }}
           />
         ),
       });
-    } else if (routeName === 'ProductDetailScreen') {
+    } else {
       navigation.setOptions({headerShown: false});
     }
   }, [navigation, route, dialogSettingHandler]);
 
   return (
     <ThucDonStack.Navigator>
-      <ThucDonStack.Screen
-        name="TabsThucDon"
-        options={{
-          headerShown: false,
-        }}>
+      <ThucDonStack.Screen name="TabsThucDon" options={{headerShown: false}}>
         {props => (
           <MyTabs
             {...props}
@@ -62,15 +63,12 @@ function ThucDonStackScreen({
         )}
       </ThucDonStack.Screen>
       <ThucDonStack.Screen
-        name="ProductDetailScreen"
-        component={ProductDetailScreen}
-        options={{headerShown: true}}
+        name="ChiTietMonAn"
+        component={ManCapNhatMonAn}
+        options={{title: 'Thông tin chi tiết món ăn'}}
       />
-      <ThucDonStack.Screen
-        name="ThemMonAn"
-        component={ManThemMonAn}
-        options={{headerShown: true}}
-      />
+      <ThucDonStack.Screen name="ThemMonAn" component={ManThemMonAn} options={{title:"Thêm món ăn"}}/>
+      <ThucDonStack.Screen name="CapNhatDanhMuc" component={CapNhatDanhMuc} options={{headerShown: false}}/>
     </ThucDonStack.Navigator>
   );
 }

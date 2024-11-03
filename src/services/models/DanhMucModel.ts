@@ -1,11 +1,9 @@
 export default class DanhMuc {
-  _id: string;
   tenDanhMuc: string;
-  id_NhaHang: string;
+  id_nhaHang: string;
 
-  constructor(tenDanhMuc: string, id_NhaHang: string, _id: string) {
+  constructor(tenDanhMuc: string, id_nhaHang: string) {
     this.tenDanhMuc = tenDanhMuc;
-    this.id_NhaHang = id_NhaHang;
-    this._id = _id;
+    this.id_nhaHang = id_nhaHang;
   }
 }

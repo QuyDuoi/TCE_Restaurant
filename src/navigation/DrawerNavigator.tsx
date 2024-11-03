@@ -18,13 +18,8 @@ import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonCompo
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import {View} from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {TabView} from 'react-native-tab-view';
-import DanhMucComponent from '../screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
-import MyTabs from '../screens/QuanLyThucDon/TabView';
-import ProductDetailScreen from '../screens/QuanLyThucDon/xemCTMonAn';
 import NhanVienStackScreen from './NhanVienScreen';
-import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
+import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
 import ThucDonStackScreen from './ThucDonScreen';
 
 const Drawer = createDrawerNavigator();

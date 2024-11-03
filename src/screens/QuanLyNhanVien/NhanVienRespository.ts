@@ -12,14 +12,17 @@ export const taoFormDataNhanVien = (nhanVien : NhanVienModel) => {
 
     // Kiểm tra xem có ảnh được chọn không
     if (nhanVien.hinhAnh) {
-        const imageUri = nhanVien.hinhAnh;
+      const imageUri = nhanVien.hinhAnh;
+      // Kiểm tra nếu ảnh là từ camera hoặc thư viện (bắt đầu bằng "file://")
+      if (imageUri.startsWith('file://') || imageUri.startsWith('/')) {
         const fileName = imageUri.split('/').pop(); // Lấy tên file từ đường dẫn
         formData.append('hinhAnh', {
-        uri: imageUri,
-        type: 'image/jpeg', // Định dạng ảnh
-        name: fileName,
-      });
-    }
+          uri: imageUri,
+          type: 'image/jpeg', // Định dạng ảnh
+          name: fileName,
+        });
+      }
+    };
 
     console.log("Thông tin formData: " + formData);
 

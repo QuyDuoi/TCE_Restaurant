@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -30,6 +30,11 @@ const EmployeeDetails = () => {
       Alert.alert('Lỗi', 'Không thể thực hiện cuộc gọi: ' + err.message);
     });
   };
+
+  useEffect(() => {
+    console.log(nhanVien);
+    
+  }, [])
 
   if (!nhanVien) {
     console.log('No nhanVien found in params');

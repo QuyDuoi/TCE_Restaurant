@@ -1,20 +1,17 @@
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
 import {
   getListDanhMuc,
-  addDanhMuc,
-  updateDanhMuc,
-  deleteDanhMuc,
+  themDanhMuc,
+  capNhatDanhMuc,
+  xoaDanhMuc,
 } from '../services/api'; // Đường dẫn tới API tương ứng
 import MonAn from '../services/models/MonAnModel';
 
 // Định nghĩa interface cho DanhMuc
 export interface DanhMuc {
-  _id: string;
+  _id?: string;
   tenDanhMuc: string;
-  id_NhaHang: string;
-  quantityCurrent: number;
-  totalFood: number;
-  monAn: MonAn[];
+  id_nhaHang: string;
 }
 
 // Định nghĩa state cho DanhMuc
@@ -40,30 +37,27 @@ export const fetchDanhMucs = createAsyncThunk(
   },
 );
 
-export const addNewDanhMuc = createAsyncThunk(
-  'danhMucs/addDanhMuc',
-  async (formData: DanhMuc, thunkAPI) => {
+export const themDanhMucThunk = createAsyncThunk(
+  'danhMucs/themDanhMuc',
+  async (danhMuc: DanhMuc, thunkAPI) => {
     try {
-      const data = await addDanhMuc(formData);
+      const data = await themDanhMuc(danhMuc);
       return data;
     } catch (error: any) {
-      console.log('Lỗi thêm mới:', error);
-      return thunkAPI.rejectWithValue(error.message || 'Error adding DanhMuc');
+      return thunkAPI.rejectWithValue({ msg: error.msg || 'Lỗi thêm danh mục mới'});
     }
   },
 );
 
-export const updateDanhMucThunk = createAsyncThunk(
-  'danhMucs/updateDanhMuc',
-  async ({id, formData}: {id: string; formData: DanhMuc}, thunkAPI) => {
+export const capNhatDanhMucThunk = createAsyncThunk(
+  'danhMucs/capNhatDanhMuc',
+  async ({id, danhMuc}: {id: string; danhMuc: DanhMuc}, thunkAPI) => {
     try {
-      const data = await updateDanhMuc(id, formData);
+      const data = await capNhatDanhMuc(id, danhMuc);
       return data;
     } catch (error: any) {
       console.log('Lỗi cập nhật:', error);
-      return thunkAPI.rejectWithValue(
-        error.message || 'Error updating DanhMuc',
-      );
+      return thunkAPI.rejectWithValue({ msg: error.msg || 'Lỗi cập nhật danh mục'});
     }
   },
 );
@@ -71,13 +65,11 @@ export const deleteDanhMucThunk = createAsyncThunk(
   'danhMucs/deleteDanhMuc',
   async (id: string, thunkAPI) => {
     try {
-      await deleteDanhMuc(id);
+      await xoaDanhMuc(id);
       return id;
     } catch (error: any) {
       console.log('Lỗi xóa:', error);
-      return thunkAPI.rejectWithValue(
-        error.message || 'Error deleting DanhMuc',
-      );
+      return thunkAPI.rejectWithValue({ msg: error.msg || 'Lỗi xóa danh'});
     }
   },
 );
@@ -103,18 +95,18 @@ const danhMucSlice = createSlice({
       )
       .addCase(fetchDanhMucs.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Could not fetch danh mục'; // Lỗi khi fetch thất bại
+        state.error = action.error.message || 'Không thể lấy danh sách danh mục'; // Lỗi khi fetch thất bại
       })
-      .addCase(addNewDanhMuc.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(themDanhMucThunk.fulfilled, (state, action: PayloadAction<any>) => {
         state.danhMucs.unshift(action.payload);
         state.status = 'succeeded';
       })
-      .addCase(addNewDanhMuc.rejected, (state, action) => {
+      .addCase(themDanhMucThunk.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = (action.payload as string) || 'Error adding DanhMuc';
+        state.error = action.payload.msg || 'Lỗi thêm danh mục';
       })
       .addCase(
-        updateDanhMucThunk.fulfilled,
+        capNhatDanhMucThunk.fulfilled,
         (state, action: PayloadAction<any>) => {
           const index = state.danhMucs.findIndex(
             cthd => cthd._id === action.payload._id,
@@ -125,7 +117,7 @@ const danhMucSlice = createSlice({
           state.status = 'succeeded';
         },
       )
-      .addCase(updateDanhMucThunk.rejected, (state, action) => {
+      .addCase(capNhatDanhMucThunk.rejected, (state, action) => {
         state.status = 'failed';
         state.error = (action.payload as string) || 'Error updating DanhMuc';
       })

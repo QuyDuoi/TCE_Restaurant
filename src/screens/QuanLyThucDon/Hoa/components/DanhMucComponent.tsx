@@ -137,7 +137,7 @@ const DanhMucComponent = (props: Props) => {
                   status={monAn.trangThai}
                   image={monAn.anhMonAn}
                   onPress={() => {
-                    navigation.navigate('ProductDetailScreen', {
+                    navigation.navigate('ChiTietMonAn', {
                       monAn: monAn,
                     });
                   }}

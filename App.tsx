@@ -16,7 +16,9 @@ import EmployeeDetails from './src/screens/QuanLyNhanVien/EmployeeDetails';
 import KhuVucTabView from './src/screens/QuanLyKhuVuc/Component/KhuVucTabView';
 import QuanLyCaLam from './src/screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ProductDetailScreen from './src/screens/QuanLyThucDon/xemCTMonAn';
-import ManThemMonAn from './src/screens/QuanLyThucDon/themMonAn';
+import ManThemMonAn from './src/screens/QuanLyThucDon/ThemMonAn';
+import ModalThemSuaDanhMuc from './src/screens/QuanLyThucDon/ModalThemSuaDanhMuc';
+import CapNhatDanhMuc from './src/screens/QuanLyThucDon/CapNhatDanhMuc';
 
 const Stack = createStackNavigator();
 

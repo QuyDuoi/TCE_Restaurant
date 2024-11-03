@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   Image,
   Alert,
@@ -19,22 +18,28 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {fetchDanhMucs} from '../../store/DanhMucSlice';
 import {Dropdown} from 'react-native-element-dropdown';
-import { taoFormDataMonAn } from './ThucDonRespository';
-import { themMonAnMoi } from '../../store/MonAnSlice';
-import { styles } from './ThemSuaStyle';
-// import { useNavigation } from '@react-navigation/native';
+import {taoFormDataMonAn} from './ThucDonRespository';
+import {updateMonAnThunk} from '../../store/MonAnSlice';
+import {styles} from './ThemSuaStyle';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import { IPV4 } from '../../services/api';
 
-function ManThemMonAn(): React.JSX.Element {
-  // const navigation = useNavigation();
-  const [monAnMoi, setMonAnMoi] = useState<MonAn>(
-    new MonAn('', '', '', 0, true, ''),
-  );
+interface Props {
+  route: RouteProp<{params: {monAn: MonAn}}, 'params'>;
+}
+
+function ManCapNhatMonAn(): React.JSX.Element {
+    const navigation = useNavigation();
+  const route = useRoute<Props['route']>(); // Lấy route từ useRoute
+  const {monAn} = route.params; // Lấy monAn từ route.params
+  const [monAnCapNhat, setMonAnCapNhat] = useState<MonAn>(monAn);
   const [errors, setErrors] = useState<Partial<Record<keyof MonAn, string>>>(
     {},
-  ); // State quản lý lỗi
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const dispatch = useDispatch<AppDispatch>();
+
   const danhMucOptions = dsDanhMuc.map(
     (danhMuc: {_id: string; tenDanhMuc: string}) => ({
       label: danhMuc.tenDanhMuc,
@@ -42,51 +47,70 @@ function ManThemMonAn(): React.JSX.Element {
     }),
   );
 
+  const kiemTraThayDoi = () => {
+    return (
+      monAnCapNhat.tenMon !== monAn.tenMon ||
+      monAnCapNhat.anhMonAn !== monAn.anhMonAn ||
+      monAnCapNhat.moTa !== monAn.moTa ||
+      monAnCapNhat.giaMonAn !== monAn.giaMonAn ||
+      (typeof monAnCapNhat.id_danhMuc === 'object'
+        ? monAnCapNhat.id_danhMuc._id
+        : monAnCapNhat.id_danhMuc) !==
+        (typeof monAn.id_danhMuc === 'object'
+          ? monAn.id_danhMuc._id
+          : monAn.id_danhMuc) ||
+      monAnCapNhat.id_nhomTopping !== monAn.id_nhomTopping
+    );
+  };
+
   useEffect(() => {
     const id_NhaHang = '66fab50fa28ec489c7137537';
     dispatch(fetchDanhMucs(id_NhaHang));
-  }, []);
+    console.log(monAnCapNhat);
+  }, [dispatch]);
 
   // Cập nhật giá trị cho từng trường của món ăn
   const capNhatDuLieu = (field: keyof MonAn, value: string | number) => {
-    setMonAnMoi(prevState => ({
+    setMonAnCapNhat(prevState => ({
       ...prevState,
       [field]: value,
     }));
   };
 
+  const hinhAnhMon = monAnCapNhat.anhMonAn
+    ? monAnCapNhat.anhMonAn.replace('localhost', IPV4) // Thay đổi IP theo cấu hình server
+    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+
   // Hàm xác thực thông tin các trường bắt buộc
   const handleValidation = () => {
     const newErrors: Partial<Record<keyof MonAn, string>> = {};
 
-    if (!monAnMoi.anhMonAn) newErrors.anhMonAn = 'Vui lòng tải ảnh món ăn';
-    if (!monAnMoi.tenMon) newErrors.tenMon = 'Tên món không được bỏ trống';
-    if (!monAnMoi.giaMonAn || monAnMoi.giaMonAn <= 0)
+    if (!monAnCapNhat.anhMonAn) newErrors.anhMonAn = 'Vui lòng tải ảnh món ăn';
+    if (!monAnCapNhat.tenMon) newErrors.tenMon = 'Tên món không được bỏ trống';
+    if (!monAnCapNhat.giaMonAn || monAnCapNhat.giaMonAn <= 0)
       newErrors.giaMonAn = 'Giá món ăn không hợp lệ';
-    if (!monAnMoi.id_danhMuc)
+    if (!monAnCapNhat.id_danhMuc)
       newErrors.id_danhMuc = 'Danh mục không được bỏ trống';
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Trả về true nếu không có lỗi
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Hàm xử lý khi nhấn "Lưu"
-  const handleSave = () => {
+  // Hàm xử lý khi nhấn "Cập nhật"
+  const handleUpdate = () => {
     if (handleValidation()) {
-      const formData = taoFormDataMonAn(monAnMoi);
-      dispatch(themMonAnMoi(formData))
+        console.log(JSON.stringify(monAnCapNhat, null, 2));
+      const formData = taoFormDataMonAn(monAnCapNhat);
+      dispatch(updateMonAnThunk({id: monAnCapNhat._id!, formData}))
         .unwrap()
         .then(() => {
-          Alert.alert('Thành công', 'Món ăn mới đã được thêm');
-          // navigation.goBack();
+          Alert.alert('Thành công', 'Món ăn đã được cập nhật');
+          navigation.goBack();
         })
         .catch(error => {
-          console.error('Lỗi thêm mới món ăn: ', error);
+          console.error('Lỗi cập nhật món ăn: ', error);
           Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
         });
-      console.log('Lưu món ăn mới:', monAnMoi);
-      Alert.alert('Thành công', 'Món ăn đã được thêm');
-      // Logic thêm món ăn vào database hoặc xử lý thêm món ăn
     } else {
       Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
     }
@@ -95,10 +119,9 @@ function ManThemMonAn(): React.JSX.Element {
   const handleOpenCamera = async () => {
     const uri = await openCamera();
     if (uri) {
-      console.log('Ảnh được chụp: ', uri);
-      setMonAnMoi(prevState => ({
+      setMonAnCapNhat(prevState => ({
         ...prevState,
-        anhMonAn: uri, // Lưu đường dẫn ảnh vào state
+        anhMonAn: uri,
       }));
     }
     setModalVisible(false);
@@ -107,17 +130,16 @@ function ManThemMonAn(): React.JSX.Element {
   const handleOpenImageLibrary = async () => {
     const uri = await openImageLibrary();
     if (uri) {
-      console.log('Ảnh được chọn: ', uri);
-      setMonAnMoi(prevState => ({
+      setMonAnCapNhat(prevState => ({
         ...prevState,
-        anhMonAn: uri, // Lưu đường dẫn ảnh vào state
+        anhMonAn: uri,
       }));
     }
     setModalVisible(false);
   };
 
   const handleEditImage = () => {
-    setModalVisible(true); // Mở modal cho việc sửa ảnh
+    setModalVisible(true);
   };
 
   return (
@@ -136,10 +158,10 @@ function ManThemMonAn(): React.JSX.Element {
           <TouchableOpacity
             style={styles.uploadButton}
             onPress={handleEditImage}>
-            {monAnMoi.anhMonAn ? (
+            {monAnCapNhat.anhMonAn ? (
               <View>
                 <Image
-                  source={{uri: monAnMoi.anhMonAn}}
+                  source={{uri: hinhAnhMon}}
                   style={styles.uploadedImage}
                 />
                 <View style={styles.overlay}>
@@ -166,7 +188,11 @@ function ManThemMonAn(): React.JSX.Element {
             labelField="label"
             valueField="value"
             placeholder="Chọn danh mục"
-            value={monAnMoi.id_danhMuc}
+            value={
+              typeof monAnCapNhat.id_danhMuc === 'object'
+                ? monAnCapNhat.id_danhMuc._id
+                : monAnCapNhat.id_danhMuc
+            }
             onChange={item => capNhatDuLieu('id_danhMuc', item.value)}
           />
         </View>
@@ -182,6 +208,7 @@ function ManThemMonAn(): React.JSX.Element {
           <TextInput
             style={[styles.input, errors.tenMon && styles.errorBorder]}
             placeholder="VD: Khoai tây chiên"
+            value={monAnCapNhat.tenMon}
             onChangeText={text => capNhatDuLieu('tenMon', text)}
           />
         </View>
@@ -200,6 +227,7 @@ function ManThemMonAn(): React.JSX.Element {
             ]}
             placeholder="đ"
             keyboardType="numeric"
+            value={monAnCapNhat.giaMonAn.toString()}
             onChangeText={text => capNhatDuLieu('giaMonAn', Number(text))}
           />
         </View>
@@ -213,24 +241,23 @@ function ManThemMonAn(): React.JSX.Element {
           <TextInput
             style={styles.inputMoTa}
             placeholder="VD: Cà chua + Khoai tây chiên + Tương ớt"
+            value={monAnCapNhat.moTa}
             onChangeText={text => capNhatDuLieu('moTa', text)}
             multiline={true}
             numberOfLines={4}
             textAlignVertical="top"
           />
         </View>
-
-        {/* Nhóm Topping */}
-        <View style={styles.row}>
-          <Text style={styles.label}>Nhóm Topping</Text>
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryButtonText}>Chọn nhóm Topping</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Lưu</Text>
+      <TouchableOpacity
+        style={[
+          styles.saveButton,
+          {backgroundColor: kiemTraThayDoi() ? '#ff4500' : '#ccc'},
+        ]}
+        onPress={handleUpdate}
+        disabled={!kiemTraThayDoi()}>
+        <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
       </TouchableOpacity>
 
       <CustomModalChoiseCamera
@@ -243,4 +270,4 @@ function ManThemMonAn(): React.JSX.Element {
   );
 }
 
-export default ManThemMonAn;
+export default ManCapNhatMonAn;

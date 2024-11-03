@@ -1,6 +1,7 @@
 import { MonAn } from "../../store/MonAnSlice";
 
 export const taoFormDataMonAn = (monAn : MonAn) => {
+  
     const formData = new FormData();
     // Thêm các trường thông tin của nhân viên
     formData.append('tenMon', monAn.tenMon);
@@ -14,16 +15,20 @@ export const taoFormDataMonAn = (monAn : MonAn) => {
 
     // Kiểm tra xem có ảnh được chọn không
     if (monAn.anhMonAn) {
-        const imageUri = monAn.anhMonAn;
+      const imageUri = monAn.anhMonAn;
+      
+      // Kiểm tra nếu ảnh là từ camera hoặc thư viện (bắt đầu bằng "file://")
+      if (imageUri.startsWith('file://') || imageUri.startsWith('/')) {
         const fileName = imageUri.split('/').pop(); // Lấy tên file từ đường dẫn
         formData.append('anhMonAn', {
-        uri: imageUri,
-        type: 'image/jpeg', // Định dạng ảnh
-        name: fileName,
-      });
+          uri: imageUri,
+          type: 'image/jpeg', // Định dạng ảnh
+          name: fileName,
+        });
+      } 
     }
 
-    console.log("Thông tin formData: " + formData);
+    console.log("Thông tin formData: " + JSON.stringify(formData));
 
     return formData;
 }

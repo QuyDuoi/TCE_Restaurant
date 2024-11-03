@@ -152,7 +152,7 @@ export default function MyTabs(props: Props) {
           initialLayout={{width: layout.width}}
         />
       </View>
-      <SettingModaDanhMuc visible={visible} onClose={handleCloseModal} />
+      <SettingModaDanhMuc visible={visible} onClose={handleCloseModal} navigation={props.navigation}/>
     </>
   );
 }

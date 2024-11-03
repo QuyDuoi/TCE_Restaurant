@@ -1,33 +1,35 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
 import ModalComponent from '../components/ModalComponent';
-import SectionComponent from '../components/SectionComponent';
-import TitleComponent from '../components/TitleComponent';
-import {colors} from '../contants/hoaColors';
+import { colors } from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import ButtonComponent from '../components/ButtonComponent';
+import ModalThemSuaDanhMuc from '../../ModalThemSuaDanhMuc';
 
 interface Props {
   visible: boolean;
   onClose?: () => void;
+  navigation: any;
 }
 
-const SettingModaDanhMuc = (props: Props) => {
-  const {visible, onClose} = props;
+const SettingModaDanhMuc = ({ visible, onClose, navigation }: Props) => {
+  const [isModalThemDanhMuc, setModalThemDanhMuc] = useState(false);
   return (
     <ModalComponent
       visible={visible}
       onClose={onClose}
-      stylesTitle={{fontSize: 15}}>
+    >
       <View
         style={{
           alignItems: 'center',
           paddingVertical: 10,
-        }}>
+        }}
+      >
         <ButtonComponent
-          title="Them mon an"
+          title="Thêm món ăn"
           onPress={() => {
-            console.log('them mon an');
+            navigation.navigate('ThemMonAn'); // Điều hướng đến màn hình ThemMonAn
+            onClose && onClose(); // Đóng modal sau khi điều hướng
           }}
           activeOpacity={0.2}
         />
@@ -35,9 +37,9 @@ const SettingModaDanhMuc = (props: Props) => {
         <View style={styles.indicator} />
         <SpaceComponent height={15} />
         <ButtonComponent
-          title="Them danh muc"
+          title="Thêm danh mục"
           onPress={() => {
-            console.log('them danh muc');
+            setModalThemDanhMuc(true);
           }}
           activeOpacity={0.2}
         />
@@ -45,15 +47,21 @@ const SettingModaDanhMuc = (props: Props) => {
         <View style={styles.indicator} />
         <SpaceComponent height={15} />
         <ButtonComponent
-          title="Sap xep danh muc"
+          title="Cập nhật danh mục"
           onPress={() => {
-            console.log('sap xep danh muc');
+            navigation.navigate('CapNhatDanhMuc'); // Điều hướng đến màn hình ThemMonAn
+            onClose && onClose(); // Đóng modal sau khi điều hướng
           }}
           activeOpacity={0.2}
         />
         <SpaceComponent height={10} />
         <View style={styles.indicator} />
       </View>
+
+      <ModalThemSuaDanhMuc
+        visible={isModalThemDanhMuc}
+        onClose={() => setModalThemDanhMuc(false)} // Đóng ModalThemSuaDanhMuc khi nhấn "Huỷ" hoặc "Xác nhận"
+      />
     </ModalComponent>
   );
 };
@@ -61,7 +69,7 @@ const SettingModaDanhMuc = (props: Props) => {
 const styles = StyleSheet.create({
   indicator: {
     borderWidth: 1,
-    color: colors.desc,
+    borderColor: colors.desc, // Sửa 'color' thành 'borderColor'
     width: '50%',
   },
 });

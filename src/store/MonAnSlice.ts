@@ -52,7 +52,7 @@ export const themMonAnMoi = createAsyncThunk(
 
 export const updateMonAnThunk = createAsyncThunk(
   'monAns/updateMonAn',
-  async ({id, formData}: {id: string; formData: MonAn}, thunkAPI) => {
+  async ({id, formData}: {id: string; formData: FormData}, thunkAPI) => {
     try {
       const data = await updateMonAn(id, formData);
       return data;
