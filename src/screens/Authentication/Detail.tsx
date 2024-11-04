@@ -27,7 +27,7 @@ const getIdToken = async (user: any) => {
 
 
 
-const Detail = ({ user }) => {
+const Detail = ({ user } : any) => {
 
 
     getIdToken(user)

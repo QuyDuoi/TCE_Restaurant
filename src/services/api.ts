@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.10'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.7'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 
@@ -461,8 +461,7 @@ export const themMonAn = async (formData: FormData): Promise<MonAn> => {
   try {
     const response = await fetch(`${ipAddress}themMonAn`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
+      body: formData,
     });
     if (!response.ok) {
       const errorData = await response.json();

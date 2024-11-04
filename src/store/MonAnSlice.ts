@@ -45,7 +45,7 @@ export const themMonAnMoi = createAsyncThunk(
       return data;
     } catch (error: any) {
       console.log('Lỗi thêm mới:', error);
-      return thunkAPI.rejectWithValue(error.message || 'Error adding MonAn');
+      return thunkAPI.rejectWithValue(error.message || 'Lỗi khi thêm món ăn');
     }
   },
 );
@@ -58,7 +58,7 @@ export const updateMonAnThunk = createAsyncThunk(
       return data;
     } catch (error: any) {
       console.log('Lỗi cập nhật:', error);
-      return thunkAPI.rejectWithValue(error.message || 'Error updating MonAn');
+      return thunkAPI.rejectWithValue(error.message || 'Lỗi khi cập nhật món ăn');
     }
   },
 );
