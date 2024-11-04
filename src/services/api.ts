@@ -13,7 +13,6 @@ import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
 import NhanVien from './models/NhanVienModel';
 import CaLam from './models/CaLamModel';
-import {NhanVienSlice} from '../store/NhanVienSlice';
 import {DanhMuc} from '../store/DanhMucSlice';
 import {NhanVienSlice} from '../store/NhanVienSlice';
 
