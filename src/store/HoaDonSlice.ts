@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
 import {getListHoaDon, addHoaDon, updateHoaDon} from '../services/api';
+import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
 // Interface định nghĩa cho HoaDon
 export interface HoaDon {
@@ -8,7 +9,7 @@ export interface HoaDon {
   trangThai: string;
   hinhThucThanhToan: boolean;
   id_caLamViec: string;
-  id_chiTietHoaDon: string;
+  id_chiTietHoaDon: string[];
   id_nhanVien: string;
   tienGiamGia?: number;
   ghiChu?: string;

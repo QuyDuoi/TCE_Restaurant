@@ -26,7 +26,7 @@ const CardComponent = (props: Props) => {
   } = props;
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={onPress ? () => onPress() : undefined}
       onLongPress={onLongPress ? () => onLongPress() : undefined}
       style={{flex: flex ? flex : undefined}}
       activeOpacity={1}>

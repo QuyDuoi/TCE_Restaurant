@@ -8,16 +8,21 @@ import {hoaStyles} from '../styles/hoaStyles';
 import {HoaDonModel} from '../modelTests/modelTest';
 import {formatTime} from '../utils/formatUtils';
 import {HoaDon} from '../../../../store/HoaDonSlice';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../store/store';
 
 interface Props {
   hoaDon: HoaDon;
   tenKhuVuc?: string;
   tenBan?: string;
   onPress?: () => void;
+  tongGiaTri?: number;
 }
 
 const ItemHoaDon = (props: Props) => {
-  const {hoaDon, tenKhuVuc, tenBan, onPress} = props;
+  const {hoaDon, tenKhuVuc, tenBan, onPress, tongGiaTri} = props;
+
+  //console.log('chiTietHoaDon', chiTietHoaDon);
 
   return !hoaDon.id_ban ? (
     <View
@@ -61,7 +66,7 @@ const ItemHoaDon = (props: Props) => {
       <TextComponent
         text={`Khu vực: ${tenKhuVuc} - ${
           tenBan?.length == 1 ? 'Bàn: ' + tenBan : tenBan
-        } (${hoaDon.hinhThucThanhToan})`}
+        } (${hoaDon.hinhThucThanhToan ? 'Chuyển khoản' : 'Tiền mặt'})`}
         size={15}
         color={colors.black}
       />
@@ -78,7 +83,7 @@ const ItemHoaDon = (props: Props) => {
         color={colors.desc}
       />
       <TextComponent
-        text={`Tổng tiền hóa đơn: ${hoaDon.tongGiaTri.toLocaleString()} VND`}
+        text={`Tổng tiền hóa đơn: ${hoaDon.tongGiaTri?.toLocaleString()} VND`}
         size={15}
         color={colors.black}
       />

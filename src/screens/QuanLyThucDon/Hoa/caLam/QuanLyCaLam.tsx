@@ -68,42 +68,6 @@ const QuanLyCaLam = (props: Props) => {
     dispatch(fetchCaLam() as any);
   }, []);
 
-  // useEffect(() => {
-  //   const fetchAllCaLams = async () => {
-  //     const allCaLamsPromise = nhanViens.map(nv =>
-  //       dispatch(fetchCaLam(nv._id) as any),
-  //     );
-  //     const allCaLamsResponse = await Promise.all(allCaLamsPromise);
-  //     const allCaLams = allCaLamsResponse.flatMap((response, index) =>
-  //       response.payload.map((caLam: CaLam) => {
-  //         return {
-  //           ...caLam,
-  //           nv: nhanViens[index],
-  //         };
-  //       }),
-  //     );
-  //     const sortedCaLams = [...allCaLams].sort((a, b) => {
-  //       return new Date(b.batDau).getTime() - new Date(a.batDau).getTime();
-  //     });
-  //     setCaLam(sortedCaLams);
-  //     setCaLamFilter(sortedCaLams);
-  //   };
-  //   if (nhanViens.length > 0) {
-  //     fetchAllCaLams();
-  //   }
-  //   //console.log('render');
-  // }, [nhanViens, dispatch]);
-
-  // useEffect(() => {
-  //   const sortedCaLams = [...caLams].sort((a, b) => {
-  //     return new Date(b.batDau).getTime() - new Date(a.batDau).getTime();
-  //   });
-
-  //   //console.log(sortedCaLams);
-  //   setCaLam(sortedCaLams as any);
-  //   setCaLamFilter(sortedCaLams as any);
-  // }, [caLams]);
-
   const sortedCaLam = (caLams: CaLam[]) => {
     return [...caLams].sort((a, b) => {
       return new Date(b.batDau).getTime() - new Date(a.batDau).getTime();
@@ -136,7 +100,7 @@ const QuanLyCaLam = (props: Props) => {
       <ItemCaLam
         batDau={item.batDau.toLocaleString('vi-VN')}
         ketThuc={item.ketThuc?.toLocaleString('vi-VN')}
-        nhanVienMoCa={item.nv.hoTen}
+        nhanVienMoCa={item.id_nhanVien.hoTen}
         onPress={() => {
           // console.log(item.nv._id);
 
@@ -150,6 +114,7 @@ const QuanLyCaLam = (props: Props) => {
     setRefreshing(true);
     setTimeout(() => {
       setDate(null);
+      dispatch(fetchCaLam() as any);
       setRefreshing(false);
     }, 2000);
   };

@@ -8,8 +8,16 @@ import {
   LayoutAnimation,
   useWindowDimensions,
   TextInput,
+  ActivityIndicator,
+  Keyboard,
 } from 'react-native';
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import ItemDanhMuc from '../lists/ItemDanhMuc';
 import ItemMonAn from '../lists/ItemMonAn';
@@ -22,6 +30,8 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import {useNavigation} from '@react-navigation/native';
 import {DanhMuc, fetchDanhMucs} from '../../../../store/DanhMucSlice';
 import unorm from 'unorm';
+import {searchMonAn} from '../../../../services/api';
+import debounce from 'lodash';
 
 if (
   Platform.OS === 'android' &&
@@ -37,12 +47,13 @@ interface Props {
 const DanhMucComponent = (props: Props) => {
   const {searchQueryMonAn} = props;
   console.log('render danh muc component');
+  const id_NhaHang = '66fab50fa28ec489c7137537';
 
   const [isLoading, setIsLoading] = useState(true);
-  const [filterDanhMucList, setFilterDanhMucList] = useState<DanhMuc[]>([]);
   const [expandedDanhMuc, setExpandedDanhMuc] = useState<string[]>([]);
   const [monAnList, setMonAnList] = useState<{[key: string]: MonAn[]}>({});
   const [monAnCounts, setMonAnCounts] = useState<{[key: string]: number}>({});
+  const [filteredMonAn, setFilteredMonAn] = useState<MonAn[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
@@ -53,8 +64,9 @@ const DanhMucComponent = (props: Props) => {
     if (statusDanhMuc === 'idle') {
       setIsLoading(true);
     } else if (statusDanhMuc === 'succeeded') {
-      setFilterDanhMucList(dsDanhMuc || []);
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
 
       // Mở rộng tất cả danh mục
       const expandedIds = dsDanhMuc.map(item => item._id);
@@ -68,8 +80,12 @@ const DanhMucComponent = (props: Props) => {
               ...prev,
               [item._id]: action.payload.length,
             }));
+
             // Cập nhật danh sách món ăn
-            setMonAnList(prev => ({...prev, [item._id]: action.payload}));
+            setMonAnList(prev => ({
+              ...prev,
+              [item._id]: mergeMonAnLists(prev[item._id] || [], action.payload),
+            }));
           }
         });
       });
@@ -91,30 +107,61 @@ const DanhMucComponent = (props: Props) => {
     }
   };
 
-  const filterMonAnByName = (monAnList: MonAn[]) => {
-    return monAnList.filter(monAn =>
-      unorm
-        .nfkd(monAn.tenMon)
-        .toLowerCase()
-        .includes(unorm.nfkd(searchQueryMonAn).toLowerCase()),
+  //xu ly tim kiem
+  const debounceSearch = useRef(
+    debounce.debounce(async (text: string) => {
+      if (text.trim().length > 0) {
+        setIsLoading(true);
+
+        try {
+          const data = await searchMonAn(text);
+          setFilteredMonAn(data);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setFilteredMonAn([]);
+      }
+    }, 1500),
+  );
+
+  useEffect(() => {
+    if (searchQueryMonAn.trim().length > 0) {
+      setIsLoading(true);
+    }
+    debounceSearch.current(searchQueryMonAn);
+    if (searchQueryMonAn.trim().length === 0) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+    }
+    return () => debounceSearch.current.cancel();
+  }, [searchQueryMonAn]);
+  //console.log(filteredMonAn);
+
+  const renderSearchItem = ({item}: {item: MonAn}) => {
+    return (
+      <ItemMonAn
+        id={item._id}
+        nameFood={item.tenMon}
+        price={item.giaMonAn}
+        status={item.trangThai}
+        image={item.anhMonAn}
+        onPress={() => {
+          navigation.navigate('ProductDetailScreen', {
+            monAn: item,
+          });
+        }}
+      />
     );
   };
 
-  // const filterDanhMucByName = (danhMucList: DanhMuc[]) => {
-  //   return danhMucList.filter(danhMuc =>
-  //     unorm
-  //       .nfkd(danhMuc.tenDanhMuc)
-  //       .toLowerCase()
-  //       .includes(unorm.nfkd(searchQueryMonAn).toLowerCase()),
-  //   );
-  // };
-
-  //console.log(monAnList['66fac699ec29d76397011e6d'][0].anhMonAn);
-
   const renderItem = ({item}: {item: DanhMuc}) => {
     const isExpanded = expandedDanhMuc.includes(item._id);
-    const filteredMonAn = filterMonAnByName(monAnList[item._id] || []);
-    //console.log(filteredMonAn);
+    const monAns = monAnList[item._id] || [];
 
     return (
       <View>
@@ -127,8 +174,8 @@ const DanhMucComponent = (props: Props) => {
         />
         {isExpanded && (
           <View>
-            {filteredMonAn.length > 0 ? (
-              filteredMonAn.map(monAn => (
+            {monAns.length > 0 ? (
+              monAns.map(monAn => (
                 <ItemMonAn
                   id={monAn._id}
                   key={monAn._id}
@@ -175,14 +222,42 @@ const DanhMucComponent = (props: Props) => {
         hoaStyles.container,
         {justifyContent: 'center', alignSelf: 'center'},
       ]}>
-      <FlatList
-        data={dsDanhMuc}
-        renderItem={renderItem}
-        keyExtractor={item => item._id}
-        showsVerticalScrollIndicator={false}
-      />
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : filteredMonAn.length > 0 && searchQueryMonAn.trim().length > 0 ? (
+        <FlatList
+          data={filteredMonAn as any}
+          renderItem={renderSearchItem}
+          keyExtractor={item => item._id as string}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : searchQueryMonAn.trim().length > 0 && filteredMonAn.length === 0 ? (
+        <TextComponent text="Không tìm thấy món ăn nào" />
+      ) : (
+        searchQueryMonAn.trim().length === 0 && (
+          <FlatList
+            data={dsDanhMuc}
+            renderItem={renderItem}
+            keyExtractor={item => item._id as string}
+            showsVerticalScrollIndicator={false}
+          />
+        )
+      )}
     </View>
   );
 };
 
 export default DanhMucComponent;
+
+// loai bo trung lap
+function mergeMonAnLists(existingList: MonAn[], newList: MonAn[]) {
+  const existingIds = new Set(existingList.map(monAn => monAn._id));
+  const mergedList = [...existingList];
+  newList.forEach(monAn => {
+    if (!existingIds.has(monAn._id)) {
+      mergedList.push(monAn);
+      existingIds.add(monAn._id);
+    }
+  });
+  return mergedList;
+}

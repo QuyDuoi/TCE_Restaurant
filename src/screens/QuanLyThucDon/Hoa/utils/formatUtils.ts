@@ -22,7 +22,7 @@ export const formatTime = (time: Date) => {
 
 export const formatMoney = (money: number | null) => {
   if (money === 0 || money === null || money === undefined) {
-    return '0 VNĐ';
+    return '0';
   }
-  return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' VNĐ';
+  return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };

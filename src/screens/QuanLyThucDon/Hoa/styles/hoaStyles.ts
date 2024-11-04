@@ -1,7 +1,7 @@
-import {StyleSheet, useWindowDimensions} from 'react-native';
+import {Dimensions, StyleSheet, useWindowDimensions} from 'react-native';
 import {colors} from '../contants/hoaColors';
 
-//const {height, width} = useWindowDimensions();
+const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
 
 export const hoaStyles = StyleSheet.create({
   container: {
@@ -11,7 +11,7 @@ export const hoaStyles = StyleSheet.create({
     alignSelf: 'center',
   },
   containerTopping: {
-    width: '98%',
+    width: MaxWidth * 0.98,
     height: '99%',
     margin: 5,
   },
@@ -24,9 +24,10 @@ export const hoaStyles = StyleSheet.create({
     color: colors.text,
   },
   image: {
-    width: 70,
-    height: 55,
+    width: 60,
+    height: 50,
     borderRadius: 10,
+    alignSelf: 'center',
   },
   indicator: {
     borderBottomWidth: 2,
@@ -51,9 +52,8 @@ export const hoaStyles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    width: '85%',
+    width: '89%',
     backgroundColor: colors.white,
-    borderRadius: 10,
     alignItems: 'center',
     padding: 5,
   },

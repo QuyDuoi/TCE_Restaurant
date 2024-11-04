@@ -16,6 +16,15 @@ interface Props {
   boederWidth?: number;
   disabled?: boolean;
   activeOpacity?: number;
+  titleFontWeight?:
+    | 'normal'
+    | 'bold'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900';
 }
 
 const ButtonComponent = (props: Props) => {
@@ -32,6 +41,7 @@ const ButtonComponent = (props: Props) => {
     boederWidth,
     disabled,
     activeOpacity,
+    titleFontWeight,
   } = props;
 
   return (
@@ -55,7 +65,7 @@ const ButtonComponent = (props: Props) => {
         <TextComponent
           text={title}
           color={titleColor ? titleColor : colors.black}
-          fontWeight="bold"
+          fontWeight={titleFontWeight ? titleFontWeight : 'bold'}
           size={titleSize ? titleSize : 18}
         />
       </View>

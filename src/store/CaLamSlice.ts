@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {getListCaLam, getListNhanVien} from '../services/api';
+import {NhanVienSlice} from './NhanVienSlice';
 
 export interface CaLam {
   _id?: string;
@@ -12,7 +13,7 @@ export interface CaLam {
   tongDoanhThu: number;
   tongThu: number;
   tongChi: number;
-  id_nhanVien: string;
+  id_nhanVien: NhanVienSlice;
 }
 
 export interface CaLamState {
@@ -39,7 +40,7 @@ export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
     return response.map((caLam: CaLam) => {
       return {
         ...caLam,
-        nv: nhanViens[index],
+        id_nhanVien: nhanViens[index],
       };
     });
   });

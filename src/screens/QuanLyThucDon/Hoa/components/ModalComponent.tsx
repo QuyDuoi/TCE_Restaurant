@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TextStyle,
 } from 'react-native';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useCallback} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import RowComponent from './RowComponent';
 import SpaceComponent from './SpaceComponent';
@@ -22,15 +22,34 @@ interface Props {
   title?: string;
   stylesTitle?: StyleProp<TextStyle>;
   isClose?: boolean;
+  borderRadius?: number;
 }
 const ModalComponent = (props: Props) => {
-  const {children, visible, onClose, title, isClose, stylesTitle} = props;
+  const {
+    children,
+    visible,
+    onClose,
+    title,
+    isClose,
+    stylesTitle,
+    borderRadius,
+  } = props;
+
+  const handleClose = useCallback(() => {
+    onClose && onClose();
+  }, [onClose]);
   return (
     <Modal visible={visible} transparent={true} animationType="fade">
-      <TouchableWithoutFeedback onPress={onClose}>
+      <TouchableWithoutFeedback onPress={handleClose}>
         <View style={[hoaStyles.modalContainer]}>
           <TouchableWithoutFeedback>
-            <View style={[hoaStyles.modalContent]}>
+            <View
+              style={[
+                hoaStyles.modalContent,
+                {
+                  borderRadius: borderRadius ? borderRadius : 10,
+                },
+              ]}>
               {isClose && title ? (
                 <RowComponent
                   activeOpacity={1}
@@ -47,7 +66,7 @@ const ModalComponent = (props: Props) => {
                       stylesTitle,
                     ]}
                   />
-                  <TouchableOpacity onPress={onClose}>
+                  <TouchableOpacity onPress={handleClose}>
                     <Icon name="close" size={18} />
                   </TouchableOpacity>
                 </RowComponent>
@@ -55,7 +74,8 @@ const ModalComponent = (props: Props) => {
                 <TitleComponent
                   text={title ? title : ''}
                   size={20}
-                  styles={{paddingTop: 10}}
+                  styles={[{paddingTop: 10}, stylesTitle]}
+                  fontWeight="700"
                 />
               ) : null}
 
@@ -70,4 +90,4 @@ const ModalComponent = (props: Props) => {
   );
 };
 
-export default ModalComponent;
+export default React.memo(ModalComponent);

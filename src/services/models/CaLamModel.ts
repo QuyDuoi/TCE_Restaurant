@@ -1,3 +1,5 @@
+import {NhanVienSlice} from '../../store/NhanVienSlice';
+
 export default class CaLam {
   _id?: string;
   batDau: Date;
@@ -9,7 +11,7 @@ export default class CaLam {
   tongDoanhThu: number;
   tongThu: number;
   tongChi: number;
-  id_nhanVien: string;
+  id_nhanVien: NhanVienSlice;
 
   constructor(
     batDau: Date,
@@ -21,7 +23,7 @@ export default class CaLam {
     tongDoanhThu: number,
     tongThu: number,
     tongChi: number,
-    id_nhanVien: string,
+    id_nhanVien: NhanVienSlice,
     _id?: string,
   ) {
     this.batDau = batDau;

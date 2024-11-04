@@ -21,6 +21,8 @@ import {View} from 'react-native';
 import NhanVienStackScreen from './NhanVienScreen';
 import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
 import ThucDonStackScreen from './ThucDonScreen';
+import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
+import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
 
 const Drawer = createDrawerNavigator();
 const CaLamStack = createNativeStackNavigator();
@@ -61,6 +63,10 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
           />
         ),
       });
+    } else if (routeName === 'ChiTietHoaDonScreen') {
+      navigation.setOptions({headerShown: false});
+    } else if (routeName === 'ThemMonScreen') {
+      navigation.setOptions({headerShown: false});
     }
   }, [navigation, route, filterHandler]);
 
@@ -74,6 +80,16 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
       <CaLamStack.Screen
         name="ChiTietCaLam"
         component={ChiTietCaLam}
+        options={{headerShown: false}}
+      />
+      <CaLamStack.Screen
+        name="ChiTietHoaDonScreen"
+        component={ChiTietHoaDonScreen}
+        options={{headerShown: false}}
+      />
+      <CaLamStack.Screen
+        name="ThemMonScreen"
+        component={ThemMonScreen}
         options={{headerShown: false}}
       />
     </CaLamStack.Navigator>

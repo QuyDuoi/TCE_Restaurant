@@ -22,14 +22,19 @@ const RowComponent = (props: Props) => {
   const {children, justify, onPress, styles, onLongPress, activeOpacity} =
     props;
 
-  return (
+  return onPress || onLongPress ? (
     <TouchableOpacity
-      style={[hoaStyles.row, {justifyContent: justify ?? 'center'}, styles]}
+      style={[hoaStyles.row, {justifyContent: justify ?? undefined}, styles]}
       onPress={onPress ? () => onPress() : undefined}
       onLongPress={onLongPress ? () => onLongPress() : undefined}
-      activeOpacity={activeOpacity ? activeOpacity : 0.5}>
+      activeOpacity={activeOpacity ? activeOpacity : 0.7}>
       {children}
     </TouchableOpacity>
+  ) : (
+    <View
+      style={[hoaStyles.row, {justifyContent: justify ?? undefined}, styles]}>
+      {children}
+    </View>
   );
 };
 

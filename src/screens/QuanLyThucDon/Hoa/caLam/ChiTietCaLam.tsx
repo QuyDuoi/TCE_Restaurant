@@ -35,7 +35,8 @@ import {fetchHoaDon, HoaDon} from '../../../../store/HoaDonSlice';
 import {fetchKhuVucs, KhuVuc} from '../../../../store/KhuVucSlice';
 import {Ban, fetchBans} from '../../../../store/BanSlice';
 import {useNavigation} from '@react-navigation/native';
-
+import {fetchChiTietHoaDon} from '../../../../store/ChiTietHoaDonSlice';
+import {ChiTietHoaDon} from '../../../../store/ChiTietHoaDonSlice';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
 
@@ -43,8 +44,12 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [bansByKhuVuc, setBansByKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
+  // const [chiTietHoaDons, setChiTietHoaDons] = useState<ChiTietHoaDon[]>([]);
+  // const [chiTietHoaDonList, setChiTietHoaDonList] = useState<ChiTietHoaDon[]>(
+  //   [],
+  // );
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const batDau = caLam.batDau ? new Date(caLam.batDau) : new Date();
   const ketThuc = caLam.ketThuc ? new Date(caLam.ketThuc) : undefined;
@@ -63,6 +68,30 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const bans = useSelector((state: RootState) => state.ban.bans);
 
+  // useEffect(() => {
+  //   const fetchIds = new Set();
+  //   hoaDons.forEach(hd => {
+  //     if (!fetchIds.has(hd.id_chiTietHoaDon)) {
+  //       fetchIds.add(hd.id_chiTietHoaDon);
+  //       dispatch(fetchChiTietHoaDon(hd.id_chiTietHoaDon) as any).then(
+  //         (action: any) => {
+  //           if (fetchChiTietHoaDon.fulfilled.match(action)) {
+  //             setChiTietHoaDons(prev => [...prev, ...action.payload]);
+  //           }
+  //         },
+  //       );
+  //     }
+  //   });
+  // }, []);
+
+  // useEffect(() => {
+  //   const allChiTietHoaDons = Object.values(chiTietHoaDons).flat();
+  //   const uniqueChiTietHoaDons = allChiTietHoaDons.filter(
+  //     (item, index, self) => index === self.findIndex(t => t._id === item._id),
+  //   );
+  //   setChiTietHoaDonList(uniqueChiTietHoaDons);
+  // }, [chiTietHoaDons]);
+
   useEffect(() => {
     if (bans.length > 0) {
       setBansByKhuVuc(bans as any);
@@ -80,20 +109,34 @@ const ChiTietCaLam = ({route}: {route: any}) => {
     };
   };
 
+  // const getTongGiaTri = (hoaDon: HoaDon) => {
+  //   return hoaDon.id_chiTietHoaDon.reduce((sum, id) => {
+  //     const cthd = chiTietHoaDons.find(cthd => cthd._id === id);
+  //     return sum + (cthd ? cthd.giaTien * cthd.soLuongMon : 0);
+  //   }, 0);
+  // };
+
   const filterHoaDons = hoaDons.filter(hd => hd.id_caLamViec === caLam._id);
-  //console.log(hoaDons);
 
   const renderItem = ({item}: {item: HoaDon}) => {
     const {tenKhuVuc, tenBan} = getKhuVucBan(item.id_ban);
 
     return (
       <ItemHoaDon
+        key={item._id}
         hoaDon={item}
         tenKhuVuc={tenKhuVuc}
         tenBan={tenBan}
         onPress={() => {
-          console.log(item._id);
+          //console.log(item.id_nhanVien);
+
+          navigation.navigate('ChiTietHoaDonScreen', {
+            hoaDon: item,
+            tenKhuVuc: tenKhuVuc,
+            tenBan: tenBan,
+          });
         }}
+        //tongGiaTri={getTongGiaTri(item)}
       />
     );
   };
@@ -132,8 +175,9 @@ const ChiTietCaLam = ({route}: {route: any}) => {
                 </RowComponent>
                 <TextComponent
                   text={`Nhân viên mở ca: ${
-                    nhanViens.find(nhanvien => nhanvien._id === caLam.nv._id)
-                      ?.hoTen
+                    nhanViens.find(
+                      nhanvien => nhanvien._id === caLam.id_nhanVien._id,
+                    )?.hoTen
                   }`}
                   color={colors.black}
                 />

@@ -3,7 +3,7 @@ export default class HoaDon {
   tongGiaTri: number;
   trangThai: string;
   id_nhanVien: string;
-  id_chiTietHoaDon: string;
+  id_chiTietHoaDon: string[];
   hinhThucThanhToan: boolean;
   id_caLamViec: string;
   tienGiamGia?: number;
@@ -16,7 +16,7 @@ export default class HoaDon {
     tongGiaTri: number,
     trangThai: string,
     id_nhanVien: string,
-    id_chiTietHoaDon: string,
+    id_chiTietHoaDon: string[],
     hinhThucThanhToan: boolean,
     id_caLamViec: string,
     tienGiamGia?: number,

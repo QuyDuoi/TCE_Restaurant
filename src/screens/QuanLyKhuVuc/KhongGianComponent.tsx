@@ -1,5 +1,12 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {View, ScrollView, FlatList, StyleSheet, Modal} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  View,
+  ScrollView,
+  FlatList,
+  StyleSheet,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
 import ItemTrangThaiBan from './Component/ItemTrangThaiBan';
 import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
 import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
@@ -14,10 +21,12 @@ import {fetchKhuVucs, KhuVuc} from '../../store/KhuVucSlice';
 import {fetchBans, Ban} from '../../store/BanSlice';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
-import {updateBan} from '../../services/api';
+import {searchBan, updateBan} from '../../services/api';
+import debounce from 'lodash';
+import ItemBanSearch from './Component/ItemBanSearch';
 
 interface Props {
-  searchQuery: string;
+  searchQueryBan: string;
 }
 
 const KhongGianComponent = (props: Props) => {
@@ -25,14 +34,15 @@ const KhongGianComponent = (props: Props) => {
 
   console.log('render khong gian component');
 
-  const {searchQuery} = props;
+  const {searchQueryBan} = props;
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
-  const [selectedBan, setSelectedBan] = useState<(Ban & {kv: KhuVuc}) | null>(
-    null,
-  );
+  const [selectedBan, setSelectedBan] = useState<Ban | null>(null);
+  const [bansSearch, setBansSearch] = useState<Ban[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const bans = useSelector((state: RootState) => state.ban.bans);
+  const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
 
   // useEffect(() => {
   //   dispatch(fetchKhuVucs(idNhaHang) as any);
@@ -62,15 +72,46 @@ const KhongGianComponent = (props: Props) => {
   //   }
   // }, [khuvucs]);
 
-  const filteredBan = bans.filter(ban => {
-    return ban.tenBan?.toLowerCase()?.includes(searchQuery.toLowerCase());
-  });
-
-  const banTrong = filteredBan.filter(ban => ban.trangThai === 'Trống');
-  const banDaDat = filteredBan.filter(ban => ban.trangThai === 'Đã đặt');
-  const banDangSuDung = filteredBan.filter(
-    ban => ban.trangThai === 'Đang sử dụng',
+  const debouncedSearchQueryBan = useRef(
+    debounce.debounce(async (text: string) => {
+      if (text.trim().length > 0) {
+        setIsLoading(true);
+        try {
+          const data = await searchBan(text);
+          setBansSearch(data as any);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setBansSearch([]);
+      }
+    }, 1500),
   );
+
+  // const filteredBan = bans.filter(ban => {
+  //   return ban.tenBan?.toLowerCase()?.includes(searchQueryBan.toLowerCase());
+  // });
+
+  useEffect(() => {
+    if (searchQueryBan.trim().length > 0) {
+      setIsLoading(true);
+    }
+    debouncedSearchQueryBan.current(searchQueryBan);
+    if (searchQueryBan.trim().length === 0) {
+      setIsLoading(false);
+    }
+
+    return () => {
+      debouncedSearchQueryBan.current.cancel();
+    };
+  }, [searchQueryBan]);
+  //console.log(bansSearch);
+
+  const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
+  const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');
+  const banDangSuDung = bans.filter(ban => ban.trangThai === 'Đang sử dụng');
 
   const getImageBan = (status: string) => {
     switch (status) {
@@ -84,12 +125,31 @@ const KhongGianComponent = (props: Props) => {
   };
 
   const handleSelectBan = useCallback(
-    (ban: Ban & {kv: KhuVuc}) => {
+    (ban: Ban) => {
       setSelectedBan(ban);
       setIsVisibleDialog(true);
     },
     [selectedBan],
   );
+  const handleSelectBanSearch = (ban: Ban) => {
+    setSelectedBan(ban);
+    setIsVisibleDialog(true);
+  };
+  const renderItemSearch = ({item}: {item: Ban}) => {
+    const banKhuVuc = khuvucs.find(kv => kv._id === (item.id_khuVuc as any));
+
+    return (
+      <ItemBanSearch
+        tenBan={item.tenBan}
+        tenKhuVuc={banKhuVuc?.tenKhuVuc ?? ''}
+        trangThai={item.trangThai}
+        image={getImageBan(item.trangThai)}
+        onLongPress={() => {
+          console.log('jjiji');
+        }}
+      />
+    );
+  };
 
   const renderItem = ({item}: {item: Ban & {kv: KhuVuc}}) => {
     return (
@@ -110,9 +170,18 @@ const KhongGianComponent = (props: Props) => {
 
   return (
     <>
-      {banTrong.length > 0 ||
-      banDaDat.length > 0 ||
-      banDangSuDung.length > 0 ? (
+      {isLoading ? (
+        <View
+          style={[
+            hoaStyles.containerTopping,
+            {
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
+          ]}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : bans.length > 0 && searchQueryBan.trim().length === 0 ? (
         <ScrollView
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
@@ -204,21 +273,34 @@ const KhongGianComponent = (props: Props) => {
             selectedBan={selectedBan}
           />
         </ScrollView>
-      ) : (
-        <View
-          style={[
-            hoaStyles.containerTopping,
-            {
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-          ]}>
-          <TitleComponent
-            text="Chưa có bàn được tạo"
-            color={colors.desc}
-            styles={[styles.textMessage]}
+      ) : searchQueryBan.trim().length > 0 && bansSearch.length > 0 ? (
+        <View style={[hoaStyles.containerTopping]}>
+          <FlatList
+            data={bansSearch as any}
+            renderItem={renderItemSearch}
+            keyExtractor={item => item._id as any}
+            showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => <SpaceComponent height={10} />}
           />
         </View>
+      ) : (
+        bansSearch.length === 0 &&
+        searchQueryBan.trim().length > 0 && (
+          <View
+            style={[
+              hoaStyles.containerTopping,
+              {
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+            ]}>
+            <TitleComponent
+              text="Chưa có bàn được tạo"
+              color={colors.desc}
+              styles={[styles.textMessage]}
+            />
+          </View>
+        )
       )}
     </>
   );

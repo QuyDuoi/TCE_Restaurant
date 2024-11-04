@@ -11,7 +11,7 @@ export interface Ban {
   sucChua: number;
   trangThai: string;
   ghiChu: string;
-  id_KhuVuc: string;
+  id_khuVuc: string;
 }
 
 // Định nghĩa state cho Ban

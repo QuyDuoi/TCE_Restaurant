@@ -31,6 +31,11 @@ interface Props {
   readonly?: boolean;
   flex?: number;
   onPress?: () => void;
+  paddingHorizontal?: number;
+  borderRadius?: number;
+  borderWidth?: number;
+  bgrColor?: string;
+  onSubmitEditing?: () => void;
 }
 
 const InputComponent = (props: Props) => {
@@ -52,6 +57,11 @@ const InputComponent = (props: Props) => {
     readonly,
     flex,
     onPress,
+    paddingHorizontal,
+    borderRadius,
+    borderWidth,
+    bgrColor,
+    onSubmitEditing,
   } = props;
 
   return type === 'normal' ? (
@@ -61,7 +71,13 @@ const InputComponent = (props: Props) => {
           <RowComponent justify="space-between" styles={[]} onPress={onPress}>
             {leftIcon && leftIcon}
             <TextInput
-              style={[{paddingVertical: 0, color: colors.black}]}
+              style={[
+                {
+                  paddingVertical: 0,
+                  color: colors.black,
+                  borderRadius: borderRadius ? borderRadius : undefined,
+                },
+              ]}
               numberOfLines={numberOfLines ?? undefined}
               placeholder={placeholder ?? ''}
               placeholderTextColor={colors.desc}
@@ -76,7 +92,14 @@ const InputComponent = (props: Props) => {
         </View>
       ) : (
         <TextInput
-          style={[styles]}
+          style={[
+            {
+              borderRadius: borderRadius ? borderRadius : undefined,
+              fontSize: fontSize ? fontSize : undefined,
+              color: colors.black,
+            },
+            styles,
+          ]}
           numberOfLines={numberOfLines ?? undefined}
           placeholder={placeholder ?? ''}
           placeholderTextColor={colors.desc}
@@ -85,17 +108,28 @@ const InputComponent = (props: Props) => {
           keyboardType={keyboardType ?? 'default'}
           autoFocus={autoFocus ?? false}
           readOnly={readonly ?? false}
+          onSubmitEditing={onSubmitEditing ? onSubmitEditing : undefined}
         />
       )}
     </View>
   ) : (
-    <View style={[{paddingHorizontal: 15}]}>
+    <View
+      style={[
+        {
+          paddingHorizontal: paddingHorizontal ?? 15,
+        },
+      ]}>
       {/* / lay out cua input / */}
       <RowComponent
         styles={[
           hoaStyles.inputContainer,
           styles,
-          {elevation: elevation ? elevation : 0},
+          {
+            borderWidth: borderWidth ? borderWidth : undefined,
+            borderColor: colors.desc2,
+            backgroundColor: bgrColor ? bgrColor : colors.white,
+            elevation: elevation ? elevation : 0,
+          },
         ]}>
         {leftIcon ?? leftIcon}
         <View
@@ -104,12 +138,13 @@ const InputComponent = (props: Props) => {
             paddingLeft: leftIcon ? 5 : 0,
           }}>
           <TextInput
-            style={[{color: colors.black, fontSize: fontSize}]}
+            style={[{color: colors.black, fontSize: fontSize ?? undefined}]}
             placeholder={placeholder ?? ''}
             placeholderTextColor={colors.desc}
             onChangeText={val => onChangeText(val)}
             value={value}
             numberOfLines={numberOfLines}
+            onSubmitEditing={onSubmitEditing ? onSubmitEditing : undefined}
           />
         </View>
         {rightIcon ?? rightIcon}

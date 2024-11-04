@@ -26,7 +26,7 @@ import {RootState} from '../../store/store';
 import {Ban, fetchBans} from '../../store/BanSlice';
 
 interface Props {
-  searchQuery: string;
+  searchQueryKhuVuc: string;
 }
 
 if (
@@ -37,7 +37,7 @@ if (
 }
 
 const ThongTinKhuVuc = (props: Props) => {
-  const {searchQuery} = props;
+  const {searchQueryKhuVuc} = props;
 
   console.log('render thong tin khu vuc');
 
@@ -78,7 +78,9 @@ const ThongTinKhuVuc = (props: Props) => {
   };
 
   const filterData = khuVucs.filter(item => {
-    return item.tenKhuVuc.toLowerCase().includes(searchQuery.toLowerCase());
+    return item.tenKhuVuc
+      .toLowerCase()
+      .includes(searchQueryKhuVuc.toLowerCase());
   });
 
   const renderItemBan = ({item}: {item: Ban}) => {

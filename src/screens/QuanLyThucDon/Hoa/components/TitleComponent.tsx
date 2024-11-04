@@ -6,7 +6,15 @@ interface Props {
   text: string;
   size?: number;
   color?: string;
-  fontWeight?: 'normal' | 'bold';
+  fontWeight?:
+    | 'normal'
+    | 'bold'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900';
   styles?: StyleProp<TextStyle>;
   opacity?: number;
   numberOfLines?: number;
@@ -33,7 +41,7 @@ const TitleComponent = (props: Props) => {
           {
             fontSize: size ?? 16,
             color: color ?? colors.black,
-            fontWeight: fontWeight ?? 'bold',
+            fontWeight: fontWeight ? fontWeight : '700',
             minHeight: minHeight ?? 0,
             opacity: opacity ?? 1,
             flex: 0,
