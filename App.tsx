@@ -31,7 +31,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>
-        <BillScreen/>
+        <DrawerNavigator/>
       </View>
     </Provider>
   );

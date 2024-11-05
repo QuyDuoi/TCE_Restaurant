@@ -1,4 +1,4 @@
-export const IPV4 = '192.168.1.97'; // Địa chỉ IP giả định của server
+export const IPV4 = '192.168.1.7'; // Địa chỉ IP giả định của server
 
 // export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
 

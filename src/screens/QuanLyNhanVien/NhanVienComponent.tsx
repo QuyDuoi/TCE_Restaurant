@@ -1,7 +1,5 @@
 import {
   View,
-  Text,
-  Image,
   FlatList,
   Modal,
   TouchableWithoutFeedback,

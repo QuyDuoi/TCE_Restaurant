@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { PieChart } from 'react-native-chart-kit';
+import {PieChart} from 'react-native-chart-kit';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
-import {IPV4} from '../../services/api'
+import {useNavigation} from '@react-navigation/native';
+import {IPV4} from '../../services/api';
 
 const ThongKeDoanhThu = () => {
   const navigation = useNavigation();
@@ -25,8 +32,8 @@ const ThongKeDoanhThu = () => {
   const promotionPercentage = ((promotion / total) * 100).toFixed(1);
 
   const data = [
-    { name: 'Doanh Thu', population: revenue, color: '#ff6347' },
-    { name: 'Khuyến Mãi', population: promotion, color: '#90ee90' },
+    {name: 'Doanh Thu', population: revenue, color: '#ff6347'},
+    {name: 'Khuyến Mãi', population: promotion, color: '#90ee90'},
   ];
 
   const options = [
@@ -44,18 +51,18 @@ const ThongKeDoanhThu = () => {
       if (type === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-  
+
       const response = await fetch(url, {
         method: 'GET',
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       const data = await response.json();
-      console.log("API Response:", data);
-      
+      console.log('API Response:', data);
+
       // Kiểm tra dữ liệu và lấy giá trị từ phần tử đầu tiên nếu tồn tại
       if (data.length > 0) {
         setRevenue(data[0].tongDoanhThu || 0);
@@ -64,16 +71,14 @@ const ThongKeDoanhThu = () => {
         setRevenue(0);
         setPromotion(0);
       }
-      console.log("Revenue (after fetch):", data[0]?.tongDoanhThu);
-      console.log("Promotion (after fetch):", data[0]?.tongKhuyenMai);
+      console.log('Revenue (after fetch):', data[0]?.tongDoanhThu);
+      console.log('Promotion (after fetch):', data[0]?.tongKhuyenMai);
     } catch (error) {
       console.error('Error fetching revenue data:', error);
     }
   };
-  
-  
 
-  const handleSelectOption = (option) => {
+  const handleSelectOption = option => {
     setSelectedTimeRange(option);
     setModalVisible(false);
     switch (option) {
@@ -110,7 +115,11 @@ const ThongKeDoanhThu = () => {
     const currentDate = selectedDate || endDate;
     setShowEndDatePicker(false);
     setEndDate(currentDate);
-    fetchRevenueData('custom', startDate.toISOString(), currentDate.toISOString());
+    fetchRevenueData(
+      'custom',
+      startDate.toISOString(),
+      currentDate.toISOString(),
+    );
   };
 
   const navigateToTopMonAn = () => {
@@ -131,18 +140,29 @@ const ThongKeDoanhThu = () => {
   return (
     <View style={styles.container}>
       <View style={styles.rectangle}>
-      
-      <View style={styles.Contenttt}>
-        <TouchableOpacity style={[styles.button, { width: 220, height: 40, justifyContent: 'center', alignItems: 'center' }]} onPress={() => setModalVisible(true)}>
-          <Text style={styles.buttonText}>{selectedTimeRange}</Text>
-        </TouchableOpacity>
-        <Text style={styles.selectedText}>{dateRange}</Text>
-      </View>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => setShowOptionsModal(true)} style={styles.optionsButton}>
-          <Icon name="menu" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.Contenttt}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              {
+                width: 220,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+            ]}
+            onPress={() => setModalVisible(true)}>
+            <Text style={styles.buttonText}>{selectedTimeRange}</Text>
+          </TouchableOpacity>
+          <Text style={styles.selectedText}>{dateRange}</Text>
+        </View>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity
+            onPress={() => setShowOptionsModal(true)}
+            style={styles.optionsButton}>
+            <Icon name="menu" size={30} color="#000" />
+          </TouchableOpacity>
+        </View>
       </View>
       {/* Modal for Time Selection */}
       <Modal
@@ -154,34 +174,52 @@ const ThongKeDoanhThu = () => {
           <View style={styles.modalContent}>
             <FlatList
               data={options}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.option} onPress={() => handleSelectOption(item)}>
+              keyExtractor={item => item}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.option}
+                  onPress={() => handleSelectOption(item)}>
                   <Text style={styles.optionText}>{item}</Text>
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}>
               <Text style={styles.closeButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-      <Modal transparent={true} animationType="slide" visible={dateRangeModalVisible} onRequestClose={() => setDateRangeModalVisible(false)}>
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={dateRangeModalVisible}
+        onRequestClose={() => setDateRangeModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Chọn Khoảng Ngày</Text>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              style={styles.dateButton}>
               <Text style={styles.dateButtonText}>
-                {`Ngày Bắt Đầu: ${startDate ? startDate.toLocaleDateString() : 'Chọn Ngày'}`}
+                {`Ngày Bắt Đầu: ${
+                  startDate ? startDate.toLocaleDateString() : 'Chọn Ngày'
+                }`}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowEndDatePicker(true)} style={styles.dateButton}>
+            <TouchableOpacity
+              onPress={() => setShowEndDatePicker(true)}
+              style={styles.dateButton}>
               <Text style={styles.dateButtonText}>
-                {`Ngày Kết Thúc: ${endDate ? endDate.toLocaleDateString() : 'Chọn Ngày'}`}
+                {`Ngày Kết Thúc: ${
+                  endDate ? endDate.toLocaleDateString() : 'Chọn Ngày'
+                }`}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setDateRangeModalVisible(false)}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setDateRangeModalVisible(false)}>
               <Text style={styles.closeButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
@@ -190,37 +228,60 @@ const ThongKeDoanhThu = () => {
 
       {/* Date Picker for Custom Date Range */}
       {showDatePicker && (
-        <DateTimePicker value={startDate} mode="date" display="default" onChange={handleStartDateChange} />
+        <DateTimePicker
+          value={startDate}
+          mode="date"
+          display="default"
+          onChange={handleStartDateChange}
+        />
       )}
       {showEndDatePicker && (
-        <DateTimePicker value={endDate} mode="date" display="default" onChange={handleEndDateChange} />
+        <DateTimePicker
+          value={endDate}
+          mode="date"
+          display="default"
+          onChange={handleEndDateChange}
+        />
       )}
-      
+
       {/* Modal for Options */}
-      <Modal transparent={true} animationType="slide" visible={showOptionsModal}>
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={showOptionsModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Tùy Chọn</Text>
-            <TouchableOpacity onPress={() => setShowOptionsModal(false)} style={styles.modalOption}>
+            <TouchableOpacity
+              onPress={() => setShowOptionsModal(false)}
+              style={styles.modalOption}>
               <Text style={styles.optionText}>Thống Kê Doanh Thu</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToTopMonAn} style={styles.modalOption}>
+            <TouchableOpacity
+              onPress={navigateToTopMonAn}
+              style={styles.modalOption}>
               <Text style={styles.optionText}>Top 5 Món Ăn</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToHinhThucThanhToan} style={styles.modalOption}>
+            <TouchableOpacity
+              onPress={navigateToHinhThucThanhToan}
+              style={styles.modalOption}>
               <Text style={styles.optionText}>Hình Thức Thanh Toán</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToNguonDoanhThu} style={styles.modalOption}>
+            <TouchableOpacity
+              onPress={navigateToNguonDoanhThu}
+              style={styles.modalOption}>
               <Text style={styles.optionText}>Nguồn Doanh Thu</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowOptionsModal(false)} style={styles.closeButton}>
+            <TouchableOpacity
+              onPress={() => setShowOptionsModal(false)}
+              style={styles.closeButton}>
               <Text style={styles.closeButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-      {console.log("Revenue (before chart render):", revenue)}
-  {console.log("Promotion (before chart render):", promotion)}
+      {console.log('Revenue (before chart render):', revenue)}
+      {console.log('Promotion (before chart render):', promotion)}
       {/* Chart */}
       <View style={styles.chartContainer}>
         <PieChart
@@ -240,15 +301,25 @@ const ThongKeDoanhThu = () => {
         />
         <View style={styles.legendContainer}>
           <View style={styles.legendItemContainer}>
-            <Text style={styles.legendLabel}>Doanh Thu({((promotion / (revenue + promotion)) * 100).toFixed(1)}%)</Text>
-            <View style={[styles.legendItem, { backgroundColor: '#ff6347' }]}>
-              <Text style={styles.legendText}>{revenue.toLocaleString()} VND</Text>
+            <Text style={styles.legendLabel}>
+              Doanh Thu({((promotion / (revenue + promotion)) * 100).toFixed(1)}
+              %)
+            </Text>
+            <View style={[styles.legendItem, {backgroundColor: '#ff6347'}]}>
+              <Text style={styles.legendText}>
+                {revenue.toLocaleString()} VND
+              </Text>
             </View>
           </View>
           <View style={styles.legendItemContainer}>
-            <Text style={styles.legendLabel}>Khuyến Mãi({((revenue / (revenue + promotion)) * 100).toFixed(1)}%)</Text>
-            <View style={[styles.legendItem, { backgroundColor: '#90ee90' }]}>
-              <Text style={styles.legendText}>{promotion.toLocaleString()} VND</Text>
+            <Text style={styles.legendLabel}>
+              Khuyến Mãi({((revenue / (revenue + promotion)) * 100).toFixed(1)}
+              %)
+            </Text>
+            <View style={[styles.legendItem, {backgroundColor: '#90ee90'}]}>
+              <Text style={styles.legendText}>
+                {promotion.toLocaleString()} VND
+              </Text>
             </View>
           </View>
         </View>
@@ -258,7 +329,7 @@ const ThongKeDoanhThu = () => {
 };
 
 const styles = StyleSheet.create({
-  rectangle:{ 
+  rectangle: {
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#000',
@@ -270,14 +341,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  
+
     padding: 16,
     backgroundColor: '#f5f5f5',
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop:19,
+    marginTop: 19,
     marginBottom: 16,
   },
   optionsButton: {
@@ -298,7 +369,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderRadius: 15,
     marginBottom: -10,
-    marginLeft:30,
+    marginLeft: 30,
   },
   buttonText: {
     color: '#fff',

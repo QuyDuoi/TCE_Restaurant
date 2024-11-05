@@ -1,29 +1,21 @@
 import {
   View,
-  Text,
   FlatList,
   Platform,
   UIManager,
   LayoutAnimation,
-  ScrollView,
-  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import ItemKhuVuc from './Component/ItemKhuVuc';
 import ItemBan from './Component/ItemBan';
-
-import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
-import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
-import {KhuVucModelTest} from '../QuanLyThucDon/Hoa/modelTests/modelTest';
-import {khuVucData} from '../QuanLyThucDon/Hoa/modelTests/sampleData';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchKhuVucs, KhuVuc} from '../../store/KhuVucSlice';
+import { useSelector} from 'react-redux';
+import { KhuVuc} from '../../store/KhuVucSlice';
 import {RootState} from '../../store/store';
-import {Ban, fetchBans} from '../../store/BanSlice';
+import {Ban} from '../../store/BanSlice';
 
 interface Props {
   searchQueryKhuVuc: string;

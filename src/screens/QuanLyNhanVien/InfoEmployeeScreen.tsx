@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Alert, Modal, Linking } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert, Linking } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteNhanVienThunk, fetchNhanViens, updateNhanVienThunk } from '../../store/NhanVienSlice';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { deleteNhanVienThunk, updateNhanVienThunk } from '../../store/NhanVienSlice';
 import styles from './Khai/Styles/EmployeeDetailStyles';
 import { IPV4 } from '../../services/api';
 import DeletePostModal from '../../customcomponent/modalDelete';

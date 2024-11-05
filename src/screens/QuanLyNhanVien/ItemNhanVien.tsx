@@ -1,11 +1,10 @@
-import { View, Text, Image } from 'react-native';
+import { View, Image } from 'react-native';
 import React from 'react';
 import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import { IPV4 } from '../../services/api';
-import NhanVienModel from '../../services/models/NhanVienModel';
 
 interface Props {
   status?: boolean;

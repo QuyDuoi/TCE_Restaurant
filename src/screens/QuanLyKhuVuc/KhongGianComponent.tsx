@@ -4,7 +4,6 @@ import {
   ScrollView,
   FlatList,
   StyleSheet,
-  Modal,
   ActivityIndicator,
 } from 'react-native';
 import ItemTrangThaiBan from './Component/ItemTrangThaiBan';
@@ -14,14 +13,12 @@ import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import ModalChucNang from './ComponentModal/ModalChucNang';
-import {testKhuVucData, KhuVucModelTest, BanModelTest} from './testData';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import {fetchKhuVucs, KhuVuc} from '../../store/KhuVucSlice';
-import {fetchBans, Ban} from '../../store/BanSlice';
+import {KhuVuc} from '../../store/KhuVucSlice';
+import {Ban} from '../../store/BanSlice';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
-import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
-import {searchBan, updateBan} from '../../services/api';
+import {searchBan} from '../../services/api';
 import debounce from 'lodash';
 import ItemBanSearch from './Component/ItemBanSearch';
 
@@ -44,34 +41,6 @@ const KhongGianComponent = (props: Props) => {
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
 
-  // useEffect(() => {
-  //   dispatch(fetchKhuVucs(idNhaHang) as any);
-  // }, [idNhaHang]);
-
-  // useEffect(() => {
-  //   if (khuvucs.length > 0) {
-  //     const fetchAllBan = async () => {
-  //       const allBans: (Ban & {tenKhuVuc: string})[] = [];
-  //       for (const kv of khuvucs) {
-  //         const response = await dispatch(fetchBans(kv._id ?? '') as any);
-  //         //console.log(response);
-
-  //         if (response.payload) {
-  //           const bansByKhuVuc = response.payload.map((ban: Ban) => {
-  //             return {
-  //               ...ban,
-  //               tenKhuVuc: kv.tenKhuVuc,
-  //             };
-  //           });
-  //           allBans.push(...bansByKhuVuc);
-  //         }
-  //       }
-  //       setBans(allBans);
-  //     };
-  //     fetchAllBan();
-  //   }
-  // }, [khuvucs]);
-
   const debouncedSearchQueryBan = useRef(
     debounce.debounce(async (text: string) => {
       if (text.trim().length > 0) {
@@ -90,10 +59,6 @@ const KhongGianComponent = (props: Props) => {
     }, 1500),
   );
 
-  // const filteredBan = bans.filter(ban => {
-  //   return ban.tenBan?.toLowerCase()?.includes(searchQueryBan.toLowerCase());
-  // });
-
   useEffect(() => {
     if (searchQueryBan.trim().length > 0) {
       setIsLoading(true);
@@ -107,7 +72,6 @@ const KhongGianComponent = (props: Props) => {
       debouncedSearchQueryBan.current.cancel();
     };
   }, [searchQueryBan]);
-  //console.log(bansSearch);
 
   const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
   const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');

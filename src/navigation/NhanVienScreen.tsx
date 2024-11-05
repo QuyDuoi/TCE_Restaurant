@@ -8,7 +8,7 @@ import EditEmployeeInfo from "../screens/QuanLyNhanVien/EditEmployeeInfo";
 
 const NhanVienStack = createStackNavigator();
 
-const NhanVienStackScreen = ({ navigation, route }) => {
+function NhanVienStackScreen({navigation, route}: {navigation: any; route: any}) {
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'NhanVienList';
 
