@@ -1,8 +1,4 @@
-export const IPV4 = '192.168.1.7'; // Địa chỉ IP giả định của server
-
-// export const IPV4 = '192.168.100.234';  // Địa chỉ IP giả định của server
-
-export const ipAddress = `http://${IPV4}:3000/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
 
 import NhomTopping from './models/NhomToppingModel';
 import Topping from './models/ToppingModel';
@@ -11,7 +7,6 @@ import ChiTietHoaDon from './models/ChiTietHoaDonModel';
 import Ban from './models/BanModel';
 import KhuVuc from './models/KhuVucModel';
 import MonAn from './models/MonAnModel';
-import NhanVien from './models/NhanVienModel';
 import CaLam from './models/CaLamModel';
 import {DanhMuc} from '../store/DanhMucSlice';
 import {NhanVienSlice} from '../store/NhanVienSlice';
