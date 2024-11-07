@@ -24,6 +24,8 @@ import Detail from './src/screens/Authentication/Detail';
 import DashBoard from './src/screens/Authentication/DashBoard';
 import FoodOrderScreen from './src/screens/QuanLyLenMon/FoodOderScreen';
 import BillScreen from './src/screens/QuyetToanHoaDon/BillScreen';
+import BookingFlow from './src/customcomponent/BookingFlow';
+import TableBookingDetail from './src/customcomponent/ItemChiTietDatBan';
 
 const Stack = createStackNavigator();
 
