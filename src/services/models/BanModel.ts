@@ -6,14 +6,14 @@ export default class Ban {
   sucChua: number;
   trangThai: string;
   ghiChu: string;
-  id_khuVuc: string;
+  id_khuVuc: KhuVuc;
 
   constructor(
     tenBan: string,
     sucChua: number,
     trangThai: string,
     ghiChu: string,
-    id_khuVuc: string,
+    id_khuVuc: KhuVuc,
     _id?: string,
   ) {
     this.tenBan = tenBan;

@@ -15,6 +15,8 @@ export interface CaLam {
   tongThu: number;
   tongChi: number;
   id_nhanVien: NhanVienSlice;
+  id_hoaDon: string[];
+  id_nhaHang: string;
 }
 
 export interface CaLamState {

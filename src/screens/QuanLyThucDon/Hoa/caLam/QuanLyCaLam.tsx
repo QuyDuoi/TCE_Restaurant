@@ -29,7 +29,9 @@ import {RootState} from '../../../../store/store';
 import {CaLam, fetchCaLam} from '../../../../store/CaLamSlice';
 import {fetchNhanViens, NhanVienSlice} from '../../../../store/NhanVienSlice';
 import {formatDate} from '../utils/formatUtils';
-import {fetchHoaDon} from '../../../../store/HoaDonSlice';
+import fetchHoaDonTheoCaLam, {
+  fetchHoaDonTheoNhaHang,
+} from '../../../../store/HoaDonSlice';
 import ModalDate from './ModalDate';
 
 interface Props {
@@ -54,19 +56,19 @@ const QuanLyCaLam = (props: Props) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [refreshing, setRefreshing] = useState(false);
 
-  //////////
-  const caLams = useSelector((state: RootState) => state.calam.caLams);
-  //console.log(caLams);
-
   //thuc thi nut loc ben drawer
   useEffect(() => {
     setFilterHandler(() => setIsVisibleDialog.bind(null, true));
   }, [setFilterHandler]);
 
   useEffect(() => {
+    dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
     dispatch(fetchNhanViens() as any);
     dispatch(fetchCaLam() as any);
-  }, []);
+  }, [dispatch]);
+  //////////
+  const caLams = useSelector((state: RootState) => state.calam.caLams);
+  //console.log(caLams[1].id_hoaDon);
 
   const sortedCaLam = (caLams: CaLam[]) => {
     return [...caLams].sort((a, b) => {

@@ -31,7 +31,7 @@ import {
 } from '../../../../../store/ChiTietHoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import ModalCart from './ModalCart';
-import {fetchHoaDon} from '../../../../../store/HoaDonSlice';
+import {fetchHoaDonTheoCaLam} from '../../../../../store/HoaDonSlice';
 import debounce from 'lodash';
 import {searchMonAn} from '../../../../../services/api';
 
@@ -77,7 +77,7 @@ const ThemMonScreen = (props: Props) => {
         .then(action => {
           if (fetchMonAns.fulfilled.match(action)) {
             setMonAns(prev => {
-              const existing = prev[item._id] || [];
+              const existing = prev[item._id as string] || [];
               const newItems = action.payload.filter(
                 monAn =>
                   !existing.some(
@@ -86,7 +86,7 @@ const ThemMonScreen = (props: Props) => {
               );
               return {
                 ...prev,
-                [item._id]: [...existing, ...newItems],
+                [item._id as string]: [...existing, ...newItems],
               };
             });
           }
@@ -263,10 +263,18 @@ const ThemMonScreen = (props: Props) => {
         monAn={item}
         soLuong={soLuong ?? 0}
         onMinus={() =>
-          onMinus(item._id, item.tenMon, item.giaMonAn as unknown as string)
+          onMinus(
+            item._id as string,
+            item.tenMon as string,
+            item.giaMonAn as unknown as string,
+          )
         }
         onPlus={() =>
-          onPlus(item._id, item.tenMon, item.giaMonAn as unknown as string)
+          onPlus(
+            item._id as string,
+            item.tenMon as string,
+            item.giaMonAn as unknown as string,
+          )
         }
       />
     );
