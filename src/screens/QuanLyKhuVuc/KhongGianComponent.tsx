@@ -34,7 +34,9 @@ const KhongGianComponent = (props: Props) => {
   const {searchQueryBan} = props;
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
-  const [selectedBan, setSelectedBan] = useState<Ban | null>(null);
+  const [selectedBan, setSelectedBan] = useState<(Ban & {kv: KhuVuc}) | null>(
+    null,
+  );
   const [bansSearch, setBansSearch] = useState<Ban[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -90,15 +92,16 @@ const KhongGianComponent = (props: Props) => {
 
   const handleSelectBan = useCallback(
     (ban: Ban) => {
-      setSelectedBan(ban);
+      const idKhuVuc =
+        typeof ban.id_khuVuc === 'string' ? ban.id_khuVuc : ban.id_khuVuc._id;
+      const kv = khuvucs.find(kv => kv._id === idKhuVuc);
+      //console.log(kv);
+      setSelectedBan({...ban, kv: kv as KhuVuc});
       setIsVisibleDialog(true);
     },
     [selectedBan],
   );
-  const handleSelectBanSearch = (ban: Ban) => {
-    setSelectedBan(ban);
-    setIsVisibleDialog(true);
-  };
+
   const renderItemSearch = ({item}: {item: Ban}) => {
     const banKhuVuc = khuvucs.find(kv => kv._id === (item.id_khuVuc as any));
 
@@ -109,7 +112,8 @@ const KhongGianComponent = (props: Props) => {
         trangThai={item.trangThai}
         image={getImageBan(item.trangThai)}
         onLongPress={() => {
-          console.log('jjiji');
+          handleSelectBan(item);
+          //handleSelectBanSearch(item);
         }}
       />
     );
@@ -130,6 +134,7 @@ const KhongGianComponent = (props: Props) => {
 
   const handleCloseModal = () => {
     setIsVisibleDialog(false);
+    setSelectedBan(null);
   };
 
   return (
@@ -229,13 +234,6 @@ const KhongGianComponent = (props: Props) => {
               </View>
             </SectionComponent>
           </View>
-
-          <ModalChucNang
-            isVisible={isVisibleDialog}
-            onClose={handleCloseModal}
-            onCloseParent={handleCloseModal}
-            selectedBan={selectedBan}
-          />
         </ScrollView>
       ) : searchQueryBan.trim().length > 0 && bansSearch.length > 0 ? (
         <View style={[hoaStyles.containerTopping]}>
@@ -266,6 +264,12 @@ const KhongGianComponent = (props: Props) => {
           </View>
         )
       )}
+      <ModalChucNang
+        isVisible={isVisibleDialog}
+        onClose={handleCloseModal}
+        onCloseParent={handleCloseModal}
+        selectedBan={selectedBan}
+      />
     </>
   );
 };

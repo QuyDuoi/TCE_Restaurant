@@ -17,7 +17,7 @@ interface Props {
   onClose: () => void;
   totalFinalBill?: number;
   hoaDon: HoaDon;
-  discount: number;
+  discount?: number;
 }
 
 const ModalPTTT = React.memo((props: Props) => {
@@ -37,7 +37,7 @@ const ModalPTTT = React.memo((props: Props) => {
       trangThai: 'Đã Thanh Toán',
       hinhThucThanhToan: chuyenKhoan ? true : false,
       tongGiaTri: totalFinalBill as number,
-      tienGiamGia: discount,
+      tienGiamGia: discount ? discount : hoaDon.tienGiamGia,
     };
     const result = await dispatch(
       updateHoaDonThunk({

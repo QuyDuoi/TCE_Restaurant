@@ -21,21 +21,32 @@ import {
   fetchChiTietHoaDon,
   updateChiTietHoaDonThunk,
 } from '../../../../../store/ChiTietHoaDonSlice';
-import {IPV4} from '../../../../../services/api';
+import {ipAddress} from '../../../../../services/api';
 import {formatMoney} from '../../utils/formatUtils';
-import {useDispatch} from 'react-redux';
-import {fetchHoaDon} from '../../../../../store/HoaDonSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  fetchHoaDonTheoCaLam,
+  fetchHoaDonTheoNhaHang,
+  HoaDon,
+} from '../../../../../store/HoaDonSlice';
+import {CaLam} from '../../../../../store/CaLamSlice';
+import {RootState} from '../../../../../store/store';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   item: ChiTietHoaDon | null;
+  hoaDon: HoaDon;
 }
 
 const ModalSoLuongMon = (props: Props) => {
-  const {visible, onClose, item} = props;
+  const {visible, onClose, item, hoaDon} = props;
   const [soLuong, setSoLuong] = useState(0);
   //console.log('so luong', item?.soLuongMon);
+  //console.log('hoa don', hoaDon);
+
+  const calams = useSelector((state: RootState) => state.calam.caLams);
+
   useEffect(() => {
     setSoLuong(item?.soLuongMon ?? 0);
   }, [item]);
@@ -56,7 +67,12 @@ const ModalSoLuongMon = (props: Props) => {
     );
     if (result.type.endsWith('fulfilled')) {
       onClose();
-      dispatch(fetchHoaDon() as any);
+      const caLam = calams.find(item =>
+        item.id_hoaDon.includes(hoaDon._id as string),
+      );
+      if (caLam) {
+        dispatch(fetchHoaDonTheoNhaHang(caLam.id_nhaHang as string) as any);
+      }
       //console.log('success');
     } else {
       //console.log('error');
@@ -64,7 +80,7 @@ const ModalSoLuongMon = (props: Props) => {
   };
 
   const anhMonAn = item?.id_monAn?.anhMonAn
-    ? item.id_monAn.anhMonAn.replace('localhost', `${IPV4}`)
+    ? item.id_monAn.anhMonAn.replace('localhost', `${ipAddress}`)
     : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
   return (
     <ModalComponent

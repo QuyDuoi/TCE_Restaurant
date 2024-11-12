@@ -15,6 +15,10 @@ import DatBanModal from './DatBanModal'; // Import modal đặt bàn
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import {Ban} from '../../../store/BanSlice';
 import {KhuVuc} from '../../../store/KhuVucSlice';
+import TableBookingDetail from '../../../customcomponent/ItemChiTietDatBan';
+import BookingFlow from '../../../customcomponent/BookingFlow';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store/store';
 
 interface Props {
   isVisible: boolean;
@@ -26,8 +30,10 @@ interface Props {
 const ModalChucNang = (props: Props) => {
   const {isVisible, onClose, onCloseParent, selectedBan} = props;
   const [isVisibleDatBan, setIsVisibleDatBan] = useState(false);
+  const [isVisibleChiTietBan, setIsVisibleChiTietBan] = useState(false);
 
   //console.log(selectedBan?._id);
+  const bans = useSelector((state: RootState) => state.ban.bans);
 
   return (
     <>
@@ -40,12 +46,15 @@ const ModalChucNang = (props: Props) => {
             <ButtonComponent
               title="Đặt bàn"
               onPress={() => {
-                if (selectedBan.trangThai === 'Trống') {
+                if (selectedBan && selectedBan.trangThai === 'Trống') {
                   setIsVisibleDatBan(true);
-                } else if (selectedBan.trangThai === 'Đã đặt') {
+                } else if (selectedBan && selectedBan.trangThai === 'Đã đặt') {
                   ToastAndroid.show('Bàn đã được đặt', ToastAndroid.LONG);
                   onClose();
-                } else if (selectedBan.trangThai === 'Đang sử dụng') {
+                } else if (
+                  selectedBan &&
+                  selectedBan.trangThai === 'Đang sử dụng'
+                ) {
                   ToastAndroid.show('Bàn đang được sử dụng', ToastAndroid.LONG);
                   onClose();
                 }
@@ -79,7 +88,9 @@ const ModalChucNang = (props: Props) => {
           <SectionComponent>
             <ButtonComponent
               title="Xem thông tin bàn đặt"
-              onPress={() => {}}
+              onPress={() => {
+                setIsVisibleChiTietBan(true);
+              }}
               bgrColor={colors.orange}
               titleColor={colors.white}
               styles={styles.button}
@@ -106,6 +117,12 @@ const ModalChucNang = (props: Props) => {
         onClose={() => setIsVisibleDatBan(false)}
         selectedBan={selectedBan}
         onCloseParent={onCloseParent}
+      />
+      <TableBookingDetail
+        slectedBan={selectedBan}
+        visible={isVisibleChiTietBan}
+        onClose={() => setIsVisibleChiTietBan(false)}
+        //onEdit={() => setIsVisibleChiTietBan(false)}
       />
     </>
   );

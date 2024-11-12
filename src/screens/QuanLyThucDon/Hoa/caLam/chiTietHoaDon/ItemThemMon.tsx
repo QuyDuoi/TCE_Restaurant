@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CardComponent from '../../components/CardComponent';
 import {MonAn} from '../../../../../store/MonAnSlice';
 import {formatMoney} from '../../utils/formatUtils';
-import {IPV4} from '../../../../../services/api';
+import {ipAddress} from '../../../../../services/api';
 
 interface Props {
   monAn: MonAn;
@@ -22,7 +22,7 @@ const ItemThemMon = React.memo((props: Props) => {
   const {monAn, soLuong, onMinus, onPlus} = props;
 
   const anhMonAn = monAn.anhMonAn
-    ? monAn.anhMonAn.replace('localhost', `${IPV4}`)
+    ? monAn.anhMonAn.replace('localhost', `${ipAddress}`)
     : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
   return (

@@ -29,7 +29,10 @@ import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
 } from '../../../../../store/ChiTietHoaDonSlice';
-import {fetchHoaDon} from '../../../../../store/HoaDonSlice';
+import {
+  fetchHoaDonTheoCaLam,
+  fetchHoaDonTheoNhaHang,
+} from '../../../../../store/HoaDonSlice';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -37,10 +40,12 @@ interface Props {
   route: any;
 }
 const ChiTietHoaDonScreen = (props: Props) => {
-  const {hoaDon, tenKhuVuc, tenBan} = props.route.params;
+  const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
+  const idNhaHang = '66fab50fa28ec489c7137537';
   //console.log(hoaDon, tenKhuVuc, tenBan);
   console.log('render chi tiet hoa don');
   //console.log(hoaDon.id_chiTietHoaDon);
+  //console.log('caLam', caLam);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -51,6 +56,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
   const navigation = useNavigation<any>();
 
   const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);
+  const calams = useSelector((state: RootState) => state.calam.caLams);
 
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);
@@ -106,38 +112,31 @@ const ChiTietHoaDonScreen = (props: Props) => {
     setTotalFinalBill(totalFinalBillCal());
   }, [totalFinalBillCal, isPercent, discount]);
 
-  //console.log('total bill test', totalBillCal);
-
-  //console.log('total bill', totalBill);
-  // console.log('total final bill', totalFinalBill);
-
-  //console.log('id nhan vien', hoaDon.id_nhanVien);
-
-  // console.log(disableDiscount);
-
-  //console.log('nhan viens', nhanviens);
-
   const dispatch = useDispatch();
 
-  const hoadons = useSelector((state: RootState) => state.hoaDons.hoaDons);
-  const hoaDonUpdate = hoadons.find(item => item._id === hoaDon._id);
+  //const hoadons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+  //const hoaDonUpdate = hoadons.find(item => item._id === hoaDon._id);
 
   useFocusEffect(() => {
-    console.log('focus');
+    //console.log('focus');
     const unsubscribe = navigation.addListener('focus', () => {
-      dispatch(fetchHoaDon() as any);
+      if (caLam) {
+        dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
+      } else {
+        dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
+      }
     });
     return unsubscribe;
   });
 
   useEffect(() => {
-    if (hoaDonUpdate?.id_chiTietHoaDon) {
-      dispatch(fetchChiTietHoaDon(hoaDonUpdate.id_chiTietHoaDon) as any);
+    if (hoaDon?.id_chiTietHoaDon) {
+      dispatch(fetchChiTietHoaDon(hoaDon.id_chiTietHoaDon) as any);
     }
-    if (hoaDonUpdate?.trangThai) {
-      setIsPaid(hoaDonUpdate.trangThai === 'Đã Thanh Toán');
+    if (hoaDon?.trangThai) {
+      setIsPaid(hoaDon.trangThai === 'Đã Thanh Toán');
     }
-  }, [hoaDonUpdate]);
+  }, [hoaDon]);
 
   useEffect(() => {
     if (hoaDon.trangThai === 'Đã Thanh Toán') {
@@ -184,6 +183,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
             nameMonAn={item.id_monAn.tenMon}
             soLuong={item.soLuongMon}
             gia={item.giaTien}
+            key={item._id}
           />
         ) : null}
       </View>
@@ -292,22 +292,24 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 <View style={styles.indicator} />
               </View>
               <SpaceComponent height={10} />
-              <View style={styles.sectionContainer}>
-                <SectionComponent styles={styles.section}>
-                  <RowComponent justify="space-between">
-                    <TextComponent
-                      text="Thanh Toán: "
-                      size={15}
-                      color={colors.desc}
-                    />
-                    <TextComponent
-                      text={'18:20 | 20/10/2024'}
-                      color={colors.desc}
-                    />
-                  </RowComponent>
-                </SectionComponent>
-                <View style={styles.indicator} />
-              </View>
+              {isPaid && (
+                <View style={styles.sectionContainer}>
+                  <SectionComponent styles={styles.section}>
+                    <RowComponent justify="space-between">
+                      <TextComponent
+                        text="Thanh Toán: "
+                        size={15}
+                        color={colors.desc}
+                      />
+                      <TextComponent
+                        text={'18:20 | 20/10/2024'}
+                        color={colors.desc}
+                      />
+                    </RowComponent>
+                  </SectionComponent>
+                  <View style={styles.indicator} />
+                </View>
+              )}
             </View>
           )}
           <SpaceComponent height={hoaDon.id_ban ? 5 : 15} />
@@ -485,7 +487,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 paddingHorizontal: 5,
               },
             ]}>
-            {nhanVienThanhToan ? (
+            {nhanVienThanhToan && isPaid ? (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
                   <TextComponent text="NV thanh toán: " styles={styles.text} />
@@ -608,6 +610,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
           setVisibleModalSoLuongMon(false);
         }}
         item={chiTietSelected}
+        hoaDon={hoaDon}
       />
     </>
   );

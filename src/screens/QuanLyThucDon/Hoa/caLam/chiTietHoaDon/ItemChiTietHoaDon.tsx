@@ -1,9 +1,9 @@
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import RowComponent from '../../components/RowComponent';
 import TextComponent from '../../components/TextComponent';
 import SectionComponent from '../../components/SectionComponent';
-import {colors} from '../../contants/hoaColors';
+import { colors } from '../../contants/hoaColors';
 import SpaceComponent from '../../components/SpaceComponent';
 
 interface Props {
@@ -14,12 +14,12 @@ interface Props {
 }
 
 const ItemChiTietHoaDon = (props: Props) => {
-  const {onLongPress, nameMonAn, soLuong, gia} = props;
+  const { onLongPress, nameMonAn, soLuong, gia } = props;
   return (
     <View>
       <View style={styles.container}>
-        <RowComponent justify="space-between" styles={{paddingHorizontal: 8}}>
-          <View style={{width: '50%', alignItems: 'flex-start'}}>
+        <RowComponent justify="space-between" styles={{ paddingHorizontal: 8 }}>
+          <View style={{ width: '50%', alignItems: 'flex-start' }}>
             <TextComponent
               text={nameMonAn ?? 'com ga'}
               styles={styles.text}
@@ -29,13 +29,13 @@ const ItemChiTietHoaDon = (props: Props) => {
           </View>
           <RowComponent
             onLongPress={onLongPress}
-            styles={{alignItems: 'center'}}>
+            styles={{ alignItems: 'center' }}>
             <TextComponent
               text={soLuong?.toString() ?? '-1'}
               styles={styles.text}
             />
           </RowComponent>
-          <View style={{width: '23%', alignItems: 'center'}}>
+          <View style={{ width: '23%', alignItems: 'center' }}>
             <TextComponent
               text={gia?.toString() ?? '100'}
               styles={styles.text}

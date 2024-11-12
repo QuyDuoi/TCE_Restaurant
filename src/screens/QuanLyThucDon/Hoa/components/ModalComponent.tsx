@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TextStyle,
 } from 'react-native';
-import React, {ReactNode, useCallback} from 'react';
+import React, {memo, ReactNode, useCallback} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import RowComponent from './RowComponent';
 import SpaceComponent from './SpaceComponent';

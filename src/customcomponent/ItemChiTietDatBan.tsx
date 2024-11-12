@@ -1,40 +1,114 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, StyleProp, ViewStyle } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
+import {Ban} from '../store/BanSlice';
+import RowComponent from '../screens/QuanLyThucDon/Hoa/components/RowComponent';
+import TextComponent from '../screens/QuanLyThucDon/Hoa/components/TextComponent';
+import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../screens/QuanLyThucDon/Hoa/components/SpaceComponent';
 
 interface Props {
-  booking: {
-    tableNumber: number;
-    floor: number;
-    customerName: string;
-    date: string;
-    time: string;
-    note: string; 
-  };
+  slectedBan?: any;
   visible: boolean;
   onClose: () => void;
-  onEdit: () => void;
+  onEdit?: () => void;
   styles?: StyleProp<ViewStyle>;
 }
 
-const TableBookingDetail = ({ booking, visible, onClose, onEdit, styles }: Props) => {
-  if (!booking) {
+const TableBookingDetail = (props: Props) => {
+  const {visible, onClose, onEdit, styles, slectedBan} = props;
+  if (!slectedBan) {
+    //console.log('booking null');
+
     return null; // Kiểm tra nếu dữ liệu không tồn tại
   }
+
+  const thongTinBanDat = slectedBan?.ghiChu?.split(' - ');
+  //console.log(thongTinBanDat);
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
       <View style={[stylesContainer.container, styles]}>
         <View style={stylesContainer.modal}>
-          <Text style={stylesContainer.title}>Chi tiết đặt bàn</Text>
-          <Text style={stylesContainer.subTitle}>{`Bàn ${booking.tableNumber || 'N/A'} tầng ${booking.floor || 'N/A'}`}</Text>
-          <Text style={stylesContainer.note}>
-            {`Ghi chú: ${booking.customerName || 'Không có thông tin'},\n${booking.date || 'Không có ngày'}, ${booking.time || 'Không có giờ'}, ${booking.note || 'Không có ghi chú'}`} {/* Hiển thị ghi chú */}
-          </Text>
+          <View style={[{alignItems: 'center'}]}>
+            <Text style={stylesContainer.title}>Chi tiết đặt bàn</Text>
+            <Text style={stylesContainer.subTitle}>{`${
+              slectedBan.tenBan.length === 1 ? 'Bàn ' : ''
+            }${slectedBan.tenBan} | ${slectedBan.kv.tenKhuVuc || 'N/A'}`}</Text>
+          </View>
+          <SpaceComponent height={14} />
+          <RowComponent>
+            <TextComponent
+              text="Họ tên: "
+              styles={[{}]}
+              fontWeight="700"
+              color={colors.black}
+              size={16}
+            />
+            <TextComponent
+              text={
+                thongTinBanDat && thongTinBanDat[3] ? thongTinBanDat[3] : 'N/A'
+              }
+              styles={stylesContainer.subTitle}
+            />
+          </RowComponent>
+          <SpaceComponent height={6} />
+          <RowComponent>
+            <TextComponent
+              text="Ngày đặt: "
+              styles={[{}]}
+              fontWeight="700"
+              color={colors.black}
+              size={16}
+            />
+            <TextComponent
+              text={
+                thongTinBanDat && thongTinBanDat[1] && thongTinBanDat[2]
+                  ? thongTinBanDat[2] + ' - ' + thongTinBanDat[1]
+                  : 'N/A'
+              }
+              styles={stylesContainer.subTitle}
+            />
+          </RowComponent>
+          <SpaceComponent height={6} />
+          <RowComponent styles={{}}>
+            <TextComponent
+              text="Ghi chú: "
+              fontWeight="700"
+              color={colors.black}
+              size={16}
+            />
+            <View style={{width: '100%'}}>
+              <TextComponent
+                text={
+                  thongTinBanDat && thongTinBanDat[0]
+                    ? thongTinBanDat[0]
+                    : slectedBan?.ghiChu
+                }
+                styles={{
+                  width: '80%',
+                }}
+                color={colors.black}
+              />
+            </View>
+          </RowComponent>
+          <SpaceComponent height={10} />
           <View style={stylesContainer.buttonContainer}>
-            <TouchableOpacity style={stylesContainer.closeButton} onPress={onClose}>
+            <TouchableOpacity
+              style={stylesContainer.closeButton}
+              onPress={onClose}>
               <Text style={stylesContainer.closeButtonText}>Đóng</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={stylesContainer.confirmButton} onPress={onEdit}>
+            <TouchableOpacity
+              style={stylesContainer.confirmButton}
+              onPress={onEdit}>
               <Text style={stylesContainer.confirmButtonText}>Xác nhận</Text>
             </TouchableOpacity>
           </View>
@@ -56,17 +130,15 @@ const stylesContainer = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
-    alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: 21,
     fontWeight: 'bold',
     color: 'green',
   },
   subTitle: {
     fontSize: 16,
     color: '#666',
-    marginVertical: 10,
   },
   note: {
     fontSize: 14,
@@ -79,25 +151,25 @@ const stylesContainer = StyleSheet.create({
     width: '100%',
   },
   closeButton: {
-    height:45,
+    height: 45,
     flex: 1,
     padding: 10,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     marginRight: 10,
-    marginLeft:15,
+    marginLeft: 15,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
   confirmButton: {
     flex: 1,
-    height:40,
+    height: 40,
     padding: 10,
     backgroundColor: '#ffede7',
     borderRadius: 5,
     marginLeft: 10,
-    marginRight:15,
+    marginRight: 15,
     alignItems: 'center',
   },
   closeButtonText: {

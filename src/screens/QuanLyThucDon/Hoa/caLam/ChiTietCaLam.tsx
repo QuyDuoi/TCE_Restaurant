@@ -31,7 +31,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalComponent from '../components/ModalComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
-import {fetchHoaDon, HoaDon} from '../../../../store/HoaDonSlice';
+import {
+  fetchHoaDonTheoCaLam,
+  fetchHoaDonTheoNhaHang,
+  HoaDon,
+} from '../../../../store/HoaDonSlice';
 import {fetchKhuVucs, KhuVuc} from '../../../../store/KhuVucSlice';
 import {Ban, fetchBans} from '../../../../store/BanSlice';
 import {useNavigation} from '@react-navigation/native';
@@ -58,13 +62,21 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   //fetch hoa don va khu vuc tu api ve redux store
   useEffect(() => {
-    dispatch(fetchHoaDon() as any);
+    console.log('fetch hoa don');
+
+    dispatch(fetchHoaDonTheoCaLam(caLam._id) as any);
     dispatch(fetchKhuVucs(idNhaHang) as any);
     dispatch(fetchBans() as any);
-  }, []);
+  }, [caLam._id, dispatch]);
 
   //lay data tu redux store
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+  console.log('hoaDons', hoaDons);
+
+  // const hoaDonsFilter = hoaDons.filter(hoaDon =>
+  //   caLam.id_hoaDon.includes(hoaDon._id),
+  // );
+
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const bans = useSelector((state: RootState) => state.ban.bans);
 
@@ -93,6 +105,8 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   // }, [chiTietHoaDons]);
 
   useEffect(() => {
+    console.log('set ban');
+
     if (bans.length > 0) {
       setBansByKhuVuc(bans as any);
     }
@@ -116,8 +130,6 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   //   }, 0);
   // };
 
-  const filterHoaDons = hoaDons.filter(hd => hd.id_caLamViec === caLam._id);
-
   const renderItem = ({item}: {item: HoaDon}) => {
     const {tenKhuVuc, tenBan} = getKhuVucBan(item.id_ban);
 
@@ -134,6 +146,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
             hoaDon: item,
             tenKhuVuc: tenKhuVuc,
             tenBan: tenBan,
+            caLam: caLam,
           });
         }}
         //tongGiaTri={getTongGiaTri(item)}
@@ -165,7 +178,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
                 <RowComponent justify="space-between">
                   <TitleComponent text="Chi tiết ca làm" size={19} />
                   <Icon
-                    name="backward"
+                    name="mail-reply"
                     size={22}
                     color={colors.black}
                     onPress={() => {

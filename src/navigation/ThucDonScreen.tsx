@@ -1,10 +1,10 @@
-import React, {useLayoutEffect, useState} from 'react';
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useLayoutEffect, useState } from 'react';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
-import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
+import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
-import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
+import { colors } from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
 import CapNhatDanhMuc from '../screens/QuanLyThucDon/CapNhatDanhMuc';
 
@@ -42,19 +42,19 @@ function ThucDonStackScreen({
               borderWidth: 1,
               paddingVertical: 6,
               borderRadius: 6,
-              borderColor: 'orange'
+              borderColor: 'orange',
             }}
           />
         ),
       });
     } else {
-      navigation.setOptions({headerShown: false});
+      navigation.setOptions({ headerShown: false });
     }
   }, [navigation, route, dialogSettingHandler]);
 
   return (
     <ThucDonStack.Navigator>
-      <ThucDonStack.Screen name="TabsThucDon" options={{headerShown: false}}>
+      <ThucDonStack.Screen name="TabsThucDon" options={{ headerShown: false }}>
         {props => (
           <MyTabs
             {...props}
@@ -65,10 +65,18 @@ function ThucDonStackScreen({
       <ThucDonStack.Screen
         name="ChiTietMonAn"
         component={ManCapNhatMonAn}
-        options={{title: 'Thông tin chi tiết món ăn'}}
+        options={{ title: 'Thông tin chi tiết món ăn' }}
       />
-      <ThucDonStack.Screen name="ThemMonAn" component={ManThemMonAn} options={{title:"Thêm món ăn"}}/>
-      <ThucDonStack.Screen name="CapNhatDanhMuc" component={CapNhatDanhMuc} options={{headerShown: false}}/>
+      <ThucDonStack.Screen
+        name="ThemMonAn"
+        component={ManThemMonAn}
+        options={{ title: 'Thêm món ăn' }}
+      />
+      <ThucDonStack.Screen
+        name="CapNhatDanhMuc"
+        component={CapNhatDanhMuc}
+        options={{ headerShown: false }}
+      />
     </ThucDonStack.Navigator>
   );
 }
