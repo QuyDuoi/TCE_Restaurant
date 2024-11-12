@@ -1,19 +1,23 @@
-import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   getListChiTietHoaDon,
   addChiTietHoaDon,
   updateChiTietHoaDon,
   getListMonAn,
   addListChiTietHoaDon,
+  updateStatusChiTietHoaDon,
 } from '../services/api';
-import {MonAn} from './MonAnSlice';
+import { MonAn } from './MonAnSlice';
 
 // Interface định nghĩa cho ChiTietHoaDon
 export interface ChiTietHoaDon {
   _id?: string;
   soLuongMon: number;
   giaTien: number;
+  trangThai: boolean
   id_monAn: MonAn;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ChiTietHoaDonState {
@@ -53,7 +57,7 @@ export const addNewChiTietHoaDon = createAsyncThunk(
       monAn,
     }: {
       id_hoaDon: string;
-      monAn: Array<{id_monAn: string; soLuong: number; giaTien: number}>;
+      monAn: Array<{ id_monAn: string; soLuong: number; giaTien: number }>;
     },
     thunkAPI,
   ) => {
@@ -72,7 +76,7 @@ export const addNewChiTietHoaDon = createAsyncThunk(
 // Async thunk để cập nhật ChiTietHoaDon
 export const updateChiTietHoaDonThunk = createAsyncThunk(
   'chiTietHoaDon/updateChiTietHoaDon',
-  async ({id, formData}: {id: string; formData: ChiTietHoaDon}, thunkAPI) => {
+  async ({ id, formData }: { id: string; formData: ChiTietHoaDon }, thunkAPI) => {
     try {
       const data = await updateChiTietHoaDon(id, formData);
       return data;
@@ -83,6 +87,21 @@ export const updateChiTietHoaDonThunk = createAsyncThunk(
       );
     }
   },
+);
+// Thunk để cập nhật trạng thái ChiTietHoaDon
+export const updateStatusChiTietHoaDonThunk = createAsyncThunk(
+  'chiTietHoaDon/updateStatusChiTietHoaDon',
+  async (
+    { id, trangThai }: { id: string; trangThai: boolean },
+    thunkAPI
+  ) => {
+    try {
+      const updatedChiTietHoaDon = await updateStatusChiTietHoaDon(id, trangThai);
+      return updatedChiTietHoaDon;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message || 'Error updating status');
+    }
+  }
 );
 
 const chiTietHoaDonSlice = createSlice({
@@ -133,6 +152,26 @@ const chiTietHoaDonSlice = createSlice({
         state.status = 'failed';
         state.error =
           (action.payload as string) || 'Error updating ChiTietHoaDon';
+      })
+      .addCase(updateStatusChiTietHoaDonThunk.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        updateStatusChiTietHoaDonThunk.fulfilled,
+        (state, action: PayloadAction<ChiTietHoaDon>) => {
+          state.status = 'succeeded';
+          // Tìm và cập nhật trạng thái của ChiTietHoaDon trong danh sách
+          const index = state.chiTietHoaDons.findIndex(
+            (cthd) => cthd._id === action.payload._id
+          );
+          if (index !== -1) {
+            state.chiTietHoaDons[index] = action.payload; // Cập nhật chi tiết hóa đơn
+          }
+        }
+      )
+      .addCase(updateStatusChiTietHoaDonThunk.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
       });
   },
 });

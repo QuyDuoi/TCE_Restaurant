@@ -1,86 +1,179 @@
-import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Image, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Image, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 import CheckBox from 'react-native-check-box';
-import { FoodOrder, sampleFoodOrders } from './FoodOderData';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMonAnTheoId, MonAn } from '../../store/MonAnSlice';
+import OrderDetailModal from './ModalDetailOder';
+import { IPV4 } from '../../services/api';
+import { AppDispatch, RootState } from '../../store/store';
+import { fetchHoaDon } from '../../store/HoaDonSlice';
+import { ChiTietHoaDon, updateStatusChiTietHoaDonThunk } from '../../store/ChiTietHoaDonSlice';
+import { useFocusEffect } from '@react-navigation/native';
+import { fetchChiTietHoaDonTheoCaLam } from '../../store/CaLamSlice';
+import ItemChiTietHoaDon from './ItemChiTietHoaDon';
+import { hoaStyles } from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import { FlatList } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 
-const FoodOrderItem: React.FC<{ order: FoodOrder; onToggleStatus: (id: number) => void; onDetailPress: (id: number) => void }> = ({ order, onToggleStatus, onDetailPress }) => {
-  return (
-    <View style={[styles.orderContainer, order.status ? styles.completed : styles.pending]}>
-      <Image source={{ uri: order.imageUrl }} style={styles.foodImage} />
-      <View style={styles.orderInfo}>
-        <Text style={styles.foodName}>{order.name}</Text>
-        <Text style={styles.quantity}>Số lượng: {order.quantity}</Text>
-      </View>
-      <View style={styles.orderActions}>
-        <TouchableOpacity onPress={() => onDetailPress(order.id)}>
-          <Text style={styles.areaText}>Khu vực: <Text style={styles.detailLink}>Xem chi tiết</Text></Text>
-        </TouchableOpacity>
-        <View style={styles.statusContainer}>
-          <CheckBox
-            isChecked={order.status}
-            onClick={() => onToggleStatus(order.id)}
-            checkedCheckBoxColor="#33cc33"
-            uncheckedCheckBoxColor="#ff4d4d"
-          />
-          <Text style={order.status ? styles.statusTextCompleted : styles.statusTextPending}>
-            {order.status ? 'Hoàn thành' : 'Chưa hoàn thành'}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-};
 
-const FoodOrderScreen: React.FC = () => {
-  const [orders, setOrders] = useState(sampleFoodOrders);
+
+const FoodOrderScreen: React.FC = (props) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const statusCaLam = useSelector((state: RootState) => state.calam.status);
+  const chitietHoaDons = useSelector((state: RootState) => state.calam.chiTietHoaDons);
+  const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
+  const [filterChiTietHoaDon, setFilterChiTietHoaDon] = useState<ChiTietHoaDon[]>([]);
+
   const [searchQuery, setSearchQuery] = useState('');
 
-  const toggleStatus = (id: number) => {
-    setOrders((prevOrders) => {
-      const updatedOrders = prevOrders.map((order) =>
-        order.id === id ? { ...order, status: !order.status } : order
-      );
-      return updatedOrders.sort((a, b) => Number(a.status) - Number(b.status));
-    });
+  useEffect(() => {
+    const id_caLam = '67078655a4fa7c03a24d2c19';
+    if (statusCaLam === 'idle') {
+      dispatch(fetchChiTietHoaDonTheoCaLam(id_caLam));
+      setIsLoading(true);
+    } else if (statusCaLam === 'succeeded') {
+      // Chia thành 2 phần: phần chưa hoàn thành (trangThai = false) và đã hoàn thành (trangThai = true)
+      const incompleteItems = chitietHoaDons.filter(item => !item.trangThai); // Món chưa hoàn thành
+      const completedItems = chitietHoaDons.filter(item => item.trangThai); // Món đã hoàn thành
+
+      // Sắp xếp món chưa hoàn thành theo createAt (thời gian tạo)
+      const sortedIncompleteItems = incompleteItems.sort((a, b) => {
+        const timeA = new Date(a.createdAt).getTime();
+        const timeB = new Date(b.createdAt).getTime();
+        return timeA - timeB; // Tăng dần theo thời gian tạo
+      });
+
+      // Sắp xếp món đã hoàn thành theo updateAt (thời gian cập nhật)
+      const sortedCompletedItems = completedItems.sort((a, b) => {
+        const timeA = new Date(a.updatedAt).getTime();
+        const timeB = new Date(b.updatedAt).getTime();
+        return timeB - timeA; // Giảm dần theo thời gian cập nhật
+      });
+
+      // Gộp lại 2 phần: món chưa hoàn thành ở trên, món đã hoàn thành ở dưới
+      const sortedItems = [...sortedIncompleteItems, ...sortedCompletedItems];
+      setFilterChiTietHoaDon(sortedItems);
+      setIsLoading(false);
+    } else if (statusCaLam === 'failed') {
+      setIsLoading(false);
+    }
+  }, [dispatch, statusCaLam, chitietHoaDons]);
+
+  // Hàm lọc theo tìm kiếm
+  const handleSearchChange = (text: string) => {
+    setSearchQuery(text);
+    const filteredData = chitietHoaDons.filter(item =>
+      item.id_monAn.tenMon.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilterChiTietHoaDon(filteredData); // Cập nhật danh sách lọc
   };
 
-  const handleDetailPress = (id: number) => {
-    // Xử lý sự kiện "Xem chi tiết" cho món ăn với id tương ứng
-    console.log("Xem chi tiết món ăn với ID:", id);
+  const handleStatusChange = async (id: string, value: boolean) => {
+    if (id) {
+      const formData = {
+        trangThai: value,
+      };
+
+      try {
+        // Gọi thunk để cập nhật trạng thái món ăn
+        await dispatch(updateStatusChiTietHoaDonThunk({ id, formData } as any) as any);
+        // Sau khi trạng thái món ăn được cập nhật, cập nhật lại món ăn đó trong danh sách
+        setFilterChiTietHoaDon((prevState) => {
+          // Cập nhật lại trạng thái món ăn
+          const updatedItems = prevState.map((item) =>
+            item._id === id ? { ...item, trangThai: value } : item
+          );
+
+          // Sắp xếp lại danh sách sau khi thay đổi trạng thái
+          const incompleteItems = updatedItems.filter(item => !item.trangThai); // Món chưa hoàn thành
+          const completedItems = updatedItems.filter(item => item.trangThai); // Món đã hoàn thành
+
+          // Sắp xếp món chưa hoàn thành theo createAt (thời gian tạo)
+          const sortedIncompleteItems = incompleteItems.sort((a, b) => {
+            const timeA = new Date(a.createdAt).getTime();
+            const timeB = new Date(b.createdAt).getTime();
+            return timeA - timeB; // Tăng dần theo thời gian tạo
+          });
+
+          // Sắp xếp món đã hoàn thành theo updateAt (thời gian cập nhật)
+          const sortedCompletedItems = completedItems.sort((a, b) => {
+            const timeA = new Date(a.updatedAt).getTime();
+            const timeB = new Date(b.updatedAt).getTime();
+            return timeB - timeA; // Giảm dần theo thời gian cập nhật
+          });
+
+          // Gộp lại 2 phần: món chưa hoàn thành ở trên, món đã hoàn thành ở dưới
+          return [...sortedIncompleteItems, ...sortedCompletedItems];
+        });
+
+      } catch (error) {
+        console.error('Lỗi khi cập nhật trạng thái:', error);
+      }
+    } else {
+      console.error('ID của chi tiết hóa đơn không tồn tại.');
+    }
   };
 
-  const filteredOrders = orders.filter((order) =>
-    order.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
+  const renderItem = ({ item }: { item: ChiTietHoaDon }) => {
+    const monAnImg = item.id_monAn.anhMonAn
+      ? item.id_monAn.anhMonAn.replace('localhost:3000', IPV4)
+      : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+    console.log(item.id_monAn.anhMonAn);
+    return (
+      <ItemChiTietHoaDon
+        // onPress={() => props.navigation.navigate('EmployeeDetails', {nhanVien: item})}
+        tenMon={item.id_monAn.tenMon}
+        trangThai={item.trangThai}
+        soLuong={item.soLuongMon}
+        onClick={() => handleStatusChange(item._id, !item.trangThai)}
+        // colorStatus={item.trangThai ? '#E7F4FF' : '#FFD2CD'}
+        anhMonAn={monAnImg}  // Truyền đúng trường đại diện cho avatar
+      />
+    );
+  };
+
+
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          hoaStyles.containerTopping,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={hoaStyles.containerTopping}>
       <Text style={styles.header}>Quản lý lên món</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Tìm kiếm món ăn"
         value={searchQuery}
-        onChangeText={setSearchQuery}
+        onChangeText={handleSearchChange}
       />
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        {filteredOrders.map((order) => (
-          <FoodOrderItem key={order.id} order={order} onToggleStatus={toggleStatus} onDetailPress={handleDetailPress} />
-        ))}
-      </ScrollView>
+
+      <FlatList
+        data={filterChiTietHoaDon}
+        keyExtractor={(item) => item._id} // Sử dụng id của từng item làm key
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 20 }} // Để tránh item cuối bị cắt đứt
+      />
     </SafeAreaView>
   );
-};
+}
 
 export default FoodOrderScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: width * 0.04,
-  },
+
   header: {
     fontSize: width * 0.06,
     fontWeight: 'bold',
@@ -89,6 +182,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchInput: {
+    backgroundColor: 'white',
     height: height * 0.07,
     borderColor: '#ddd',
     borderWidth: 1,
@@ -96,72 +190,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.03,
     marginBottom: height * 0.02,
   },
-  scrollView: {
-    paddingBottom: height * 0.02,
-  },
-  orderContainer: {
-    backgroundColor: '#fff',
-    padding: width * 0.04,
-    borderRadius: 8,
-    marginBottom: height * 0.02,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  pending: {
-    backgroundColor: '#ffe6e6',
-  },
-  completed: {
-    backgroundColor: '#ccffcc',
-  },
-  foodImage: {
-    width: width * 0.1,
-    height: width * 0.1,
-    borderRadius: 8,
-    marginRight: width * 0.03,
-  },
-  orderInfo: {
-    flex: 3,
-  },
-  foodName: {
-    fontSize: width * 0.04,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  quantity: {
-    fontSize: width * 0.035,
-    color: '#ff7f50',
-    marginTop: 4,
-  },
-  orderActions: {
-    flex: 2.5,
-    alignItems: 'flex-end',
-  },
-  areaText: {
-    fontSize: width * 0.03,
-    color: '#333',
-  },
-  detailLink: {
-    color: '#4da6ff',
-    textDecorationLine: 'underline',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: height * 0.01,
-  },
-  statusTextPending: {
-    color: '#ff4d4d',
-    fontSize: width * 0.03,
-    marginLeft: 5,
-  },
-  statusTextCompleted: {
-    color: '#33cc33',
-    fontSize: width * 0.03,
-    marginRight: 10,
-    marginLeft: 20,
-  },
+
 });
