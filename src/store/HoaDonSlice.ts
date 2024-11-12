@@ -1,5 +1,10 @@
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
-import {getListHoaDon, addHoaDon, updateHoaDon} from '../services/api';
+import {
+  getListHoaDonTheoCaLam,
+  getListHoaDonTheoNhaHang,
+  addHoaDon,
+  updateHoaDon,
+} from '../services/api';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
 // Interface định nghĩa cho HoaDon
@@ -8,7 +13,6 @@ export interface HoaDon {
   tongGiaTri: number;
   trangThai: string;
   hinhThucThanhToan: boolean;
-  id_caLamViec: string;
   id_chiTietHoaDon: string[];
   id_nhanVien: string;
   tienGiamGia?: number;
@@ -31,11 +35,29 @@ const initialState: HoaDonState = {
 };
 
 // Async thunk để lấy danh sách HoaDon
-export const fetchHoaDon = createAsyncThunk(
-  'hoaDon/fetchHoaDon',
+export const fetchHoaDonTheoCaLam = createAsyncThunk(
+  'hoaDon/fetchHoaDonTheoCaLam',
   async (id_caLam: string) => {
-    const hoaDonsData = await getListHoaDon(id_caLam);
-    return hoaDonsData;
+    try {
+      const hoaDonsData = await getListHoaDonTheoCaLam(id_caLam);
+      return hoaDonsData;
+    } catch (error) {
+      console.log('Lỗi lấy danh sách hoa đơn:', error);
+      return [];
+    }
+  },
+);
+
+export const fetchHoaDonTheoNhaHang = createAsyncThunk(
+  'hoaDon/fetchHoaDonTheoNhaHang',
+  async (id_nhaHang: string) => {
+    try {
+      const hoaDonsData = await getListHoaDonTheoNhaHang(id_nhaHang);
+      return hoaDonsData;
+    } catch (error) {
+      console.log('Lỗi lấy danh sách hoa đơn:', error);
+      return [];
+    }
   },
 );
 
@@ -73,17 +95,31 @@ const hoaDonSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(fetchHoaDon.pending, state => {
+      .addCase(fetchHoaDonTheoCaLam.pending, state => {
         state.status = 'loading';
       })
       .addCase(
-        fetchHoaDon.fulfilled,
+        fetchHoaDonTheoCaLam.fulfilled,
         (state, action: PayloadAction<HoaDon[]>) => {
           state.status = 'succeeded';
           state.hoaDons = action.payload;
         },
       )
-      .addCase(fetchHoaDon.rejected, (state, action) => {
+      .addCase(fetchHoaDonTheoCaLam.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Could not fetch hoaDons';
+      })
+      .addCase(fetchHoaDonTheoNhaHang.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(
+        fetchHoaDonTheoNhaHang.fulfilled,
+        (state, action: PayloadAction<HoaDon[]>) => {
+          state.status = 'succeeded';
+          state.hoaDons = action.payload;
+        },
+      )
+      .addCase(fetchHoaDonTheoNhaHang.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Could not fetch hoaDons';
       })

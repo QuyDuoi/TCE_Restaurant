@@ -130,14 +130,31 @@ export const updateTopping = async (
 };
 
 // Lấy danh sách HoaDon
-export const getListHoaDon = async (id_caLam: string): Promise<HoaDon[]> => {
+export const getListHoaDonTheoCaLam = async (
+  id_caLam: string,
+): Promise<HoaDon[]> => {
   try {
     const response = await fetch(
-      `${ipAddress}layDsHoaDon?id_caLamViec=${id_caLam}  `,
+      `${ipAddress}layHdTheoCaLam?id_caLamViec=${id_caLam}  `,
     );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Hóa Đơn');
     }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi lấy danh sách Hóa Đơn: ', error);
+    return [];
+  }
+};
+
+export const getListHoaDonTheoNhaHang = async (
+  id_nhaHang: string,
+): Promise<HoaDon[]> => {
+  try {
+    const response = await fetch(
+      `${ipAddress}layDsHoaDonTheoNhaHang?id_nhaHang=${id_nhaHang}`,
+    );
     const data = await response.json();
     return data;
   } catch (error) {

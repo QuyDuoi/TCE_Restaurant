@@ -31,7 +31,7 @@ import {
 } from '../../../../../store/ChiTietHoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import ModalCart from './ModalCart';
-import {fetchHoaDon} from '../../../../../store/HoaDonSlice';
+import {fetchHoaDonTheoCaLam} from '../../../../../store/HoaDonSlice';
 import debounce from 'lodash';
 import {searchMonAn} from '../../../../../services/api';
 

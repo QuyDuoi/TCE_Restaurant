@@ -23,6 +23,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchKhuVucs, KhuVuc} from '../../../store/KhuVucSlice';
 import {Ban, fetchBans} from '../../../store/BanSlice';
 import {RootState} from '../../../store/store';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 
 interface Route {
   key: string;
@@ -179,8 +180,9 @@ const KhuVucTabView = () => {
           alignSelf: 'center',
           paddingRight: 8,
         }}
-        bgrColor={colors.search}
+        bgrColor={colors.white}
       />
+      <SpaceComponent height={10} />
       <TabView
         navigationState={tabState}
         renderScene={

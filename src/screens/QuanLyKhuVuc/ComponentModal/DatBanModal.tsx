@@ -23,6 +23,7 @@ import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalDate from '../../QuanLyThucDon/Hoa/caLam/ModalDate';
 import ModalTime from '../../QuanLyThucDon/Hoa/caLam/ModalTime';
 import {formatTime} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 
 interface Props {
   isVisible: boolean;
@@ -41,25 +42,29 @@ const DatBanModal = (props: Props) => {
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [isVisibleModalTime, setIsVisibleModalTime] = useState(false);
   const [time, setTime] = useState(new Date());
+  const [hoTen, setHoTen] = useState('Nguyen van a');
 
-  //console.log(selectedBan._id)
+  //console.log(selectedBanSearch?.id_khuVuc);
+  // const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
 
   const dispatch = useDispatch();
 
-  const handleConfirm = async () => {
+  const handleConfirmDatBan = async () => {
     const datBanData = {
-      ...selectedBan,
-      ghiChu: ` Ghi chú thêm: ${ghiChu}`,
+      id_khuVuc: selectedBan?.kv?._id,
+      ghiChu: `${ghiChu} - ${date.toLocaleDateString('vi-VN')} - ${time
+        .toLocaleTimeString('vi-VN')
+        .slice(0, 5)} - ${hoTen}`,
       trangThai: 'Đã đặt',
     };
     const result = await dispatch(
       updateBanThunk({
-        id: selectedBan?._id as string,
+        id: selectedBan?._id,
         formData: datBanData as any,
       }) as any,
     );
 
-    //console.log(result);
+    console.log(result);
 
     if (result.type.endsWith('fulfilled')) {
       onClose();
@@ -69,6 +74,29 @@ const DatBanModal = (props: Props) => {
       ToastAndroid.show('Đặt bàn thất bại', ToastAndroid.LONG);
     }
   };
+  // console.log(selectedBan?._id);
+  // console.log(selectedBanSearch?._id);
+
+  // const tenKhuVuc = selectedBanSearch
+  //   ? khuVucs.find(kv => kv._id === selectedBanSearch.id_khuVuc)?.tenKhuVuc
+  //   : '';
+
+  // selectedBanSearch ? (
+  //   <InputComponent
+  //     value={``}
+  //     onChangeText={() => {}}
+  //     type={'normal'}
+  //     styles={[styles.input]}
+  //     placeholder={`${
+  //       selectedBanSearch.tenBan.length === 1
+  //         ? 'Bàn ' + selectedBanSearch.tenBan
+  //         : selectedBanSearch.tenBan
+  //     } - ${tenKhuVuc}`}
+  //     numberOfLines={1}
+  //     readonly
+  //     flex={1}
+  //   />
+  // ) :
 
   return (
     <>
@@ -81,20 +109,22 @@ const DatBanModal = (props: Props) => {
                 <View style={{width: '45%', justifyContent: 'center'}}>
                   <TitleComponent text="Vị trí bàn" styles={[styles.text]} />
                 </View>
-                <InputComponent
-                  value={''}
-                  onChangeText={() => {}}
-                  type={'normal'}
-                  styles={[styles.input, {}]}
-                  placeholder={`${
-                    selectedBan?.tenBan.length == 1
-                      ? 'Ban: ' + selectedBan.tenBan
-                      : selectedBan?.tenBan
-                  } - ${selectedBan?.kv.tenKhuVuc}`}
-                  numberOfLines={1}
-                  readonly
-                  flex={1}
-                />
+                {selectedBan ? (
+                  <InputComponent
+                    value={``}
+                    onChangeText={() => {}}
+                    type={'normal'}
+                    styles={[styles.input, {}]}
+                    placeholder={`${
+                      selectedBan.tenBan.length === 1
+                        ? 'Bàn ' + selectedBan.tenBan
+                        : selectedBan.tenBan
+                    } - ${selectedBan.kv.tenKhuVuc}`}
+                    numberOfLines={1}
+                    readonly
+                    flex={1}
+                  />
+                ) : null}
               </RowComponent>
             </SectionComponent>
             <SectionComponent>
@@ -175,21 +205,66 @@ const DatBanModal = (props: Props) => {
                 </RowComponent>
               </SectionComponent>
             </SectionComponent>
-            <SectionComponent>
-              <InputComponent
-                value={ghiChu}
-                onChangeText={setGhiChu}
-                placeholder="Ghi chú"
-                styles={[styles.input2]}
-                numberOfLines={4}
-                type="normal"
-              />
-            </SectionComponent>
+            <SpaceComponent height={6} />
+            <RowComponent styles={{width: '100%'}}>
+              <View
+                style={{
+                  width: '25%',
+                  borderWidth: 1,
+                  borderTopStartRadius: 5,
+                  borderBottomLeftRadius: 5,
+
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderColor: colors.desc2,
+                }}>
+                <TextComponent
+                  text="Ho ten"
+                  size={15}
+                  fontWeight="600"
+                  color={colors.black}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  borderLeftWidth: 0,
+                  borderRightWidth: 1,
+                  borderTopWidth: 1,
+                  borderBottomWidth: 1,
+                  borderTopEndRadius: 5,
+                  borderBottomEndRadius: 5,
+                  borderColor: colors.desc2,
+                  backgroundColor: colors.white,
+                }}>
+                <InputComponent
+                  type={'normal'}
+                  placeholder={`Nhap ho ten`}
+                  value={'Nguyen van a'}
+                  onChangeText={() => {}}
+                  styles={{
+                    paddingVertical: 0,
+                    height: 33,
+                  }}
+                  fontSize={14}
+                />
+              </View>
+            </RowComponent>
+            <SpaceComponent height={10} />
+
+            <InputComponent
+              value={ghiChu}
+              onChangeText={setGhiChu}
+              placeholder="Ghi chú"
+              styles={[styles.input2]}
+              numberOfLines={4}
+              type="normal"
+            />
 
             <RowComponent justify="space-between">
               <ButtonComponent
                 title="Xác nhận"
-                onPress={handleConfirm}
+                onPress={handleConfirmDatBan}
                 bgrColor={colors.orange}
                 titleColor={colors.white}
                 styles={styles.button}
@@ -241,7 +316,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    width: '80%',
+    width: '88%',
     padding: 20,
     backgroundColor: colors.white,
     borderRadius: 10,
@@ -278,7 +353,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray,
     borderRadius: 5,
-
     paddingVertical: 1,
   },
 

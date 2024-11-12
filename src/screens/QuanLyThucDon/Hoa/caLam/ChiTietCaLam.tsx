@@ -31,7 +31,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalComponent from '../components/ModalComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
-import {fetchHoaDon, HoaDon} from '../../../../store/HoaDonSlice';
+import {
+  fetchHoaDonTheoCaLam,
+  fetchHoaDonTheoNhaHang,
+  HoaDon,
+} from '../../../../store/HoaDonSlice';
 import {fetchKhuVucs, KhuVuc} from '../../../../store/KhuVucSlice';
 import {Ban, fetchBans} from '../../../../store/BanSlice';
 import {useNavigation} from '@react-navigation/native';
@@ -60,14 +64,17 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   useEffect(() => {
     console.log('fetch hoa don');
 
-    dispatch(fetchHoaDon(caLam._id) as any);
+    dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
     dispatch(fetchKhuVucs(idNhaHang) as any);
     dispatch(fetchBans() as any);
   }, [caLam._id, dispatch]);
 
   //lay data tu redux store
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
-  //console.log(caLam._id);
+
+  const hoaDonsFilter = hoaDons.filter(hoaDon =>
+    caLam.id_hoaDon.includes(hoaDon._id),
+  );
 
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const bans = useSelector((state: RootState) => state.ban.bans);
@@ -138,6 +145,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
             hoaDon: item,
             tenKhuVuc: tenKhuVuc,
             tenBan: tenBan,
+            caLam: caLam,
           });
         }}
         //tongGiaTri={getTongGiaTri(item)}
@@ -243,7 +251,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
               <SpaceComponent height={10} />
               {hoaDons.length > 0 ? (
                 <FlatList
-                  data={hoaDons}
+                  data={hoaDonsFilter}
                   renderItem={renderItem}
                   keyExtractor={item => item._id as any}
                   showsVerticalScrollIndicator={false}

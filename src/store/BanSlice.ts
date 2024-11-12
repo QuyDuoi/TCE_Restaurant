@@ -2,6 +2,7 @@ import {getListKhuVuc} from './../services/api';
 // slices/BanSlice.ts
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
 import {getListBan, addBan, updateBan} from '../services/api'; // Đường dẫn tới API tương ứng
+import KhuVuc from '../services/models/KhuVucModel';
 const idNhaHang = '66fab50fa28ec489c7137537';
 // Định nghĩa interface cho Ban
 export interface Ban {
@@ -10,7 +11,7 @@ export interface Ban {
   sucChua: number;
   trangThai: string;
   ghiChu: string;
-  id_khuVuc: string;
+  id_khuVuc: KhuVuc;
 }
 
 // Định nghĩa state cho Ban

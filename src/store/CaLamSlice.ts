@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {getListCaLam, getListNhanVien} from '../services/api';
 import {NhanVienSlice} from './NhanVienSlice';
+import {HoaDon} from './HoaDonSlice';
 
 export interface CaLam {
   _id?: string;
@@ -14,6 +15,8 @@ export interface CaLam {
   tongThu: number;
   tongChi: number;
   id_nhanVien: NhanVienSlice;
+  id_hoaDon: string[];
+  id_nhaHang: string;
 }
 
 export interface CaLamState {
