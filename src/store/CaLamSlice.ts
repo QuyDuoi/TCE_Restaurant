@@ -1,6 +1,7 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {getListCaLam, getListNhanVien} from '../services/api';
-import {NhanVienSlice} from './NhanVienSlice';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getListCaLam, getListChiTietHoaDonTheoCaLam, getListNhanVien } from '../services/api';
+import { NhanVienSlice } from './NhanVienSlice';
+import { ChiTietHoaDon } from './ChiTietHoaDonSlice';
 
 export interface CaLam {
   _id?: string;
@@ -20,12 +21,14 @@ export interface CaLamState {
   caLams: CaLam[];
   status: 'idle' | 'loading' | 'failed' | 'succeeded';
   error: string | null;
+  chiTietHoaDons: ChiTietHoaDon[];
 }
 
 const initialState: CaLamState = {
   caLams: [],
   status: 'idle',
   error: null,
+  chiTietHoaDons: [],
 };
 
 export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
@@ -47,6 +50,19 @@ export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
   return allCaLams;
 });
 
+export const fetchChiTietHoaDonTheoCaLam = createAsyncThunk('caLam/fetchChiTietHoaDon', async (id_caLam: string, thunkAPI) => {
+  try {
+    const data = await getListChiTietHoaDonTheoCaLam(id_caLam);
+    return data;
+  } catch (error: any) {
+    console.log('Lỗi lấy danh sách:', error);
+    return thunkAPI.rejectWithValue(
+      error.message || 'Error fetching ChiTietHoaDon',
+    );
+  }
+});
+
+
 const caLamSlice = createSlice({
   name: 'caLam',
   initialState,
@@ -64,6 +80,20 @@ const caLamSlice = createSlice({
         },
       )
       .addCase(fetchCaLam.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || null;
+      })
+      .addCase(fetchChiTietHoaDonTheoCaLam.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(
+        fetchChiTietHoaDonTheoCaLam.fulfilled,
+        (state, action: PayloadAction<ChiTietHoaDon[]>) => {
+          state.status = 'succeeded';
+          state.chiTietHoaDons = action.payload;
+        },
+      )
+      .addCase(fetchChiTietHoaDonTheoCaLam.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || null;
       });

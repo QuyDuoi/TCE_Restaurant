@@ -5,8 +5,8 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import React, { useEffect, useState } from 'react';
+import { hoaStyles } from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
@@ -14,13 +14,13 @@ import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
 import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ItemNhanVien from './ItemNhanVien';
-import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
-import {useFocusEffect, useNavigation, useRoute} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchNhanViens, NhanVienSlice} from '../../store/NhanVienSlice';
-import {RootState} from '../../store/store';
-import type {AppDispatch} from '../../store/store';
-import {applyFilters} from './hamTimKiem';
+import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNhanViens, NhanVienSlice } from '../../store/NhanVienSlice';
+import { RootState } from '../../store/store';
+import type { AppDispatch } from '../../store/store';
+import { applyFilters } from './hamTimKiem';
 import { IPV4 } from '../../services/api';
 import { fetchDanhMucs } from '../../store/DanhMucSlice';
 
@@ -58,28 +58,28 @@ const NhanVienComponent = (props) => {
 
   // **Lấy dữ liệu nhân viên từ API**
   // Sử dụng useEffect để cập nhật danh sách nhân viên khi Redux store thay đổi
-useEffect(() => {
-  const id_NhaHang = '66fab50fa28ec489c7137537';
-  if (status === 'idle') {
-    dispatch(fetchNhanViens());
-    dispatch(fetchDanhMucs(id_NhaHang));
-    setIsLoading(true);
-  } else if (status === 'succeeded') {
-    setFilterNhanVienList(dsNhanVien || []); // Cập nhật danh sách nhân viên từ store
-    setIsLoading(false);
-  } else if (status === 'failed') {
-    setIsLoading(false);
-  }
-}, [dispatch, status, dsNhanVien]);
-
- // Reload dữ liệu mỗi khi màn hình được focus lại
- useFocusEffect(
-  React.useCallback(() => {
-    if (status !== 'loading') {
-      dispatch(fetchNhanViens()); // Fetch lại danh sách nhân viên khi màn hình được focus lại
+  useEffect(() => {
+    const id_NhaHang = '66fab50fa28ec489c7137537';
+    if (status === 'idle') {
+      dispatch(fetchNhanViens());
+      dispatch(fetchDanhMucs(id_NhaHang));
+      setIsLoading(true);
+    } else if (status === 'succeeded') {
+      setFilterNhanVienList(dsNhanVien || []); // Cập nhật danh sách nhân viên từ store
+      setIsLoading(false);
+    } else if (status === 'failed') {
+      setIsLoading(false);
     }
-  }, [dispatch])
-);
+  }, [dispatch, status, dsNhanVien]);
+
+  // Reload dữ liệu mỗi khi màn hình được focus lại
+  useFocusEffect(
+    React.useCallback(() => {
+      if (status !== 'loading') {
+        dispatch(fetchNhanViens()); // Fetch lại danh sách nhân viên khi màn hình được focus lại
+      }
+    }, [dispatch])
+  );
 
   // Cập nhật danh sách nhân viên khi tìm kiếm hoặc bộ lọc thay đổi
   useEffect(() => {
@@ -102,21 +102,21 @@ useEffect(() => {
     setFilters(defaultFilters);
   };
 
-  const renderItem = ({item}: {item: NhanVienSlice}) => {
+  const renderItem = ({ item }: { item: NhanVienSlice }) => {
     // Kiểm tra và thay thế localhost bằng địa chỉ IP hợp lệ
-  const employeeImage = item.hinhAnh 
-  ? item.hinhAnh.replace('localhost', IPV4)  // Đổi 192.168.x.x thành IP của server của bạn
-  : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+    const employeeImage = item.hinhAnh
+      ? item.hinhAnh.replace('localhost', IPV4)  // Đổi 192.168.x.x thành IP của server của bạn
+      : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
     return (
       <ItemNhanVien
-      onPress={() => props.navigation.navigate('EmployeeDetails', {nhanVien: item})}
-      nameNhanVien={item.hoTen}
-      position={item.vaiTro}
-      status={item.trangThai}
-      colorStatus={item.trangThai ? '#E7F4FF' : '#FFD2CD'}
-      avatar={employeeImage}  // Truyền đúng trường đại diện cho avatar
-    />
+        onPress={() => props.navigation.navigate('EmployeeDetails', { nhanVien: item })}
+        nameNhanVien={item.hoTen}
+        position={item.vaiTro}
+        status={item.trangThai}
+        colorStatus={item.trangThai ? '#E7F4FF' : '#FFD2CD'}
+        avatar={employeeImage}  // Truyền đúng trường đại diện cho avatar
+      />
     );
   };
 
@@ -125,7 +125,7 @@ useEffect(() => {
       <View
         style={[
           hoaStyles.containerTopping,
-          {justifyContent: 'center', alignItems: 'center'},
+          { justifyContent: 'center', alignItems: 'center' },
         ]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
@@ -147,7 +147,7 @@ useEffect(() => {
             onChangeText={text => setSearchQuery(text)}
             elevation={10}
             allowClear
-            styleIconX={{alignSelf: 'center', marginRight: 5}}
+            styleIconX={{ alignSelf: 'center', marginRight: 5 }}
             fontSize={16}
           />
         </View>
@@ -161,7 +161,7 @@ useEffect(() => {
             title="Thêm nhân viên mới"
             onPress={() => props.navigation.navigate('AddEmployee')}
             bgrColor="#5664F5"
-            styles={{width: '52%', height: 48}}
+            styles={{ width: '52%', height: 48 }}
             boderRadius={8}
             titleColor="white"
             titleSize={16.5}
@@ -169,13 +169,13 @@ useEffect(() => {
           <ButtonComponent
             title="Lọc"
             onPress={() => setIsVisibleDialog(true)}
-            styles={{width: '20%', height: 47}}
+            styles={{ width: '20%', height: 47 }}
             boderRadius={4}
             titleSize={18}
             evalation={15}
           />
         </RowComponent>
-        <SectionComponent styles={{flex: 1}}>
+        <SectionComponent styles={{ flex: 1 }}>
           {filterNhanVienList.length > 0 ? (
             <FlatList
               data={filterNhanVienList}
@@ -185,7 +185,7 @@ useEffect(() => {
             />
           ) : (
             <View
-              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <TitleComponent
                 text="Không tìm thấy nhân viên"
                 color={colors.desc}
@@ -206,7 +206,7 @@ useEffect(() => {
               <View style={[hoaStyles.modalContent]}>
                 <TitleComponent
                   text="Lọc danh sách"
-                  styles={{marginVertical: 5}}
+                  styles={{ marginVertical: 5 }}
                   size={19}
                 />
                 <SectionComponent
@@ -223,7 +223,7 @@ useEffect(() => {
                     <ButtonComponent
                       title="Hoạt động"
                       onPress={() => toggleFilter('hoatDong')}
-                      styles={[{width: '48%', height: 40}]}
+                      styles={[{ width: '48%', height: 40 }]}
                       bgrColor={colors.desc2}
                       boderRadius={6}
                       titleSize={15}
@@ -233,7 +233,7 @@ useEffect(() => {
                     <ButtonComponent
                       title="Ngưng hoạt động"
                       onPress={() => toggleFilter('ngungHoatDong')}
-                      styles={[{width: '48%', height: 40}]}
+                      styles={[{ width: '48%', height: 40 }]}
                       bgrColor={colors.desc2}
                       boderRadius={6}
                       titleSize={15}
@@ -256,7 +256,7 @@ useEffect(() => {
                     <ButtonComponent
                       title="Quản lý"
                       onPress={() => toggleFilter('quanLy')}
-                      styles={[{width: '48%', height: 40}]}
+                      styles={[{ width: '48%', height: 40 }]}
                       bgrColor={colors.desc2}
                       boderRadius={6}
                       titleSize={15}
@@ -266,7 +266,7 @@ useEffect(() => {
                     <ButtonComponent
                       title="Nhân viên thu ngân"
                       onPress={() => toggleFilter('thuNgan')}
-                      styles={[{width: '48%', height: 40}]}
+                      styles={[{ width: '48%', height: 40 }]}
                       bgrColor={colors.desc2}
                       boderRadius={6}
                       titleSize={14}
@@ -282,7 +282,7 @@ useEffect(() => {
                       <ButtonComponent
                         title="Nhân viên phục vụ"
                         onPress={() => toggleFilter('phucVu')}
-                        styles={[{width: '48%', height: 40}]}
+                        styles={[{ width: '48%', height: 40 }]}
                         bgrColor={colors.desc2}
                         boderRadius={6}
                         titleSize={14}
@@ -292,7 +292,7 @@ useEffect(() => {
                       <ButtonComponent
                         title="Đầu bếp"
                         onPress={() => toggleFilter('dauBep')}
-                        styles={[{width: '48%', height: 40}]}
+                        styles={[{ width: '48%', height: 40 }]}
                         bgrColor={colors.desc2}
                         boderRadius={6}
                         titleSize={15}
@@ -311,7 +311,7 @@ useEffect(() => {
                     <ButtonComponent
                       title="Thiết lập lại"
                       onPress={resetFilters}
-                      styles={[{width: '48%', height: 40}]}
+                      styles={[{ width: '48%', height: 40 }]}
                       bgrColor={colors.white}
                       boderRadius={2}
                       titleSize={15}
@@ -324,7 +324,7 @@ useEffect(() => {
                       onPress={() => {
                         setIsVisibleDialog(false);
                       }}
-                      styles={[{width: '48%', height: 40}]}
+                      styles={[{ width: '48%', height: 40 }]}
                       bgrColor={colors.orange}
                       boderRadius={6}
                       titleSize={15}

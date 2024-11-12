@@ -1,6 +1,6 @@
 // slices/MonAnSlice.ts
-import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
-import {getListMonAn, themMonAn, updateMonAn} from '../services/api'; // Đường dẫn tới API tương ứng
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { getListMonAn, getMonAnTheoId, themMonAn, updateMonAn } from '../services/api'; // Đường dẫn tới API tương ứng
 
 // Định nghĩa interface cho MonAn
 export interface MonAn {
@@ -19,6 +19,7 @@ export interface MonAnState {
   monAns: MonAn[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  monAn: MonAn | null;
 }
 
 // Trạng thái ban đầu cho MonAnSlice
@@ -26,6 +27,7 @@ const initialState: MonAnState = {
   monAns: [],
   status: 'idle',
   error: null,
+  monAn: null,
 };
 
 // Thunk để fetch danh sách món ăn
@@ -52,7 +54,7 @@ export const themMonAnMoi = createAsyncThunk(
 
 export const updateMonAnThunk = createAsyncThunk(
   'monAns/updateMonAn',
-  async ({id, formData}: {id: string; formData: FormData}, thunkAPI) => {
+  async ({ id, formData }: { id: string; formData: FormData }, thunkAPI) => {
     try {
       const data = await updateMonAn(id, formData);
       return data;
@@ -60,6 +62,15 @@ export const updateMonAnThunk = createAsyncThunk(
       console.log('Lỗi cập nhật:', error);
       return thunkAPI.rejectWithValue(error.message || 'Lỗi khi cập nhật món ăn');
     }
+  },
+);
+
+// Thunk để fetch món ăn
+export const fetchMonAnTheoId = createAsyncThunk(
+  'monAns/fetchMonAnTheoId',
+  async (id_MonAn: String) => {
+    const data = await getMonAnTheoId(id_MonAn);
+    return data; // Trả về dữ liệu
   },
 );
 
@@ -109,7 +120,17 @@ const monAnSlice = createSlice({
       .addCase(updateMonAnThunk.rejected, (state, action) => {
         state.status = 'failed';
         state.error = (action.payload as string) || 'Error updating MonAn';
-      });
+      })
+      .addCase(fetchMonAnTheoId.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(fetchMonAnTheoId.fulfilled, (state, action: PayloadAction<MonAn>) => {
+        // console.log("Dữ liệu trả về từ API:", action.payload);  // Kiểm tra lại dữ liệu
+        console.log("name: " + action.payload.tenMon)
+        state.status = 'succeeded';
+        state.monAn = action.payload;  // action.payload là đối tượng món ăn
+      })
+
   },
 });
 
