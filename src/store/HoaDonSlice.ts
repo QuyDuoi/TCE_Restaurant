@@ -31,10 +31,13 @@ const initialState: HoaDonState = {
 };
 
 // Async thunk để lấy danh sách HoaDon
-export const fetchHoaDon = createAsyncThunk('hoaDon/fetchHoaDon', async () => {
-  const hoaDonsData = await getListHoaDon();
-  return hoaDonsData;
-});
+export const fetchHoaDon = createAsyncThunk(
+  'hoaDon/fetchHoaDon',
+  async (id_caLam: string) => {
+    const hoaDonsData = await getListHoaDon(id_caLam);
+    return hoaDonsData;
+  },
+);
 
 // Async thunk để thêm mới HoaDon
 export const addNewHoaDon = createAsyncThunk(

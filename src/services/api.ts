@@ -130,9 +130,11 @@ export const updateTopping = async (
 };
 
 // Lấy danh sách HoaDon
-export const getListHoaDon = async (): Promise<HoaDon[]> => {
+export const getListHoaDon = async (id_caLam: string): Promise<HoaDon[]> => {
   try {
-    const response = await fetch(`${ipAddress}layDsHoaDon`);
+    const response = await fetch(
+      `${ipAddress}layDsHoaDon?id_caLamViec=${id_caLam}  `,
+    );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Hóa Đơn');
     }

@@ -46,7 +46,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
 
-  console.log('chi tiet hoa don', chiTietHoaDons.length);
+  //console.log('chi tiet hoa don', chiTietHoaDons.length);
 
   const navigation = useNavigation<any>();
 
@@ -123,9 +123,9 @@ const ChiTietHoaDonScreen = (props: Props) => {
   const hoaDonUpdate = hoadons.find(item => item._id === hoaDon._id);
 
   useFocusEffect(() => {
-    console.log('focus');
+    //console.log('focus');
     const unsubscribe = navigation.addListener('focus', () => {
-      dispatch(fetchHoaDon() as any);
+      dispatch(fetchHoaDon(hoaDon.id_caLamViec) as any);
     });
     return unsubscribe;
   });

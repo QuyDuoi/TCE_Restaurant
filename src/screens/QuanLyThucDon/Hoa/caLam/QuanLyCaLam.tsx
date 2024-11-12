@@ -66,7 +66,7 @@ const QuanLyCaLam = (props: Props) => {
   useEffect(() => {
     dispatch(fetchNhanViens() as any);
     dispatch(fetchCaLam() as any);
-  }, []);
+  }, [dispatch]);
 
   const sortedCaLam = (caLams: CaLam[]) => {
     return [...caLams].sort((a, b) => {

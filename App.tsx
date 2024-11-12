@@ -33,7 +33,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>
-        <DrawerNavigator/>
+        <DrawerNavigator />
       </View>
     </Provider>
   );

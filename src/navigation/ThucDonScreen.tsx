@@ -2,7 +2,7 @@ import React, {useLayoutEffect, useState} from 'react';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
-import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
+import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
@@ -42,7 +42,7 @@ function ThucDonStackScreen({
               borderWidth: 1,
               paddingVertical: 6,
               borderRadius: 6,
-              borderColor: 'orange'
+              borderColor: 'orange',
             }}
           />
         ),
@@ -67,8 +67,16 @@ function ThucDonStackScreen({
         component={ManCapNhatMonAn}
         options={{title: 'Thông tin chi tiết món ăn'}}
       />
-      <ThucDonStack.Screen name="ThemMonAn" component={ManThemMonAn} options={{title:"Thêm món ăn"}}/>
-      <ThucDonStack.Screen name="CapNhatDanhMuc" component={CapNhatDanhMuc} options={{headerShown: false}}/>
+      <ThucDonStack.Screen
+        name="ThemMonAn"
+        component={ManThemMonAn}
+        options={{title: 'Thêm món ăn'}}
+      />
+      <ThucDonStack.Screen
+        name="CapNhatDanhMuc"
+        component={CapNhatDanhMuc}
+        options={{headerShown: false}}
+      />
     </ThucDonStack.Navigator>
   );
 }
