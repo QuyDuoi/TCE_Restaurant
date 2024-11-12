@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
-import PropTypes from 'prop-types';  // Import thư viện PropTypes
 
-const AlertDialog = ({ isSuccess, message}) => {
+interface AlertDialogProps {
+    isSuccess: boolean;
+    message: string;
+    onDismiss: () => void;
+}
+
+const AlertDialog: React.FC<AlertDialogProps> = ({ isSuccess, message, onDismiss }) => {
     const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setVisible(false);
+        }, 2000); // Tự động đóng sau 2 giây
+
+        return () => clearTimeout(timer); // Dọn dẹp timer
+    }, [onDismiss]);
 
     if (!visible) return null;
 
@@ -21,12 +34,9 @@ const AlertDialog = ({ isSuccess, message}) => {
                     />
                 </View>
                 <Text style={styles.messageText}>
-                    {message} {/* Sử dụng message được truyền vào */}
+                    {message} {/* Hiển thị thông điệp */}
                 </Text>
             </View>
-            <TouchableOpacity onPress={() => setVisible(false)} style={styles.closeButton}>
-                <FontAwesomeIcon icon={faTimesCircle} size={20} color={'#667085'} />
-            </TouchableOpacity>
         </View>
     );
 };
@@ -37,7 +47,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
         borderWidth: 2,
-        borderRadius: 50, // Bo tròn viền
+        borderRadius: 50,
         padding: 10,
         margin: 10,
         shadowColor: '#000',
@@ -50,15 +60,14 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     successBorder: {
-        borderColor: '#12B76A', // Màu xanh cho thành công
+        borderColor: '#12B76A',
     },
     errorBorder: {
-        borderColor: '#F04438', // Màu đỏ cho lỗi
+        borderColor: '#F04438',
     },
     contentWrapper: {
         flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1, // Đảm bảo phần nội dung chiếm toàn bộ không gian trừ nút đóng
+        alignItems: 'center', 
     },
     iconCircle: {
         width: 40,
@@ -69,18 +78,15 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     successBackground: {
-        backgroundColor: '#E6F4EA', // Màu nền xanh nhạt cho thành công
+        backgroundColor: '#E6F4EA',
     },
     errorBackground: {
-        backgroundColor: '#FEE4E2', // Màu nền đỏ nhạt cho lỗi
+        backgroundColor: '#FEE4E2',
     },
     messageText: {
         color: '#344054',
         fontSize: 14,
-        flex: 1, // Để đảm bảo văn bản không vượt quá phần diện tích còn lại
-    },
-    closeButton: {
-        padding: 10,
+        width: '85%',
     },
 });
 

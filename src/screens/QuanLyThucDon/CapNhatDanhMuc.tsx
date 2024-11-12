@@ -6,11 +6,15 @@ import {DanhMuc} from '../../store/DanhMucSlice';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
 import ModalThemSuaDanhMuc from './ModalThemSuaDanhMuc';
+import AlertDialog from '../../customcomponent/alertDialog';
 
 function CapNhatDanhMuc(): React.JSX.Element {
   const navigation = useNavigation();
   const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const [modalCapNhat, setModalCapNhat] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSuccess, setAlertSuccess] = useState(true);
   const [danhMucInfo, setDanhMucInfo] = useState<DanhMuc | undefined>(
     undefined,
   );
@@ -51,6 +55,17 @@ function CapNhatDanhMuc(): React.JSX.Element {
         }}
         idDanhMucUd={danhMucInfo?._id}
         tenDanhMucUd={danhMucInfo?.tenDanhMuc}
+        onActionComplete={(success, message) => {
+          setAlertSuccess(success);
+          setAlertMessage(message);
+          setAlertVisible(true);
+        }}
+      />
+
+      <AlertDialog
+        isSuccess={alertSuccess}
+        message={alertMessage}
+        onDismiss={() => setAlertVisible(false)} // Thêm chức năng đóng AlertDialog
       />
     </View>
   );
@@ -81,6 +96,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
+    marginVertical: 2,
   },
   itemText: {
     fontSize: 18,

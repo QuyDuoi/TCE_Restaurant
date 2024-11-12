@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { PieChart } from 'react-native-chart-kit';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import {IPV4} from '../../services/api'
+import {ipAddress} from '../../services/api'
 
 
 const ThongKeHinhThucThanhToan = () => {
@@ -41,7 +41,7 @@ const ThongKeHinhThucThanhToan = () => {
 
   const fetchRevenueData = async (type, startDate, endDate) => {
     try {
-      let url = `http://${IPV4}:3000/api/thongKeHinhThucThanhToan?type=${type}`;
+      let url = `${ipAddress}thongKeHinhThucThanhToan?type=${type}`;
       if (type === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }

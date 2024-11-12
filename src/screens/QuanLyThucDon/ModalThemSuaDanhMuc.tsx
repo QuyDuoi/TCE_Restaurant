@@ -17,10 +17,11 @@ interface DanhMucModalProps {
   onClose: () => void;
   idDanhMucUd?: string;
   tenDanhMucUd?: string;
+  onActionComplete: (success: boolean, message: string) => void;
 }
 
 function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
-  const {visible, onClose, idDanhMucUd, tenDanhMucUd} = props;
+  const {visible, onClose, idDanhMucUd, tenDanhMucUd, onActionComplete} = props;
   const [tenDanhMuc, setTenDanhMuc] = useState(idDanhMucUd ? tenDanhMucUd : '');
   const [error, setError] = useState<string | null>(null);
   const id_NhaHang = '66fab50fa28ec489c7137537';
@@ -46,10 +47,13 @@ function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
         } else {
           await dispatch(themDanhMucThunk(danhMuc)).unwrap();
         }
-        setTenDanhMuc('')
-        onClose();
+        onActionComplete(true, 'Cập nhật danh mục thành công!')
+        // onClose();
       } catch (e: any) {
         setError(e.msg || 'Đã xảy ra lỗi');
+      } finally {
+        setError(null)
+        onClose()
       }
     }
   };
