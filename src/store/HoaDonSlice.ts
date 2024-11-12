@@ -20,6 +20,7 @@ export interface HoaDon {
   id_ban?: string;
   thoiGianVaoBan?: Date;
   thoiGianRaBan?: Date;
+  tongTien?: number;
 }
 
 export interface HoaDonState {

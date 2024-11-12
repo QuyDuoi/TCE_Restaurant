@@ -23,6 +23,7 @@ import {fetchKhuVucs} from '../../store/KhuVucSlice';
 import {Ban, fetchBans} from '../../store/BanSlice';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
+import {getListHoaDonTheoNhaHang} from '../../services/api';
 
 const {width, height} = Dimensions.get('window');
 
@@ -82,7 +83,7 @@ const BillItem: React.FC<{
             <Text style={styles.billText}>Ban mang di</Text>
           </View>
         )}
-        <Text style={styles.totalText}>Tổng tiền: {hoaDon.tongGiaTri}</Text>
+        <Text style={styles.totalText}>Tổng tiền: {hoaDon.tongTien}</Text>
       </View>
       <View style={styles.billActions}>
         <Text style={styles.durationText}>Thời gian: {'null'}</Text>
@@ -101,8 +102,7 @@ const BillItem: React.FC<{
 const BillScreen: React.FC = () => {
   const idNhaHang = '66fab50fa28ec489c7137537';
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredBills, setFilteredBills] = useState<HoaDon[]>([]);
-  const [banByKhuVuc, setBanByKhuVuc] = useState<Ban[]>([]);
+  const [billData, setBillData] = useState<HoaDon[]>();
 
   const navigation = useNavigation<any>();
 
@@ -118,20 +118,29 @@ const BillScreen: React.FC = () => {
     dispatch(fetchCaLam() as any);
     dispatch(fetchKhuVucs(idNhaHang) as any);
     dispatch(fetchBans() as any);
-    if (hoaDons.length === 0) {
-      dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
-    }
+    //dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
   }, [dispatch]);
-  console.log(hoaDons[0]);
 
-  useFocusEffect(() => {
-    console.log('focus');
+  useEffect(() => {
+    const fetchHoaDonNhaHang = async () => {
+      const response = await getListHoaDonTheoNhaHang(idNhaHang);
+      setBillData(response);
 
-    const unsubscribe = navigation.addListener('focus', () => {
-      dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
-    });
-    return unsubscribe;
-  });
+      //console.log(response);
+    };
+
+    fetchHoaDonNhaHang();
+  }, [hoaDons]);
+  console.log(hoaDons);
+
+  // useFocusEffect(() => {
+  //   console.log('focus');
+
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
+  //   });
+  //   return unsubscribe;
+  // });
 
   // useEffect(() => {
   //   const fetchAllHoaDons = async () => {
@@ -159,13 +168,13 @@ const BillScreen: React.FC = () => {
 
   //console.log('filteredBills', filteredBills.length);
 
-  useEffect(() => {
-    const filterHoaDon = hoaDons.filter(
-      hoaDon => hoaDon.trangThai === 'Chưa Thanh Toán' && hoaDon.id_ban,
-    );
+  // useEffect(() => {
+  //   const filterHoaDon = hoaDons.filter(
+  //     hoaDon => hoaDon.trangThai === 'Chưa Thanh Toán' && hoaDon.id_ban,
+  //   );
 
-    setFilteredBills(filterHoaDon);
-  }, [hoaDons]);
+  //   setFilteredBills(filterHoaDon);
+  // }, [hoaDons]);
 
   //console.log('caLamHienTai', caLamHienTai);
 
@@ -213,7 +222,7 @@ const BillScreen: React.FC = () => {
           onChangeText={setSearchQuery}
         />
         <FlatList
-          data={filteredBills}
+          data={billData}
           renderItem={renderItem}
           keyExtractor={item => item._id as string}
         />

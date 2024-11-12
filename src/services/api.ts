@@ -1,4 +1,5 @@
-export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.53:3000/api/`; // Địa chỉ cơ sở API
 
 import NhomTopping from './models/NhomToppingModel';
 import Topping from './models/ToppingModel';
@@ -141,6 +142,8 @@ export const getListHoaDonTheoCaLam = async (
       throw new Error('Lỗi khi lấy danh sách Hóa Đơn');
     }
     const data = await response.json();
+    //console.log('tong tien', data[0].tongTien);
+
     return data;
   } catch (error) {
     console.log('Lỗi khi lấy danh sách Hóa Đơn: ', error);

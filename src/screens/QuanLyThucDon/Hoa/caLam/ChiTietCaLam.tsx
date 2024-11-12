@@ -64,17 +64,18 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   useEffect(() => {
     console.log('fetch hoa don');
 
-    dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
+    dispatch(fetchHoaDonTheoCaLam(caLam._id) as any);
     dispatch(fetchKhuVucs(idNhaHang) as any);
     dispatch(fetchBans() as any);
   }, [caLam._id, dispatch]);
 
   //lay data tu redux store
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+  console.log('hoaDons', hoaDons);
 
-  const hoaDonsFilter = hoaDons.filter(hoaDon =>
-    caLam.id_hoaDon.includes(hoaDon._id),
-  );
+  // const hoaDonsFilter = hoaDons.filter(hoaDon =>
+  //   caLam.id_hoaDon.includes(hoaDon._id),
+  // );
 
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const bans = useSelector((state: RootState) => state.ban.bans);
@@ -251,7 +252,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
               <SpaceComponent height={10} />
               {hoaDons.length > 0 ? (
                 <FlatList
-                  data={hoaDonsFilter}
+                  data={hoaDons}
                   renderItem={renderItem}
                   keyExtractor={item => item._id as any}
                   showsVerticalScrollIndicator={false}

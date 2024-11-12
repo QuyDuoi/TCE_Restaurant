@@ -31,9 +31,11 @@ const ItemHoaDon = (props: Props) => {
         marginBottom: 10,
       }}>
       <TextComponent
-        text={`Bán mang về (${
-          hoaDon.hinhThucThanhToan ? 'Chuyển khoản' : 'Tiền mặt'
-        })`}
+        text={`Bán mang về ${
+          hoaDon.trangThai === 'Đã Thanh Toán'
+            ? `(${hoaDon.hinhThucThanhToan ? `Chuyển khoản` : `Tiền mặt`})`
+            : ''
+        }`}
         size={15}
         color={colors.black}
       />
@@ -66,7 +68,11 @@ const ItemHoaDon = (props: Props) => {
       <TextComponent
         text={`Khu vực: ${tenKhuVuc} - ${
           tenBan?.length == 1 ? 'Bàn: ' + tenBan : tenBan
-        } (${hoaDon.hinhThucThanhToan ? 'Chuyển khoản' : 'Tiền mặt'})`}
+        } ${
+          hoaDon.trangThai === 'Đã Thanh Toán'
+            ? `(${hoaDon.hinhThucThanhToan ? `Chuyển khoản` : `Tiền mặt`})`
+            : ''
+        }`}
         size={15}
         color={colors.black}
       />

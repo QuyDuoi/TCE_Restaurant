@@ -62,7 +62,7 @@ const QuanLyCaLam = (props: Props) => {
   }, [setFilterHandler]);
 
   useEffect(() => {
-    dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
+    //dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
     dispatch(fetchNhanViens() as any);
     dispatch(fetchCaLam() as any);
   }, [dispatch]);
