@@ -22,6 +22,7 @@ import {searchBan} from '../../services/api';
 import debounce from 'lodash';
 import ItemBanSearch from './Component/ItemBanSearch';
 
+
 interface Props {
   searchQueryBan: string;
 }

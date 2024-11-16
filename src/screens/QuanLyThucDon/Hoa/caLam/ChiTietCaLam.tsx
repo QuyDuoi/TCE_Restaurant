@@ -48,10 +48,6 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [bansByKhuVuc, setBansByKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
-  // const [chiTietHoaDons, setChiTietHoaDons] = useState<ChiTietHoaDon[]>([]);
-  // const [chiTietHoaDonList, setChiTietHoaDonList] = useState<ChiTietHoaDon[]>(
-  //   [],
-  // );
 
   const navigation = useNavigation<any>();
 
@@ -95,13 +91,6 @@ const ChiTietCaLam = ({route}: {route: any}) => {
     };
   };
 
-  // const getTongGiaTri = (hoaDon: HoaDon) => {
-  //   return hoaDon.id_chiTietHoaDon.reduce((sum, id) => {
-  //     const cthd = chiTietHoaDons.find(cthd => cthd._id === id);
-  //     return sum + (cthd ? cthd.giaTien * cthd.soLuongMon : 0);
-  //   }, 0);
-  // };
-
   const renderItem = ({item}: {item: HoaDon}) => {
     const {tenKhuVuc, tenBan} = getKhuVucBan(item.id_ban);
 
@@ -121,7 +110,6 @@ const ChiTietCaLam = ({route}: {route: any}) => {
             caLam: caLam,
           });
         }}
-        //tongGiaTri={getTongGiaTri(item)}
       />
     );
   };

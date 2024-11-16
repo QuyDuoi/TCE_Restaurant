@@ -13,7 +13,6 @@ export default class CaLam {
   tongThu: number;
   tongChi: number;
   id_nhanVien: NhanVienSlice;
-  id_hoaDon: string[];
   id_nhaHang: string;
   constructor(
     batDau: Date,
@@ -26,7 +25,7 @@ export default class CaLam {
     tongThu: number,
     tongChi: number,
     id_nhanVien: NhanVienSlice,
-    id_hoaDon: string[],
+
     id_nhaHang: string,
     _id?: string,
   ) {
@@ -40,7 +39,6 @@ export default class CaLam {
     this.tongThu = tongThu;
     this.tongChi = tongChi;
     this.id_nhanVien = id_nhanVien;
-    this.id_hoaDon = id_hoaDon;
     this.id_nhaHang = id_nhaHang;
     this._id = _id;
   }

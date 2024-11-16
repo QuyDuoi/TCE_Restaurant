@@ -75,7 +75,14 @@ const BillItem: React.FC<{
               }`}
             </Text>
             <Text style={styles.billText1}>
-              <Text style={styles.boldText}>Giờ vào:</Text> {'null'}
+              <Text style={styles.boldText}>Giờ vào: </Text>
+              {hoaDon.thoiGianVao
+                ? `${new Date(hoaDon.thoiGianVao)
+                    .toLocaleTimeString('vi-VN')
+                    .slice(0, 5)} - ${new Date(
+                    hoaDon.thoiGianVao,
+                  ).toLocaleDateString('vi-VN')}`
+                : 'null'}
             </Text>
           </View>
         ) : (

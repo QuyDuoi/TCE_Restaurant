@@ -3,8 +3,8 @@ export const formatDate = (date?: Date) => {
     return 'khong co ngay';
   }
 
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
+  const day = date.getDate().toLocaleString('vi-VN');
+  const month = (date.getMonth() + 1).toLocaleString('vi-VN');
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };

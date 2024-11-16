@@ -1,3 +1,4 @@
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -9,31 +10,26 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {hoaStyles} from '../../styles/hoaStyles';
-import RowComponent from '../../components/RowComponent';
-import TitleComponent from '../../components/TitleComponent';
-import {colors} from '../../contants/hoaColors';
-import SectionComponent from '../../components/SectionComponent';
-import InputComponent from '../../components/InputComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import SpaceComponent from '../../components/SpaceComponent';
-import ButtonComponent from '../../components/ButtonComponent';
-import ItemThemMon from './ItemThemMon';
-import TextComponent from '../../components/TextComponent';
+import {fetchMonAns, MonAn} from '../../../store/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../../store/store';
-import {fetchMonAns, MonAn} from '../../../../../store/MonAnSlice';
+import {useNavigation} from '@react-navigation/native';
+import {AppDispatch, RootState} from '../../../store/store';
+import {searchMonAn} from '../../../services/api';
 import {
   addNewChiTietHoaDon,
   ChiTietHoaDon,
-  fetchChiTietHoaDon,
-} from '../../../../../store/ChiTietHoaDonSlice';
-import {useNavigation} from '@react-navigation/native';
-import ModalCart from './ModalCart';
-import {fetchHoaDonTheoCaLam} from '../../../../../store/HoaDonSlice';
-import debounce from 'lodash';
-import {searchMonAn} from '../../../../../services/api';
+} from '../../../store/ChiTietHoaDonSlice';
+import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
+import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
+import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import ModalCart from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalCart';
+import ItemThemMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemThemMon';
 
 interface Props {
   route?: any;
@@ -41,11 +37,11 @@ interface Props {
 
 const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
 
-const ThemMonScreen = (props: Props) => {
+const ThemMonNVPV = (props: Props) => {
   const {route} = props;
   const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc} = route.params;
 
-  //console.log('chi tiet hoa don', chiTietHoaDon);
+  //console.log(chiTietHoaDon[1].soLuongMon);
 
   const [visibleModalCart, setVisibleModalCart] = useState(false);
   const [monAns, setMonAns] = useState<{[key: string]: MonAn[]}>({});
@@ -65,8 +61,7 @@ const ThemMonScreen = (props: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
   const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
-  const danhMucStatus = useSelector((state: RootState) => state.danhMuc.status);
-  const monAnsStatus = useSelector((state: RootState) => state.monAn.status);
+
   //phai tu fetch mon an
   useEffect(() => {
     setIsLoading(true);
@@ -418,7 +413,6 @@ const ThemMonScreen = (props: Props) => {
                     ).then(action => {
                       if (addNewChiTietHoaDon.fulfilled.match(action)) {
                         console.log('Thêm mới Chi Tiết Hóa Đơn thành công');
-
                         navigation.goBack();
                       }
                     });
@@ -457,4 +451,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ThemMonScreen;
+export default ThemMonNVPV;

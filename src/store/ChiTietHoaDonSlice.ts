@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
 import {
   getListChiTietHoaDon,
   addChiTietHoaDon,
@@ -7,7 +7,7 @@ import {
   addListChiTietHoaDon,
   updateStatusChiTietHoaDon,
 } from '../services/api';
-import { MonAn } from './MonAnSlice';
+import {MonAn} from './MonAnSlice';
 
 // Interface định nghĩa cho ChiTietHoaDon
 export interface ChiTietHoaDon {
@@ -38,9 +38,9 @@ const initialState: ChiTietHoaDonState = {
 // Async thunk để lấy danh sách ChiTietHoaDon
 export const fetchChiTietHoaDon = createAsyncThunk(
   'chiTietHoaDon/fetchChiTietHoaDon',
-  async (id_chiTietHoaDon: string[], thunkAPI) => {
+  async (id_hoaDon: string, thunkAPI) => {
     try {
-      const data = await getListChiTietHoaDon(id_chiTietHoaDon);
+      const data = await getListChiTietHoaDon(id_hoaDon);
       return data;
     } catch (error: any) {
       console.log('Lỗi lấy danh sách:', error);
@@ -60,7 +60,7 @@ export const addNewChiTietHoaDon = createAsyncThunk(
       monAn,
     }: {
       id_hoaDon: string;
-      monAn: Array<{ id_monAn: string; soLuong: number; giaTien: number }>;
+      monAn: Array<{id_monAn: string; soLuong: number; giaTien: number}>;
     },
     thunkAPI,
   ) => {
@@ -79,7 +79,7 @@ export const addNewChiTietHoaDon = createAsyncThunk(
 // Async thunk để cập nhật ChiTietHoaDon
 export const updateChiTietHoaDonThunk = createAsyncThunk(
   'chiTietHoaDon/updateChiTietHoaDon',
-  async ({ id, formData }: { id: string; formData: ChiTietHoaDon }, thunkAPI) => {
+  async ({id, formData}: {id: string; formData: ChiTietHoaDon}, thunkAPI) => {
     try {
       const data = await updateChiTietHoaDon(id, formData);
       return data;
@@ -94,17 +94,17 @@ export const updateChiTietHoaDonThunk = createAsyncThunk(
 // Thunk để cập nhật trạng thái ChiTietHoaDon
 export const updateStatusChiTietHoaDonThunk = createAsyncThunk(
   'chiTietHoaDon/updateStatusChiTietHoaDon',
-  async (
-    { id, trangThai }: { id: string; trangThai: boolean },
-    thunkAPI
-  ) => {
+  async ({id, trangThai}: {id: string; trangThai: boolean}, thunkAPI) => {
     try {
-      const updatedChiTietHoaDon = await updateStatusChiTietHoaDon(id, trangThai);
+      const updatedChiTietHoaDon = await updateStatusChiTietHoaDon(
+        id,
+        trangThai,
+      );
       return updatedChiTietHoaDon;
-    } catch (error) {
+    } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message || 'Error updating status');
     }
-  }
+  },
 );
 
 const chiTietHoaDonSlice = createSlice({
@@ -156,7 +156,7 @@ const chiTietHoaDonSlice = createSlice({
         state.error =
           (action.payload as string) || 'Error updating ChiTietHoaDon';
       })
-      .addCase(updateStatusChiTietHoaDonThunk.pending, (state) => {
+      .addCase(updateStatusChiTietHoaDonThunk.pending, state => {
         state.status = 'loading';
       })
       .addCase(
@@ -165,12 +165,12 @@ const chiTietHoaDonSlice = createSlice({
           state.status = 'succeeded';
           // Tìm và cập nhật trạng thái của ChiTietHoaDon trong danh sách
           const index = state.chiTietHoaDons.findIndex(
-            (cthd) => cthd._id === action.payload._id
+            cthd => cthd._id === action.payload._id,
           );
           if (index !== -1) {
             state.chiTietHoaDons[index] = action.payload; // Cập nhật chi tiết hóa đơn
           }
-        }
+        },
       )
       .addCase(updateStatusChiTietHoaDonThunk.rejected, (state, action) => {
         state.status = 'failed';

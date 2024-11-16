@@ -1,7 +1,11 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getListCaLam, getListChiTietHoaDonTheoCaLam, getListNhanVien } from '../services/api';
-import { NhanVienSlice } from './NhanVienSlice';
-import { ChiTietHoaDon } from './ChiTietHoaDonSlice';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {
+  getListCaLam,
+  getListChiTietHoaDonTheoCaLam,
+  getListNhanVien,
+} from '../services/api';
+import {NhanVienSlice} from './NhanVienSlice';
+import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
 export interface CaLam {
   _id?: string;
@@ -15,7 +19,6 @@ export interface CaLam {
   tongThu: number;
   tongChi: number;
   id_nhanVien: NhanVienSlice;
-  id_hoaDon: string[];
   id_nhaHang: string;
 }
 

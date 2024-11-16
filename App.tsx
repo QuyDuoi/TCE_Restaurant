@@ -1,14 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import DrawerNavigator from './src/navigation/DrawerNavigator';
-import { Provider } from 'react-redux';
-import { store } from './src/store/store';
+import {Provider} from 'react-redux';
+import {store} from './src/store/store';
 import MyTabs from './src/screens/QuanLyThucDon/TabView';
 import DanhMucComponent from './src/screens/QuanLyThucDon/Hoa/components/DanhMucComponent';
 import NhomToppingComponent from './src/screens/QuanLyThucDon/Hoa/components/NhomToppingComponent';
 import NhanVienComponent from './src/screens/QuanLyNhanVien/NhanVienComponent';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import AddEmployeeScreen from './src/screens/QuanLyNhanVien/themNhanVien'; // Màn hình thêm nhân viên
 import ItemNhanVien from './src/screens/QuanLyNhanVien/ItemNhanVien';
 import EditEmployeeInfo from './src/screens/QuanLyNhanVien/EditEmployeeInfo';
@@ -26,13 +26,14 @@ import FoodOrderScreen from './src/screens/QuanLyLenMon/FoodOderScreen';
 import BillScreen from './src/screens/QuyetToanHoaDon/BillScreen';
 import BookingFlow from './src/customcomponent/BookingFlow';
 import TableBookingDetail from './src/customcomponent/ItemChiTietDatBan';
+import ChiTietHoaDonNVPV from './src/screens/QuanLyKhuVuc/taoHoaDon/ChiTietHoaDonNVPV';
 
 const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 1}}>
         <DrawerNavigator />
       </View>
     </Provider>
