@@ -73,36 +73,8 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
   console.log('hoaDons', hoaDons);
 
-  // const hoaDonsFilter = hoaDons.filter(hoaDon =>
-  //   caLam.id_hoaDon.includes(hoaDon._id),
-  // );
-
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const bans = useSelector((state: RootState) => state.ban.bans);
-
-  // useEffect(() => {
-  //   const fetchIds = new Set();
-  //   hoaDons.forEach(hd => {
-  //     if (!fetchIds.has(hd.id_chiTietHoaDon)) {
-  //       fetchIds.add(hd.id_chiTietHoaDon);
-  //       dispatch(fetchChiTietHoaDon(hd.id_chiTietHoaDon) as any).then(
-  //         (action: any) => {
-  //           if (fetchChiTietHoaDon.fulfilled.match(action)) {
-  //             setChiTietHoaDons(prev => [...prev, ...action.payload]);
-  //           }
-  //         },
-  //       );
-  //     }
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   const allChiTietHoaDons = Object.values(chiTietHoaDons).flat();
-  //   const uniqueChiTietHoaDons = allChiTietHoaDons.filter(
-  //     (item, index, self) => index === self.findIndex(t => t._id === item._id),
-  //   );
-  //   setChiTietHoaDonList(uniqueChiTietHoaDons);
-  // }, [chiTietHoaDons]);
 
   useEffect(() => {
     console.log('set ban');

@@ -1,6 +1,6 @@
 // slices/MonAnSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { getListMonAn, getMonAnTheoId, themMonAn, updateMonAn } from '../services/api'; // Đường dẫn tới API tương ứng
+import { getListMonAn, getMonAnTheoId, themMonAn, updateMonAn } from '../screens/QuanLyThucDon/CallApiThucDon';
 
 // Định nghĩa interface cho MonAn
 export interface MonAn {

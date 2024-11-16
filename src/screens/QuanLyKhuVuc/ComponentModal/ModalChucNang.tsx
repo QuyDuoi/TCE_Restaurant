@@ -97,6 +97,16 @@ const ModalChucNang = (props: Props) => {
               boderRadius={100}
             />
           </SectionComponent>
+          <SectionComponent>
+            <ButtonComponent
+              title="Hủy bàn đặt"
+              onPress={() => {}}
+              bgrColor={colors.orange}
+              titleColor={colors.white}
+              styles={styles.button}
+              boderRadius={100}
+            />
+          </SectionComponent>
           <SpaceComponent height={24} />
           <SectionComponent>
             <ButtonComponent

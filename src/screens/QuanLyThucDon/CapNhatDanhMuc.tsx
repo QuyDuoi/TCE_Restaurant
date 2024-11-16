@@ -2,14 +2,17 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
-import {DanhMuc} from '../../store/DanhMucSlice';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
+import {DanhMuc, moveItemDown, moveItemUp} from '../../store/DanhMucSlice';
+import {useSelector, useDispatch} from 'react-redux';
+import {AppDispatch, RootState} from '../../store/store';
 import ModalThemSuaDanhMuc from './ModalThemSuaDanhMuc';
 import AlertDialog from '../../customcomponent/alertDialog';
+import ButtonComponent from './Hoa/components/ButtonComponent';
+import {colors} from './Hoa/contants/hoaColors';
 
 function CapNhatDanhMuc(): React.JSX.Element {
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
   const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const [modalCapNhat, setModalCapNhat] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -26,19 +29,44 @@ function CapNhatDanhMuc(): React.JSX.Element {
         setModalCapNhat(true);
       }}>
       <Text style={styles.itemText}>{item.tenDanhMuc}</Text>
-      <Icon name="chevron-right" size={18} color={'gray'} />
+      <View style={styles.doiViTri}>
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(moveItemUp(item._id || ''));
+          }}
+          style={{marginRight: 8}}>
+          <Icon name="arrow-up" size={20} color={'gray'} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            {
+              dispatch(moveItemDown(item._id || ''));
+            }
+          }}>
+          <Icon name="arrow-down" size={20} color={'gray'} />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <Icon name="reply" size={30} color="orange" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Cập nhật danh mục</Text>
+        <View style={styles.tieuDe}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <Icon name="reply" size={30} color="orange" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Cập nhật danh mục</Text>
+        </View>
+        <ButtonComponent
+          title="Lưu thay đổi"
+          titleSize={14}
+          titleColor={colors.price}
+          onPress={() => {}}
+          styles={styles.cuttom}
+        />
       </View>
       <View style={styles.containerList}>
         <FlatList
@@ -82,6 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 10,
+    justifyContent: 'space-between',
   },
   title: {
     marginHorizontal: 20,
@@ -107,4 +136,18 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingTop: 10,
   },
+  doiViTri: {
+    flexDirection: 'row',
+  },
+  cuttom: {
+    paddingHorizontal: 8,
+    marginRight: 2,
+    borderWidth: 1,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderColor: 'orange',
+  },
+  tieuDe: {
+    flexDirection: 'row'
+  }
 });

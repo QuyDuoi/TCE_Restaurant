@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
-import { FoodOrder } from './FoodOderScreen'; // Điều chỉnh theo đúng đường dẫn của bạn
-import { useDispatch, useSelector } from 'react-redux';
+import { FoodOderScreen } from './FoodOderScreen'; // Điều chỉnh theo đúng đường dẫn của bạn
+import { useDispatch } from 'react-redux';
 import { fetchMonAnTheoId } from '../../store/MonAnSlice';
-import { RootState } from '../../store/store';
 import { fetchBanTheoId } from '../../store/BanSlice';
 
 interface OrderDetailModalProps {
     visible: boolean;
     onClose: () => void;
-    order: FoodOrder | null;
+    order: FoodOderScreen | null;
 }
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ visible, onClose, order }) => {

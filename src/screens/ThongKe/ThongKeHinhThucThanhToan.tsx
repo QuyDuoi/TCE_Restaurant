@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet, processColor, Image, } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { PieChart } from 'react-native-chart-kit';
+// import { PieChart } from 'react-native-chart-kit';
+import { PieChart } from 'react-native-charts-wrapper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import {ipAddress} from '../../services/api'
-
+import {ipAddress} from '../../services/api';
 
 const ThongKeHinhThucThanhToan = () => {
+  const noDataImageURL = 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRzlNmuaJh6jvjDXesEjjS-1ZqS1GnsE8jb2mY8XjwqrSoim8N4';
+
   const navigation = useNavigation();
   const [revenue, setRevenue] = useState(0);
   const [promotion, setPromotion] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [dateRange, setDateRange] = useState('');
   const [showOptionsModal, setShowOptionsModal] = useState(false);
-  const [selectedTimeRange, setSelectedTimeRange] = useState('Chọn Thời Gian');
+  const [selectedTimeRange, setSelectedTimeRange] = useState('Hôm Nay');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -22,13 +24,27 @@ const ThongKeHinhThucThanhToan = () => {
   const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false);
 
   const total = revenue + promotion;
-  const revenuePercentage = ((revenue / total) * 100).toFixed(1);
-  const promotionPercentage = ((promotion / total) * 100).toFixed(1);
+const revenuePercentage = ((revenue / total) * 100).toFixed(1);
+const promotionPercentage = ((promotion / total) * 100).toFixed(1);
 
-  const data = [
-    { name: 'Chuyển Khoản', population: revenue, color: '#ff6347' },
-    { name: 'Tiền Mặt', population: promotion, color: '#90ee90' },
-  ];
+const data = {
+  dataSets: [
+    {
+      values:total>0
+      ? [
+        { value: parseFloat(revenuePercentage), label: `${revenuePercentage}%` },
+        { value: parseFloat(promotionPercentage), label: `${promotionPercentage}%` }
+      ]:[],
+      label: '',
+      config: {
+        colors: [processColor('#ff6347'), processColor('#90ee90')],
+        valueTextSize: 0,
+        valueTextColor: processColor('black'),
+        sliceSpace: 5,
+      }
+    }
+  ]
+};
 
   const options = [
     'Hôm Nay',
@@ -225,41 +241,77 @@ const ThongKeHinhThucThanhToan = () => {
   {console.log("Promotion (before chart render):", promotion)}
       {/* Chart */}
       <View style={styles.chartContainer}>
-        <PieChart
-          data={data}
-          width={400}
-          height={300}
-          chartConfig={{
-            backgroundGradientFrom: '#1E2923',
-            backgroundGradientTo: '#08130D',
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            strokeWidth: 2,
-          }}
-          accessor="population"
-          backgroundColor="transparent"
-          paddingLeft="95"
-          hasLegend={false}
-        />
-        <View style={styles.legendContainer}>
-          <View style={styles.legendItemContainer}>
-            <Text style={styles.legendLabel}>Chuyển Khoản ({((revenue / (revenue + promotion)) * 100).toFixed(1)}%)</Text>
-            <View style={[styles.legendItem, { backgroundColor: '#ff6347' }]}>
-              <Text style={styles.legendText}>{revenue.toLocaleString()} VND</Text>
-            </View>
+  {total === 0 ? ( 
+    <Image 
+      source={{ uri: noDataImageURL }}
+      style={{ height: 250, width: 350 }} 
+      resizeMode="contain" 
+    />
+  ) : (
+    <>
+      <PieChart
+        style={{height: 300, width: 300}}
+        chartDescription={{text: ''}}
+        data={data}
+        legend={{enabled: false}}
+        entryLabelColor={processColor('black')}
+        entryLabelTextSize={20}
+        rotationEnabled={true}
+        rotationAngle={45}
+        drawEntryLabels={true}
+        usePercentValues={true}
+        styledCenterText={{
+          text: 'Tổng Doanh Thu',
+          color: processColor('black'),
+          size: 20,
+        }}
+        centerTextRadiusPercent={100}
+        holeRadius={40}
+        holeColor={processColor('transparent')}
+        transparentCircleRadius={45}
+        transparentCircleColor={processColor('#f0f0f088')}
+        maxAngle={360}
+        config={{
+          valueFormatter: "#'%'",
+        }}
+      />
+      <View style={styles.legendContainer}>
+        <View style={styles.legendItemContainer}>
+          <Text style={styles.legendLabel}>
+            Tiền Mặt
+          </Text>
+          <View style={[styles.legendItem, {backgroundColor: '#ff6347'}]}>
+            <Text style={styles.legendText}>
+              {revenue.toLocaleString()} VND
+            </Text>
           </View>
-          <View style={styles.legendItemContainer}>
-            <Text style={styles.legendLabel}>Tiền Mặt ({((promotion / (revenue + promotion)) * 100).toFixed(1)}%)</Text>
-            <View style={[styles.legendItem, { backgroundColor: '#90ee90' }]}>
-              <Text style={styles.legendText}>{promotion.toLocaleString()} VND</Text>
-            </View>
+        </View>
+        <View style={styles.legendItemContainer}>
+          <Text style={styles.legendLabel}>
+            Chuyển Khoản
+          </Text>
+          <View style={[styles.legendItem, {backgroundColor: '#90ee90'}]}>
+            <Text style={styles.legendText}>
+              {promotion.toLocaleString()} VND
+            </Text>
           </View>
         </View>
       </View>
+    </>
+  )}
+</View>
+      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  noDataText: {
+    fontSize: 20,
+    color: 'gray',
+    textAlign: 'center',
+    marginTop: 200,
+  },
   rectangle:{ 
     flexDirection: 'row',
     borderWidth: 1,
@@ -347,13 +399,13 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 80,
   },
   legendContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginTop: 10,
+    marginTop: 30,
   },
   legendItemContainer: {
     alignItems: 'center',

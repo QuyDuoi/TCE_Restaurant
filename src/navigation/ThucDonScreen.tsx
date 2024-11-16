@@ -2,11 +2,12 @@ import React, { useLayoutEffect, useState } from 'react';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
-import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
+
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
 import { colors } from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
 import CapNhatDanhMuc from '../screens/QuanLyThucDon/CapNhatDanhMuc';
+import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
 
 const ThucDonStack = createNativeStackNavigator();
 
@@ -28,7 +29,7 @@ function ThucDonStackScreen({
         headerShown: true,
         headerRight: () => (
           <ButtonComponent
-            title="Thêm mới"
+            title="Tùy chọn"
             titleSize={14}
             titleColor={colors.price}
             onPress={() => {

@@ -38,9 +38,9 @@ const initialState: HoaDonState = {
 // Async thunk để lấy danh sách HoaDon
 export const fetchHoaDonTheoCaLam = createAsyncThunk(
   'hoaDon/fetchHoaDonTheoCaLam',
-  async (id_caLam: string) => {
+  async (id_caLamViec: string) => {
     try {
-      const hoaDonsData = await getListHoaDonTheoCaLam(id_caLam);
+      const hoaDonsData = await getListHoaDonTheoCaLam(id_caLamViec);
       return hoaDonsData;
     } catch (error) {
       console.log('Lỗi lấy danh sách hoa đơn:', error);

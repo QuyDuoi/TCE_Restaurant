@@ -1,20 +1,10 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ToastAndroid,
-} from 'react-native';
+import {View, Text, Modal, StyleSheet, ToastAndroid} from 'react-native';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent'; // Điều chỉnh đường dẫn import theo cấu trúc project của bạn
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors'; // Điều chỉnh đường dẫn import theo cấu trúc project của bạn
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
-import {Ban, updateBanThunk} from '../../../store/BanSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
-import {KhuVuc} from '../../../store/KhuVucSlice';
+import {updateBanThunk} from '../../../store/BanSlice';
+import {useDispatch} from 'react-redux';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
@@ -22,7 +12,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalDate from '../../QuanLyThucDon/Hoa/caLam/ModalDate';
 import ModalTime from '../../QuanLyThucDon/Hoa/caLam/ModalTime';
-import {formatTime} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 
 interface Props {
@@ -43,9 +32,6 @@ const DatBanModal = (props: Props) => {
   const [isVisibleModalTime, setIsVisibleModalTime] = useState(false);
   const [time, setTime] = useState(new Date());
   const [hoTen, setHoTen] = useState('Nguyen van a');
-
-  //console.log(selectedBanSearch?.id_khuVuc);
-  // const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
 
   const dispatch = useDispatch();
 
@@ -74,29 +60,6 @@ const DatBanModal = (props: Props) => {
       ToastAndroid.show('Đặt bàn thất bại', ToastAndroid.LONG);
     }
   };
-  // console.log(selectedBan?._id);
-  // console.log(selectedBanSearch?._id);
-
-  // const tenKhuVuc = selectedBanSearch
-  //   ? khuVucs.find(kv => kv._id === selectedBanSearch.id_khuVuc)?.tenKhuVuc
-  //   : '';
-
-  // selectedBanSearch ? (
-  //   <InputComponent
-  //     value={``}
-  //     onChangeText={() => {}}
-  //     type={'normal'}
-  //     styles={[styles.input]}
-  //     placeholder={`${
-  //       selectedBanSearch.tenBan.length === 1
-  //         ? 'Bàn ' + selectedBanSearch.tenBan
-  //         : selectedBanSearch.tenBan
-  //     } - ${tenKhuVuc}`}
-  //     numberOfLines={1}
-  //     readonly
-  //     flex={1}
-  //   />
-  // ) :
 
   return (
     <>
@@ -239,9 +202,9 @@ const DatBanModal = (props: Props) => {
                 }}>
                 <InputComponent
                   type={'normal'}
-                  placeholder={`Nhap ho ten`}
-                  value={'Nguyen van a'}
-                  onChangeText={() => {}}
+                  placeholder={`Nhập họ tên khách`}
+                  value={hoTen}
+                  onChangeText={setHoTen}
                   styles={{
                     paddingVertical: 0,
                     height: 33,

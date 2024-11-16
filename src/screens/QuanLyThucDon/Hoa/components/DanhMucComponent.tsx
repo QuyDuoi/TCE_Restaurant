@@ -1,19 +1,12 @@
 import {
   View,
-  Text,
-  ScrollView,
   FlatList,
   Platform,
   UIManager,
   LayoutAnimation,
-  useWindowDimensions,
-  TextInput,
   ActivityIndicator,
-  Keyboard,
 } from 'react-native';
 import React, {
-  ReactNode,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -23,13 +16,11 @@ import ItemDanhMuc from '../lists/ItemDanhMuc';
 import ItemMonAn from '../lists/ItemMonAn';
 import TextComponent from './TextComponent';
 import {colors} from '../contants/hoaColors';
-import SettingModaDanhMuc from '../caLam/SettingModaDanhMuc';
 import {fetchMonAns, MonAn} from '../../../../store/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {useNavigation} from '@react-navigation/native';
 import {DanhMuc, fetchDanhMucs} from '../../../../store/DanhMucSlice';
-import unorm from 'unorm';
 import {searchMonAn} from '../../../../services/api';
 import debounce from 'lodash';
 
@@ -47,7 +38,6 @@ interface Props {
 const DanhMucComponent = (props: Props) => {
   const {searchQueryMonAn} = props;
   console.log('render danh muc component');
-  const id_NhaHang = '66fab50fa28ec489c7137537';
 
   const [isLoading, setIsLoading] = useState(true);
   const [expandedDanhMuc, setExpandedDanhMuc] = useState<string[]>([]);
@@ -109,38 +99,45 @@ const DanhMucComponent = (props: Props) => {
 
   //xu ly tim kiem
   const debounceSearch = useRef(
-    debounce.debounce(async (text: string) => {
-      if (text.trim().length > 0) {
-        setIsLoading(true);
-
-        try {
-          const data = await searchMonAn(text);
-          setFilteredMonAn(data);
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setIsLoading(false);
+    debounce.debounce(
+      async (text: string, id_NhaHang: string) => {
+        if (text.trim().length > 0) {
+          setIsLoading(true);
+  
+          try {
+            const data = await searchMonAn(text, id_NhaHang);
+            setFilteredMonAn(data);
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setIsLoading(false);
+          }
+        } else {
+          setFilteredMonAn([]);
         }
-      } else {
-        setFilteredMonAn([]);
-      }
-    }, 1500),
+      },
+      1000, // Thời gian debounce (1 giây)
+    ),
   );
-
+  
   useEffect(() => {
     if (searchQueryMonAn.trim().length > 0) {
       setIsLoading(true);
     }
-    debounceSearch.current(searchQueryMonAn);
+  
+    // Gọi debounceSearch với cả text và id_NhaHang
+    debounceSearch.current(searchQueryMonAn, '66fab50fa28ec489c7137537');
+  
     if (searchQueryMonAn.trim().length === 0) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
       }, 1500);
     }
+  
+    // Hủy bỏ debounce khi component unmount hoặc searchQueryMonAn thay đổi
     return () => debounceSearch.current.cancel();
-  }, [searchQueryMonAn]);
-  //console.log(filteredMonAn);
+  }, [searchQueryMonAn, '66fab50fa28ec489c7137537']); // Thêm id_NhaHang vào danh sách phụ thuộc  
 
   const renderSearchItem = ({item}: {item: MonAn}) => {
     return (
@@ -192,7 +189,7 @@ const DanhMucComponent = (props: Props) => {
               ))
             ) : (
               <TextComponent
-                text="Chưa có món ăn nào trong nàyyy"
+                text="Chưa có món ăn nào trong danh mục này"
                 color={colors.text}
                 styles={{
                   alignSelf: 'center',

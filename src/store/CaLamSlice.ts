@@ -52,9 +52,9 @@ export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
   return allCaLams;
 });
 
-export const fetchChiTietHoaDonTheoCaLam = createAsyncThunk('caLam/fetchChiTietHoaDon', async (id_caLam: string, thunkAPI) => {
+export const fetchChiTietHoaDonTheoCaLam = createAsyncThunk('caLam/fetchChiTietHoaDon', async (id_caLamViec: string, thunkAPI) => {
   try {
-    const data = await getListChiTietHoaDonTheoCaLam(id_caLam);
+    const data = await getListChiTietHoaDonTheoCaLam(id_caLamViec);
     return data;
   } catch (error: any) {
     console.log('Lỗi lấy danh sách:', error);

@@ -14,10 +14,13 @@ export interface ChiTietHoaDon {
   _id?: string;
   soLuongMon: number;
   giaTien: number;
-  trangThai: boolean
+  trangThai: boolean;
   id_monAn: MonAn;
+  id_hoaDon: string;
   createdAt?: string;
   updatedAt?: string;
+  ban?: any
+  khuVuc?: any
 }
 
 export interface ChiTietHoaDonState {

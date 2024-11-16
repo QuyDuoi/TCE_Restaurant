@@ -106,11 +106,11 @@ function DrawerNavigator(): React.JSX.Element {
         />
         <Drawer.Screen
           name="ThongKe"
-          component={ThongKeScreen}
           options={{
             title: 'Thống kê',
-          }}
-        />
+          }}>
+          {props => <ThongKeScreen {...props} />}
+        </Drawer.Screen>
       </Drawer.Navigator>
     </NavigationContainer>
   );
