@@ -26,12 +26,15 @@ import DatePicker from 'react-native-date-picker';
 import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
-import {CaLam, fetchCaLam} from '../../../../store/CaLamSlice';
-import {fetchNhanViens, NhanVienSlice} from '../../../../store/NhanVienSlice';
+import {CaLam, fetchCaLam} from '../../../../store/Slices/CaLamSlice';
+import {
+  fetchNhanViens,
+  NhanVienSlice,
+} from '../../../../store/Slices/NhanVienSlice';
 import {formatDate} from '../utils/formatUtils';
 import fetchHoaDonTheoCaLam, {
   fetchHoaDonTheoNhaHang,
-} from '../../../../store/HoaDonSlice';
+} from '../../../../store/Slices/HoaDonSlice';
 import ModalDate from './ModalDate';
 
 interface Props {

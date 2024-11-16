@@ -3,7 +3,7 @@ import {View, Text, Modal, StyleSheet, ToastAndroid} from 'react-native';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent'; // Điều chỉnh đường dẫn import theo cấu trúc project của bạn
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors'; // Điều chỉnh đường dẫn import theo cấu trúc project của bạn
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
-import {updateBanThunk} from '../../../store/BanSlice';
+import {updateBanThunk} from '../../../store/Slices/BanSlice';
 import {useDispatch} from 'react-redux';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';

@@ -1,4 +1,4 @@
-import { NhanVien } from "../../store/NhanVienSlice";
+import { NhanVien } from "../../store/Slices/NhanVienSlice";
 import { FiltersModelTest } from "./NhanVienComponent";
 
 // Hàm loại bỏ dấu tiếng Việt

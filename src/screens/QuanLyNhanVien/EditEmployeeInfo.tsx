@@ -14,7 +14,7 @@ import {styles} from './EditEmployeeInfoStyles';
 import UnsavedChangesModal from '../../customcomponent/modalSave';
 import {useDispatch} from 'react-redux';
 import type {AppDispatch} from '../../store/store';
-import {updateNhanVienThunk} from '../../store/NhanVienSlice';
+import {updateNhanVienThunk} from '../../store/Slices/NhanVienSlice';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import NhanVienModel from '../../services/models/NhanVienModel';
 import {taoFormDataNhanVien} from './NhanVienRespository';

@@ -15,7 +15,7 @@ import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import {addNewHoaDon} from '../../../store/HoaDonSlice';
+import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
 

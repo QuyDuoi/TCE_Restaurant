@@ -35,12 +35,12 @@ import {
   fetchHoaDonTheoCaLam,
   fetchHoaDonTheoNhaHang,
   HoaDon,
-} from '../../../../store/HoaDonSlice';
-import {fetchKhuVucs, KhuVuc} from '../../../../store/KhuVucSlice';
-import {Ban, fetchBans} from '../../../../store/BanSlice';
+} from '../../../../store/Slices/HoaDonSlice';
+import {fetchKhuVucs, KhuVuc} from '../../../../store/Slices/KhuVucSlice';
+import {Ban, fetchBans} from '../../../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
-import {fetchChiTietHoaDon} from '../../../../store/ChiTietHoaDonSlice';
-import {ChiTietHoaDon} from '../../../../store/ChiTietHoaDonSlice';
+import {fetchChiTietHoaDon} from '../../../../store/Slices/ChiTietHoaDonSlice';
+import {ChiTietHoaDon} from '../../../../store/Slices/ChiTietHoaDonSlice';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
 

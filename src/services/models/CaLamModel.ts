@@ -1,5 +1,5 @@
-import {HoaDon} from '../../store/HoaDonSlice';
-import {NhanVienSlice} from '../../store/NhanVienSlice';
+import {HoaDon} from '../../store/Slices/HoaDonSlice';
+import {NhanVienSlice} from '../../store/Slices/NhanVienSlice';
 
 export default class CaLam {
   _id?: string;

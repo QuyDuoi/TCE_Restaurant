@@ -2,7 +2,11 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
-import {DanhMuc, moveItemDown, moveItemUp} from '../../store/DanhMucSlice';
+import {
+  DanhMuc,
+  moveItemDown,
+  moveItemUp,
+} from '../../store/Slices/DanhMucSlice';
 import {useSelector, useDispatch} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import ModalThemSuaDanhMuc from './ModalThemSuaDanhMuc';
@@ -148,6 +152,6 @@ const styles = StyleSheet.create({
     borderColor: 'orange',
   },
   tieuDe: {
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });

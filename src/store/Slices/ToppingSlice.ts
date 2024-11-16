@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
-import {getListTopping, addTopping, updateTopping} from '../services/api';
+import {getListTopping, addTopping, updateTopping} from '../../services/api';
 
 // Interface định nghĩa cho Topping
 export interface Topping {

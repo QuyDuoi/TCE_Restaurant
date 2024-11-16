@@ -9,7 +9,10 @@ import ButtonComponent from '../../components/ButtonComponent';
 import SectionComponent from '../../components/SectionComponent';
 import TextComponent from '../../components/TextComponent';
 import {formatMoney} from '../../utils/formatUtils';
-import {HoaDon, updateHoaDonThunk} from '../../../../../store/HoaDonSlice';
+import {
+  HoaDon,
+  updateHoaDonThunk,
+} from '../../../../../store/Slices/HoaDonSlice';
 import {useDispatch} from 'react-redux';
 
 interface Props {

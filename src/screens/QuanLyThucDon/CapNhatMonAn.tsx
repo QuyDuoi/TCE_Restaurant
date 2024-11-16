@@ -16,20 +16,20 @@ import {
 } from '../../respositorys/CameraRespository';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {fetchDanhMucs} from '../../store/DanhMucSlice';
+import {fetchDanhMucs} from '../../store/Slices/DanhMucSlice';
 import {Dropdown} from 'react-native-element-dropdown';
 import {taoFormDataMonAn} from './ThucDonRespository';
-import {updateMonAnThunk} from '../../store/MonAnSlice';
+import {updateMonAnThunk} from '../../store/Slices/MonAnSlice';
 import {styles} from './ThemSuaStyle';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import { IPV4 } from '../../services/api';
+import {IPV4} from '../../services/api';
 
 interface Props {
   route: RouteProp<{params: {monAn: MonAn}}, 'params'>;
 }
 
 function ManCapNhatMonAn(): React.JSX.Element {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const route = useRoute<Props['route']>(); // Lấy route từ useRoute
   const {monAn} = route.params; // Lấy monAn từ route.params
   const [monAnCapNhat, setMonAnCapNhat] = useState<MonAn>(monAn);
@@ -99,7 +99,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
   // Hàm xử lý khi nhấn "Cập nhật"
   const handleUpdate = () => {
     if (handleValidation()) {
-        console.log(JSON.stringify(monAnCapNhat, null, 2));
+      console.log(JSON.stringify(monAnCapNhat, null, 2));
       const formData = taoFormDataMonAn(monAnCapNhat);
       dispatch(updateMonAnThunk({id: monAnCapNhat._id!, formData}))
         .unwrap()

@@ -1,4 +1,4 @@
-import { MonAn } from "../../store/MonAnSlice";
+import { MonAn } from "../../store/Slices/MonAnSlice";
 
 export const taoFormDataMonAn = (monAn : MonAn) => {
   

@@ -9,7 +9,10 @@ import {
 import React, {useEffect, useState} from 'react';
 import type {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
-import {capNhatDanhMucThunk, themDanhMucThunk} from '../../store/DanhMucSlice';
+import {
+  capNhatDanhMucThunk,
+  themDanhMucThunk,
+} from '../../store/Slices/DanhMucSlice';
 import DanhMuc from '../../services/models/DanhMucModel';
 
 interface DanhMucModalProps {
@@ -47,13 +50,13 @@ function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
         } else {
           await dispatch(themDanhMucThunk(danhMuc)).unwrap();
         }
-        onActionComplete(true, 'Cập nhật danh mục thành công!')
+        onActionComplete(true, 'Cập nhật danh mục thành công!');
         // onClose();
       } catch (e: any) {
         setError(e.msg || 'Đã xảy ra lỗi');
       } finally {
-        setError(null)
-        onClose()
+        setError(null);
+        onClose();
       }
     }
   };

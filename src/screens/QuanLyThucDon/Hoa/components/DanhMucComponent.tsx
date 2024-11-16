@@ -6,21 +6,17 @@ import {
   LayoutAnimation,
   ActivityIndicator,
 } from 'react-native';
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import ItemDanhMuc from '../lists/ItemDanhMuc';
 import ItemMonAn from '../lists/ItemMonAn';
 import TextComponent from './TextComponent';
 import {colors} from '../contants/hoaColors';
-import {fetchMonAns, MonAn} from '../../../../store/MonAnSlice';
+import {fetchMonAns, MonAn} from '../../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {useNavigation} from '@react-navigation/native';
-import {DanhMuc, fetchDanhMucs} from '../../../../store/DanhMucSlice';
+import {DanhMuc, fetchDanhMucs} from '../../../../store/Slices/DanhMucSlice';
 import {searchMonAn} from '../../../../services/api';
 import debounce from 'lodash';
 
@@ -47,10 +43,12 @@ const DanhMucComponent = (props: Props) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
+  const dsMonAn = useSelector((state: RootState) => state.monAn.monAns);
   const statusDanhMuc = useSelector((state: RootState) => state.danhMuc.status);
   const navigation = useNavigation<any>();
 
   useEffect(() => {
+    console.log('Danh sách danh mục: ' + dsDanhMuc);
     if (statusDanhMuc === 'idle') {
       setIsLoading(true);
     } else if (statusDanhMuc === 'succeeded') {
@@ -62,23 +60,24 @@ const DanhMucComponent = (props: Props) => {
       const expandedIds = dsDanhMuc.map(item => item._id);
       setExpandedDanhMuc(expandedIds);
 
-      // Tải món ăn cho tất cả danh mục
-      dsDanhMuc.forEach(item => {
-        dispatch(fetchMonAns(item._id)).then(action => {
-          if (fetchMonAns.fulfilled.match(action)) {
-            setMonAnCounts(prev => ({
-              ...prev,
-              [item._id]: action.payload.length,
-            }));
+      // Tạo đối tượng đếm số lượng món ăn và nhóm món ăn theo danh mục
+      const monAnCountsTemp: {[key: string]: number} = {};
+      const monAnListTemp: {[key: string]: MonAn[]} = {};
 
-            // Cập nhật danh sách món ăn
-            setMonAnList(prev => ({
-              ...prev,
-              [item._id]: mergeMonAnLists(prev[item._id] || [], action.payload),
-            }));
-          }
-        });
+      // Lặp qua dsMonAn để tính số lượng món ăn cho từng danh mục và nhóm món ăn theo danh mục
+      dsMonAn.forEach(monAn => {
+        const danhMucId = monAn.id_danhMuc; // giả sử mỗi món ăn có thuộc tính id_danhMuc
+        if (!monAnCountsTemp[danhMucId]) {
+          monAnCountsTemp[danhMucId] = 0;
+          monAnListTemp[danhMucId] = [];
+        }
+        monAnCountsTemp[danhMucId] += 1;
+        monAnListTemp[danhMucId].push(monAn);
       });
+
+      // Cập nhật state
+      setMonAnCounts(monAnCountsTemp);
+      setMonAnList(monAnListTemp);
     } else if (statusDanhMuc === 'failed') {
       setIsLoading(false);
     }
@@ -103,7 +102,7 @@ const DanhMucComponent = (props: Props) => {
       async (text: string, id_NhaHang: string) => {
         if (text.trim().length > 0) {
           setIsLoading(true);
-  
+
           try {
             const data = await searchMonAn(text, id_NhaHang);
             setFilteredMonAn(data);
@@ -119,25 +118,25 @@ const DanhMucComponent = (props: Props) => {
       1000, // Thời gian debounce (1 giây)
     ),
   );
-  
+
   useEffect(() => {
     if (searchQueryMonAn.trim().length > 0) {
       setIsLoading(true);
     }
-  
+
     // Gọi debounceSearch với cả text và id_NhaHang
     debounceSearch.current(searchQueryMonAn, '66fab50fa28ec489c7137537');
-  
+
     if (searchQueryMonAn.trim().length === 0) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
       }, 1500);
     }
-  
+
     // Hủy bỏ debounce khi component unmount hoặc searchQueryMonAn thay đổi
     return () => debounceSearch.current.cancel();
-  }, [searchQueryMonAn, '66fab50fa28ec489c7137537']); // Thêm id_NhaHang vào danh sách phụ thuộc  
+  }, [searchQueryMonAn, '66fab50fa28ec489c7137537']); // Thêm id_NhaHang vào danh sách phụ thuộc
 
   const renderSearchItem = ({item}: {item: MonAn}) => {
     return (

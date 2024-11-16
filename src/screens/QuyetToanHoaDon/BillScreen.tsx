@@ -17,10 +17,10 @@ import {
   fetchHoaDonTheoCaLam,
   fetchHoaDonTheoNhaHang,
   HoaDon,
-} from '../../store/HoaDonSlice';
-import {fetchCaLam} from '../../store/CaLamSlice';
-import {fetchKhuVucs} from '../../store/KhuVucSlice';
-import {Ban, fetchBans} from '../../store/BanSlice';
+} from '../../store/Slices/HoaDonSlice';
+import {fetchCaLam} from '../../store/Slices/CaLamSlice';
+import {fetchKhuVucs} from '../../store/Slices/KhuVucSlice';
+import {Ban, fetchBans} from '../../store/Slices/BanSlice';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
 import {getListHoaDonTheoNhaHang} from '../../services/api';

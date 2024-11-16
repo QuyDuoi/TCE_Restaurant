@@ -1,6 +1,6 @@
 // slices/KhuVucSlice.ts
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
-import {addKhuVuc, getListKhuVuc, updateKhuVuc} from '../services/api'; // Đường dẫn tới API tương ứng
+import {addKhuVuc, getListKhuVuc, updateKhuVuc} from '../../services/api'; // Đường dẫn tới API tương ứng
 import {fetchBans} from './BanSlice';
 
 // Định nghĩa interface cho KhuVuc

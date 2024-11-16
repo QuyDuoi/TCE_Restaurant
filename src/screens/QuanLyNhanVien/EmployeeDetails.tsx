@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import DeletePostModal from '../../customcomponent/modalDelete'; // Your custom delete modal
-import {deleteNhanVienThunk} from '../../store/NhanVienSlice';
+import {deleteNhanVienThunk} from '../../store/Slices/NhanVienSlice';
 import {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
 import {IPV4} from '../../services/api';
@@ -33,8 +33,7 @@ const EmployeeDetails = () => {
 
   useEffect(() => {
     console.log(nhanVien);
-    
-  }, [])
+  }, []);
 
   if (!nhanVien) {
     console.log('No nhanVien found in params');
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
   },
   box: {
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusText: {
     fontSize: 16,

@@ -8,7 +8,7 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import {Ban} from '../store/BanSlice';
+import {Ban} from '../store/Slices/BanSlice';
 import RowComponent from '../screens/QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../screens/QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';

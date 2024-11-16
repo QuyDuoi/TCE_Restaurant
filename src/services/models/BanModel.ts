@@ -1,4 +1,4 @@
-import {KhuVuc} from '../../store/KhuVucSlice';
+import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 
 export default class Ban {
   _id?: string;

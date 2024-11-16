@@ -1,5 +1,5 @@
-//export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.1.110:3000/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.5:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -11,10 +11,8 @@ import HoaDon from './models/HoaDonModel';
 import ChiTietHoaDon from './models/ChiTietHoaDonModel';
 import Ban from './models/BanModel';
 import KhuVuc from './models/KhuVucModel';
-import MonAn from './models/MonAnModel';
 import CaLam from './models/CaLamModel';
-import {DanhMuc} from '../store/DanhMucSlice';
-import {NhanVienSlice} from '../store/NhanVienSlice';
+import {NhanVienSlice} from '../store/Slices/NhanVienSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -281,7 +279,7 @@ export const updateChiTietHoaDon = async (
 export const updateStatusChiTietHoaDon = async (
   id: string,
   trangThai: boolean,
-): Promise<ChiTietHoaDon> => {
+) => {
   try {
     const response = await fetch(`${ipAddress}capNhatTrangThaiCthd/${id}`, {
       method: 'PUT',
@@ -559,12 +557,11 @@ export const getListCaLam = async (id_nhanVien: string): Promise<CaLam[]> => {
     return [];
   }
 };
-export const getListChiTietHoaDonTheoCaLam = async (id_caLamViec: string) => {
+export const getListChiTietHoaDonTheoCaLam = async (id_nhaHang: string) => {
   try {
-    const response = await fetch(`${ipAddress}layCthdTheoCaLam`, {
-      method: 'POST',
+    const response = await fetch(`${ipAddress}layCthdTheoCaLam?id_nhaHang=${id_nhaHang}`, {
+      method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_caLam }),
     });
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Chi tiết hóa đơn theo ca làm');
@@ -572,7 +569,7 @@ export const getListChiTietHoaDonTheoCaLam = async (id_caLamViec: string) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log('Lỗi khi lấy danh sách Chi tiết hóa đơn theo ca làm: ', error);
+    console.log('Lỗi khi lấy danh sách: ', error);
     return [];
   }
 };

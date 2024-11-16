@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {fetchMonAns, MonAn} from '../../../store/MonAnSlice';
+import {fetchMonAns, MonAn} from '../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '../../../store/store';
@@ -18,7 +18,7 @@ import {searchMonAn} from '../../../services/api';
 import {
   addNewChiTietHoaDon,
   ChiTietHoaDon,
-} from '../../../store/ChiTietHoaDonSlice';
+} from '../../../store/Slices/ChiTietHoaDonSlice';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';

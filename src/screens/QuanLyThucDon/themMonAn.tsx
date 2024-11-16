@@ -17,11 +17,11 @@ import {
 } from '../../respositorys/CameraRespository';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {fetchDanhMucs} from '../../store/DanhMucSlice';
+import {fetchDanhMucs} from '../../store/Slices/DanhMucSlice';
 import {Dropdown} from 'react-native-element-dropdown';
-import { taoFormDataMonAn } from './ThucDonRespository';
-import { themMonAnMoi } from '../../store/MonAnSlice';
-import { styles } from './ThemSuaStyle';
+import {taoFormDataMonAn} from './ThucDonRespository';
+import {themMonAnMoi} from '../../store/Slices/MonAnSlice';
+import {styles} from './ThemSuaStyle';
 // import { useNavigation } from '@react-navigation/native';
 
 function ManThemMonAn(): React.JSX.Element {

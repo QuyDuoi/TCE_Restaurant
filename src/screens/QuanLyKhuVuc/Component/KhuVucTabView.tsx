@@ -20,8 +20,8 @@ import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchKhuVucs, KhuVuc} from '../../../store/KhuVucSlice';
-import {Ban, fetchBans} from '../../../store/BanSlice';
+import {fetchKhuVucs, KhuVuc} from '../../../store/Slices/KhuVucSlice';
+import {Ban, fetchBans} from '../../../store/Slices/BanSlice';
 import {RootState} from '../../../store/store';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 

@@ -3,7 +3,7 @@ import {
   getListNhomTopping,
   addNhomTopping,
   updateNhomTopping,
-} from '../services/api';
+} from '../../services/api';
 
 // Interface định nghĩa cho NhomTopping
 export interface NhomTopping {

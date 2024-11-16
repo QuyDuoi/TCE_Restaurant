@@ -13,9 +13,9 @@ import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
 import {useSelector} from 'react-redux';
-import {KhuVuc} from '../../store/KhuVucSlice';
+import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 import {RootState} from '../../store/store';
-import {Ban} from '../../store/BanSlice';
+import {Ban} from '../../store/Slices/BanSlice';
 
 interface Props {
   searchQueryKhuVuc: string;

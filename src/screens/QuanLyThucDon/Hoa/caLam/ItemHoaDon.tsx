@@ -7,7 +7,7 @@ import {colors} from '../contants/hoaColors';
 import {hoaStyles} from '../styles/hoaStyles';
 import {HoaDonModel} from '../modelTests/modelTest';
 import {formatTime} from '../utils/formatUtils';
-import {HoaDon} from '../../../../store/HoaDonSlice';
+import {HoaDon} from '../../../../store/Slices/HoaDonSlice';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 

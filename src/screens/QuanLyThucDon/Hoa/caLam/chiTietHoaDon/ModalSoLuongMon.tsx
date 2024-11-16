@@ -20,7 +20,7 @@ import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
   updateChiTietHoaDonThunk,
-} from '../../../../../store/ChiTietHoaDonSlice';
+} from '../../../../../store/Slices/ChiTietHoaDonSlice';
 import {ipAddress} from '../../../../../services/api';
 import {formatMoney} from '../../utils/formatUtils';
 import {useDispatch, useSelector} from 'react-redux';
@@ -28,8 +28,8 @@ import {
   fetchHoaDonTheoCaLam,
   fetchHoaDonTheoNhaHang,
   HoaDon,
-} from '../../../../../store/HoaDonSlice';
-import {CaLam} from '../../../../../store/CaLamSlice';
+} from '../../../../../store/Slices/HoaDonSlice';
+import {CaLam} from '../../../../../store/Slices/CaLamSlice';
 import {RootState} from '../../../../../store/store';
 
 interface Props {

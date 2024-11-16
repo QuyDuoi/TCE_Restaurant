@@ -14,7 +14,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
-} from '../../../store/ChiTietHoaDonSlice';
+} from '../../../store/Slices/ChiTietHoaDonSlice';
 import ItemChiTietHoaDon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemChiTietHoaDon';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';

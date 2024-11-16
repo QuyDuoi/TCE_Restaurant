@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect} from 'react';
+import React, {useLayoutEffect} from 'react';
 import {
   getFocusedRouteNameFromRoute,
   NavigationContainer,
@@ -7,7 +7,6 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 
 import NhanVienStackScreen from './NhanVienScreen';
 import ThucDonStackScreen from './ThucDonScreen';
-import KhuVucTabView from '../screens/QuanLyKhuVuc/Component/KhuVucTabView';
 import FoodOrderScreen from '../screens/QuanLyLenMon/FoodOderScreen';
 import BillScreen from '../screens/QuyetToanHoaDon/BillScreen';
 import ThongKeScreen from './ThongKeScreen';
@@ -15,49 +14,10 @@ import CaLamStackScreen from './CaLamStackScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
-import ChiTietHoaDonNVPV from '../screens/QuanLyKhuVuc/taoHoaDon/ChiTietHoaDonNVPV';
-import ThemMonNVPV from '../screens/QuanLyKhuVuc/taoHoaDon/ThemMonNVPV';
+import KhuVucStackScreen from './KhuVucScreen';
 
 const Drawer = createDrawerNavigator();
 const BillStack = createNativeStackNavigator();
-const KhuVucStack = createNativeStackNavigator();
-
-const KhuVucStackScreen = ({
-  navigation,
-  route,
-}: {
-  navigation: any;
-  route: any;
-}) => {
-  useLayoutEffect(() => {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'KhuVucTabView';
-    if (routeName === 'KhuVucTabView') {
-      navigation.setOptions({headerShown: true});
-    } else {
-      navigation.setOptions({headerShown: false});
-    }
-  }, [navigation, route]);
-
-  return (
-    <KhuVucStack.Navigator>
-      <KhuVucStack.Screen
-        name="KhuVucTabView"
-        component={KhuVucTabView}
-        options={{headerShown: false}}
-      />
-      <KhuVucStack.Screen
-        name="ChiTietHoaDonNVPV"
-        component={ChiTietHoaDonNVPV}
-        options={{headerShown: false}}
-      />
-      <KhuVucStack.Screen
-        name="ThemMonNVPV"
-        component={ThemMonNVPV}
-        options={{headerShown: false}}
-      />
-    </KhuVucStack.Navigator>
-  );
-};
 
 const BillStackScreen = ({
   navigation,

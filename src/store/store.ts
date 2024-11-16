@@ -1,14 +1,14 @@
 import {configureStore} from '@reduxjs/toolkit';
-import hoaDonReducer from './HoaDonSlice';
-import chiTietHoaDonReducer from './ChiTietHoaDonSlice';
-import toppingReducer from './ToppingSlice';
-import nhomToppingReducer from './NhomToppingSlice';
-import danhMucReducer from './DanhMucSlice';
-import monAnReducer from './MonAnSlice';
-import nhanVienReducer from './NhanVienSlice';
-import khuVucReducer from './KhuVucSlice';
-import banReducer from './BanSlice';
-import caLamReducer from './CaLamSlice';
+import hoaDonReducer from './Slices/HoaDonSlice';
+import chiTietHoaDonReducer from './Slices/ChiTietHoaDonSlice';
+import toppingReducer from './Slices/ToppingSlice';
+import nhomToppingReducer from './Slices/NhomToppingSlice';
+import danhMucReducer from './Slices/DanhMucSlice';
+import monAnReducer from './Slices/MonAnSlice';
+import nhanVienReducer from './Slices/NhanVienSlice';
+import khuVucReducer from './Slices/KhuVucSlice';
+import banReducer from './Slices/BanSlice';
+import caLamReducer from './Slices/CaLamSlice';
 
 export const store = configureStore({
   reducer: {

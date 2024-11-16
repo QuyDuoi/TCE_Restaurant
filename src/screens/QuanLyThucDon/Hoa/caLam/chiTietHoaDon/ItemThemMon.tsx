@@ -7,7 +7,7 @@ import TextComponent from '../../components/TextComponent';
 import SpaceComponent from '../../components/SpaceComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CardComponent from '../../components/CardComponent';
-import {MonAn} from '../../../../../store/MonAnSlice';
+import {MonAn} from '../../../../../store/Slices/MonAnSlice';
 import {formatMoney} from '../../utils/formatUtils';
 import {ipAddress} from '../../../../../services/api';
 

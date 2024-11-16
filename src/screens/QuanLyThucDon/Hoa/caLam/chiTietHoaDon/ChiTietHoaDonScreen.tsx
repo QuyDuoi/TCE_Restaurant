@@ -28,11 +28,11 @@ import ModalSoLuongMon from './ModalSoLuongMon';
 import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
-} from '../../../../../store/ChiTietHoaDonSlice';
+} from '../../../../../store/Slices/ChiTietHoaDonSlice';
 import {
   fetchHoaDonTheoCaLam,
   fetchHoaDonTheoNhaHang,
-} from '../../../../../store/HoaDonSlice';
+} from '../../../../../store/Slices/HoaDonSlice';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 

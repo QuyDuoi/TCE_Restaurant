@@ -1,6 +1,6 @@
 // slices/MonAnSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { getListMonAn, getMonAnTheoId, themMonAn, updateMonAn } from '../screens/QuanLyThucDon/CallApiThucDon';
+import { getListMonAn, getMonAnTheoId, themMonAn, updateMonAn } from '../../screens/QuanLyThucDon/CallApiThucDon';
 
 // Định nghĩa interface cho MonAn
 export interface MonAn {
@@ -79,7 +79,9 @@ const monAnSlice = createSlice({
   name: 'monAns',
   initialState,
   reducers: {
-    // Các reducers tùy chỉnh (nếu cần)
+    setMonAns: (state, action: PayloadAction<MonAn[]>) => {
+      state.monAns = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -135,4 +137,5 @@ const monAnSlice = createSlice({
 });
 
 // Export reducer để sử dụng trong store
+export const {setMonAns} = monAnSlice.actions;
 export default monAnSlice.reducer;

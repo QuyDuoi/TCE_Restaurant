@@ -15,13 +15,12 @@ import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import ModalChucNang from './ComponentModal/ModalChucNang';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import {KhuVuc} from '../../store/KhuVucSlice';
-import {Ban} from '../../store/BanSlice';
+import {KhuVuc} from '../../store/Slices/KhuVucSlice';
+import {Ban} from '../../store/Slices/BanSlice';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {searchBan} from '../../services/api';
 import debounce from 'lodash';
 import ItemBanSearch from './Component/ItemBanSearch';
-
 
 interface Props {
   searchQueryBan: string;

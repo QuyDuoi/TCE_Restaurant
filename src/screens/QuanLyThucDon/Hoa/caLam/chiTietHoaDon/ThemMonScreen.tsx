@@ -23,15 +23,15 @@ import ItemThemMon from './ItemThemMon';
 import TextComponent from '../../components/TextComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../../store/store';
-import {fetchMonAns, MonAn} from '../../../../../store/MonAnSlice';
+import {fetchMonAns, MonAn} from '../../../../../store/Slices/MonAnSlice';
 import {
   addNewChiTietHoaDon,
   ChiTietHoaDon,
   fetchChiTietHoaDon,
-} from '../../../../../store/ChiTietHoaDonSlice';
+} from '../../../../../store/Slices/ChiTietHoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import ModalCart from './ModalCart';
-import {fetchHoaDonTheoCaLam} from '../../../../../store/HoaDonSlice';
+import {fetchHoaDonTheoCaLam} from '../../../../../store/Slices/HoaDonSlice';
 import debounce from 'lodash';
 import {searchMonAn} from '../../../../../services/api';
 

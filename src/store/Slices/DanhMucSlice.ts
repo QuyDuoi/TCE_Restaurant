@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
-import { capNhatDanhMuc, getListDanhMuc, themDanhMuc, xoaDanhMuc } from '../screens/QuanLyThucDon/CallApiThucDon';
+import { capNhatDanhMuc, getListDanhMuc, themDanhMuc, xoaDanhMuc } from '../../screens/QuanLyThucDon/CallApiThucDon';
+import { capNhatDanhMucThunk, deleteDanhMucThunk, fetchDanhMucVaMonAn, themDanhMucThunk } from '../Thunks/danhMucThunks';
 
 export interface DanhMuc {
   _id?: string;
@@ -27,40 +28,6 @@ export const fetchDanhMucs = createAsyncThunk(
       return await getListDanhMuc(id_nhaHang);
     } catch (error: any) {
       return rejectWithValue(error.message || 'Không thể tải danh mục');
-    }
-  },
-);
-
-export const themDanhMucThunk = createAsyncThunk(
-  'danhMucs/themDanhMuc',
-  async (danhMuc: DanhMuc, {rejectWithValue}) => {
-    try {
-      return await themDanhMuc(danhMuc);
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Không thể thêm danh mục');
-    }
-  },
-);
-
-export const capNhatDanhMucThunk = createAsyncThunk(
-  'danhMucs/capNhatDanhMuc',
-  async ({id, danhMuc}: {id: string; danhMuc: DanhMuc}, {rejectWithValue}) => {
-    try {
-      return await capNhatDanhMuc(id, danhMuc);
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Không thể cập nhật danh mục');
-    }
-  },
-);
-
-export const deleteDanhMucThunk = createAsyncThunk(
-  'danhMucs/deleteDanhMuc',
-  async (id: string, {rejectWithValue}) => {
-    try {
-      await xoaDanhMuc(id);
-      return id;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Không thể xóa danh mục');
     }
   },
 );
@@ -102,12 +69,22 @@ const danhMucSlice = createSlice({
 
     builder
       // Fetch
-      .addCase(fetchDanhMucs.pending, handlePending)
-      .addCase(fetchDanhMucs.fulfilled, (state, action: PayloadAction<DanhMuc[]>) => {
-        state.status = 'succeeded';
-        state.danhMucs = action.payload;
+      .addCase(fetchDanhMucVaMonAn.pending, state => {
+        state.status = 'loading';
+        state.error = null;
       })
-      .addCase(fetchDanhMucs.rejected, handleRejected)
+      .addCase(
+        fetchDanhMucVaMonAn.fulfilled,
+        (state, action: PayloadAction<Array<{ monAns: any[]; _id: string; tenDanhMuc: string; id_nhaHang: string; thuTu: number }>>) => {
+          state.status = 'succeeded';
+          // Lưu danh mục vào state
+          state.danhMucs = action.payload.map(({ monAns, ...danhMuc }) => danhMuc);
+        }
+      )
+      .addCase(fetchDanhMucVaMonAn.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
 
       // Thêm
       .addCase(themDanhMucThunk.pending, handlePending)

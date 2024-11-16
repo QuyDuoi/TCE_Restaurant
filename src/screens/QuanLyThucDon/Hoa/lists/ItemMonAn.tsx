@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import {useDispatch} from 'react-redux';
-import {updateMonAnThunk} from '../../../../store/MonAnSlice';
+import {updateMonAnThunk} from '../../../../store/Slices/MonAnSlice';
 import {ipAddress, IPV4} from '../../../../services/api';
 
 interface Props {

@@ -13,7 +13,7 @@ import ItemChiTietHoaDon from './ItemChiTietHoaDon';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import {FlatList} from 'react-native-gesture-handler';
-import {ChiTietHoaDon} from '../../store/ChiTietHoaDonSlice';
+import {ChiTietHoaDon} from '../../store/Slices/ChiTietHoaDonSlice';
 
 const {width, height} = Dimensions.get('window');
 
@@ -26,13 +26,10 @@ const FoodOrderScreen: React.FC = () => {
     const fetchChiTietHoaDon = async () => {
       setIsLoading(true);
       try {
-        const id_caLamViec = '67078655a4fa7c03a24d2c19';
-        const chiTietHoaDons = await getListChiTietHoaDonTheoCaLam(
-          id_caLamViec,
-        );
+        const id_nhaHang = '66fab50fa28ec489c7137537';
+        const chiTietHoaDons = await getListChiTietHoaDonTheoCaLam(id_nhaHang);
         setDsChiTiet(chiTietHoaDons);
         console.log(chiTietHoaDons);
-        
       } catch (error) {
         console.log('Lỗi khi lấy danh sách chi tiết hóa đơn:', error);
       } finally {

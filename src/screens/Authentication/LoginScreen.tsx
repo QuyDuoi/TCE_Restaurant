@@ -10,7 +10,10 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import {checkLoginThunk, loginNhanVienThunk} from '../../store/NhanVienSlice';
+import {
+  checkLoginThunk,
+  loginNhanVienThunk,
+} from '../../store/Slices/NhanVienSlice';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
 

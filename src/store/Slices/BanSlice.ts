@@ -1,8 +1,8 @@
-import { getBanTheoId, getListKhuVuc } from './../services/api';
+import { getBanTheoId, getListKhuVuc } from '../../services/api';
 // slices/BanSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { getListBan, addBan, updateBan } from '../services/api'; // Đường dẫn tới API tương ứng
-import KhuVuc from '../services/models/KhuVucModel';
+import { getListBan, addBan, updateBan } from '../../services/api'; // Đường dẫn tới API tương ứng
+import KhuVuc from '../../services/models/KhuVucModel';
 const idNhaHang = '66fab50fa28ec489c7137537';
 // Định nghĩa interface cho Ban
 export interface Ban {

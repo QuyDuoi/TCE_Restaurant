@@ -8,7 +8,7 @@ import {colors} from '../contants/hoaColors';
 import TitleComponent from '../components/TitleComponent';
 import {CaLamModel, NhanVienModel} from '../modelTests/modelTest';
 import {formatDate, formatTime} from '../utils/formatUtils';
-import {CaLam} from '../../../../store/CaLamSlice';
+import {CaLam} from '../../../../store/Slices/CaLamSlice';
 
 interface Props {
   batDau?: string;

@@ -1,6 +1,6 @@
 // slices/NhanVienSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { themNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien, loginNhanVien, checkLogin } from '../services/api'; // Đường dẫn tới API tương ứng
+import { themNhanVien, deleteNhanVien, getListNhanVien, ipAddress, updateNhanVien, loginNhanVien, checkLogin } from '../../services/api'; // Đường dẫn tới API tương ứng
 
 // Định nghĩa interface cho NhanVien
 export interface NhanVienSlice {

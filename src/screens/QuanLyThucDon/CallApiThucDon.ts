@@ -1,6 +1,6 @@
 import { ipAddress } from "../../services/api";
-import { DanhMuc } from "../../store/DanhMucSlice";
-import { MonAn } from "../../store/MonAnSlice";
+import { DanhMuc } from "../../store/Slices/DanhMucSlice";
+import { MonAn } from "../../store/Slices/MonAnSlice";
 
 export const getListDanhMuc = async (
     id_nhaHang: string,
@@ -154,6 +154,7 @@ export const getListDanhMuc = async (
       throw error;
     }
   };
+  
   export const getMonAnTheoId = async (id_MonAn: String): Promise<MonAn[]> => {
     let response: Response | null = null; // Khai báo biến response
     try {

@@ -3,7 +3,7 @@ import {
   getListCaLam,
   getListChiTietHoaDonTheoCaLam,
   getListNhanVien,
-} from '../services/api';
+} from '../../services/api';
 import {NhanVienSlice} from './NhanVienSlice';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 

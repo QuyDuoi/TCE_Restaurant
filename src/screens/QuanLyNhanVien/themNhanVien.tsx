@@ -14,13 +14,16 @@ import {
 import {Dropdown} from 'react-native-element-dropdown';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {addNewNhanVien} from '../../store/NhanVienSlice';
+import {addNewNhanVien} from '../../store/Slices/NhanVienSlice';
 import NhanVien from '../../services/models/NhanVienModel';
 import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {taoFormDataNhanVien} from './NhanVienRespository';
 import {styles} from './styleThem';
-import { openCamera, openImageLibrary } from '../../respositorys/CameraRespository';
+import {
+  openCamera,
+  openImageLibrary,
+} from '../../respositorys/CameraRespository';
 
 const AddEmployeeScreen = () => {
   const navigation = useNavigation(); // Lấy đối tượng navigation để điều hướng
@@ -126,12 +129,12 @@ const AddEmployeeScreen = () => {
   const handleImagePress = () => {
     setModalVisible(true);
   };
-  
+
   useEffect(() => {
     // Ẩn thanh Drawer khi vào màn hình thêm nhân viên
     navigation.setOptions({
-      drawerLockMode: 'locked-closed',  // Khóa Drawer
-      headerShown: true,  // Hiện header của Stack
+      drawerLockMode: 'locked-closed', // Khóa Drawer
+      headerShown: true, // Hiện header của Stack
     });
 
     return () => {
@@ -228,7 +231,9 @@ const AddEmployeeScreen = () => {
           />
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
-              <TouchableOpacity onPress={handleOpenCamera} style={styles.modalButton}>
+              <TouchableOpacity
+                onPress={handleOpenCamera}
+                style={styles.modalButton}>
                 <Text style={styles.textButImage}>Chụp ảnh</Text>
               </TouchableOpacity>
               <TouchableOpacity

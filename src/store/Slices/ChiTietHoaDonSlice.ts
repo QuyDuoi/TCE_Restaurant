@@ -6,7 +6,7 @@ import {
   getListMonAn,
   addListChiTietHoaDon,
   updateStatusChiTietHoaDon,
-} from '../services/api';
+} from '../../services/api';
 import {MonAn} from './MonAnSlice';
 
 // Interface định nghĩa cho ChiTietHoaDon

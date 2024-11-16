@@ -16,8 +16,8 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 import {useRoute} from '@react-navigation/native';
-import {MonAn} from '../../store/MonAnSlice';
-import {DanhMuc} from '../../store/DanhMucSlice';
+import {MonAn} from '../../store/Slices/MonAnSlice';
+import {DanhMuc} from '../../store/Slices/DanhMucSlice';
 
 const categories = [
   {label: 'Món chính', value: '1'},

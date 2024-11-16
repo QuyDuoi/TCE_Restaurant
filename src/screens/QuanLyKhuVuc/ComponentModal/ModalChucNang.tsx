@@ -13,8 +13,8 @@ import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import DatBanModal from './DatBanModal'; // Import modal đặt bàn
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
-import {Ban} from '../../../store/BanSlice';
-import {KhuVuc} from '../../../store/KhuVucSlice';
+import {Ban} from '../../../store/Slices/BanSlice';
+import {KhuVuc} from '../../../store/Slices/KhuVucSlice';
 import TableBookingDetail from '../../../customcomponent/ItemChiTietDatBan';
 import BookingFlow from '../../../customcomponent/BookingFlow';
 import {useSelector} from 'react-redux';

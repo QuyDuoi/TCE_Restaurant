@@ -12,8 +12,8 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import {
   fetchNhomTopping,
   NhomTopping,
-} from '../../../../store/NhomToppingSlice';
-import {fetchTopping, Topping} from '../../../../store/ToppingSlice';
+} from '../../../../store/Slices/NhomToppingSlice';
+import {fetchTopping, Topping} from '../../../../store/Slices/ToppingSlice';
 import unorm from 'unorm';
 
 interface Props {

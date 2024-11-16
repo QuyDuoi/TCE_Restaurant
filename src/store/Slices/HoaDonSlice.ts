@@ -4,7 +4,7 @@ import {
   getListHoaDonTheoNhaHang,
   addHoaDon,
   updateHoaDon,
-} from '../services/api';
+} from '../../services/api';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
 // Interface định nghĩa cho HoaDon

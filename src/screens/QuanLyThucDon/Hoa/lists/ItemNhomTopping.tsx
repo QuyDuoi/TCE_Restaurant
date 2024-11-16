@@ -5,8 +5,8 @@ import TextComponent from '../components/TextComponent';
 import {colors} from '../contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from '../components/SpaceComponent';
-import {NhomTopping} from '../../../../store/NhomToppingSlice';
-import {Topping} from '../../../../store/ToppingSlice';
+import {NhomTopping} from '../../../../store/Slices/NhomToppingSlice';
+import {Topping} from '../../../../store/Slices/ToppingSlice';
 
 interface Props {
   nhomTopping: {
