@@ -50,23 +50,10 @@ const ThongTinKhuVucRoute = ({
 const KhuVucTabView = () => {
   const idNhaHang = '66fab50fa28ec489c7137537';
   const [isLoading, setIsLoading] = useState(false);
-  //const [bansByKhuVuc, setBansByKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
-  //const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
-  //const bans = useSelector((state: RootState) => state.ban.bans);
-
-  //update UI
-  // const updatedBans = useCallback((updateBan: Ban & {kv: KhuVuc}) => {
-  //   // const newBans = bansByKhuVuc.map(ban => {
-  //   //   if (ban._id === updateBan._id) {
-  //   //     return updateBan;
-  //   //   }
-  //   //   return ban;
-  //   // });
-  //   // setBansByKhuVuc(newBans);
-  // }, []);
 
   const dispatch = useDispatch();
   const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
+
   useEffect(() => {
     if (khuVucStatus === 'idle') {
       setIsLoading(true);
@@ -82,30 +69,6 @@ const KhuVucTabView = () => {
       }, 500);
     }
   }, [dispatch, khuVucStatus]);
-
-  // useEffect(() => {
-  //   const fetchAllBans = async () => {
-  //     const allBansPromise = khuVucs.map(kv =>
-  //       dispatch(fetchBans(kv._id as string) as any),
-  //     );
-
-  //     const allBansResponse = await Promise.all(allBansPromise);
-  //     const allBans = allBansResponse.flatMap((response, index) => {
-  //       return response.payload.map((ban: Ban) => {
-  //         return {
-  //           ...ban,
-  //           kv: khuVucs[index],
-  //         };
-  //       });
-  //     });
-
-  //     setBansByKhuVuc(allBans);
-  //     console.log('render');
-  //   };
-  //   if (khuVucs.length > 0) {
-  //     fetchAllBans();
-  //   }
-  // }, [khuVucs, dispatch]);
 
   const layout = useWindowDimensions();
 

@@ -1,7 +1,11 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getListCaLam, getListChiTietHoaDonTheoCaLam, getListNhanVien } from '../services/api';
-import { NhanVienSlice } from './NhanVienSlice';
-import { ChiTietHoaDon } from './ChiTietHoaDonSlice';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {
+  getListCaLam,
+  getListChiTietHoaDonTheoCaLam,
+  getListNhanVien,
+} from '../services/api';
+import {NhanVienSlice} from './NhanVienSlice';
+import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
 export interface CaLam {
   _id?: string;
@@ -15,7 +19,6 @@ export interface CaLam {
   tongThu: number;
   tongChi: number;
   id_nhanVien: NhanVienSlice;
-  id_hoaDon: string[];
   id_nhaHang: string;
 }
 
@@ -52,18 +55,20 @@ export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
   return allCaLams;
 });
 
-export const fetchChiTietHoaDonTheoCaLam = createAsyncThunk('caLam/fetchChiTietHoaDon', async (id_caLam: string, thunkAPI) => {
-  try {
-    const data = await getListChiTietHoaDonTheoCaLam(id_caLam);
-    return data;
-  } catch (error: any) {
-    console.log('Lỗi lấy danh sách:', error);
-    return thunkAPI.rejectWithValue(
-      error.message || 'Error fetching ChiTietHoaDon',
-    );
-  }
-});
-
+export const fetchChiTietHoaDonTheoCaLam = createAsyncThunk(
+  'caLam/fetchChiTietHoaDon',
+  async (id_caLam: string, thunkAPI) => {
+    try {
+      const data = await getListChiTietHoaDonTheoCaLam(id_caLam);
+      return data;
+    } catch (error: any) {
+      console.log('Lỗi lấy danh sách:', error);
+      return thunkAPI.rejectWithValue(
+        error.message || 'Error fetching ChiTietHoaDon',
+      );
+    }
+  },
+);
 
 const caLamSlice = createSlice({
   name: 'caLam',

@@ -19,6 +19,8 @@ import TableBookingDetail from '../../../customcomponent/ItemChiTietDatBan';
 import BookingFlow from '../../../customcomponent/BookingFlow';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
+import ModalTaoHoaDon from '../taoHoaDon/ModalTaoHoaDon';
+import {useNavigation} from '@react-navigation/native';
 
 interface Props {
   isVisible: boolean;
@@ -31,9 +33,17 @@ const ModalChucNang = (props: Props) => {
   const {isVisible, onClose, onCloseParent, selectedBan} = props;
   const [isVisibleDatBan, setIsVisibleDatBan] = useState(false);
   const [isVisibleChiTietBan, setIsVisibleChiTietBan] = useState(false);
+  const [isVisibleModalTaoHoaDon, setIsVisibleModalTaoHoaDon] = useState(false);
 
+  const navigation = useNavigation<any>();
   //console.log(selectedBan?._id);
   const bans = useSelector((state: RootState) => state.ban.bans);
+  const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+
+  const hoaDonSelected = hoaDons.find(
+    hoaDon => hoaDon.id_ban === selectedBan?._id,
+  );
+  console.log('selectedBan', hoaDonSelected);
 
   return (
     <>
@@ -68,7 +78,14 @@ const ModalChucNang = (props: Props) => {
           <SectionComponent>
             <ButtonComponent
               title="Tạo hóa đơn"
-              onPress={() => {}}
+              onPress={() => {
+                if (selectedBan.trangThai === 'Đang sử dụng') {
+                  ToastAndroid.show('Bàn đang sử dụng', ToastAndroid.LONG);
+                  onClose();
+                } else {
+                  setIsVisibleModalTaoHoaDon(true);
+                }
+              }}
               bgrColor={colors.orange}
               titleColor={colors.white}
               styles={styles.button}
@@ -78,7 +95,25 @@ const ModalChucNang = (props: Props) => {
           <SectionComponent>
             <ButtonComponent
               title="Xem thông tin hóa đơn"
-              onPress={() => {}}
+              onPress={() => {
+                if (
+                  selectedBan.trangThai === 'Đang sử dụng' &&
+                  hoaDonSelected?.trangThai === 'Chưa Thanh Toán'
+                ) {
+                  navigation.navigate('ChiTietHoaDonNVPV', {
+                    hoaDon: hoaDonSelected,
+                    tenKhuVuc: selectedBan?.id_khuVuc?.tenKhuVuc,
+                    tenBan: selectedBan?.tenBan,
+                  });
+                  onClose();
+                } else {
+                  ToastAndroid.show(
+                    'Bàn không đang sử dụng',
+                    ToastAndroid.LONG,
+                  );
+                  onClose();
+                }
+              }}
               bgrColor={colors.orange}
               titleColor={colors.white}
               styles={styles.button}
@@ -123,6 +158,11 @@ const ModalChucNang = (props: Props) => {
         visible={isVisibleChiTietBan}
         onClose={() => setIsVisibleChiTietBan(false)}
         //onEdit={() => setIsVisibleChiTietBan(false)}
+      />
+      <ModalTaoHoaDon
+        visible={isVisibleModalTaoHoaDon}
+        onClose={() => setIsVisibleModalTaoHoaDon(false)}
+        selectedBan={selectedBan}
       />
     </>
   );

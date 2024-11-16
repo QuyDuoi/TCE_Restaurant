@@ -23,6 +23,7 @@ interface Props {
   stylesTitle?: StyleProp<TextStyle>;
   isClose?: boolean;
   borderRadius?: number;
+  stylesContainer?: StyleProp<ViewStyle>;
 }
 const ModalComponent = (props: Props) => {
   const {
@@ -33,6 +34,7 @@ const ModalComponent = (props: Props) => {
     isClose,
     stylesTitle,
     borderRadius,
+    stylesContainer,
   } = props;
 
   const handleClose = useCallback(() => {
@@ -41,7 +43,7 @@ const ModalComponent = (props: Props) => {
   return (
     <Modal visible={visible} transparent={true} animationType="fade">
       <TouchableWithoutFeedback onPress={handleClose}>
-        <View style={[hoaStyles.modalContainer]}>
+        <View style={[hoaStyles.modalContainer, stylesContainer]}>
           <TouchableWithoutFeedback>
             <View
               style={[

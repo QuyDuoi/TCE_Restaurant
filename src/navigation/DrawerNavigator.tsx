@@ -15,9 +15,49 @@ import CaLamStackScreen from './CaLamStackScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
+import ChiTietHoaDonNVPV from '../screens/QuanLyKhuVuc/taoHoaDon/ChiTietHoaDonNVPV';
+import ThemMonNVPV from '../screens/QuanLyKhuVuc/taoHoaDon/ThemMonNVPV';
 
 const Drawer = createDrawerNavigator();
 const BillStack = createNativeStackNavigator();
+const KhuVucStack = createNativeStackNavigator();
+
+const KhuVucStackScreen = ({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) => {
+  useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'KhuVucTabView';
+    if (routeName === 'KhuVucTabView') {
+      navigation.setOptions({headerShown: true});
+    } else {
+      navigation.setOptions({headerShown: false});
+    }
+  }, [navigation, route]);
+
+  return (
+    <KhuVucStack.Navigator>
+      <KhuVucStack.Screen
+        name="KhuVucTabView"
+        component={KhuVucTabView}
+        options={{headerShown: false}}
+      />
+      <KhuVucStack.Screen
+        name="ChiTietHoaDonNVPV"
+        component={ChiTietHoaDonNVPV}
+        options={{headerShown: false}}
+      />
+      <KhuVucStack.Screen
+        name="ThemMonNVPV"
+        component={ThemMonNVPV}
+        options={{headerShown: false}}
+      />
+    </KhuVucStack.Navigator>
+  );
+};
 
 const BillStackScreen = ({
   navigation,
@@ -85,7 +125,7 @@ function DrawerNavigator(): React.JSX.Element {
         />
         <Drawer.Screen
           name="KhuVuc"
-          component={KhuVucTabView}
+          component={KhuVucStackScreen}
           options={{
             title: 'Quản lý khu vực',
           }}

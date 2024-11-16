@@ -8,50 +8,47 @@ import {
   Dimensions,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {hoaStyles} from '../../styles/hoaStyles';
-import RowComponent from '../../components/RowComponent';
-import TitleComponent from '../../components/TitleComponent';
-import SectionComponent from '../../components/SectionComponent';
-import TextComponent from '../../components/TextComponent';
-import SpaceComponent from '../../components/SpaceComponent';
-import {colors} from '../../contants/hoaColors';
-import ItemChiTietHoaDon from './ItemChiTietHoaDon';
-import ModalGiamGia from './ModalGiamGia';
-import DatBanModal from '../../../../QuanLyKhuVuc/ComponentModal/DatBanModal';
-import ModalPTTT from './ModalPTTT';
-import ButtonComponent from '../../components/ButtonComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../../store/store';
-import {formatDate, formatMoney} from '../../utils/formatUtils';
+import {RootState} from '../../../store/store';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import ModalSoLuongMon from './ModalSoLuongMon';
 import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
-} from '../../../../../store/ChiTietHoaDonSlice';
+} from '../../../store/ChiTietHoaDonSlice';
+import ItemChiTietHoaDon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemChiTietHoaDon';
+import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
+import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import {
-  fetchHoaDonTheoCaLam,
-  fetchHoaDonTheoNhaHang,
-} from '../../../../../store/HoaDonSlice';
+  formatDate,
+  formatMoney,
+  formatTime,
+} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
+import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
+import ModalGiamGia from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalGiamGia';
+import ModalPTTT from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
+import ModalSoLuongMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalSoLuongMon';
+import ItemCTHDnvpv from './ItemCTHDnvpv';
+import {random} from 'lodash';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
 interface Props {
   route: any;
 }
-const ChiTietHoaDonScreen = (props: Props) => {
+const ChiTietHoaDonNVPV = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
-  //console.log(hoaDon, tenKhuVuc, tenBan);
-  console.log('render chi tiet hoa don');
-  //console.log(hoaDon.id_chiTietHoaDon);
-  //console.log('caLam', caLam);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
 
-  console.log('chi tiet hoa don', chiTietHoaDons);
+  //console.log('chi tiet hoa don', chiTietHoaDons.length);
 
   const navigation = useNavigation<any>();
 
@@ -61,6 +58,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);
   const [visibleModalSoLuongMon, setVisibleModalSoLuongMon] = useState(false);
+
   const [discount, setDiscount] = useState(
     hoaDon.tienGiamGia ? hoaDon.tienGiamGia : null,
   );
@@ -83,7 +81,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
   );
 
   let totalBillCal = chiTietHoaDons.reduce((total: number, item: any) => {
-    return (total += item.giaTien);
+    return (total += item.giaTien * item.soLuongMon);
   }, 0);
 
   let totalFinalBillCal = () => {
@@ -103,7 +101,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
   };
 
   useEffect(() => {
-    if (hoaDon) {
+    if (hoaDon.id_chiTietHoaDon) {
       setTotalBill(totalBillCal);
     }
   }, [totalBillCal]);
@@ -114,18 +112,17 @@ const ChiTietHoaDonScreen = (props: Props) => {
 
   const dispatch = useDispatch();
 
-  //const hoadons = useSelector((state: RootState) => state.hoaDons.hoaDons);
-  //const hoaDonUpdate = hoadons.find(item => item._id === hoaDon._id);
-
-  useFocusEffect(() => {
-    //console.log('focus');
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (caLam) {
-        //dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
-      }
-    });
-    return unsubscribe;
-  });
+  // useFocusEffect(() => {
+  //   //console.log('focus');
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     if (caLam) {
+  //       dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
+  //     } else {
+  //       dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
+  //     }
+  //   });
+  //   return unsubscribe;
+  // });
 
   useEffect(() => {
     if (hoaDon) {
@@ -166,21 +163,17 @@ const ChiTietHoaDonScreen = (props: Props) => {
     item => item._id === hoaDon.id_nhanVien,
   );
 
-  //console.log('chi tiet hoa don', chiTietHoaDons);
-  //console.log('nhan vien thanh toan', nhanVienThanhToan);
-
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
     return (
       <View>
         {item.id_monAn ? (
-          <ItemChiTietHoaDon
+          <ItemCTHDnvpv
             onLongPress={() => {
               handleOpenModalSoLuongMon(item);
-              //console.log('long press', item._id);
             }}
             nameMonAn={item.id_monAn.tenMon}
             soLuong={item.soLuongMon}
-            gia={item.giaTien}
+            giaTien={item.giaTien}
             key={item._id}
           />
         ) : null}
@@ -208,7 +201,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
               color={colors.red}
             />
           </RowComponent>
-          <SpaceComponent height={hoaDon.id_ban ? 5 : 15} />
+          <SpaceComponent height={5} />
           {/* view co ban an */}
           {hoaDon.id_ban ? (
             <View style={[]}>
@@ -239,13 +232,11 @@ const ChiTietHoaDonScreen = (props: Props) => {
                       styles={styles.text}
                     />
                     <TextComponent
-                      text={`${
-                        new Date(hoaDon.thoiGianVao)
-                          .toLocaleTimeString('vi-VN')
-                          .slice(0, 5) +
-                        ' - ' +
-                        formatDate(new Date(hoaDon.thoiGianVao))
-                      } `}
+                      text={`${new Date(hoaDon?.thoiGianVao)
+                        .toLocaleTimeString('vi-VN')
+                        .slice(0, 5)} - ${formatDate(
+                        new Date(hoaDon?.thoiGianVao),
+                      )}`}
                       styles={styles.text2}
                     />
                   </RowComponent>
@@ -274,47 +265,8 @@ const ChiTietHoaDonScreen = (props: Props) => {
 
               {/* end view ban an */}
             </View>
-          ) : (
-            <View>
-              <View style={styles.sectionContainer}>
-                <SectionComponent styles={styles.section}>
-                  <RowComponent justify="space-between">
-                    <TextComponent
-                      text="Trạng thái: "
-                      styles={styles.text}
-                      fontWeight="bold"
-                    />
-                    <TextComponent
-                      text={isPaid ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}
-                      fontWeight={isPaid ? '600' : '500'}
-                      color={isPaid ? 'green' : 'red'}
-                    />
-                  </RowComponent>
-                </SectionComponent>
-                <View style={styles.indicator} />
-              </View>
-              <SpaceComponent height={10} />
-              {isPaid && (
-                <View style={styles.sectionContainer}>
-                  <SectionComponent styles={styles.section}>
-                    <RowComponent justify="space-between">
-                      <TextComponent
-                        text="Thanh Toán: "
-                        size={15}
-                        color={colors.desc}
-                      />
-                      <TextComponent
-                        text={'18:20 | 20/10/2024'}
-                        color={colors.desc}
-                      />
-                    </RowComponent>
-                  </SectionComponent>
-                  <View style={styles.indicator} />
-                </View>
-              )}
-            </View>
-          )}
-          <SpaceComponent height={hoaDon.id_ban ? 5 : 15} />
+          ) : null}
+          <SpaceComponent height={5} />
           {/* view giam gia */}
           <View style={[styles.sectionContainer, {}]}>
             <SectionComponent
@@ -373,8 +325,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
             style={[
               styles.sectionContainer,
               {
-                height:
-                  chiTietHoaDons.length <= 4 ? 'auto' : ScreenHeight * 0.4,
+                height: chiTietHoaDons.length < 4 ? 'auto' : ScreenHeight * 0.4,
               },
             ]}>
             <SectionComponent styles={[styles.section, {flex: 1}]}>
@@ -389,7 +340,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
                     alignItems: 'center',
                   }}
                   onPress={() => {
-                    navigation.navigate('ThemMonScreen', {
+                    navigation.navigate('ThemMonNVPV', {
                       chiTietHoaDon: chiTietHoaDons,
                       hoaDon: hoaDon,
                       tenBan: tenBan,
@@ -397,7 +348,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
                     });
                   }}>
                   <TextComponent
-                    text="Chỉnh sửa"
+                    text={chiTietHoaDons.length > 0 ? 'Chỉnh sửa' : 'Gọi món'}
                     color={colors.blue2}
                     size={16}
                   />
@@ -413,12 +364,19 @@ const ChiTietHoaDonScreen = (props: Props) => {
                       paddingVertical: 8,
                       backgroundColor: colors.desc2,
                     }}>
-                    <View style={{width: '50%'}}>
+                    <View style={{width: '45%'}}>
                       <TitleComponent text="Món" />
                     </View>
-                    <View>
-                      <TitleComponent text="SL" />
-                    </View>
+                    <RowComponent
+                      justify="space-between"
+                      styles={{width: '21%'}}>
+                      <View>
+                        <TitleComponent text="SL" />
+                      </View>
+                      <View>
+                        <TitleComponent text="TT" />
+                      </View>
+                    </RowComponent>
                     <View
                       style={{
                         width: '23%',
@@ -474,7 +432,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
                     </View>
                   )}
                 </View>
-
                 // end scroll view
               }
             </SectionComponent>
@@ -563,24 +520,12 @@ const ChiTietHoaDonScreen = (props: Props) => {
               </RowComponent>
             </SectionComponent>
           </View>
-          <RowComponent
-            styles={{marginVertical: 8}}
-            justify={isPaid ? 'center' : 'space-between'}>
-            {!isPaid ? (
-              <ButtonComponent
-                title="Thanh toán"
-                onPress={() => setVisibleModalPTTT(true)}
-                titleFontWeight="500"
-                titleSize={14}
-                boderRadius={2}
-                titleColor={'rgba(60, 138, 86, 1)'}
-                styles={[styles.button]}
-                bgrColor="rgba(222, 247, 232, 1)"
-              />
-            ) : null}
+          <RowComponent styles={{marginVertical: 8}} justify="center">
             <ButtonComponent
               title="Đóng"
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                navigation.goBack();
+              }}
               titleFontWeight="500"
               titleSize={14}
               styles={[styles.button]}
@@ -647,4 +592,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChiTietHoaDonScreen;
+export default ChiTietHoaDonNVPV;

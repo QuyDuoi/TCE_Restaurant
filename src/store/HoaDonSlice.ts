@@ -13,14 +13,14 @@ export interface HoaDon {
   tongGiaTri: number;
   trangThai: string;
   hinhThucThanhToan: boolean;
-  id_chiTietHoaDon: string[];
   id_nhanVien: string;
   tienGiamGia?: number;
   ghiChu?: string;
   id_ban?: string;
-  thoiGianVaoBan?: Date;
-  thoiGianRaBan?: Date;
+  thoiGianVao?: Date;
+  thoiGianRa?: Date;
   tongTien?: number;
+  id_caLamViec?: string;
 }
 
 export interface HoaDonState {
@@ -68,6 +68,8 @@ export const addNewHoaDon = createAsyncThunk(
   async (formData: HoaDon, thunkAPI) => {
     try {
       const data = await addHoaDon(formData);
+      //console.log(data);
+
       return data;
     } catch (error: any) {
       console.log('Lỗi thêm mới:', error);
