@@ -10,19 +10,15 @@ import {
   Dimensions,
   FlatList,
 } from 'react-native';
-import {BillData, sampleData} from './BillData';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
 import {
-  fetchHoaDonTheoCaLam,
-  fetchHoaDonTheoNhaHang,
   HoaDon,
 } from '../../store/Slices/HoaDonSlice';
 import {fetchCaLam} from '../../store/Slices/CaLamSlice';
 import {fetchKhuVucs} from '../../store/Slices/KhuVucSlice';
-import {Ban, fetchBans} from '../../store/Slices/BanSlice';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
+import {fetchBans} from '../../store/Slices/BanSlice';
+import {useNavigation} from '@react-navigation/native';
 import {getListHoaDonTheoNhaHang} from '../../services/api';
 
 const {width, height} = Dimensions.get('window');
@@ -221,7 +217,6 @@ const BillScreen: React.FC = () => {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Quyết toán hóa đơn</Text>
         <TextInput
           style={styles.searchInput}
           placeholder="Tìm kiếm hóa đơn"

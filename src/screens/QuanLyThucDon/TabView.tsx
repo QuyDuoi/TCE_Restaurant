@@ -86,15 +86,6 @@ export default function MyTabs(props: Props) {
     }
   }, [setDialogSettingHandler]);
 
-  const handleSubmitEditing = (searchQuery: string) => {
-    setState(prevState => ({
-      ...prevState,
-      [state.index === 0
-        ? 'searchQueryMonAn'
-        : 'searchQueryNhomTopping']: searchQuery,
-    }));
-  };
-
   // renderTabBar được định nghĩa với kiểu dữ liệu TabBarProps
   const renderTabBar = (props: TabBarProps<Route>) => (
     <TabBar

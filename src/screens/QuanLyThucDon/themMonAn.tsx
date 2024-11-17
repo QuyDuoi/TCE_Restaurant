@@ -42,11 +42,6 @@ function ManThemMonAn(): React.JSX.Element {
     }),
   );
 
-  useEffect(() => {
-    const id_NhaHang = '66fab50fa28ec489c7137537';
-    dispatch(fetchDanhMucs(id_NhaHang));
-  }, []);
-
   // Cập nhật giá trị cho từng trường của món ăn
   const capNhatDuLieu = (field: keyof MonAn, value: string | number) => {
     setMonAnMoi(prevState => ({

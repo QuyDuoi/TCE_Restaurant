@@ -1,6 +1,7 @@
 import { ipAddress } from "../../services/api";
 import { DanhMuc } from "../../store/Slices/DanhMucSlice";
 import { MonAn } from "../../store/Slices/MonAnSlice";
+import axios from 'axios';
 
 export const getListDanhMuc = async (
     id_nhaHang: string,
@@ -88,6 +89,10 @@ export const getListDanhMuc = async (
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(id_nhaHang, danhMucs),
       });
+
+      if (!response) {
+        console.log("Chưa sắp xếp được danh mục!");
+      }
 
     } catch (error) {
       console.log("Lỗi sắp xếp danh mục: " + error);

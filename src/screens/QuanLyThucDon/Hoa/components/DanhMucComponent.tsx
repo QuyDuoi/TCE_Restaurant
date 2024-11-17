@@ -12,11 +12,11 @@ import ItemDanhMuc from '../lists/ItemDanhMuc';
 import ItemMonAn from '../lists/ItemMonAn';
 import TextComponent from './TextComponent';
 import {colors} from '../contants/hoaColors';
-import {fetchMonAns, MonAn} from '../../../../store/Slices/MonAnSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
+import {MonAn} from '../../../../store/Slices/MonAnSlice';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../store/store';
 import {useNavigation} from '@react-navigation/native';
-import {DanhMuc, fetchDanhMucs} from '../../../../store/Slices/DanhMucSlice';
+import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
 import {searchMonAn} from '../../../../services/api';
 import debounce from 'lodash';
 
@@ -41,20 +41,12 @@ const DanhMucComponent = (props: Props) => {
   const [monAnCounts, setMonAnCounts] = useState<{[key: string]: number}>({});
   const [filteredMonAn, setFilteredMonAn] = useState<MonAn[]>([]);
 
-  const dispatch = useDispatch<AppDispatch>();
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const dsMonAn = useSelector((state: RootState) => state.monAn.monAns);
-  const statusDanhMuc = useSelector((state: RootState) => state.danhMuc.status);
   const navigation = useNavigation<any>();
 
   useEffect(() => {
     console.log('Danh sách danh mục: ' + dsDanhMuc);
-    if (statusDanhMuc === 'idle') {
-      setIsLoading(true);
-    } else if (statusDanhMuc === 'succeeded') {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
 
       // Mở rộng tất cả danh mục
       const expandedIds = dsDanhMuc.map(item => item._id);
@@ -78,10 +70,7 @@ const DanhMucComponent = (props: Props) => {
       // Cập nhật state
       setMonAnCounts(monAnCountsTemp);
       setMonAnList(monAnListTemp);
-    } else if (statusDanhMuc === 'failed') {
-      setIsLoading(false);
-    }
-  }, [dispatch, dsDanhMuc]);
+  }, [dsDanhMuc]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -101,7 +90,6 @@ const DanhMucComponent = (props: Props) => {
     debounce.debounce(
       async (text: string, id_NhaHang: string) => {
         if (text.trim().length > 0) {
-          setIsLoading(true);
 
           try {
             const data = await searchMonAn(text, id_NhaHang);
@@ -122,21 +110,17 @@ const DanhMucComponent = (props: Props) => {
   useEffect(() => {
     if (searchQueryMonAn.trim().length > 0) {
       setIsLoading(true);
-    }
-
-    // Gọi debounceSearch với cả text và id_NhaHang
-    debounceSearch.current(searchQueryMonAn, '66fab50fa28ec489c7137537');
-
-    if (searchQueryMonAn.trim().length === 0) {
+      debounceSearch.current(searchQueryMonAn, '66fab50fa28ec489c7137537');
+    } else if (searchQueryMonAn.trim().length === 0) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
-      }, 1500);
+      }, 1000);
     }
 
     // Hủy bỏ debounce khi component unmount hoặc searchQueryMonAn thay đổi
     return () => debounceSearch.current.cancel();
-  }, [searchQueryMonAn, '66fab50fa28ec489c7137537']); // Thêm id_NhaHang vào danh sách phụ thuộc
+  }, [searchQueryMonAn]);
 
   const renderSearchItem = ({item}: {item: MonAn}) => {
     return (
@@ -244,16 +228,3 @@ const DanhMucComponent = (props: Props) => {
 };
 
 export default DanhMucComponent;
-
-// loai bo trung lap
-function mergeMonAnLists(existingList: MonAn[], newList: MonAn[]) {
-  const existingIds = new Set(existingList.map(monAn => monAn._id));
-  const mergedList = [...existingList];
-  newList.forEach(monAn => {
-    if (!existingIds.has(monAn._id)) {
-      mergedList.push(monAn);
-      existingIds.add(monAn._id);
-    }
-  });
-  return mergedList;
-}

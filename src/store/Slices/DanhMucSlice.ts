@@ -20,40 +20,13 @@ const initialState: DanhMucState = {
   error: null,
 };
 
-// Thunk để fetch danh sách danh mục
-export const fetchDanhMucs = createAsyncThunk(
-  'danhMucs/fetchDanhMucs',
-  async (id_nhaHang: string, {rejectWithValue}) => {
-    try {
-      return await getListDanhMuc(id_nhaHang);
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Không thể tải danh mục');
-    }
-  },
-);
-
 // Tạo DanhMucSlice
 const danhMucSlice = createSlice({
   name: 'danhMucs',
   initialState,
   reducers: {
-    moveItemUp: (state, action: PayloadAction<string>) => {
-      const index = state.danhMucs.findIndex(item => item._id === action.payload);
-      if (index > 0) {
-        [state.danhMucs[index - 1], state.danhMucs[index]] = [
-          state.danhMucs[index],
-          state.danhMucs[index - 1],
-        ];
-      }
-    },
-    moveItemDown: (state, action: PayloadAction<string>) => {
-      const index = state.danhMucs.findIndex(item => item._id === action.payload);
-      if (index < state.danhMucs.length - 1) {
-        [state.danhMucs[index], state.danhMucs[index + 1]] = [
-          state.danhMucs[index + 1],
-          state.danhMucs[index],
-        ];
-      }
+    updateDanhMucOrder: (state, action: PayloadAction<DanhMuc[]>) => {
+      state.danhMucs = action.payload;
     },
   },
   extraReducers: builder => {
@@ -115,5 +88,5 @@ const danhMucSlice = createSlice({
   },
 });
 
-export const {moveItemUp, moveItemDown} = danhMucSlice.actions;
+export const {moveItemUp, moveItemDown, updateDanhMucOrder } = danhMucSlice.actions;
 export default danhMucSlice.reducer;

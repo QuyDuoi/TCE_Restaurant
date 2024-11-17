@@ -61,8 +61,7 @@ const NhanVienComponent = props => {
     (state: RootState) => state.nhanVien.nhanViens,
   );
   const status = useSelector((state: RootState) => state.nhanVien.status);
-  const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
-
+  
   // **Lấy dữ liệu nhân viên từ API**
   // Sử dụng useEffect để cập nhật danh sách nhân viên khi Redux store thay đổi
   useEffect(() => {
