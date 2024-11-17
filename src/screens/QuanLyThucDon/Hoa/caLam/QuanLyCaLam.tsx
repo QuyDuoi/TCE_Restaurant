@@ -65,13 +65,11 @@ const QuanLyCaLam = (props: Props) => {
   }, [setFilterHandler]);
 
   useEffect(() => {
-    //dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
-    dispatch(fetchNhanViens() as any);
     dispatch(fetchCaLam() as any);
   }, [dispatch]);
+
   //////////
   const caLams = useSelector((state: RootState) => state.calam.caLams);
-  //console.log(caLams[1].id_hoaDon);
 
   const sortedCaLam = (caLams: CaLam[]) => {
     return [...caLams].sort((a, b) => {
@@ -79,18 +77,12 @@ const QuanLyCaLam = (props: Props) => {
     });
   };
 
-  //console.log(caLams);
-
-  //console.log(caLamFilter);
-
   useEffect(() => {
     const filtered = caLams.filter(caLam => {
       const caLamDate = new Date(caLam.batDau).toLocaleDateString('vi-VN');
-      //console.log(caLamDate);
 
       return caLamDate === date?.toLocaleDateString('vi-VN');
     });
-    //console.log(filtered);
 
     const sortedCaLam = filtered.sort((a, b) => {
       return (

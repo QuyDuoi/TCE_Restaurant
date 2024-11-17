@@ -9,6 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import {fetchMonAns, MonAn} from '../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,6 +19,7 @@ import {searchMonAn} from '../../../services/api';
 import {
   addNewChiTietHoaDon,
   ChiTietHoaDon,
+  fetchChiTietHoaDon,
 } from '../../../store/Slices/ChiTietHoaDonSlice';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
@@ -41,10 +43,12 @@ const ThemMonNVPV = (props: Props) => {
   const {route} = props;
   const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc} = route.params;
 
+  const idNhaHang = '66fab50fa28ec489c7137537';
+
   //console.log(chiTietHoaDon[1].soLuongMon);
 
   const [visibleModalCart, setVisibleModalCart] = useState(false);
-  const [monAns, setMonAns] = useState<{[key: string]: MonAn[]}>({});
+
   const [monAnsList, setMonAnsList] = useState<MonAn[]>([]);
   const [chiTiets, setChiTiets] = useState<
     {id_monAn: string; soLuongMon: number; tenMon: string; giaMon: string}[]
@@ -60,43 +64,17 @@ const ThemMonNVPV = (props: Props) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
-  const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
+  const monAns = useSelector((state: RootState) => state.monAn.monAns);
 
-  //phai tu fetch mon an
   useEffect(() => {
-    setIsLoading(true);
-    danhMucs.forEach(item => {
-      dispatch(fetchMonAns(item._id))
-        .then(action => {
-          if (fetchMonAns.fulfilled.match(action)) {
-            setMonAns(prev => {
-              const existing = prev[item._id as string] || [];
-              const newItems = action.payload.filter(
-                monAn =>
-                  !existing.some(
-                    existingMonAn => existingMonAn._id === monAn._id,
-                  ),
-              );
-              return {
-                ...prev,
-                [item._id as string]: [...existing, ...newItems],
-              };
-            });
-          }
-        })
-        .finally(() => {
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 1000);
-        });
-    });
-  }, [dispatch, danhMucs]);
+    setMonAnsList(monAns);
+  }, [monAns]);
 
   const handleSubmitEditing = async (text: string) => {
     if (text.trim().length !== 0) {
       setIsLoading(true);
       try {
-        const data = await searchMonAn(text);
+        const data = await searchMonAn(text, idNhaHang);
         if (data.length === 0) {
           setShowNoResult(true);
         } else {
@@ -123,11 +101,6 @@ const ThemMonNVPV = (props: Props) => {
   }, [searchQuery]);
 
   useEffect(() => {
-    const allMonAns = Object.values(monAns).flat();
-    setMonAnsList(allMonAns as any);
-  }, [monAns]);
-
-  useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
       id_monAn: ct.id_monAn ? ct.id_monAn._id : '',
       soLuongMon: ct.soLuongMon ? (ct.id_monAn ? ct.soLuongMon : 0) : 0,
@@ -140,7 +113,7 @@ const ThemMonNVPV = (props: Props) => {
 
   const sortedMonAnsList = useMemo(() => {
     return monAnsList && chiTiets
-      ? monAnsList.sort((a, b) => {
+      ? [...monAnsList].sort((a, b) => {
           const aSoLuong =
             chiTiets.find(ct => ct.id_monAn === a._id)?.soLuongMon || 0;
           const bSoLuong =
@@ -413,7 +386,10 @@ const ThemMonNVPV = (props: Props) => {
                     ).then(action => {
                       if (addNewChiTietHoaDon.fulfilled.match(action)) {
                         console.log('Thêm mới Chi Tiết Hóa Đơn thành công');
-                        navigation.goBack();
+                        dispatch(fetchChiTietHoaDon(hoaDon._id));
+                        setTimeout(() => {
+                          navigation.goBack();
+                        }, 500);
                       }
                     });
                   } else {

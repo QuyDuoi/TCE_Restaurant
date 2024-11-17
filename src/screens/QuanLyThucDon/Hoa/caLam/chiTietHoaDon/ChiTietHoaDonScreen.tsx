@@ -40,18 +40,14 @@ interface Props {
   route: any;
 }
 const ChiTietHoaDonScreen = (props: Props) => {
-  const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
+  const {hoaDon, tenKhuVuc, tenBan, caLam, type} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
   //console.log(hoaDon, tenKhuVuc, tenBan);
   console.log('render chi tiet hoa don');
-  //console.log(hoaDon.id_chiTietHoaDon);
-  //console.log('caLam', caLam);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
-
-  console.log('chi tiet hoa don', chiTietHoaDons);
 
   const navigation = useNavigation<any>();
 
@@ -69,9 +65,9 @@ const ChiTietHoaDonScreen = (props: Props) => {
   );
   const [isPaid, setIsPaid] = useState(false);
   const [totalBill, setTotalBill] = useState(
-    hoaDon.id_chiTietHoaDon
+    hoaDon
       ? chiTietHoaDons.reduce((total, item) => {
-          return (total += item.giaTien * item.soLuongMon);
+          return (total += item.giaTien);
         }, 0)
       : 0,
   );
@@ -106,7 +102,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
     if (hoaDon) {
       setTotalBill(totalBillCal);
     }
-  }, [totalBillCal]);
+  }, [totalBillCal, chiTietHoaDons]);
 
   useEffect(() => {
     setTotalFinalBill(totalFinalBillCal());
@@ -114,25 +110,18 @@ const ChiTietHoaDonScreen = (props: Props) => {
 
   const dispatch = useDispatch();
 
-  //const hoadons = useSelector((state: RootState) => state.hoaDons.hoaDons);
-  //const hoaDonUpdate = hoadons.find(item => item._id === hoaDon._id);
-
-  useFocusEffect(() => {
-    //console.log('focus');
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (caLam) {
-        //dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
-      }
-    });
-    return unsubscribe;
-  });
-
   useEffect(() => {
     if (hoaDon) {
       dispatch(fetchChiTietHoaDon(hoaDon._id) as any);
     }
     if (hoaDon?.trangThai) {
       setIsPaid(hoaDon.trangThai === 'Đã Thanh Toán');
+    }
+
+    if (hoaDon.trangThai === null) {
+      setIsPaid(false);
+    } else {
+      setIsPaid(false);
     }
   }, [hoaDon]);
 
@@ -165,9 +154,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
   const nhanVienThanhToan = nhanviens.find(
     item => item._id === hoaDon.id_nhanVien,
   );
-
-  //console.log('chi tiet hoa don', chiTietHoaDons);
-  //console.log('nhan vien thanh toan', nhanVienThanhToan);
 
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
     return (
@@ -394,10 +380,11 @@ const ChiTietHoaDonScreen = (props: Props) => {
                       hoaDon: hoaDon,
                       tenBan: tenBan,
                       tenKhuVuc: tenKhuVuc,
+                      type: type,
                     });
                   }}>
                   <TextComponent
-                    text="Chỉnh sửa"
+                    text={chiTietHoaDons.length > 0 ? 'Chỉnh sửa' : 'Gọi món'}
                     color={colors.blue2}
                     size={16}
                   />

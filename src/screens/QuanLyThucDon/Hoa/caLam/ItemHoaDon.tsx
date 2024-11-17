@@ -78,14 +78,12 @@ const ItemHoaDon = (props: Props) => {
       />
       <TextComponent
         text={`Thời gian vào: ${formatTime(
-          hoaDon.thoiGianVaoBan ?? new Date(''),
+          hoaDon.thoiGianVao ?? new Date(''),
         )}`}
         color={colors.desc}
       />
       <TextComponent
-        text={`Thời gian ra: ${formatTime(
-          hoaDon.thoiGianRaBan ?? new Date(''),
-        )}`}
+        text={`Thời gian ra: ${formatTime(hoaDon.thoiGianRa ?? new Date(''))}`}
         color={colors.desc}
       />
       <TextComponent

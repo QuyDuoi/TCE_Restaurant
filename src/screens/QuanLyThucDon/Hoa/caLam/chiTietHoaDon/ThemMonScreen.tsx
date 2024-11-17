@@ -43,19 +43,22 @@ const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
 
 const ThemMonScreen = (props: Props) => {
   const {route} = props;
-  const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc} = route.params;
+  const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc, type} = route.params;
+  const idNhaHang = '66fab50fa28ec489c7137537';
 
   //console.log('chi tiet hoa don', chiTietHoaDon);
 
+  //console.log('type', type);
+
   const [visibleModalCart, setVisibleModalCart] = useState(false);
-  const [monAns, setMonAns] = useState<{[key: string]: MonAn[]}>({});
-  const [monAnsList, setMonAnsList] = useState<MonAn[]>([]);
+
   const [chiTiets, setChiTiets] = useState<
     {id_monAn: string; soLuongMon: number; tenMon: string; giaMon: string}[]
   >([]);
   const [dataSent, setDataSent] = useState<
     {id_monAn: string; soLuongMon: number; giaTien: string}[]
   >([]);
+  const [monAnList, setMonAnList] = useState<MonAn[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredMonAns, setFilteredMonAns] = useState<MonAn[]>([]);
   const [onChange, setOnChange] = useState(false);
@@ -64,44 +67,13 @@ const ThemMonScreen = (props: Props) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
-  const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
-  const danhMucStatus = useSelector((state: RootState) => state.danhMuc.status);
-  const monAnsStatus = useSelector((state: RootState) => state.monAn.status);
-  //phai tu fetch mon an
-  useEffect(() => {
-    setIsLoading(true);
-    danhMucs.forEach(item => {
-      dispatch(fetchMonAns(item._id))
-        .then(action => {
-          if (fetchMonAns.fulfilled.match(action)) {
-            setMonAns(prev => {
-              const existing = prev[item._id as string] || [];
-              const newItems = action.payload.filter(
-                monAn =>
-                  !existing.some(
-                    existingMonAn => existingMonAn._id === monAn._id,
-                  ),
-              );
-              return {
-                ...prev,
-                [item._id as string]: [...existing, ...newItems],
-              };
-            });
-          }
-        })
-        .finally(() => {
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 1000);
-        });
-    });
-  }, [dispatch, danhMucs]);
+  const monAns = useSelector((state: RootState) => state.monAn.monAns);
 
   const handleSubmitEditing = async (text: string) => {
     if (text.trim().length !== 0) {
       setIsLoading(true);
       try {
-        const data = await searchMonAn(text);
+        const data = await searchMonAn(text, idNhaHang);
         if (data.length === 0) {
           setShowNoResult(true);
         } else {
@@ -128,11 +100,6 @@ const ThemMonScreen = (props: Props) => {
   }, [searchQuery]);
 
   useEffect(() => {
-    const allMonAns = Object.values(monAns).flat();
-    setMonAnsList(allMonAns as any);
-  }, [monAns]);
-
-  useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
       id_monAn: ct.id_monAn ? ct.id_monAn._id : '',
       soLuongMon: ct.soLuongMon ? (ct.id_monAn ? ct.soLuongMon : 0) : 0,
@@ -143,17 +110,19 @@ const ThemMonScreen = (props: Props) => {
     setDataSent(initialChiTiets);
   }, [chiTietHoaDon]);
 
+  useEffect(() => {
+    setMonAnList(monAns);
+  }, [monAns]);
+
   const sortedMonAnsList = useMemo(() => {
-    return monAnsList && chiTiets
-      ? monAnsList.sort((a, b) => {
-          const aSoLuong =
-            chiTiets.find(ct => ct.id_monAn === a._id)?.soLuongMon || 0;
-          const bSoLuong =
-            chiTiets.find(ct => ct.id_monAn === b._id)?.soLuongMon || 0;
-          return bSoLuong - aSoLuong;
-        })
-      : [];
-  }, [monAnsList]);
+    return [...monAnList].sort((a, b) => {
+      const aSoLuong =
+        chiTiets.find(ct => ct.id_monAn === a._id)?.soLuongMon || 0;
+      const bSoLuong =
+        chiTiets.find(ct => ct.id_monAn === b._id)?.soLuongMon || 0;
+      return bSoLuong - aSoLuong;
+    });
+  }, [monAnList]);
 
   //so luong mon an
   const updateSoLuongMon = useCallback(
@@ -418,8 +387,18 @@ const ThemMonScreen = (props: Props) => {
                     ).then(action => {
                       if (addNewChiTietHoaDon.fulfilled.match(action)) {
                         console.log('Thêm mới Chi Tiết Hóa Đơn thành công');
-
-                        navigation.goBack();
+                        if (type === 'chiTietCaLam') {
+                          dispatch(fetchChiTietHoaDon(hoaDon._id));
+                          setTimeout(() => {
+                            navigation.goBack();
+                          }, 1000);
+                        } else if (type == 'quyetToan') {
+                          dispatch(fetchChiTietHoaDon(hoaDon._id));
+                          setTimeout(() => {
+                            navigation.goBack();
+                          }, 1000);
+                        }
+                        //navigation.goBack();
                       }
                     });
                   } else {

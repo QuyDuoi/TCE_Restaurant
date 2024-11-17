@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Modal,
@@ -13,14 +13,19 @@ import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import DatBanModal from './DatBanModal'; // Import modal đặt bàn
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
-import {Ban} from '../../../store/Slices/BanSlice';
+import {Ban, updateBanThunk} from '../../../store/Slices/BanSlice';
 import {KhuVuc} from '../../../store/Slices/KhuVucSlice';
 import TableBookingDetail from '../../../customcomponent/ItemChiTietDatBan';
 import BookingFlow from '../../../customcomponent/BookingFlow';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import ModalTaoHoaDon from '../taoHoaDon/ModalTaoHoaDon';
 import {useNavigation} from '@react-navigation/native';
+import {HoaDon} from '../../../store/Slices/HoaDonSlice';
+import {getListHoaDonTheoNhaHang} from '../../../services/api';
+import UnsavedChangesModal from '../../../customcomponent/modalSave';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {updateMonAn} from '../../QuanLyThucDon/CallApiThucDon';
 
 interface Props {
   isVisible: boolean;
@@ -30,20 +35,55 @@ interface Props {
 }
 
 const ModalChucNang = (props: Props) => {
+  const idNhaHang = '66fab50fa28ec489c7137537';
   const {isVisible, onClose, onCloseParent, selectedBan} = props;
   const [isVisibleDatBan, setIsVisibleDatBan] = useState(false);
   const [isVisibleChiTietBan, setIsVisibleChiTietBan] = useState(false);
   const [isVisibleModalTaoHoaDon, setIsVisibleModalTaoHoaDon] = useState(false);
-
+  const [hoaDonsChuaThanhToan, setHoaDonsChuaThanhToan] = useState<
+    HoaDon[] | null
+  >([]);
+  const [isVisibleModalHuyBan, setIsVisibleModalHuyBan] = useState(false);
   const navigation = useNavigation<any>();
   //console.log(selectedBan?._id);
-  const bans = useSelector((state: RootState) => state.ban.bans);
-  const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+  //const bans = useSelector((state: RootState) => state.ban.bans);
 
-  const hoaDonSelected = hoaDons.find(
+  useEffect(() => {
+    const fetchHoaDon = async () => {
+      const hoaDons = await getListHoaDonTheoNhaHang(idNhaHang);
+      setHoaDonsChuaThanhToan(hoaDons);
+    };
+    fetchHoaDon();
+  }, []);
+
+  const hoaDonSelected = hoaDonsChuaThanhToan?.find(
     hoaDon => hoaDon.id_ban === selectedBan?._id,
   );
-  console.log('selectedBan', hoaDonSelected);
+
+  const dispatch = useDispatch();
+
+  const handleConfirmHuyBan = async () => {
+    const data = {
+      ...selectedBan,
+      trangThai: 'Trống',
+    };
+
+    const result = await dispatch(
+      updateBanThunk({id: selectedBan._id, formData: data}) as any,
+    );
+
+    if (result.type.endsWith('fulfilled')) {
+      ToastAndroid.show('Hủy bàn thành công', ToastAndroid.LONG);
+      setIsVisibleModalHuyBan(false);
+      onCloseParent();
+    } else {
+      ToastAndroid.show('Hủy bàn thất bại', ToastAndroid.LONG);
+    }
+
+    onClose();
+  };
+
+  //console.log('selectedBan', hoaDonSelected);
 
   return (
     <>
@@ -135,7 +175,9 @@ const ModalChucNang = (props: Props) => {
           <SectionComponent>
             <ButtonComponent
               title="Hủy bàn đặt"
-              onPress={() => {}}
+              onPress={() => {
+                setIsVisibleModalHuyBan(true);
+              }}
               bgrColor={colors.orange}
               titleColor={colors.white}
               styles={styles.button}
@@ -173,6 +215,16 @@ const ModalChucNang = (props: Props) => {
         visible={isVisibleModalTaoHoaDon}
         onClose={() => setIsVisibleModalTaoHoaDon(false)}
         selectedBan={selectedBan}
+      />
+      <UnsavedChangesModal
+        visible={isVisibleModalHuyBan}
+        title={'Thông báo'}
+        content={'Bạn có chắc muốn hủy bàn đặt này không?'}
+        onConfirm={handleConfirmHuyBan}
+        onCancel={() => {
+          setIsVisibleModalHuyBan(false);
+        }}
+        image={<Icon name="close" size={22} color="red" />}
       />
     </>
   );

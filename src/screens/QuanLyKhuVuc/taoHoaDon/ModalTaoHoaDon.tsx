@@ -18,6 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
+import {fetchBans} from '../../../store/Slices/BanSlice';
 
 interface Props {
   visible: boolean;
@@ -56,6 +57,9 @@ const ModalTaoHoaDon = (props: Props) => {
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
         tenBan: selectedBan?.tenBan,
       });
+      //tam thoi
+      dispatch(fetchBans() as any);
+
       onClose();
     } else {
       ToastAndroid.show('Lỗi tạo hóa đơn', ToastAndroid.LONG);

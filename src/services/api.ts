@@ -1,5 +1,5 @@
-// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.1.5:3000/api/`; // Địa chỉ cơ sở API
+//export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.133:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -457,7 +457,7 @@ export const themNhanVien = async (formData: FormData) => {
       const data = await response.json();
       return data;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log('Lỗi thêm mới Nhân viên: ', error.message);
     throw error;
   }
@@ -559,10 +559,13 @@ export const getListCaLam = async (id_nhanVien: string): Promise<CaLam[]> => {
 };
 export const getListChiTietHoaDonTheoCaLam = async (id_nhaHang: string) => {
   try {
-    const response = await fetch(`${ipAddress}layCthdTheoCaLam?id_nhaHang=${id_nhaHang}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await fetch(
+      `${ipAddress}layCthdTheoCaLam?id_nhaHang=${id_nhaHang}`,
+      {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      },
+    );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Chi tiết hóa đơn theo ca làm');
     }
@@ -595,16 +598,13 @@ export const addListChiTietHoaDon = async (
   }
 };
 
-export const searchMonAn = async (
-  textSearch: string,
-  id_nhaHang: string
-) => {
+export const searchMonAn = async (textSearch: string, id_nhaHang: string) => {
   try {
     const response = await fetch(
       `${ipAddress}timKiemMonAn?textSearch=${textSearch}&id_nhaHang=${id_nhaHang}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
       },
     );
     if (!response.ok) {

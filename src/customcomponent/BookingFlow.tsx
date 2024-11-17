@@ -1,11 +1,12 @@
 // src/flows/BookingFlow.tsx
 
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Image} from 'react-native';
 import {booking} from './bookingData';
 import TableBookingDetail from './ItemChiTietDatBan';
 import AlertDialog from './alertDialog';
 import UnsavedChangesModal from './modalSave';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const BookingFlow = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,11 +36,14 @@ const BookingFlow = () => {
           <Text>Hiển thị chi tiết đặt bàn</Text>
         </TouchableOpacity>
       </View>
-      {modalVisible && (
-        <View style={[styles.toast, {}]}>
-          <AlertDialog isSuccess={true} message="Is Success" />
-        </View>
-      )}
+      <UnsavedChangesModal
+        visible={true}
+        title={'Thông báo'}
+        content={'Bạn có chắc muốn hủy bàn đặt này không?'}
+        onConfirm={() => {}}
+        onCancel={() => {}}
+        image={<Icon name="close" size={22} color="red" />}
+      />
     </>
   );
 };
