@@ -34,6 +34,7 @@ import ModalPTTT from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
 import ModalSoLuongMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalSoLuongMon';
 import ItemCTHDnvpv from './ItemCTHDnvpv';
 import {random} from 'lodash';
+import UnsavedChangesModal from '../../../customcomponent/modalSave';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -47,6 +48,8 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
+
+  console.log(chiTietHoaDons[0]._id);
 
   //console.log('chi tiet hoa don', chiTietHoaDons.length);
 
@@ -67,9 +70,9 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   );
   const [isPaid, setIsPaid] = useState(false);
   const [totalBill, setTotalBill] = useState(
-    hoaDon.id_chiTietHoaDon
+    hoaDon
       ? chiTietHoaDons.reduce((total, item) => {
-          return (total += item.giaTien * item.soLuongMon);
+          return (total += item.giaTien);
         }, 0)
       : 0,
   );
@@ -81,7 +84,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   );
 
   let totalBillCal = chiTietHoaDons.reduce((total: number, item: any) => {
-    return (total += item.giaTien * item.soLuongMon);
+    return (total += item.giaTien);
   }, 0);
 
   let totalFinalBillCal = () => {
@@ -101,28 +104,16 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   };
 
   useEffect(() => {
-    if (hoaDon.id_chiTietHoaDon) {
+    if (hoaDon) {
       setTotalBill(totalBillCal);
     }
-  }, [totalBillCal]);
+  }, [totalBillCal, chiTietHoaDons]);
 
   useEffect(() => {
     setTotalFinalBill(totalFinalBillCal());
   }, [totalFinalBillCal, isPercent, discount]);
 
   const dispatch = useDispatch();
-
-  // useFocusEffect(() => {
-  //   //console.log('focus');
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     if (caLam) {
-  //       dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
-  //     } else {
-  //       dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
-  //     }
-  //   });
-  //   return unsubscribe;
-  // });
 
   useEffect(() => {
     if (hoaDon) {
@@ -174,6 +165,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             nameMonAn={item.id_monAn.tenMon}
             soLuong={item.soLuongMon}
             giaTien={item.giaTien}
+            trangThai={item.trangThai}
             key={item._id}
           />
         ) : null}
@@ -268,57 +260,8 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           ) : null}
           <SpaceComponent height={5} />
           {/* view giam gia */}
-          <View style={[styles.sectionContainer, {}]}>
-            <SectionComponent
-              styles={[
-                styles.section,
-                {
-                  paddingVertical: 4,
-                },
-              ]}>
-              <RowComponent justify="space-between">
-                <TextComponent text="Giảm giá: " styles={styles.text} />
-                <TouchableOpacity
-                  //disabled={isPaid}
-                  style={{
-                    width: '40%',
-                    alignItems: 'center',
-                  }}
-                  onPress={handleOpenModalGiamGia}>
-                  {discount ? (
-                    <TextComponent
-                      text={
-                        discount > 100 || !isPercent
-                          ? `${formatMoney(discount)}`
-                          : `${discount}%`
-                      }
-                      size={15}
-                      color={colors.desc}
-                    />
-                  ) : (
-                    <TextComponent
-                      text={`Thêm giảm giá`}
-                      size={13}
-                      color={colors.desc}
-                      fontWeight="500"
-                      styles={{marginBottom: 2 * 1.3}}
-                    />
-                  )}
-                  <SpaceComponent height={4} />
-                  <View
-                    style={{
-                      width: '85%',
-                      height: 1 * 1.5,
-                      backgroundColor: colors.desc,
-                    }}
-                  />
-                </TouchableOpacity>
-              </RowComponent>
-              <SpaceComponent height={5} />
-            </SectionComponent>
-            {/* end view giam gia */}
-          </View>
-          <SpaceComponent height={2} />
+
+          <SpaceComponent height={16} />
 
           {/* view chi tiet mon an */}
           <View
@@ -458,6 +401,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
               </SectionComponent>
             ) : null}
           </View>
+          <SpaceComponent height={12} />
           <View
             style={[
               styles.sectionContainer,
@@ -520,6 +464,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
               </RowComponent>
             </SectionComponent>
           </View>
+          <SpaceComponent height={12} />
           <RowComponent styles={{marginVertical: 8}} justify="center">
             <ButtonComponent
               title="Đóng"

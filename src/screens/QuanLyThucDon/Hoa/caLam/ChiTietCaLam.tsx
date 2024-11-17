@@ -55,26 +55,25 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const ketThuc = caLam.ketThuc ? new Date(caLam.ketThuc) : undefined;
 
   const dispatch = useDispatch();
+  const bans = useSelector((state: RootState) => state.ban.bans);
+  const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+  const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
 
   //fetch hoa don va khu vuc tu api ve redux store
   useEffect(() => {
     console.log('fetch hoa don');
 
-    dispatch(fetchHoaDonTheoCaLam(caLam._id) as any);
-    dispatch(fetchKhuVucs(idNhaHang) as any);
-    dispatch(fetchBans() as any);
-  }, [caLam._id, dispatch]);
+    dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
+
+    if (bans.length === 0) {
+      dispatch(fetchKhuVucs(idNhaHang) as any);
+      dispatch(fetchBans() as any);
+    }
+  }, [caLam, dispatch]);
 
   //lay data tu redux store
-  const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
-  console.log('hoaDons', hoaDons);
-
-  const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
-  const bans = useSelector((state: RootState) => state.ban.bans);
 
   useEffect(() => {
-    console.log('set ban');
-
     if (bans.length > 0) {
       setBansByKhuVuc(bans as any);
     }
@@ -108,6 +107,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
             tenKhuVuc: tenKhuVuc,
             tenBan: tenBan,
             caLam: caLam,
+            type: 'chiTietCaLam',
           });
         }}
       />

@@ -42,22 +42,32 @@ interface Props {
 const ModalSoLuongMon = (props: Props) => {
   const {visible, onClose, item, hoaDon} = props;
   const [soLuong, setSoLuong] = useState(0);
-  //console.log('so luong', item?.soLuongMon);
-  //console.log('hoa don', hoaDon);
+  const [giaTien, setGiaTien] = useState(0);
 
-  const calams = useSelector((state: RootState) => state.calam.caLams);
+  console.log('item', item);
+
+  const giaMotMon = item?.giaTien ? item.giaTien / item.soLuongMon : 0;
+  console.log('gia mot mon', giaMotMon);
 
   useEffect(() => {
     setSoLuong(item?.soLuongMon ?? 0);
+    setGiaTien(item?.giaTien ?? 0);
   }, [item]);
+
   const handleChangeSoLuong = useCallback((value: number) => {
     setSoLuong(value);
   }, []);
+
+  useEffect(() => {
+    setGiaTien(parseInt((giaMotMon * soLuong).toString()));
+  }, [soLuong]);
+
   const dispatch = useDispatch();
 
   const handleConfirm = async () => {
     const data = {
       soLuongMon: soLuong,
+      giaTien: giaTien,
     };
     const result = await dispatch(
       updateChiTietHoaDonThunk({
@@ -66,16 +76,10 @@ const ModalSoLuongMon = (props: Props) => {
       }) as any,
     );
     if (result.type.endsWith('fulfilled')) {
-      onClose();
-      const caLam = calams.find(item =>
-        item.id_hoaDon.includes(hoaDon._id as string),
-      );
-      if (caLam) {
-        dispatch(fetchHoaDonTheoNhaHang(caLam.id_nhaHang as string) as any);
-      }
-      //console.log('success');
-    } else {
-      //console.log('error');
+      dispatch(fetchChiTietHoaDon(hoaDon._id as any) as any);
+      setTimeout(() => {
+        onClose();
+      }, 500);
     }
   };
 
@@ -125,10 +129,7 @@ const ModalSoLuongMon = (props: Props) => {
                 <SpaceComponent width={10} />
               </RowComponent>
 
-              <TextComponent
-                text={`${formatMoney(item?.id_monAn?.giaMonAn ?? 0)}`}
-                minHeight={28}
-              />
+              <TextComponent text={`${formatMoney(giaTien)}`} minHeight={28} />
             </View>
           </View>
           <View
@@ -139,7 +140,9 @@ const ModalSoLuongMon = (props: Props) => {
             <RowComponent styles={{alignItems: 'center'}}>
               <TouchableOpacity
                 style={{}}
-                onPress={() => handleChangeSoLuong(soLuong - 1)}>
+                onPress={() => {
+                  handleChangeSoLuong(soLuong - 1);
+                }}>
                 <Icon name="minus" size={14} color={colors.text2} />
               </TouchableOpacity>
               <SpaceComponent width={10} />
@@ -167,7 +170,11 @@ const ModalSoLuongMon = (props: Props) => {
       <RowComponent justify="space-between" styles={{paddingHorizontal: 5}}>
         <ButtonComponent
           title="Dong"
-          onPress={onClose}
+          onPress={() => {
+            setSoLuong(item?.soLuongMon ?? 0);
+            setGiaTien(item?.giaTien ?? 0);
+            onClose();
+          }}
           styles={styles.button}
           titleSize={15}
           bgrColor={colors.desc2}

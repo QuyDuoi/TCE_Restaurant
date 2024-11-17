@@ -1,7 +1,7 @@
-import { getBanTheoId, getListKhuVuc } from '../../services/api';
+import {getBanTheoId, getListKhuVuc} from '../../services/api';
 // slices/BanSlice.ts
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { getListBan, addBan, updateBan } from '../../services/api'; // Đường dẫn tới API tương ứng
+import {createSlice, PayloadAction, createAsyncThunk} from '@reduxjs/toolkit';
+import {getListBan, addBan, updateBan} from '../../services/api'; // Đường dẫn tới API tương ứng
 import KhuVuc from '../../services/models/KhuVucModel';
 const idNhaHang = '66fab50fa28ec489c7137537';
 // Định nghĩa interface cho Ban
@@ -72,7 +72,7 @@ export const addNewBan = createAsyncThunk(
 // Async thunk để cập nhật Bàn
 export const updateBanThunk = createAsyncThunk(
   'bans/updateBans',
-  async ({ id, formData }: { id: string; formData: Ban }, thunkAPI) => {
+  async ({id, formData}: {id: string; formData: Ban}, thunkAPI) => {
     try {
       const data = await updateBan(id, formData);
       return data;
@@ -129,7 +129,7 @@ const banSlice = createSlice({
             ban => ban._id === action.payload._id,
           );
           if (index !== -1) {
-            state.bans[index] = { ...state.bans[index], ...action.payload };
+            state.bans[index] = {...state.bans[index], ...action.payload};
           }
           state.status = 'succeeded';
         },
@@ -141,12 +141,15 @@ const banSlice = createSlice({
       .addCase(fetchBanTheoId.pending, state => {
         state.status = 'loading';
       })
-      .addCase(fetchBanTheoId.fulfilled, (state, action: PayloadAction<Ban>) => {
-        // console.log("Dữ liệu trả về từ API:", action.payload);  // Kiểm tra lại dữ liệu
-        console.log("name: " + action.payload.tenBan)
-        state.status = 'succeeded';
-        state.ban = action.payload;  // action.payload là đối tượng món ăn
-      });
+      .addCase(
+        fetchBanTheoId.fulfilled,
+        (state, action: PayloadAction<Ban>) => {
+          // console.log("Dữ liệu trả về từ API:", action.payload);  // Kiểm tra lại dữ liệu
+          console.log('name: ' + action.payload.tenBan);
+          state.status = 'succeeded';
+          state.ban = action.payload; // action.payload là đối tượng món ăn
+        },
+      );
   },
 });
 

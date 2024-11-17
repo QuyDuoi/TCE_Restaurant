@@ -110,17 +110,15 @@ const BillScreen: React.FC = () => {
   const navigation = useNavigation<any>();
 
   const dispatch = useDispatch();
-  const caLams = useSelector((state: RootState) => state.calam.caLams);
-  const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
 
-  const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
   // console.log('hoaDons', hoaDons[0]);
 
   useEffect(() => {
-    dispatch(fetchCaLam() as any);
-    dispatch(fetchKhuVucs(idNhaHang) as any);
-    dispatch(fetchBans() as any);
+    if (bans.length === 0) {
+      dispatch(fetchKhuVucs(idNhaHang) as any);
+      dispatch(fetchBans() as any);
+    }
     //dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
   }, [dispatch]);
 
@@ -133,53 +131,21 @@ const BillScreen: React.FC = () => {
     };
 
     fetchHoaDonNhaHang();
-  }, [hoaDons]);
-  console.log(hoaDons);
+  }, [dispatch]);
+  console.log('render BillScreen');
 
   // useFocusEffect(() => {
   //   console.log('focus');
 
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
+  // useFocusEffect(() => {
+  //   console.log('focus');
+
+  //   const unsubscribe = navigation.addListener('focus', async () => {
+  //     const response = await getListHoaDonTheoNhaHang(idNhaHang);
+  //     setBillData(response);
   //   });
   //   return unsubscribe;
   // });
-
-  // useEffect(() => {
-  //   const fetchAllHoaDons = async () => {
-  //     const allHoaDonResponse = await Promise.all(
-  //       caLams.map(caLam =>
-  //         dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any),
-  //       ),
-  //     );
-  //     const allHoaDons = allHoaDonResponse.flatMap(response => {
-  //       return response.payload.map((hoaDon: HoaDon) => {
-  //         return {
-  //           ...hoaDon,
-  //         };
-  //       });
-  //     });
-  //     const fillteredHoaDons = allHoaDons.filter(hoaDon => {
-  //       return hoaDon.trangThai === 'Chưa Thanh Toán';
-  //     });
-  //     setFilteredBills(fillteredHoaDons);
-  //   };
-  //   if (caLams.length > 0) {
-  //     fetchAllHoaDons();
-  //   }
-  // }, [caLams]);
-
-  //console.log('filteredBills', filteredBills.length);
-
-  // useEffect(() => {
-  //   const filterHoaDon = hoaDons.filter(
-  //     hoaDon => hoaDon.trangThai === 'Chưa Thanh Toán' && hoaDon.id_ban,
-  //   );
-
-  //   setFilteredBills(filterHoaDon);
-  // }, [hoaDons]);
-
-  //console.log('caLamHienTai', caLamHienTai);
 
   const getBanKhuVuc = (idBan?: string) => {
     if (!idBan) return {tenKhuVuc: '', tenBan: ''};
@@ -189,8 +155,6 @@ const BillScreen: React.FC = () => {
       tenBan: ban?.tenBan,
     };
   };
-
-  //console.log(filteredBills[0].id_chiTietHoaDon);
 
   const renderItem = ({item}: {item: HoaDon}) => {
     const {tenKhuVuc, tenBan} = getBanKhuVuc(item.id_ban);
@@ -204,6 +168,7 @@ const BillScreen: React.FC = () => {
             hoaDon: item,
             tenKhuVuc: tenKhuVuc,
             tenBan: tenBan,
+            type: 'quyetToan',
           });
           //console.log(item._id);
         }}

@@ -20,7 +20,7 @@ export default class ChiTietHoaDon {
   ) {
     this.soLuongMon = soLuongMon;
     this.giaTien = giaTien;
-    this.trangThai = true;
+    this.trangThai = trangThai;
     this.id_monAn = id_monAn;
     this.id_hoaDon = id_hoaDon;
     this._id = _id;

@@ -3,7 +3,6 @@ import {
   getListChiTietHoaDon,
   addChiTietHoaDon,
   updateChiTietHoaDon,
-  getListMonAn,
   addListChiTietHoaDon,
   updateStatusChiTietHoaDon,
 } from '../../services/api';
@@ -19,8 +18,8 @@ export interface ChiTietHoaDon {
   id_hoaDon: string;
   createdAt?: string;
   updatedAt?: string;
-  ban?: any
-  khuVuc?: any
+  ban?: any;
+  khuVuc?: any;
 }
 
 export interface ChiTietHoaDonState {
