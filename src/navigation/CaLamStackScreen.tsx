@@ -7,6 +7,7 @@ import ChiTietCaLam from '../screens/QuanLyThucDon/Hoa/caLam/ChiTietCaLam';
 import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
+import ThuChiScreen from '../screens/QuanLyThuNhap/ThuChiScreen';
 
 const CaLamStack = createNativeStackNavigator();
 
@@ -74,6 +75,11 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
         name="ThemMonScreen"
         component={ThemMonScreen}
         options={{headerShown: false}}
+      />
+      <CaLamStack.Screen
+      name='ThuChiScreen'
+      component={ThuChiScreen}
+      options={{headerShown:false}}
       />
     </CaLamStack.Navigator>
   );

@@ -3,16 +3,17 @@ import { View, Text, StyleSheet, } from "react-native";
 
 
 interface Item {
+    id: string,
     time: string,
     status: string,
     money: string,
     description: string
 }
 const ItemThuChi = (props: Item) => {
-    const { time, status, money, description } = props;
+    const {id, time, status, money, description } = props;
     const onlyTime = time.split(' ')[0];
     return (
-        <View style={styles.card}>
+        <View style={styles.card} key={id}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={styles.time}>Thời gian tạo: <Text style={styles.valueTime}>{onlyTime}</Text></Text>
                 <Text style={styles.status}>Trạng thái: <Text style={status === 'Thu' ? styles.statusThu : styles.statusChi}>{status}</Text></Text>
