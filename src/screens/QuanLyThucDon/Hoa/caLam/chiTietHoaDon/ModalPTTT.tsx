@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import ModalComponent from '../../components/ModalComponent';
 import RowComponent from '../../components/RowComponent';
@@ -9,11 +9,17 @@ import ButtonComponent from '../../components/ButtonComponent';
 import SectionComponent from '../../components/SectionComponent';
 import TextComponent from '../../components/TextComponent';
 import {formatMoney} from '../../utils/formatUtils';
+import { useNavigation } from '@react-navigation/native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+
 import {
   HoaDon,
   updateHoaDonThunk,
 } from '../../../../../store/Slices/HoaDonSlice';
 import {useDispatch} from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 interface Props {
   visible: boolean;
@@ -21,10 +27,12 @@ interface Props {
   totalFinalBill?: number;
   hoaDon: HoaDon;
   discount?: number;
+  chiTietHoaDons: any[];
 }
 
 const ModalPTTT = React.memo((props: Props) => {
   const {visible, onClose, totalFinalBill, hoaDon, discount} = props;
+  const navigation = useNavigation<any>(); // Khởi tạo navigation
 
   const [chuyenKhoan, setChuyenKhoan] = useState(true);
   const dispatch = useDispatch();
@@ -34,6 +42,15 @@ const ModalPTTT = React.memo((props: Props) => {
   const handleChangeChuyenKhoan = useCallback((value: boolean) => {
     setChuyenKhoan(value);
   }, []);
+
+  const handlePrintInvoice = () => {
+    navigation.navigate('InHoaDon', {
+      hoaDon, // Gửi thông tin hóa đơn
+      chiTietHoaDons: props.chiTietHoaDons, // Gửi danh sách chi tiết hóa đơn
+      totalFinalBill, // Gửi tổng tiền sau giảm giá
+    });
+    onClose(); // Đóng modal sau khi điều hướng
+  };
 
   const handleThanhToan = async () => {
     const formData = {
@@ -101,6 +118,18 @@ const ModalPTTT = React.memo((props: Props) => {
           boderRadius={5}
           titleColor={chuyenKhoan ? colors.desc : 'rgba(153, 158, 237, 1)'}
         />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handlePrintInvoice}
+          activeOpacity={0.8}
+            >
+          <View style={styles.content}>
+            <FontAwesome name="print" size={18} color="black" />
+            <Text style={styles.text}>In Hóa Đơn</Text>
+          </View>
+        </TouchableOpacity>
+           
+        
       </RowComponent>
       {chuyenKhoan && (
         <SectionComponent styles={[styles.contaierImage]}>
@@ -154,6 +183,15 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
   },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 15,
+    color: colors.black,
+    left: 0
+  }
 });
 
 export default React.memo(ModalPTTT);

@@ -15,6 +15,7 @@ interface Props {
   ketThuc?: string;
   nhanVienMoCa: string;
   onPress?: () => void;
+  type?: string;
 }
 
 const ItemCaLam = (props: Props) => {
@@ -78,7 +79,7 @@ const ItemCaLam = (props: Props) => {
           }}>
           <ButtonComponent
             title="Xem chi tiết"
-            onPress={onPress ? onPress : () => {}}
+            onPress={onPress ? onPress : () => { type: 'QuanLyCaLam'}}
             bgrColor={colors.orange}
             boderRadius={20}
             styles={{

@@ -111,7 +111,7 @@ const NhanVienComponent = props => {
   const renderItem = ({item}: {item: NhanVienSlice}) => {
     // Kiểm tra và thay thế localhost bằng địa chỉ IP hợp lệ
     const employeeImage = item.hinhAnh
-      ? item.hinhAnh.replace('localhost', IPV4) // Đổi 192.168.x.x thành IP của server của bạn
+      ? item.hinhAnh.replace('localhost:3000', IPV4) // Đổi 192.168.x.x thành IP của server của bạn
       : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
     return (
