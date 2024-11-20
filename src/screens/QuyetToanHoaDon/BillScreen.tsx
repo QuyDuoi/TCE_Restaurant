@@ -12,14 +12,13 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import {
-  HoaDon,
-} from '../../store/Slices/HoaDonSlice';
+import {HoaDon} from '../../store/Slices/HoaDonSlice';
 import {fetchCaLam} from '../../store/Slices/CaLamSlice';
 import {fetchKhuVucs} from '../../store/Slices/KhuVucSlice';
 import {fetchBans} from '../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
 import {getListHoaDonTheoNhaHang} from '../../services/api';
+import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
 
 const {width, height} = Dimensions.get('window');
 
@@ -53,21 +52,6 @@ const BillItem: React.FC<{
   onDetail: () => void;
   onPayment: () => void;
 }> = ({hoaDon, tenKhuVuc, tenBan, onDetail, onPayment}) => {
-  // const [duration, setDuration] = useState(
-  //   calculateDuration(hoaDon?.thoiGianVao ?? new Date()),
-  // );
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setDuration(calculateDuration(hoaDon?.thoiGianVao ?? new Date()));
-  //   }, 1000);
-
-  //   return () => clearInterval(interval); // Xóa bộ đếm khi không cần thiết
-  // }, []);
-
-  //console.log('hoaDon.thoiGianVao', hoaDon.thoiGianVao);
-  //console.log('hihi', duration);
-
   return (
     <View style={styles.billContainer}>
       <View style={styles.billInfo}>
@@ -213,7 +197,7 @@ const BillScreen: React.FC = () => {
         }}
         hoaDon={hoaDonSelected as HoaDon}
         totalFinalBill={hoaDonSelected?.tongTien}
-        onChange={value => {
+        onChange={(value: any) => {
           setIsChange(value);
         }}
         type="quyetToan"

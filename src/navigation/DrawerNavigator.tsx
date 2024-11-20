@@ -15,6 +15,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
 import KhuVucStackScreen from './KhuVucScreen';
+import InHoaDon from '../screens/inHoaDon/InHoaDon';
 
 const Drawer = createDrawerNavigator();
 const BillStack = createNativeStackNavigator();
@@ -33,6 +34,8 @@ const BillStackScreen = ({
     } else if (routeName === 'ChiTietHoaDonScreen') {
       navigation.setOptions({headerShown: false});
     } else if (routeName === 'ThemMonScreen') {
+      navigation.setOptions({headerShown: false});
+    } else if (routeName === 'InHoaDon') {
       navigation.setOptions({headerShown: false});
     } else {
       navigation.setOptions({headerShown: true});
@@ -56,7 +59,11 @@ const BillStackScreen = ({
         component={ThemMonScreen}
         options={{headerShown: false}}
       />
-      
+      <BillStack.Screen
+        name="InHoaDon"
+        component={InHoaDon}
+        options={{headerShown: false}}
+      />
     </BillStack.Navigator>
   );
 };

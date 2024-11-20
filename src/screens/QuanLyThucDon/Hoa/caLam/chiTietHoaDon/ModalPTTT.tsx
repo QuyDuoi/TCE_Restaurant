@@ -44,34 +44,23 @@ interface Props {
   discount?: number;
   onChange?: (value: boolean) => void;
   type?: string;
-  chiTietHoaDons: any[];
+  chiTietHoaDons?: any[];
 }
 
 const ModalPTTT = React.memo((props: Props) => {
   const navigation = useNavigation<any>(); // Khởi tạo navigation
   const {visible, onClose, totalFinalBill, hoaDon, discount, onChange, type} =
     props;
-  //console.log(hoaDon);
-
-  //console.log('banSelectedId', hoaDon.id_ban);
-  //console.log('type', type);
 
   const [chuyenKhoan, setChuyenKhoan] = useState(true);
   const [isPercent, setIsPercent] = useState(true);
-  // const [isVisibleModalGiamGia, setIsVisibleModalGiamGia] = useState(false);
-  // const [discountValue, setDiscountValue] = useState(discount ? discount : 0);
-  // const [totalFinalBillValue, setTotalFinalBillValue] =
-  //   useState(totalFinalBill);
-  const dispatch = useDispatch();
 
-  //console.log(hoaDon, discount);
+  const dispatch = useDispatch();
 
   const bans = useSelector((state: RootState) => state.ban.bans);
   const banSelected = hoaDon?.id_ban
     ? bans.find(item => item._id === hoaDon?.id_ban)
     : undefined;
-
-  //console.log(banSelected);
 
   const handleChangeChuyenKhoan = useCallback((value: boolean) => {
     setChuyenKhoan(value);
@@ -85,25 +74,6 @@ const ModalPTTT = React.memo((props: Props) => {
     });
     onClose(); // Đóng modal sau khi điều hướng
   };
-
-  // const handleOpenModalGiamGia = () => {
-  //   setIsVisibleModalGiamGia(true);
-  // };
-
-  // useEffect(() => {
-  //   setTotalFinalBillValue(totalFinalBill as number);
-  // }, [totalFinalBill]);
-
-  // useEffect(() => {
-  //   if (isPercent) {
-  //     setTotalFinalBillValue(
-  //       (totalFinalBill as number) -
-  //         (discountValue / 100) * (totalFinalBill as number),
-  //     );
-  //   } else {
-  //     setTotalFinalBillValue((totalFinalBill as number) - discountValue);
-  //   }
-  // }, [discountValue]);
 
   //xu ly thanh toan
   const handleThanhToan = async () => {
@@ -231,8 +201,6 @@ const ModalPTTT = React.memo((props: Props) => {
           <ButtonComponent
             title="Quay lại"
             onPress={() => {
-              // setTotalFinalBillValue(totalFinalBill as number);
-              // setDiscountValue(discount ? discount : 0);
               setIsPercent(true);
               onClose();
             }}

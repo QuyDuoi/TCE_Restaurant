@@ -1,18 +1,15 @@
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useLayoutEffect, useState} from 'react';
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
-import { colors } from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChiTietCaLam from '../screens/QuanLyThucDon/Hoa/caLam/ChiTietCaLam';
 import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
-<<<<<<< HEAD
-import InHD from '../screens/inHoaDon/InHoaDon';
-import InHoaDon from '../screens/inHoaDon/InHoaDon';
-=======
+
 import ThuChiScreen from '../screens/QuanLyThuNhap/ThuChiScreen';
->>>>>>> b5b8ee31a129f1f3e5c8d1243369238e71405b5c
+import InHoaDon from '../screens/inHoaDon/InHoaDon';
 
 const CaLamStack = createNativeStackNavigator();
 
@@ -56,10 +53,9 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
       navigation.setOptions({headerShown: false});
     } else if (routeName === 'ThemMonScreen') {
       navigation.setOptions({headerShown: false});
-    }
-      else if (routeName === 'InHoaDon') {
+    } else if (routeName === 'InHoaDon') {
       navigation.setOptions({headerShown: false});
-  }
+    }
   }, [navigation, route, filterHandler]);
 
   return (
@@ -85,15 +81,14 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
         options={{headerShown: false}}
       />
       <CaLamStack.Screen
-<<<<<<< HEAD
         name="InHoaDon"
         component={InHoaDon}
         options={{headerShown: false}}
-=======
-      name='ThuChiScreen'
-      component={ThuChiScreen}
-      options={{headerShown:false}}
->>>>>>> b5b8ee31a129f1f3e5c8d1243369238e71405b5c
+      />
+      <CaLamStack.Screen
+        name="ThuChiScreen"
+        component={ThuChiScreen}
+        options={{headerShown: false}}
       />
     </CaLamStack.Navigator>
   );
