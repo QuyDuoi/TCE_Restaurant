@@ -13,6 +13,9 @@ import Ban from './models/BanModel';
 import KhuVuc from './models/KhuVucModel';
 import CaLam from './models/CaLamModel';
 import {NhanVienSlice} from '../store/Slices/NhanVienSlice';
+import { AppDispatch } from '../store/store';
+import { hoaDonSlice } from '../store/Slices/HoaDonSlice';
+import { chiTietHoaDonSlice } from '../store/Slices/ChiTietHoaDonSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -664,5 +667,35 @@ export const searchBan = async (textSearch: string): Promise<Ban[] | []> => {
   } catch (error) {
     console.log('Lỗi khi tìm kiếm bàn: ', error);
     return [];
+  }
+};
+
+export const thanhToanBanHang = async (
+  dispatch: AppDispatch,
+  payload: {
+    chiTietHoaDons: Array<{ id_monAn: string; soLuongMon: number; giaTien: number }>;
+    hoaDon: HoaDon;
+    id_nhaHang: string;
+    _id: string;
+  }
+) => {
+  try {
+    const response = await fetch(`${ipAddress}thanh_toan_hoa_don_moi`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Dispatch dữ liệu vào Redux store
+      dispatch(hoaDonSlice.actions.themHoaDon(data.hoaDon)); // Thêm hóa đơn mới
+      dispatch(chiTietHoaDonSlice.actions.themChiTietHoaDons(data.chiTietHoaDons)); // Thêm danh sách chi tiết hóa đơn
+    } else {
+      console.error('Lỗi từ server:', data.msg);
+    }
+  } catch (error) {
+    console.error('Lỗi khi gọi API:', error);
   }
 };

@@ -106,10 +106,14 @@ export const updateStatusChiTietHoaDonThunk = createAsyncThunk(
   },
 );
 
-const chiTietHoaDonSlice = createSlice({
+export const chiTietHoaDonSlice = createSlice({
   name: 'chiTietHoaDon',
   initialState,
-  reducers: {},
+  reducers: {
+    themChiTietHoaDons: (state, action: PayloadAction<ChiTietHoaDon[]>) => {
+      state.chiTietHoaDons.push(...action.payload);
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchChiTietHoaDon.pending, state => {
@@ -178,4 +182,5 @@ const chiTietHoaDonSlice = createSlice({
   },
 });
 
+export const { themChiTietHoaDons } = chiTietHoaDonSlice.actions;
 export default chiTietHoaDonSlice.reducer;

@@ -16,7 +16,7 @@ import EmployeeDetails from './src/screens/QuanLyNhanVien/EmployeeDetails';
 import KhuVucTabView from './src/screens/QuanLyKhuVuc/Component/KhuVucTabView';
 import QuanLyCaLam from './src/screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ProductDetailScreen from './src/screens/QuanLyThucDon/xemCTMonAn';
-import ManThemMonAn from './src/screens/QuanLyThucDon/themMonAn';
+import ManThemMonAn from './src/screens/QuanLyThucDon/ThemMonAn';
 import LoginScreen from './src/screens/Authentication/LoginScreen';
 import auth from '@react-native-firebase/auth';
 import CategoryScreen from './src/screens/QuanLyThucDon/CategoryScreen';

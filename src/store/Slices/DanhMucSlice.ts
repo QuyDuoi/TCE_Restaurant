@@ -88,5 +88,5 @@ const danhMucSlice = createSlice({
   },
 });
 
-export const {moveItemUp, moveItemDown, updateDanhMucOrder } = danhMucSlice.actions;
+export const {updateDanhMucOrder } = danhMucSlice.actions;
 export default danhMucSlice.reducer;

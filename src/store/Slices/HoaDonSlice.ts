@@ -124,10 +124,14 @@ export const thanhToanHoaDonThunk = createAsyncThunk(
   },
 );
 
-const hoaDonSlice = createSlice({
+export const hoaDonSlice = createSlice({
   name: 'hoaDon',
   initialState,
-  reducers: {},
+  reducers: {
+    themHoaDon: (state, action: PayloadAction<HoaDon>) => {
+      state.hoaDons.unshift(action.payload);
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchHoaDonTheoCaLam.pending, state => {
@@ -188,4 +192,5 @@ const hoaDonSlice = createSlice({
   },
 });
 
+export const { themHoaDon } = hoaDonSlice.actions;
 export default hoaDonSlice.reducer;
