@@ -47,6 +47,7 @@ const ModalGiamGia = (props: Props) => {
       duration: 400,
       useNativeDriver: true,
     }).start();
+    setDiscount(discountValue ? discountValue : '');
   };
 
   const closeModal = () => {

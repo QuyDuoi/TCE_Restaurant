@@ -45,8 +45,8 @@ const ModalChucNang = (props: Props) => {
   >([]);
   const [isVisibleModalHuyBan, setIsVisibleModalHuyBan] = useState(false);
   const navigation = useNavigation<any>();
-  //console.log(selectedBan?._id);
-  //const bans = useSelector((state: RootState) => state.ban.bans);
+
+  const bans = useSelector((state: RootState) => state.ban.bans);
 
   useEffect(() => {
     const fetchHoaDon = async () => {
@@ -54,7 +54,7 @@ const ModalChucNang = (props: Props) => {
       setHoaDonsChuaThanhToan(hoaDons);
     };
     fetchHoaDon();
-  }, []);
+  }, [bans]);
 
   const hoaDonSelected = hoaDonsChuaThanhToan?.find(
     hoaDon => hoaDon.id_ban === selectedBan?._id,
@@ -147,10 +147,7 @@ const ModalChucNang = (props: Props) => {
                   });
                   onClose();
                 } else {
-                  ToastAndroid.show(
-                    'Bàn không đang sử dụng',
-                    ToastAndroid.LONG,
-                  );
+                  ToastAndroid.show('Bàn chưa có hóa đơn', ToastAndroid.LONG);
                   onClose();
                 }
               }}
@@ -176,7 +173,15 @@ const ModalChucNang = (props: Props) => {
             <ButtonComponent
               title="Hủy bàn đặt"
               onPress={() => {
-                setIsVisibleModalHuyBan(true);
+                if (selectedBan.trangThai === 'Đang sử dụng') {
+                  ToastAndroid.show('Bàn đang sử dụng', ToastAndroid.LONG);
+                  onClose();
+                } else if (selectedBan.trangThai === 'Trống') {
+                  ToastAndroid.show('Bàn đang trống', ToastAndroid.LONG);
+                  onClose();
+                } else {
+                  setIsVisibleModalHuyBan(true);
+                }
               }}
               bgrColor={colors.orange}
               titleColor={colors.white}
@@ -213,8 +218,11 @@ const ModalChucNang = (props: Props) => {
       />
       <ModalTaoHoaDon
         visible={isVisibleModalTaoHoaDon}
-        onClose={() => setIsVisibleModalTaoHoaDon(false)}
+        onClose={() => {
+          setIsVisibleModalTaoHoaDon(false);
+        }}
         selectedBan={selectedBan}
+        onCloseParent={onCloseParent}
       />
       <UnsavedChangesModal
         visible={isVisibleModalHuyBan}

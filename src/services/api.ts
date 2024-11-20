@@ -211,6 +211,35 @@ export const updateHoaDon = async (
   }
 };
 
+//Thanh Toan Hoa Don
+export const thanhToanHoaDon = async (
+  id_hoaDon: string,
+  tienGiamGia: number,
+  hinhThucThanhToan: boolean,
+  thoiGianRa: Date,
+): Promise<any> => {
+  try {
+    const response = await fetch(`${ipAddress}thanhToanHoaDon`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        id_hoaDon,
+        tienGiamGia,
+        hinhThucThanhToan,
+        thoiGianRa,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thanh toán Hóa Đơn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thanh toán Hóa Đơn: ', error);
+    throw error;
+  }
+};
+
 // Lấy danh sách ChiTietHoaDon
 export const getListChiTietHoaDon = async (
   id_hoaDon: string,
@@ -604,7 +633,7 @@ export const searchMonAn = async (textSearch: string, id_nhaHang: string) => {
       `${ipAddress}timKiemMonAn?textSearch=${textSearch}&id_nhaHang=${id_nhaHang}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
       },
     );
     if (!response.ok) {

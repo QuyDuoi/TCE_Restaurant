@@ -37,16 +37,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
-
 const {height: ScreenHeight} = Dimensions.get('window');
-
 
 interface Props {
   route: any;
 }
 const ChiTietHoaDonScreen = (props: Props) => {
-  
   const {hoaDon, tenKhuVuc, tenBan, caLam, type} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
   //console.log(hoaDon, tenKhuVuc, tenBan);
@@ -307,7 +303,28 @@ const ChiTietHoaDonScreen = (props: Props) => {
               )}
             </View>
           )}
+          {isPaid && (
+            <View style={styles.sectionContainer}>
+              <SectionComponent styles={styles.section}>
+                <RowComponent justify="space-between">
+                  <TextComponent
+                    text="Hình thức thanh toán: "
+                    size={15}
+                    color={colors.black}
+                  />
+                  <TextComponent
+                    text={
+                      hoaDon?.hinhThucThanhToan ? 'Chuyyển khoản' : 'Tiền mặt'
+                    }
+                    color={colors.desc}
+                  />
+                </RowComponent>
+              </SectionComponent>
+              <View style={styles.indicator} />
+            </View>
+          )}
           <SpaceComponent height={hoaDon.id_ban ? 5 : 15} />
+
           {/* view giam gia */}
           <View style={[styles.sectionContainer, {}]}>
             <SectionComponent
@@ -571,28 +588,33 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 styles={[styles.button]}
                 bgrColor="rgba(222, 247, 232, 1)"
               />
+            ) : (
+              <TouchableOpacity
+                style={{
+                  width: '40%',
+                  marginHorizontal: 8,
+                  paddingVertical: 8,
+                  marginBottom: 8,
+                  backgroundColor: '#FF6600',
+                  alignItems: 'center',
+                }}
+                onPress={() =>
+                  navigation.navigate('InHoaDon', {
+                    hoaDon, // Gửi thông tin hóa đơn sang màn hình InHoaDonScreen
+                    chiTietHoaDons, // Gửi chi tiết hóa đơn
+                    totalFinalBill, // Gửi tổng tiền
+                  })
+                }
+                activeOpacity={0.8}>
+                <View style={styles.content}>
+                  <FontAwesome name="print" size={18} color="black" />
+                  <Text style={{fontSize: 15, color: colors.black, left: 5}}>
+                    In Hóa Đơn
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
 
-
-            ) :  <TouchableOpacity
-                  style={{width: '40%',
-                    marginHorizontal: 8,
-                    paddingVertical: 8,
-                    marginBottom: 8,
-                  backgroundColor: '#FF6600', alignItems: 'center'}}
-                  onPress={() =>
-                    navigation.navigate('InHoaDon', {
-                      hoaDon, // Gửi thông tin hóa đơn sang màn hình InHoaDonScreen
-                      chiTietHoaDons, // Gửi chi tiết hóa đơn
-                      totalFinalBill, // Gửi tổng tiền
-                    })}
-                  activeOpacity={0.8}
-                    >
-                  <View style={styles.content}>
-                    <FontAwesome name="print" size={18} color="black" />
-                    <Text style={{fontSize: 15, color: colors.black, left: 5}}>In Hóa Đơn</Text>
-                  </View>
-                </TouchableOpacity>}
-           
             <ButtonComponent
               title="Đóng"
               onPress={() => navigation.goBack()}
@@ -603,8 +625,8 @@ const ChiTietHoaDonScreen = (props: Props) => {
               titleColor={colors.desc}
               bgrColor={colors.desc2}
             />
-            
-          {/* <TouchableOpacity onPress={() =>
+
+            {/* <TouchableOpacity onPress={() =>
               navigation.navigate('InHoaDon', {
                 hoaDon, // Gửi thông tin hóa đơn sang màn hình InHoaDonScreen
                 chiTietHoaDons, // Gửi chi tiết hóa đơn
@@ -622,7 +644,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
         visible={visibleModalGiamGia}
         onClose={handleOpenModalGiamGia}
         onValueChange={value => setDiscount(Number(value))}
-        discountValue={hoaDon.tienGiamGia.toString()}
+        discountValue={discount ? discount.toString() : ''}
         onIsPercentChange={value => setIsPercent(value)}
       />
       <ModalPTTT
@@ -631,6 +653,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
         totalFinalBill={totalFinalBill}
         hoaDon={hoaDon}
         discount={discount}
+        type={'chiTietHoaDon'}
         chiTietHoaDons={chiTietHoaDons}
       />
       <ModalSoLuongMon
@@ -653,7 +676,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     color: colors.black,
-    left: 0
+    left: 0,
   },
   text2: {
     fontSize: 15,

@@ -4,6 +4,7 @@ import {
   getListHoaDonTheoNhaHang,
   addHoaDon,
   updateHoaDon,
+  thanhToanHoaDon,
 } from '../../services/api';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
@@ -88,6 +89,37 @@ export const updateHoaDonThunk = createAsyncThunk(
     } catch (error: any) {
       console.log('Lỗi cập nhật:', error);
       return thunkAPI.rejectWithValue(error.message || 'Error updating HoaDon');
+    }
+  },
+);
+
+export const thanhToanHoaDonThunk = createAsyncThunk(
+  'hoaDon/thanhToanHoaDon',
+  async (
+    {
+      id_hoaDon,
+      tienGiamGia,
+      hinhThucThanhToan,
+      thoiGianRa,
+    }: {
+      id_hoaDon: string;
+      tienGiamGia: number;
+      hinhThucThanhToan: boolean;
+      thoiGianRa: Date;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const data = await thanhToanHoaDon(
+        id_hoaDon,
+        tienGiamGia,
+        hinhThucThanhToan,
+        thoiGianRa,
+      );
+      return data;
+    } catch (error: any) {
+      console.log('Lỗi thanh toán:', error);
+      return thunkAPI.rejectWithValue(error.message || 'Error thanh toán');
     }
   },
 );

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
@@ -18,26 +18,34 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
-import {fetchBans} from '../../../store/Slices/BanSlice';
+import {fetchBans, updateBanThunk} from '../../../store/Slices/BanSlice';
+import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   selectedBan?: any;
+  onCloseParent: () => void;
 }
 
 const ModalTaoHoaDon = (props: Props) => {
-  const {visible, onClose, selectedBan} = props;
+  const {visible, onClose, selectedBan, onCloseParent} = props;
 
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
   const caLams = useSelector((state: RootState) => state.calam.caLams);
 
+  useEffect(() => {
+    if (caLams.length === 0) {
+      dispatch(fetchCaLam() as any);
+    }
+  }, [caLams]);
+
   const caLamHienTai = caLams.find(
     calam => calam.ketThuc === null || calam.ketThuc === undefined,
   );
-  //console.log(caLamHienTai);
+  //console.log(selectedBan);
 
   const handleTaoHoaDon = async () => {
     const data = {
@@ -48,18 +56,29 @@ const ModalTaoHoaDon = (props: Props) => {
     };
 
     const result = await dispatch(addNewHoaDon(data as any) as any);
-    console.log(result.payload._id);
+    //console.log(result.payload._id);
 
     if (result.type.endsWith('fulfilled')) {
-      console.log('Tao hoa don thanh cong');
+      ToastAndroid.show('Tạo hóa đơn thành công', ToastAndroid.LONG);
       navigation.navigate('ChiTietHoaDonNVPV', {
         hoaDon: result.payload,
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
         tenBan: selectedBan?.tenBan,
       });
       //tam thoi
-      dispatch(fetchBans() as any);
-
+      dispatch(
+        updateBanThunk({
+          id: selectedBan?._id as string,
+          formData: {
+            tenBan: selectedBan?.tenBan,
+            sucChua: selectedBan?.sucChua,
+            ghiChu: selectedBan?.ghiChu,
+            id_khuVuc: selectedBan?.id_khuVuc._id,
+            trangThai: 'Đang sử dụng',
+          },
+        }) as any,
+      );
+      onCloseParent();
       onClose();
     } else {
       ToastAndroid.show('Lỗi tạo hóa đơn', ToastAndroid.LONG);
