@@ -461,7 +461,7 @@ export const updateKhuVuc = async (
  */
 export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
   try {
-    const response = await fetch(`${ipAddress}/layDsNhanVien`);
+    const response = await fetch(`${ipAddress}layDsNhanVien`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Nhan Vien');
     }
@@ -632,8 +632,8 @@ export const searchMonAn = async (textSearch: string, id_nhaHang: string) => {
     const response = await fetch(
       `${ipAddress}timKiemMonAn?textSearch=${textSearch}&id_nhaHang=${id_nhaHang}`,
       {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
       },
     );
     if (!response.ok) {

@@ -7,7 +7,7 @@ import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonCompo
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
 import CapNhatDanhMuc from '../screens/QuanLyThucDon/CapNhatDanhMuc';
-import ManThemMonAn from '../screens/QuanLyThucDon/themMonAn';
+import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
 
 const ThucDonStack = createNativeStackNavigator();
 

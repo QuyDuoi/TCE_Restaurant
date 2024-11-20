@@ -17,8 +17,6 @@ import ItemNhanVien from './ItemNhanVien';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import {
   useFocusEffect,
-  useNavigation,
-  useRoute,
 } from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchNhanViens, NhanVienSlice} from '../../store/Slices/NhanVienSlice';
@@ -26,7 +24,6 @@ import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {applyFilters} from './hamTimKiem';
 import {IPV4} from '../../services/api';
-import {fetchDanhMucs} from '../../store/Slices/DanhMucSlice';
 import { fetchDanhMucVaMonAn } from '../../store/Thunks/danhMucThunks';
 
 export interface FiltersModelTest {
@@ -48,7 +45,6 @@ const defaultFilters: FiltersModelTest = {
 };
 
 const NhanVienComponent = props => {
-  const navigation = useNavigation();
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
   const [searchQuery, setSearchQuery] = useState('');
