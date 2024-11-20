@@ -7,8 +7,12 @@ import ChiTietCaLam from '../screens/QuanLyThucDon/Hoa/caLam/ChiTietCaLam';
 import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
+<<<<<<< HEAD
 import InHD from '../screens/inHoaDon/InHoaDon';
 import InHoaDon from '../screens/inHoaDon/InHoaDon';
+=======
+import ThuChiScreen from '../screens/QuanLyThuNhap/ThuChiScreen';
+>>>>>>> b5b8ee31a129f1f3e5c8d1243369238e71405b5c
 
 const CaLamStack = createNativeStackNavigator();
 
@@ -81,9 +85,15 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
         options={{headerShown: false}}
       />
       <CaLamStack.Screen
+<<<<<<< HEAD
         name="InHoaDon"
         component={InHoaDon}
         options={{headerShown: false}}
+=======
+      name='ThuChiScreen'
+      component={ThuChiScreen}
+      options={{headerShown:false}}
+>>>>>>> b5b8ee31a129f1f3e5c8d1243369238e71405b5c
       />
     </CaLamStack.Navigator>
   );
