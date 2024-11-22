@@ -17,8 +17,6 @@ import ItemNhanVien from './ItemNhanVien';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import {
   useFocusEffect,
-  useNavigation,
-  useRoute,
 } from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchNhanViens, NhanVienSlice} from '../../store/Slices/NhanVienSlice';
@@ -26,7 +24,6 @@ import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {applyFilters} from './hamTimKiem';
 import {IPV4} from '../../services/api';
-import {fetchDanhMucs} from '../../store/Slices/DanhMucSlice';
 import { fetchDanhMucVaMonAn } from '../../store/Thunks/danhMucThunks';
 
 export interface FiltersModelTest {
@@ -48,7 +45,6 @@ const defaultFilters: FiltersModelTest = {
 };
 
 const NhanVienComponent = props => {
-  const navigation = useNavigation();
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
   const [searchQuery, setSearchQuery] = useState('');
@@ -111,7 +107,7 @@ const NhanVienComponent = props => {
   const renderItem = ({item}: {item: NhanVienSlice}) => {
     // Kiểm tra và thay thế localhost bằng địa chỉ IP hợp lệ
     const employeeImage = item.hinhAnh
-      ? item.hinhAnh.replace('localhost', IPV4) // Đổi 192.168.x.x thành IP của server của bạn
+      ? item.hinhAnh.replace('localhost:3000', IPV4) // Đổi 192.168.x.x thành IP của server của bạn
       : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
     return (

@@ -1,5 +1,7 @@
 export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+
 // export const ipAddress = `http://192.168.1.5:3000/api/`; // Địa chỉ cơ sở API
+
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -13,6 +15,9 @@ import Ban from './models/BanModel';
 import KhuVuc from './models/KhuVucModel';
 import CaLam from './models/CaLamModel';
 import {NhanVienSlice} from '../store/Slices/NhanVienSlice';
+import { AppDispatch } from '../store/store';
+import { hoaDonSlice } from '../store/Slices/HoaDonSlice';
+import { chiTietHoaDonSlice } from '../store/Slices/ChiTietHoaDonSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -207,6 +212,35 @@ export const updateHoaDon = async (
     return data;
   } catch (error) {
     console.log('Lỗi cập nhật Hóa Đơn: ', error);
+    throw error;
+  }
+};
+
+//Thanh Toan Hoa Don
+export const thanhToanHoaDon = async (
+  id_hoaDon: string,
+  tienGiamGia: number,
+  hinhThucThanhToan: boolean,
+  thoiGianRa: Date,
+): Promise<any> => {
+  try {
+    const response = await fetch(`${ipAddress}thanhToanHoaDon`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        id_hoaDon,
+        tienGiamGia,
+        hinhThucThanhToan,
+        thoiGianRa,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thanh toán Hóa Đơn');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi thanh toán Hóa Đơn: ', error);
     throw error;
   }
 };
@@ -432,7 +466,7 @@ export const updateKhuVuc = async (
  */
 export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
   try {
-    const response = await fetch(`${ipAddress}/layDsNhanVien`);
+    const response = await fetch(`${ipAddress}layDsNhanVien`);
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Nhan Vien');
     }
@@ -603,7 +637,7 @@ export const searchMonAn = async (textSearch: string, id_nhaHang: string) => {
     const response = await fetch(
       `${ipAddress}timKiemMonAn?textSearch=${textSearch}&id_nhaHang=${id_nhaHang}`,
       {
-        method: 'POST',
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       },
     );
@@ -635,5 +669,35 @@ export const searchBan = async (textSearch: string): Promise<Ban[] | []> => {
   } catch (error) {
     console.log('Lỗi khi tìm kiếm bàn: ', error);
     return [];
+  }
+};
+
+export const thanhToanBanHang = async (
+  dispatch: AppDispatch,
+  payload: {
+    chiTietHoaDons: Array<{ id_monAn: string; soLuongMon: number; giaTien: number }>;
+    hoaDon: HoaDon;
+    id_nhaHang: string;
+    _id: string;
+  }
+) => {
+  try {
+    const response = await fetch(`${ipAddress}thanh_toan_hoa_don_moi`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Dispatch dữ liệu vào Redux store
+      dispatch(hoaDonSlice.actions.themHoaDon(data.hoaDon)); // Thêm hóa đơn mới
+      dispatch(chiTietHoaDonSlice.actions.themChiTietHoaDons(data.chiTietHoaDons)); // Thêm danh sách chi tiết hóa đơn
+    } else {
+      console.error('Lỗi từ server:', data.msg);
+    }
+  } catch (error) {
+    console.error('Lỗi khi gọi API:', error);
   }
 };

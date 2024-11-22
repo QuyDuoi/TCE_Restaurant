@@ -4,6 +4,7 @@ import {
   getListHoaDonTheoNhaHang,
   addHoaDon,
   updateHoaDon,
+  thanhToanHoaDon,
 } from '../../services/api';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
@@ -92,10 +93,45 @@ export const updateHoaDonThunk = createAsyncThunk(
   },
 );
 
-const hoaDonSlice = createSlice({
+export const thanhToanHoaDonThunk = createAsyncThunk(
+  'hoaDon/thanhToanHoaDon',
+  async (
+    {
+      id_hoaDon,
+      tienGiamGia,
+      hinhThucThanhToan,
+      thoiGianRa,
+    }: {
+      id_hoaDon: string;
+      tienGiamGia: number;
+      hinhThucThanhToan: boolean;
+      thoiGianRa: Date;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const data = await thanhToanHoaDon(
+        id_hoaDon,
+        tienGiamGia,
+        hinhThucThanhToan,
+        thoiGianRa,
+      );
+      return data;
+    } catch (error: any) {
+      console.log('Lỗi thanh toán:', error);
+      return thunkAPI.rejectWithValue(error.message || 'Error thanh toán');
+    }
+  },
+);
+
+export const hoaDonSlice = createSlice({
   name: 'hoaDon',
   initialState,
-  reducers: {},
+  reducers: {
+    themHoaDon: (state, action: PayloadAction<HoaDon>) => {
+      state.hoaDons.unshift(action.payload);
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchHoaDonTheoCaLam.pending, state => {
@@ -156,4 +192,5 @@ const hoaDonSlice = createSlice({
   },
 });
 
+export const { themHoaDon } = hoaDonSlice.actions;
 export default hoaDonSlice.reducer;

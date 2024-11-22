@@ -44,10 +44,10 @@ const ModalSoLuongMon = (props: Props) => {
   const [soLuong, setSoLuong] = useState(0);
   const [giaTien, setGiaTien] = useState(0);
 
-  console.log('item', item);
+  //console.log('item', item);
 
   const giaMotMon = item?.giaTien ? item.giaTien / item.soLuongMon : 0;
-  console.log('gia mot mon', giaMotMon);
+  //console.log('gia mot mon', giaMotMon);
 
   useEffect(() => {
     setSoLuong(item?.soLuongMon ?? 0);

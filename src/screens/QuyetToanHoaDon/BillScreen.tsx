@@ -12,22 +12,25 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import {
-  HoaDon,
-} from '../../store/Slices/HoaDonSlice';
+import {HoaDon} from '../../store/Slices/HoaDonSlice';
 import {fetchCaLam} from '../../store/Slices/CaLamSlice';
 import {fetchKhuVucs} from '../../store/Slices/KhuVucSlice';
 import {fetchBans} from '../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
 import {getListHoaDonTheoNhaHang} from '../../services/api';
+import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
 
 const {width, height} = Dimensions.get('window');
 
-const calculateDuration = (timeIn?: string) => {
+const calculateDuration = (timeIn?: Date) => {
   if (!timeIn) return 'null';
-  const [time, date] = timeIn.split('|').map(str => str.trim());
+
+  const [date, time] = timeIn
+    .toString()
+    .split('T')
+    .map(str => str.trim());
   const [hoursIn, minutesIn] = time.split(':').map(Number);
-  const [day, month, year] = date.split('/').map(Number);
+  const [day, month, year] = date.split('-').map(Number);
 
   const startTime = new Date(year, month - 1, day, hoursIn, minutesIn);
   const currentTime = new Date();
@@ -49,16 +52,6 @@ const BillItem: React.FC<{
   onDetail: () => void;
   onPayment: () => void;
 }> = ({hoaDon, tenKhuVuc, tenBan, onDetail, onPayment}) => {
-  //const [duration, setDuration] = useState(calculateDuration(hoaDon.timeIn));
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setDuration(calculateDuration(bill.timeIn));
-  //   }, 6000);
-
-  //   return () => clearInterval(interval); // Xóa bộ đếm khi không cần thiết
-  // }, [bill.timeIn]);
-
   return (
     <View style={styles.billContainer}>
       <View style={styles.billInfo}>
@@ -75,9 +68,7 @@ const BillItem: React.FC<{
               {hoaDon.thoiGianVao
                 ? `${new Date(hoaDon.thoiGianVao)
                     .toLocaleTimeString('vi-VN')
-                    .slice(0, 5)} - ${new Date(
-                    hoaDon.thoiGianVao,
-                  ).toLocaleDateString('vi-VN')}`
+                    .slice(0, 5)}`
                 : 'null'}
             </Text>
           </View>
@@ -89,7 +80,7 @@ const BillItem: React.FC<{
         <Text style={styles.totalText}>Tổng tiền: {hoaDon.tongTien}</Text>
       </View>
       <View style={styles.billActions}>
-        <Text style={styles.durationText}>Thời gian: {'null'}</Text>
+        <Text style={styles.durationText}>Thời gian: null</Text>
         <TouchableOpacity style={styles.detailButton} onPress={onDetail}>
           <Text style={styles.detailText}>Chi tiết</Text>
         </TouchableOpacity>
@@ -106,6 +97,9 @@ const BillScreen: React.FC = () => {
   const idNhaHang = '66fab50fa28ec489c7137537';
   const [searchQuery, setSearchQuery] = useState('');
   const [billData, setBillData] = useState<HoaDon[]>();
+  const [hoaDonSelected, setHoaDonSelected] = useState<HoaDon>();
+  const [isVisivleModalPTTT, setIsVisivleModalPTTT] = useState(false);
+  const [isChange, setIsChange] = useState(false);
 
   const navigation = useNavigation<any>();
 
@@ -119,39 +113,40 @@ const BillScreen: React.FC = () => {
       dispatch(fetchKhuVucs(idNhaHang) as any);
       dispatch(fetchBans() as any);
     }
-    //dispatch(fetchHoaDonTheoNhaHang(idNhaHang) as any);
   }, [dispatch]);
 
   useEffect(() => {
     const fetchHoaDonNhaHang = async () => {
       const response = await getListHoaDonTheoNhaHang(idNhaHang);
       setBillData(response);
-
-      //console.log(response);
     };
 
     fetchHoaDonNhaHang();
-  }, [dispatch]);
+  }, [dispatch, bans]);
+
+  useEffect(() => {
+    const fetchHoaDonNhaHang = async () => {
+      const response = await getListHoaDonTheoNhaHang(idNhaHang);
+      setBillData(response);
+    };
+    if (isChange) {
+      fetchHoaDonNhaHang();
+    }
+  }, [isChange]);
+
   console.log('render BillScreen');
 
-  // useFocusEffect(() => {
-  //   console.log('focus');
-
-  // useFocusEffect(() => {
-  //   console.log('focus');
-
-  //   const unsubscribe = navigation.addListener('focus', async () => {
-  //     const response = await getListHoaDonTheoNhaHang(idNhaHang);
-  //     setBillData(response);
-  //   });
-  //   return unsubscribe;
-  // });
+  const handleOpenModalPTTT = (hoaDon: HoaDon) => {
+    setHoaDonSelected(hoaDon);
+    setIsVisivleModalPTTT(true);
+  };
 
   const getBanKhuVuc = (idBan?: string) => {
     if (!idBan) return {tenKhuVuc: '', tenBan: ''};
-    const ban = bans.find(item => item._id === idBan);
+    const ban: any = bans.find(item => item._id === idBan);
+
     return {
-      tenKhuVuc: ban?.id_khuVuc.tenKhuVuc,
+      tenKhuVuc: ban?.kv.tenKhuVuc,
       tenBan: ban?.tenBan,
     };
   };
@@ -170,10 +165,9 @@ const BillScreen: React.FC = () => {
             tenBan: tenBan,
             type: 'quyetToan',
           });
-          //console.log(item._id);
         }}
         onPayment={() => {
-          console.log(item._id);
+          handleOpenModalPTTT(item);
         }}
       />
     );
@@ -194,7 +188,20 @@ const BillScreen: React.FC = () => {
           keyExtractor={item => item._id as string}
         />
       </SafeAreaView>
-      {/* <ModalPTTT visible={true} onClose={() => {}} hoaDon={filteredBills[1]} /> */}
+      <ModalPTTT
+        visible={isVisivleModalPTTT}
+        onClose={() => {
+          setHoaDonSelected(undefined);
+
+          setIsVisivleModalPTTT(false);
+        }}
+        hoaDon={hoaDonSelected as HoaDon}
+        totalFinalBill={hoaDonSelected?.tongTien}
+        onChange={(value: any) => {
+          setIsChange(value);
+        }}
+        type="quyetToan"
+      />
     </>
   );
 };

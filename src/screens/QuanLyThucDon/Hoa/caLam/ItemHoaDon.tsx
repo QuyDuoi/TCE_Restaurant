@@ -24,6 +24,8 @@ const ItemHoaDon = (props: Props) => {
 
   //console.log('chiTietHoaDon', chiTietHoaDon);
 
+  console.log(typeof hoaDon.thoiGianVao);
+
   return !hoaDon.id_ban ? (
     <View
       style={{
@@ -78,12 +80,14 @@ const ItemHoaDon = (props: Props) => {
       />
       <TextComponent
         text={`Thời gian vào: ${formatTime(
-          hoaDon.thoiGianVao ?? new Date(''),
+          new Date(hoaDon.thoiGianVao as any) ?? new Date(''),
         )}`}
         color={colors.desc}
       />
       <TextComponent
-        text={`Thời gian ra: ${formatTime(hoaDon.thoiGianRa ?? new Date(''))}`}
+        text={`Thời gian ra: ${formatTime(
+          new Date(hoaDon.thoiGianRa as any) ?? new Date(''),
+        )}`}
         color={colors.desc}
       />
       <TextComponent

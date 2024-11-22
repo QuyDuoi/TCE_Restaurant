@@ -1,12 +1,15 @@
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useLayoutEffect, useState} from 'react';
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
-import { colors } from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChiTietCaLam from '../screens/QuanLyThucDon/Hoa/caLam/ChiTietCaLam';
 import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
+
+import ThuChiScreen from '../screens/QuanLyThuNhap/ThuChiScreen';
+import InHoaDon from '../screens/inHoaDon/InHoaDon';
 
 const CaLamStack = createNativeStackNavigator();
 
@@ -50,6 +53,8 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
       navigation.setOptions({headerShown: false});
     } else if (routeName === 'ThemMonScreen') {
       navigation.setOptions({headerShown: false});
+    } else if (routeName === 'InHoaDon') {
+      navigation.setOptions({headerShown: false});
     }
   }, [navigation, route, filterHandler]);
 
@@ -73,6 +78,16 @@ function CaLamStackScreen({navigation, route}: {navigation: any; route: any}) {
       <CaLamStack.Screen
         name="ThemMonScreen"
         component={ThemMonScreen}
+        options={{headerShown: false}}
+      />
+      <CaLamStack.Screen
+        name="InHoaDon"
+        component={InHoaDon}
+        options={{headerShown: false}}
+      />
+      <CaLamStack.Screen
+        name="ThuChiScreen"
+        component={ThuChiScreen}
         options={{headerShown: false}}
       />
     </CaLamStack.Navigator>

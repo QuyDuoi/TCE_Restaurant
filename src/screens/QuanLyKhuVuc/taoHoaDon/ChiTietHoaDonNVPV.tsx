@@ -49,7 +49,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
 
-  console.log(chiTietHoaDons[0]._id);
+  //console.log(chiTietHoaDons[0]._id);
 
   //console.log('chi tiet hoa don', chiTietHoaDons.length);
 
