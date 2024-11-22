@@ -80,10 +80,15 @@ const ThongTinKhuVuc = (props: Props) => {
       <ItemBan
         name={item.tenBan}
         capacity={item.sucChua}
+        maQRCode={item.maQRCode}
         onPress={() => console.log(item._id)}
       />
     );
   };
+console.log('bans:', bans);
+console.log('filterData:', filterData);
+
+
 
   const renderItem = ({item}: {item: KhuVuc}) => {
     const isExpand = expandKhuVuc.includes(item._id as string);
