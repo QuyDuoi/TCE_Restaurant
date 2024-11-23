@@ -1,40 +1,22 @@
 import {
   View,
-  Text,
   ScrollView,
   FlatList,
-  Modal,
-  TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
-import CardComponent from '../components/CardComponent';
-import RowComponent from '../components/RowComponent';
-import TextComponent from '../components/TextComponent';
-import ButtonComponent from '../components/ButtonComponent';
 import TitleComponent from '../components/TitleComponent';
 import {colors} from '../contants/hoaColors';
-import SectionComponent from '../components/SectionComponent';
 import ItemCaLam from './ItemCaLam';
 import SpaceComponent from '../components/SpaceComponent';
-import {CaLamModel, NhanVienModel} from '../modelTests/modelTest';
-import {caLamData, nhanVienData} from '../modelTests/sampleData';
 import {useNavigation} from '@react-navigation/native';
-import ModalComponent from '../components/ModalComponent';
-import DatePicker from 'react-native-date-picker';
-import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {CaLam, fetchCaLam} from '../../../../store/Slices/CaLamSlice';
 import {
-  fetchNhanViens,
   NhanVienSlice,
 } from '../../../../store/Slices/NhanVienSlice';
-import {formatDate} from '../utils/formatUtils';
-import fetchHoaDonTheoCaLam, {
-  fetchHoaDonTheoNhaHang,
-} from '../../../../store/Slices/HoaDonSlice';
 import ModalDate from './ModalDate';
 
 interface Props {
@@ -42,8 +24,6 @@ interface Props {
 }
 const QuanLyCaLam = (props: Props) => {
   const {setFilterHandler} = props;
-
-  const idNhaHang = '66fab50fa28ec489c7137537';
 
   console.log('render quan ly ca lam');
 
@@ -68,7 +48,6 @@ const QuanLyCaLam = (props: Props) => {
     dispatch(fetchCaLam() as any);
   }, [dispatch]);
 
-  //////////
   const caLams = useSelector((state: RootState) => state.calam.caLams);
 
   const sortedCaLam = (caLams: CaLam[]) => {
@@ -99,8 +78,6 @@ const QuanLyCaLam = (props: Props) => {
         ketThuc={item.ketThuc?.toLocaleString('vi-VN')}
         nhanVienMoCa={item.id_nhanVien.hoTen}
         onPress={() => {
-          // console.log(item.nv._id);
-
           navigation.navigate('ChiTietCaLam', {caLam: item});
         }}
       />

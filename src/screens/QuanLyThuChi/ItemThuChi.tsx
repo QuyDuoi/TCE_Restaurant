@@ -27,13 +27,13 @@ const ItemThuChi = (props: Item) => {
 
 export default ItemThuChi;
 const styles = StyleSheet.create({
-    card: { padding: 15, backgroundColor: '#fff', borderRadius: 8, marginBottom: 10, elevation: 3 },
-    time: { fontWeight: 'bold' },
-    valueTime: { fontWeight: 'condensed', color: '#8f918f', fontSize: 13 },
-    money: { fontWeight: 'bold' },
-    status: { fontWeight: 'bold' },
-    description: { fontWeight: 'bold' },
-    valueDes: { fontWeight: 'normal', color: '#8f918f' },
+    card: { padding: 15, backgroundColor: '#fff', borderRadius: 8, marginBottom: 10, elevation: 5 },
+    time: { fontWeight: 'bold' , color: 'black'},
+    valueTime: { fontWeight: 'normal', color: 'black', fontSize: 13 },
+    money: { fontWeight: 'bold', color: 'black', marginVertical: 3},
+    status: { fontWeight: 'bold' , color: 'black'},
+    description: { fontWeight: 'bold', color: 'black'},
+    valueDes: { fontWeight: 'normal', color: 'black' },
     statusThu: { color: 'green' },
     statusChi: { color: 'red' },
 })

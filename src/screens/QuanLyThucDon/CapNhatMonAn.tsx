@@ -16,10 +16,9 @@ import {
 } from '../../respositorys/CameraRespository';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {fetchDanhMucs} from '../../store/Slices/DanhMucSlice';
 import {Dropdown} from 'react-native-element-dropdown';
 import {taoFormDataMonAn} from './ThucDonRespository';
-import {updateMonAnThunk} from '../../store/Slices/MonAnSlice';
+import {updateMonAnThunk} from '../../store/Thunks/monAnThunks';
 import {styles} from './ThemSuaStyle';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {IPV4} from '../../services/api';
@@ -93,7 +92,6 @@ function ManCapNhatMonAn(): React.JSX.Element {
   // Hàm xử lý khi nhấn "Cập nhật"
   const handleUpdate = () => {
     if (handleValidation()) {
-      console.log(JSON.stringify(monAnCapNhat, null, 2));
       const formData = taoFormDataMonAn(monAnCapNhat);
       dispatch(updateMonAnThunk({id: monAnCapNhat._id!, formData}))
         .unwrap()

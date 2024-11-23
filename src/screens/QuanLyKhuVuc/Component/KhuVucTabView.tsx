@@ -20,8 +20,7 @@ import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchKhuVucs, KhuVuc} from '../../../store/Slices/KhuVucSlice';
-import {Ban, fetchBans} from '../../../store/Slices/BanSlice';
+import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
 import {RootState} from '../../../store/store';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 
@@ -57,8 +56,7 @@ const KhuVucTabView = () => {
   useEffect(() => {
     if (khuVucStatus === 'idle') {
       setIsLoading(true);
-      dispatch(fetchKhuVucs(idNhaHang) as any);
-      dispatch(fetchBans() as any);
+      dispatch(fetchKhuVucVaBan(idNhaHang) as any);
     } else if (khuVucStatus === 'succeeded') {
       setTimeout(() => {
         setIsLoading(false);
@@ -99,9 +97,9 @@ const KhuVucTabView = () => {
     <TabBar
       {...props}
       indicatorStyle={{backgroundColor: 'blue'}}
-      style={{backgroundColor: colors.white}}
-      renderLabel={({route, focused, color}) => (
-        <Text style={{color: focused ? 'blue' : colors.gray, margin: 8}}>
+      style={{backgroundColor: colors.white, borderBlockColor: 'red'}}
+      renderLabel={({route, focused}) => (
+        <Text style={{color: focused ? 'blue' : 'gray', margin: 8}}>
           {route.title}
         </Text>
       )}

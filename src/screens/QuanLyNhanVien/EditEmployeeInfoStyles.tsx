@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     paddingLeft: 10,
-    margin: 5
+    margin: 5,
   },
   fr2: {
     borderTopColor: 'gray',
@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   formGroupRow1: {
     width: '80%',
@@ -90,8 +90,13 @@ export const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalBackground: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalView: {
     backgroundColor: '#fff',
@@ -107,14 +112,15 @@ export const styles = StyleSheet.create({
     width: width, // Modal chiếm toàn bộ chiều rộng màn hình
   },
   item: {
-    backgroundColor: 'gray',
-    margin: 2,
-    padding: 4,
-    width: '100%', // Đảm bảo mỗi item chiếm toàn bộ chiều rộng của modal
+    padding: 15,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    width: '100%',
+    alignItems: 'center', // Đảm bảo mỗi item chiếm toàn bộ chiều rộng của modal
   },
   itemText: {
     color: 'black',
-    textAlign: 'center',
+    fontSize: 16
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -138,5 +144,16 @@ export const styles = StyleSheet.create({
   positionText: {
     fontSize: 16,
     color: 'black',
+  },
+
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });

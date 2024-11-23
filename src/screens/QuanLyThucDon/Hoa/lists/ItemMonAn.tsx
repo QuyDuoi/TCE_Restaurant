@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import {useDispatch} from 'react-redux';
-import {updateMonAnThunk} from '../../../../store/Slices/MonAnSlice';
+import {updateStatusMonAnThunk} from '../../../../store/Thunks/monAnThunks';
 import {ipAddress, IPV4} from '../../../../services/api';
 
 interface Props {
@@ -35,11 +35,9 @@ const ItemMonAn = (props: Props) => {
 
   const handleStatusChange = async (value: boolean) => {
     if (id) {
-      const formData = {
-        trangThai: value,
-      };
+      const trangThai = value;
       // Gọi thunk để cập nhật trạng thái món ăn
-      await dispatch(updateMonAnThunk({id, formData} as any) as any);
+      await dispatch(updateStatusMonAnThunk({id, trangThai} as any) as any);
       setLocalStatus(value); // Cập nhật trạng thái địa phương sau khi gọi API thành công
     } else {
       console.error('ID của món ăn không tồn tại.');
@@ -51,10 +49,13 @@ const ItemMonAn = (props: Props) => {
       style={[
         styles,
         {
-          padding: 8,
+          paddingVertical: 8,
+          backgroundColor: 'white',
+          marginHorizontal: 5,
+          marginVertical: 2
         },
       ]}>
-      <RowComponent justify="space-between" onPress={onPress}>
+      <RowComponent styles={{alignItems: 'center'}} justify="space-between"  onPress={onPress}>
         <Image
           source={{
             uri: anhMonAn,
@@ -68,34 +69,32 @@ const ItemMonAn = (props: Props) => {
             paddingHorizontal: 10,
           }}>
           <View style={{alignItems: 'flex-start'}}>
-            <RowComponent onPress={onPress}>
+            <RowComponent styles={{alignItems: 'center', width: "90%"}} onPress={onPress}>
               <TextComponent
                 text={nameFood}
                 fontWeight="bold"
                 color={colors.text2}
                 size={15}
-                minHeight={28}
+                ellipsizeMode='tail'
+                numberOfLines={1}
               />
               <SpaceComponent width={10} />
               <Icon
                 name="chevron-right"
                 size={14}
                 color={colors.text2}
-                style={{
-                  paddingTop: 3,
-                }}
               />
             </RowComponent>
 
-            <TextComponent text={`${price.toLocaleString()}đ`} minHeight={28} />
+            <TextComponent text={`${price.toLocaleString()} đ`} minHeight={28} />
           </View>
         </View>
 
         <View>
           <TextComponent
-            text={localStatus ? 'Còn Hàng' : 'Hết Hàng'}
+            text={localStatus ? 'Sẵn sàng' : 'Ngưng phục vụ'}
             color={colors.status}
-            minHeight={28}
+            minHeight={24}
           />
           <Switch
             value={localStatus}

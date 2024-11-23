@@ -120,10 +120,12 @@ const KhongGianComponent = (props: Props) => {
   };
 
   const renderItem = ({item}: {item: Ban & {kv: KhuVuc}}) => {
+    const banKhuVuc = khuvucs.find(kv => kv._id === (item.id_khuVuc as any));
+
     return (
       <ItemTrangThaiBan
         nameBan={item.tenBan}
-        nameKhuVuc={item.kv.tenKhuVuc}
+        nameKhuVuc={banKhuVuc?.tenKhuVuc || ""}
         image={getImageBan(item.trangThai)}
         onPress={() => {
           handleSelectBan(item);

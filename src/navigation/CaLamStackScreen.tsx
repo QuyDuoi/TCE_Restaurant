@@ -8,7 +8,7 @@ import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
 import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
 
-import ThuChiScreen from '../screens/QuanLyThuNhap/ThuChiScreen';
+import ThuChiScreen from '../screens/QuanLyThuChi/ThuChiScreen';
 import InHoaDon from '../screens/inHoaDon/InHoaDon';
 
 const CaLamStack = createNativeStackNavigator();

@@ -49,12 +49,13 @@ FilterOptionItem.propTypes = {
 
 const styles = StyleSheet.create({
     filterOptionButton: {
-        paddingVertical: 2,
+        padding: 5,
         borderRadius: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
         alignItems: 'center',
-        marginBottom: 5,
+        borderWidth: 1,
+        marginHorizontal: 5
     },
     filterOptionText: { fontSize: 16 },
 });

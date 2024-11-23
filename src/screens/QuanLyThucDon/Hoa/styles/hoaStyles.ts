@@ -5,8 +5,8 @@ const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
 
 export const hoaStyles = StyleSheet.create({
   container: {
-    width: '93%',
-    height: '95%',
+    width: '100%',
+    height: '100%',
     margin: 5,
     alignSelf: 'center',
   },
@@ -25,8 +25,8 @@ export const hoaStyles = StyleSheet.create({
   },
   image: {
     width: 60,
-    height: 50,
-    borderRadius: 10,
+    height: 60,
+    borderRadius: 5,
     alignSelf: 'center',
   },
   indicator: {

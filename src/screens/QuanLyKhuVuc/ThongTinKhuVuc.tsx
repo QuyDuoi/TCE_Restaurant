@@ -31,10 +31,6 @@ if (
 const ThongTinKhuVuc = (props: Props) => {
   const {searchQueryKhuVuc} = props;
 
-  console.log('render thong tin khu vuc');
-
-  //const idNhaHang = '66fab50fa28ec489c7137537';
-
   const [bansKhuVuc, setBansKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
 
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
@@ -88,8 +84,7 @@ const ThongTinKhuVuc = (props: Props) => {
   const renderItem = ({item}: {item: KhuVuc}) => {
     const isExpand = expandKhuVuc.includes(item._id as string);
 
-    const banList = bansKhuVuc.filter(ban => ban.kv._id === item._id);
-    //console.log('banList', banList);
+    const banList = bansKhuVuc.filter(ban => ban.id_khuVuc === item._id);
 
     return (
       <View>

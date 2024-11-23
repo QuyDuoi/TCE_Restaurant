@@ -5,6 +5,7 @@ import {
   UIManager,
   LayoutAnimation,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -33,13 +34,13 @@ interface Props {
 
 const DanhMucComponent = (props: Props) => {
   const {searchQueryMonAn} = props;
-  console.log('render danh muc component');
 
   const [isLoading, setIsLoading] = useState(true);
   const [expandedDanhMuc, setExpandedDanhMuc] = useState<string[]>([]);
   const [monAnList, setMonAnList] = useState<{[key: string]: MonAn[]}>({});
   const [monAnCounts, setMonAnCounts] = useState<{[key: string]: number}>({});
   const [filteredMonAn, setFilteredMonAn] = useState<MonAn[]>([]);
+  const [hideImage, setHideImage] = useState(true);
 
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const dsMonAn = useSelector((state: RootState) => state.monAn.monAns);
@@ -48,29 +49,29 @@ const DanhMucComponent = (props: Props) => {
   useEffect(() => {
     console.log('Danh sách danh mục: ' + dsDanhMuc);
 
-      // Mở rộng tất cả danh mục
-      const expandedIds = dsDanhMuc.map(item => item._id);
-      setExpandedDanhMuc(expandedIds);
+    // Mở rộng tất cả danh mục
+    const expandedIds = dsDanhMuc.map(item => item._id);
+    setExpandedDanhMuc(expandedIds);
 
-      // Tạo đối tượng đếm số lượng món ăn và nhóm món ăn theo danh mục
-      const monAnCountsTemp: {[key: string]: number} = {};
-      const monAnListTemp: {[key: string]: MonAn[]} = {};
+    // Tạo đối tượng đếm số lượng món ăn và nhóm món ăn theo danh mục
+    const monAnCountsTemp: {[key: string]: number} = {};
+    const monAnListTemp: {[key: string]: MonAn[]} = {};
 
-      // Lặp qua dsMonAn để tính số lượng món ăn cho từng danh mục và nhóm món ăn theo danh mục
-      dsMonAn.forEach(monAn => {
-        const danhMucId = monAn.id_danhMuc; // giả sử mỗi món ăn có thuộc tính id_danhMuc
-        if (!monAnCountsTemp[danhMucId]) {
-          monAnCountsTemp[danhMucId] = 0;
-          monAnListTemp[danhMucId] = [];
-        }
-        monAnCountsTemp[danhMucId] += 1;
-        monAnListTemp[danhMucId].push(monAn);
-      });
+    // Lặp qua dsMonAn để tính số lượng món ăn cho từng danh mục và nhóm món ăn theo danh mục
+    dsMonAn.forEach(monAn => {
+      const danhMucId = monAn.id_danhMuc; // giả sử mỗi món ăn có thuộc tính id_danhMuc
+      if (!monAnCountsTemp[danhMucId]) {
+        monAnCountsTemp[danhMucId] = 0;
+        monAnListTemp[danhMucId] = [];
+      }
+      monAnCountsTemp[danhMucId] += 1;
+      monAnListTemp[danhMucId].push(monAn);
+    });
 
-      // Cập nhật state
-      setMonAnCounts(monAnCountsTemp);
-      setMonAnList(monAnListTemp);
-  }, [dsDanhMuc]);
+    // Cập nhật state
+    setMonAnCounts(monAnCountsTemp);
+    setMonAnList(monAnListTemp);
+  }, [dsDanhMuc, dsMonAn]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -90,7 +91,6 @@ const DanhMucComponent = (props: Props) => {
     debounce.debounce(
       async (text: string, id_NhaHang: string) => {
         if (text.trim().length > 0) {
-
           try {
             const data = await searchMonAn(text, id_NhaHang);
             setFilteredMonAn(data);
@@ -111,8 +111,10 @@ const DanhMucComponent = (props: Props) => {
     if (searchQueryMonAn.trim().length > 0) {
       setIsLoading(true);
       debounceSearch.current(searchQueryMonAn, '66fab50fa28ec489c7137537');
+      setHideImage(false);
     } else if (searchQueryMonAn.trim().length === 0) {
       setIsLoading(true);
+      setHideImage(true);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -144,7 +146,7 @@ const DanhMucComponent = (props: Props) => {
     const monAns = monAnList[item._id] || [];
 
     return (
-      <View>
+      <View style={{backgroundColor: '#F5F5F5'}}>
         <ItemDanhMuc
           nameCategory={item.tenDanhMuc}
           quantityCurrent={monAnCounts[item._id] || 0}
@@ -171,25 +173,17 @@ const DanhMucComponent = (props: Props) => {
                 />
               ))
             ) : (
-              <TextComponent
-                text="Chưa có món ăn nào trong danh mục này"
-                color={colors.text}
-                styles={{
-                  alignSelf: 'center',
-                  paddingTop: 10,
-                }}
-                minHeight={28}
-              />
+              <View style={{backgroundColor: 'white', paddingVertical: 12}}>
+                <TextComponent
+                  text="Chưa có món ăn nào trong danh mục này"
+                  color={colors.text}
+                  styles={{
+                    alignSelf: 'center',
+                  }}
+                  size={15}
+                />
+              </View>
             )}
-            <View
-              style={{
-                width: '80%',
-                backgroundColor: 'white',
-                borderWidth: 1,
-                alignSelf: 'center',
-                marginTop: 10,
-              }}
-            />
           </View>
         )}
       </View>
@@ -211,8 +205,16 @@ const DanhMucComponent = (props: Props) => {
           keyExtractor={item => item._id as string}
           showsVerticalScrollIndicator={false}
         />
-      ) : searchQueryMonAn.trim().length > 0 && filteredMonAn.length === 0 ? (
-        <TextComponent text="Không tìm thấy món ăn nào" />
+      ) : searchQueryMonAn.trim().length > 0 &&
+        filteredMonAn.length === 0 &&
+        hideImage === false ? (
+        <View style={{flex: 1, alignItems: 'center', marginTop: 50}}>
+          <Image
+            style={{width: 100, height: 100, marginVertical: 10}}
+            source={require('../../../../image/khongTimThay.png')}
+          />
+          <TextComponent text="Không tìm thấy món ăn nào" />
+        </View>
       ) : (
         searchQueryMonAn.trim().length === 0 && (
           <FlatList

@@ -1,4 +1,4 @@
-import {View, Text, StyleProp, ViewStyle, TouchableOpacity} from 'react-native';
+import {View, StyleProp, ViewStyle, TouchableOpacity} from 'react-native';
 import React, {ReactNode} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 

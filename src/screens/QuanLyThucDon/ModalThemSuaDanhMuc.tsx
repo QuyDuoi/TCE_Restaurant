@@ -12,7 +12,7 @@ import {useDispatch} from 'react-redux';
 import {
   capNhatDanhMucThunk,
   themDanhMucThunk,
-} from '../../store/Slices/DanhMucSlice';
+} from '../../store/Thunks/danhMucThunks';
 import DanhMuc from '../../services/models/DanhMucModel';
 
 interface DanhMucModalProps {

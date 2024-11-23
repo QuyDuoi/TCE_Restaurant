@@ -168,32 +168,6 @@ function EditEmployeeInfo(): React.JSX.Element {
               <Text style={styles.iconStyle}>Thay đổi</Text>
             </TouchableOpacity>
           </View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isPickerVisible}
-            onRequestClose={() => setPickerVisible(false)}>
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalView}>
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setPickerVisible(false)}>
-                  <Text>×</Text>
-                </TouchableOpacity>
-                {positions.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.item}
-                    onPress={() => {
-                      handleInputChange('vaiTro', item); // Cập nhật vai trò
-                      setPickerVisible(false); // Đóng modal sau khi chọn
-                    }}>
-                    <Text style={styles.itemText}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </Modal>
         </View>
       </View>
 
@@ -203,6 +177,32 @@ function EditEmployeeInfo(): React.JSX.Element {
         disabled={!isEdited} // Chỉ kích hoạt nút Lưu nếu có thay đổi
         color={isEdited ? 'blue' : 'gray'}
       />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isPickerVisible}
+        onRequestClose={() => setPickerVisible(false)}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          onPress={() => setPickerVisible(false)}
+        />
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            {positions.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.item}
+                onPress={() => {
+                  handleInputChange('vaiTro', item);
+                  setPickerVisible(false); 
+                }}>
+                <Text style={styles.itemText}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
 
       {isModalVisible && (
         <UnsavedChangesModal

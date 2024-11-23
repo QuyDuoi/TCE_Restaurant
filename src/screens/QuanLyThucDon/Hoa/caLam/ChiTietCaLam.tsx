@@ -1,31 +1,18 @@
 import {
   View,
-  Text,
   StyleSheet,
-  ScrollView,
   FlatList,
-  Modal,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import CardComponent from '../components/CardComponent';
 import TextComponent from '../components/TextComponent';
-import SectionComponent from '../components/SectionComponent';
 import TitleComponent from '../components/TitleComponent';
 import RowComponent from '../components/RowComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import ItemHoaDon from './ItemHoaDon';
-import {
-  banData,
-  caLamData,
-  hoaDonData,
-  khuVucData,
-  nhanVienData,
-} from '../modelTests/sampleData';
-import {HoaDonModel} from '../modelTests/modelTest';
 import {formatDate, formatMoney, formatTime} from '../utils/formatUtils';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalComponent from '../components/ModalComponent';
@@ -33,14 +20,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {
   fetchHoaDonTheoCaLam,
-  fetchHoaDonTheoNhaHang,
   HoaDon,
 } from '../../../../store/Slices/HoaDonSlice';
 import {fetchKhuVucs, KhuVuc} from '../../../../store/Slices/KhuVucSlice';
 import {Ban, fetchBans} from '../../../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
-import {fetchChiTietHoaDon} from '../../../../store/Slices/ChiTietHoaDonSlice';
-import {ChiTietHoaDon} from '../../../../store/Slices/ChiTietHoaDonSlice';
+import { fetchKhuVucVaBan } from '../../../../store/Thunks/khuVucThunks';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
 
@@ -55,6 +40,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const ketThuc = caLam.ketThuc ? new Date(caLam.ketThuc) : undefined;
 
   const dispatch = useDispatch();
+  const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
@@ -66,12 +52,9 @@ const ChiTietCaLam = ({route}: {route: any}) => {
     dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
 
     if (bans.length === 0) {
-      dispatch(fetchKhuVucs(idNhaHang) as any);
-      dispatch(fetchBans() as any);
+      dispatch(fetchKhuVucVaBan(idNhaHang) as any);
     }
   }, [caLam, dispatch]);
-
-  //lay data tu redux store
 
   useEffect(() => {
     if (bans.length > 0) {
@@ -80,13 +63,19 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   }, [bans]);
   console.log('render chi tiet ca lam');
 
-  //su dung
   const getKhuVucBan = (idBan?: string) => {
-    if (!idBan) return {tenKhuVuc: '', tenBan: ''};
+    if (!idBan) return { tenKhuVuc: '', tenBan: '' };
+  
+    // Tìm bàn từ danh sách `bansByKhuVuc`
     const ban = bansByKhuVuc.find(item => item._id === idBan);
+    if (!ban) return { tenKhuVuc: 'Không xác định', tenBan: 'Không xác định' };
+  
+    // Tìm khu vực từ thuộc tính `id_khuVuc` của bàn
+    const khuVuc = khuVucs.find(kv => kv._id === ban.id_khuVuc);
+  
     return {
-      tenKhuVuc: ban?.kv.tenKhuVuc,
-      tenBan: ban?.tenBan,
+      tenKhuVuc: khuVuc?.tenKhuVuc || 'Không xác định',
+      tenBan: ban.tenBan || 'Không xác định',
     };
   };
 

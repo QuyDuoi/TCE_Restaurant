@@ -1,5 +1,5 @@
-export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-// export const ipAddress = `http://192.168.1.10:3000/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.7:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -346,12 +346,12 @@ export const getListBan = async (idKhuVuc: string): Promise<Ban[]> => {
 };
 
 // Thêm mới Bàn
-export const addBan = async (formData: Ban): Promise<Ban> => {
+export const themBan = async (ban: Ban) => {
   try {
     const response = await fetch(`${ipAddress}addBan`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(ban),
     });
     if (!response.ok) {
       throw new Error('Lỗi khi thêm mới Bàn');
@@ -365,12 +365,12 @@ export const addBan = async (formData: Ban): Promise<Ban> => {
 };
 
 // Cập nhật Bàn
-export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
+export const capNhatBan = async (id: string, ban: Ban) => {
   try {
     const response = await fetch(`${ipAddress}capNhatBan/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(ban),
     });
     if (!response.ok) {
       throw new Error('Lỗi khi cập nhật Bàn');
@@ -383,7 +383,7 @@ export const updateBan = async (id: string, formData: Ban): Promise<Ban> => {
   }
 };
 
-export const getBanTheoId = async (id_Ban: String): Promise<Ban[]> => {
+export const getBanTheoId = async (id_Ban: String) => {
   let response: Response | null = null; // Khai báo biến response
   try {
     response = await fetch(`${ipAddress}ban/${id_Ban}`);
@@ -404,10 +404,10 @@ export const getBanTheoId = async (id_Ban: String): Promise<Ban[]> => {
  *  API cho Khu Vực
  */
 
-export const getListKhuVuc = async (idNhaHang: string): Promise<KhuVuc[]> => {
+export const layDsKhuVuc = async (id_nhaHang: string) => {
   try {
     const response = await fetch(
-      `${ipAddress}layDsKhuVuc?id_nhaHang=${idNhaHang}`,
+      `${ipAddress}layDsKhuVuc?id_nhaHang=${id_nhaHang}`,
     );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Khu Vực');
@@ -420,12 +420,12 @@ export const getListKhuVuc = async (idNhaHang: string): Promise<KhuVuc[]> => {
   }
 };
 
-export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
+export const themKhuVuc = async (KhuVuc: KhuVuc) => {
   try {
-    const response = await fetch(`${ipAddress}addKhuVuc`, {
+    const response = await fetch(`${ipAddress}themKhuVuc`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(KhuVuc),
     });
     if (!response.ok) {
       throw new Error('Lỗi khi thêm mới Khu Vực');
@@ -438,15 +438,15 @@ export const addKhuVuc = async (formData: KhuVuc): Promise<KhuVuc> => {
   }
 };
 
-export const updateKhuVuc = async (
+export const capNhatKhuVuc = async (
   id: string,
-  formData: KhuVuc,
-): Promise<KhuVuc> => {
+  khuVuc: KhuVuc,
+) => {
   try {
-    const response = await fetch(`${ipAddress}updateKhuVuc/${id}`, {
+    const response = await fetch(`${ipAddress}capNhatKhuVuc/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(khuVuc),
     });
     if (!response.ok) {
       throw new Error('Lỗi khi cập nhật khu vực');

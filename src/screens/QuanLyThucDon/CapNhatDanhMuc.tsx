@@ -9,9 +9,7 @@ import ModalThemSuaDanhMuc from './ModalThemSuaDanhMuc';
 import AlertDialog from '../../customcomponent/alertDialog';
 import ButtonComponent from './Hoa/components/ButtonComponent';
 import {colors} from './Hoa/contants/hoaColors';
-import {sapXepDanhMuc} from './CallApiThucDon';
 import axios from 'axios';
-import { ipAddress } from '../../services/api';
 
 function CapNhatDanhMuc(): React.JSX.Element {
   const navigation = useNavigation();
