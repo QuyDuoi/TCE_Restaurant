@@ -44,6 +44,7 @@ interface Props {
 const ChiTietHoaDonNVPV = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
+  //console.log(hoaDon._id);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -268,7 +269,8 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             style={[
               styles.sectionContainer,
               {
-                height: chiTietHoaDons.length < 4 ? 'auto' : ScreenHeight * 0.4,
+                height:
+                  chiTietHoaDons.length <= 4 ? 'auto' : ScreenHeight * 0.4,
               },
             ]}>
             <SectionComponent styles={[styles.section, {flex: 1}]}>
@@ -284,7 +286,9 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                   }}
                   onPress={() => {
                     navigation.navigate('ThemMonNVPV', {
-                      chiTietHoaDon: chiTietHoaDons,
+                      chiTietHoaDon: chiTietHoaDons.filter(
+                        ct => ct.trangThai === false,
+                      ),
                       hoaDon: hoaDon,
                       tenBan: tenBan,
                       tenKhuVuc: tenKhuVuc,

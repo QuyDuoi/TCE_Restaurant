@@ -45,8 +45,6 @@ const ThemMonNVPV = (props: Props) => {
 
   const idNhaHang = '66fab50fa28ec489c7137537';
 
-  //console.log(chiTietHoaDon[1].soLuongMon);
-
   const [visibleModalCart, setVisibleModalCart] = useState(false);
 
   const [monAnsList, setMonAnsList] = useState<MonAn[]>([]);
@@ -110,6 +108,8 @@ const ThemMonNVPV = (props: Props) => {
     setChiTiets(initialChiTiets.filter((item: any) => item.soLuongMon > 0));
     setDataSent(initialChiTiets);
   }, [chiTietHoaDon]);
+
+  console.log(dataSent);
 
   const sortedMonAnsList = useMemo(() => {
     return monAnsList && chiTiets

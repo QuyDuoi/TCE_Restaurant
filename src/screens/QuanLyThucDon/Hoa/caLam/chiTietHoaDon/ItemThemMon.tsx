@@ -37,7 +37,7 @@ const ItemThemMon = React.memo((props: Props) => {
         styles={[
           {
             padding: 8,
-            backgroundColor: colors.white,
+            backgroundColor: monAn.trangThai ? colors.white : '#FFD2CD',
             borderColor: colors.desc2,
           },
         ]}
@@ -68,34 +68,43 @@ const ItemThemMon = React.memo((props: Props) => {
                 />
                 <SpaceComponent width={10} />
               </RowComponent>
-
-              <TextComponent
-                text={`${formatMoney(monAn.giaMonAn)}`}
-                minHeight={28}
-              />
+              {monAn.trangThai ? (
+                <TextComponent
+                  text={`${formatMoney(monAn.giaMonAn)}`}
+                  minHeight={28}
+                />
+              ) : (
+                <TextComponent
+                  text={`Ngưng phục vụ`}
+                  minHeight={28}
+                  color={colors.desc}
+                />
+              )}
             </View>
           </View>
-          <View
-            style={{
-              justifyContent: 'center',
-              marginRight: 8,
-            }}>
-            <RowComponent styles={{alignItems: 'center'}}>
-              <TouchableOpacity style={{padding: 5}} onPress={onMinus}>
-                <Icon name="minus" size={14} color={colors.text2} />
-              </TouchableOpacity>
-              <SpaceComponent width={10} />
-              <TextComponent
-                text={soLuong.toString()}
-                color={colors.text2}
-                size={16}
-              />
-              <SpaceComponent width={10} />
-              <TouchableOpacity style={{padding: 5}} onPress={onPlus}>
-                <Icon name="plus" size={14} color={colors.text2} />
-              </TouchableOpacity>
-            </RowComponent>
-          </View>
+          {monAn.trangThai ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                marginRight: 8,
+              }}>
+              <RowComponent styles={{alignItems: 'center'}}>
+                <TouchableOpacity style={{padding: 5}} onPress={onMinus}>
+                  <Icon name="minus" size={14} color={colors.text2} />
+                </TouchableOpacity>
+                <SpaceComponent width={10} />
+                <TextComponent
+                  text={soLuong.toString()}
+                  color={colors.text2}
+                  size={16}
+                />
+                <SpaceComponent width={10} />
+                <TouchableOpacity style={{padding: 5}} onPress={onPlus}>
+                  <Icon name="plus" size={14} color={colors.text2} />
+                </TouchableOpacity>
+              </RowComponent>
+            </View>
+          ) : null}
         </RowComponent>
       </CardComponent>
     </View>
