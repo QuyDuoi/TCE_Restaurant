@@ -16,9 +16,13 @@ import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDo
 import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
 import KhuVucStackScreen from './KhuVucScreen';
 import InHoaDon from '../screens/inHoaDon/InHoaDon';
+import QuanLyBanHang from '../screens/QuanLyThucDon/Hoa/banHang/QuanLyBanHang';
+import ChiTietHoaDonBMD from '../screens/QuanLyThucDon/Hoa/banHang/ChiTietHoaDonBMD';
+import BookingFlow from '../customcomponent/BookingFlow';
 
 const Drawer = createDrawerNavigator();
 const BillStack = createNativeStackNavigator();
+const BanHangStack = createNativeStackNavigator();
 
 const BillStackScreen = ({
   navigation,
@@ -68,6 +72,28 @@ const BillStackScreen = ({
   );
 };
 
+const BanHangStackScreen = () => {
+  return (
+    <BanHangStack.Navigator>
+      <BanHangStack.Screen
+        name="QuanLyBanHang"
+        component={QuanLyBanHang}
+        options={{headerShown: false}}
+      />
+      <BanHangStack.Screen
+        name="ChiTietHoaDonBMD"
+        component={ChiTietHoaDonBMD}
+        options={{headerShown: false}}
+      />
+      <BanHangStack.Screen
+        name="BookingFlow"
+        component={BookingFlow}
+        options={{headerShown: false}}
+      />
+    </BanHangStack.Navigator>
+  );
+};
+
 function DrawerNavigator(): React.JSX.Element {
   return (
     <NavigationContainer>
@@ -110,6 +136,13 @@ function DrawerNavigator(): React.JSX.Element {
           component={BillStackScreen}
           options={{
             title: 'Quyết toán hóa đơn',
+          }}
+        />
+        <Drawer.Screen
+          name="BanHang"
+          component={BanHangStackScreen}
+          options={{
+            title: 'Quản lý bán hàng',
           }}
         />
         <Drawer.Screen

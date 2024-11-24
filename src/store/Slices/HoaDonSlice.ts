@@ -36,7 +36,7 @@ const initialState: HoaDonState = {
   error: null,
 };
 
-// Async thunk để lấy danh sách HoaDon
+// chua toi uu
 export const fetchHoaDonTheoCaLam = createAsyncThunk(
   'hoaDon/fetchHoaDonTheoCaLam',
   async (id_caLamViec: string) => {
@@ -50,6 +50,7 @@ export const fetchHoaDonTheoCaLam = createAsyncThunk(
   },
 );
 
+//chua toi uu
 export const fetchHoaDonTheoNhaHang = createAsyncThunk(
   'hoaDon/fetchHoaDonTheoNhaHang',
   async (id_nhaHang: string) => {
@@ -93,6 +94,7 @@ export const updateHoaDonThunk = createAsyncThunk(
   },
 );
 
+// chua toi uu
 export const thanhToanHoaDonThunk = createAsyncThunk(
   'hoaDon/thanhToanHoaDon',
   async (
@@ -192,5 +194,5 @@ export const hoaDonSlice = createSlice({
   },
 });
 
-export const { themHoaDon } = hoaDonSlice.actions;
+export const {themHoaDon} = hoaDonSlice.actions;
 export default hoaDonSlice.reducer;

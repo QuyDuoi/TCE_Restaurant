@@ -27,6 +27,7 @@ import BillScreen from './src/screens/QuyetToanHoaDon/BillScreen';
 import BookingFlow from './src/customcomponent/BookingFlow';
 import TableBookingDetail from './src/customcomponent/ItemChiTietDatBan';
 import ChiTietHoaDonNVPV from './src/screens/QuanLyKhuVuc/taoHoaDon/ChiTietHoaDonNVPV';
+import QuanLyBanHang from './src/screens/QuanLyThucDon/Hoa/banHang/QuanLyBanHang';
 
 const Stack = createStackNavigator();
 

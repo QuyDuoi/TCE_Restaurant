@@ -47,6 +47,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
   const idNhaHang = '66fab50fa28ec489c7137537';
   //console.log(hoaDon, tenKhuVuc, tenBan);
   console.log('render chi tiet hoa don');
+  //console.log(hoaDon._id);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,

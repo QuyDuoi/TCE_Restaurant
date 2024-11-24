@@ -37,7 +37,7 @@ const BookingFlow = () => {
         </TouchableOpacity>
       </View>
       <UnsavedChangesModal
-        visible={true}
+        visible={false}
         title={'Thông báo'}
         content={'Bạn có chắc muốn hủy bàn đặt này không?'}
         onConfirm={() => {}}

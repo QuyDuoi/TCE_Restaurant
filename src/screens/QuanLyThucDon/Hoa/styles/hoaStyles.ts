@@ -13,7 +13,6 @@ export const hoaStyles = StyleSheet.create({
   containerTopping: {
     width: MaxWidth * 0.98,
     height: '99%',
-    margin: 5,
   },
   row: {
     flexDirection: 'row',

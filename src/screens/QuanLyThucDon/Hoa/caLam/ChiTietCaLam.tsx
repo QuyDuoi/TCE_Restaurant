@@ -252,7 +252,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
           <ButtonComponent
             title="Chi tiết"
             onPress={() => {
-              navigation.navigate('ThuChiScreen', {caLam:caLam})
+              navigation.navigate('ThuChiScreen', {caLam: caLam});
             }}
             bgrColor={colors.blue2}
             titleColor={colors.white}

@@ -1,19 +1,17 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import RowComponent from '../../components/RowComponent';
-import TextComponent from '../../components/TextComponent';
-import SectionComponent from '../../components/SectionComponent';
-import {colors} from '../../contants/hoaColors';
-import SpaceComponent from '../../components/SpaceComponent';
+import {colors} from '../contants/hoaColors';
+import TextComponent from '../components/TextComponent';
+import RowComponent from '../components/RowComponent';
 
 interface Props {
   onLongPress: () => void;
-  nameMonAn?: string;
-  soLuong?: number;
-  gia?: number;
+  nameMonAn: string;
+  soLuong: number;
+  gia: number;
 }
 
-const ItemChiTietHoaDon = (props: Props) => {
+const ItemChiTietHoaDonBMD = (props: Props) => {
   const {onLongPress, nameMonAn, soLuong, gia} = props;
   return (
     <View>
@@ -65,4 +63,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemChiTietHoaDon;
+export default ItemChiTietHoaDonBMD;

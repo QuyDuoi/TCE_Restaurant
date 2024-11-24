@@ -23,6 +23,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
 import {RootState} from '../../../store/store';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
+import ModalChucNangKhuVuc from '../ModalChucNangKhuVuc';
 
 interface Route {
   key: string;
@@ -46,7 +47,7 @@ const ThongTinKhuVucRoute = ({
   searchQueryKhuVuc: string;
 }) => <View>{<ThongTinKhuVuc searchQueryKhuVuc={searchQueryKhuVuc} />}</View>;
 
-const KhuVucTabView = () => {
+const KhuVucTabView = ({modalLuaChon, setModalLuaChon}: {modalLuaChon: boolean; setModalLuaChon: (val: boolean) => void;}) => {
   const idNhaHang = '66fab50fa28ec489c7137537';
   const [isLoading, setIsLoading] = useState(false);
 
@@ -163,6 +164,10 @@ const KhuVucTabView = () => {
         renderTabBar={renderTabBarArea}
         onIndexChange={index => setTabState({...tabState, index})}
         initialLayout={{width: layout.width}}
+      />
+      <ModalChucNangKhuVuc
+        modalLuaChon={modalLuaChon}
+        setModalLuaChon={setModalLuaChon}
       />
     </View>
   );

@@ -1,5 +1,5 @@
 // export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.1.7:3000/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.4:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -13,9 +13,9 @@ import Ban from './models/BanModel';
 import KhuVuc from './models/KhuVucModel';
 import CaLam from './models/CaLamModel';
 import {NhanVienSlice} from '../store/Slices/NhanVienSlice';
-import { AppDispatch } from '../store/store';
-import { hoaDonSlice } from '../store/Slices/HoaDonSlice';
-import { chiTietHoaDonSlice } from '../store/Slices/ChiTietHoaDonSlice';
+import {AppDispatch} from '../store/store';
+import {hoaDonSlice} from '../store/Slices/HoaDonSlice';
+import {chiTietHoaDonSlice} from '../store/Slices/ChiTietHoaDonSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -636,7 +636,7 @@ export const searchMonAn = async (textSearch: string, id_nhaHang: string) => {
       `${ipAddress}timKiemMonAn?textSearch=${textSearch}&id_nhaHang=${id_nhaHang}`,
       {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
       },
     );
     if (!response.ok) {
@@ -673,16 +673,20 @@ export const searchBan = async (textSearch: string): Promise<Ban[] | []> => {
 export const thanhToanBanHang = async (
   dispatch: AppDispatch,
   payload: {
-    chiTietHoaDons: Array<{ id_monAn: string; soLuongMon: number; giaTien: number }>;
+    chiTietHoaDons: Array<{
+      id_monAn: string;
+      soLuongMon: number;
+      giaTien: number;
+    }>;
     hoaDon: HoaDon;
     id_nhaHang: string;
     _id: string;
-  }
+  },
 ) => {
   try {
-    const response = await fetch(`${ipAddress}thanh_toan_hoa_don_moi`, {
+    const response = await fetch(`${ipAddress}thanhToanHoaDonMoi`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload),
     });
 
@@ -691,7 +695,10 @@ export const thanhToanBanHang = async (
     if (response.ok) {
       // Dispatch dữ liệu vào Redux store
       dispatch(hoaDonSlice.actions.themHoaDon(data.hoaDon)); // Thêm hóa đơn mới
-      dispatch(chiTietHoaDonSlice.actions.themChiTietHoaDons(data.chiTietHoaDons)); // Thêm danh sách chi tiết hóa đơn
+      dispatch(
+        chiTietHoaDonSlice.actions.themChiTietHoaDons(data.chiTietHoaDons),
+      ); // Thêm danh sách chi tiết hóa đơn
+      return data;
     } else {
       console.error('Lỗi từ server:', data.msg);
     }
