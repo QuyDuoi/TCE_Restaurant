@@ -47,7 +47,10 @@ const DanhMucComponent = (props: Props) => {
   const navigation = useNavigation<any>();
 
   useEffect(() => {
-    console.log('Danh sách danh mục: ' + dsDanhMuc);
+    console.log('Danh sách món ăn mới nhất: ', dsMonAn); // Kiểm tra xem state đã cập nhật chưa
+  }, [dsMonAn]);
+
+  useEffect(() => {
 
     // Mở rộng tất cả danh mục
     const expandedIds = dsDanhMuc.map(item => item._id);

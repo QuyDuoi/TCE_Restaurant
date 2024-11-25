@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -13,35 +12,23 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
 import {HoaDon} from '../../store/Slices/HoaDonSlice';
-import {fetchCaLam} from '../../store/Slices/CaLamSlice';
-import {fetchKhuVucs} from '../../store/Slices/KhuVucSlice';
-import {fetchBans} from '../../store/Slices/BanSlice';
+import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import {useNavigation} from '@react-navigation/native';
 import {getListHoaDonTheoNhaHang} from '../../services/api';
 import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const {width, height} = Dimensions.get('window');
 
-const calculateDuration = (timeIn?: Date) => {
-  if (!timeIn) return 'null';
+const getTimeDifference = (startTime: string) => {
+  const start = new Date(startTime);
+  const now = new Date();
+  const diff = now.getTime() - start.getTime();
 
-  const [date, time] = timeIn
-    .toString()
-    .split('T')
-    .map(str => str.trim());
-  const [hoursIn, minutesIn] = time.split(':').map(Number);
-  const [day, month, year] = date.split('-').map(Number);
+  const hours = Math.floor(diff / (1000 * 60 * 60)); // convert milliseconds to hours
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)); // remaining minutes
 
-  const startTime = new Date(year, month - 1, day, hoursIn, minutesIn);
-  const currentTime = new Date();
-  const diffMs = currentTime.getTime() - startTime.getTime();
-
-  const hours = Math.floor(diffMs / (1000 * 60 * 60));
-  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-  return `${hours.toString().padStart(2, '0')}:${minutes
-    .toString()
-    .padStart(2, '0')}`;
+  return `${hours} giờ ${minutes} phút`;
 };
 
 //item list hoa don
@@ -52,6 +39,9 @@ const BillItem: React.FC<{
   onDetail: () => void;
   onPayment: () => void;
 }> = ({hoaDon, tenKhuVuc, tenBan, onDetail, onPayment}) => {
+  const gioVao = hoaDon.thoiGianVao
+    ? `${new Date(hoaDon.thoiGianVao).toLocaleTimeString('vi-VN').slice(0, 5)}`
+    : 'null';
   return (
     <View style={styles.billContainer}>
       <View style={styles.billInfo}>
@@ -59,28 +49,27 @@ const BillItem: React.FC<{
           <View>
             <Text style={styles.billText}>
               <Text style={styles.boldText}>Khu Vực: </Text>
-              {`${tenBan.length === 1 ? 'Ban: ' + tenBan : tenBan} - ${
-                tenKhuVuc ?? 'null'
-              }`}
+              {`${tenKhuVuc ?? 'Trống'} - Bàn ${tenBan}`}
             </Text>
             <Text style={styles.billText1}>
               <Text style={styles.boldText}>Giờ vào: </Text>
+              {gioVao}
+            </Text>
+            <Text style={styles.durationText}>
+              Thời gian:{' '}
               {hoaDon.thoiGianVao
-                ? `${new Date(hoaDon.thoiGianVao)
-                    .toLocaleTimeString('vi-VN')
-                    .slice(0, 5)}`
-                : 'null'}
+                ? getTimeDifference(hoaDon.thoiGianVao)
+                : 'Chưa có thời gian'}
             </Text>
           </View>
         ) : (
           <View>
-            <Text style={styles.billText}>Ban mang di</Text>
+            <Text style={styles.billText}>Bán mang đi</Text>
           </View>
         )}
         <Text style={styles.totalText}>Tổng tiền: {hoaDon.tongTien}</Text>
       </View>
       <View style={styles.billActions}>
-        <Text style={styles.durationText}>Thời gian: null</Text>
         <TouchableOpacity style={styles.detailButton} onPress={onDetail}>
           <Text style={styles.detailText}>Chi tiết</Text>
         </TouchableOpacity>
@@ -95,34 +84,29 @@ const BillItem: React.FC<{
 //Man quyet toan hoa don
 const BillScreen: React.FC = () => {
   const idNhaHang = '66fab50fa28ec489c7137537';
-  const [searchQuery, setSearchQuery] = useState('');
   const [billData, setBillData] = useState<HoaDon[]>();
   const [hoaDonSelected, setHoaDonSelected] = useState<HoaDon>();
   const [isVisivleModalPTTT, setIsVisivleModalPTTT] = useState(false);
   const [isChange, setIsChange] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const navigation = useNavigation<any>();
 
   const dispatch = useDispatch();
   const bans = useSelector((state: RootState) => state.ban.bans);
-
-  // console.log('hoaDons', hoaDons[0]);
-
-  useEffect(() => {
-    if (bans.length === 0) {
-      dispatch(fetchKhuVucs(idNhaHang) as any);
-      dispatch(fetchBans() as any);
-    }
-  }, [dispatch]);
+  const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
+  const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
 
   useEffect(() => {
     const fetchHoaDonNhaHang = async () => {
       const response = await getListHoaDonTheoNhaHang(idNhaHang);
       setBillData(response);
     };
-
+    if (khuVucStatus === 'idle') {
+      dispatch(fetchKhuVucVaBan(idNhaHang) as any);
+    }
     fetchHoaDonNhaHang();
-  }, [dispatch, bans]);
+  }, [dispatch, bans, khuVucs]);
 
   useEffect(() => {
     const fetchHoaDonNhaHang = async () => {
@@ -134,8 +118,6 @@ const BillScreen: React.FC = () => {
     }
   }, [isChange]);
 
-  console.log('render BillScreen');
-
   const handleOpenModalPTTT = (hoaDon: HoaDon) => {
     setHoaDonSelected(hoaDon);
     setIsVisivleModalPTTT(true);
@@ -144,9 +126,10 @@ const BillScreen: React.FC = () => {
   const getBanKhuVuc = (idBan?: string) => {
     if (!idBan) return {tenKhuVuc: '', tenBan: ''};
     const ban: any = bans.find(item => item._id === idBan);
+    const khuVuc: any = khuVucs.find(item => item._id === ban.id_khuVuc);
 
     return {
-      tenKhuVuc: ban?.kv.tenKhuVuc,
+      tenKhuVuc: khuVuc?.tenKhuVuc,
       tenBan: ban?.tenBan,
     };
   };
@@ -176,12 +159,32 @@ const BillScreen: React.FC = () => {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Tìm kiếm hóa đơn"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#F1F2FC',
+            marginHorizontal: 10,
+            borderRadius: 10,
+            borderWidth: isFocused ? 1 : 0, // Thay đổi border khi focus
+            borderColor: isFocused ? '#9E81C3' : '#ccc', // Màu sắc border khi focus
+            elevation: 10,
+            marginBottom: 10,
+          }}>
+          <Icon
+            name="search"
+            size={18}
+            color={'black'}
+            style={{paddingHorizontal: 15}}
+          />
+          <TextInput
+            onChangeText={() => {}}
+            placeholder="Tìm Kiếm "
+            style={{width: '90%', fontSize: 15}}
+            onFocus={() => setIsFocused(true)} // Cập nhật trạng thái khi focus
+            onBlur={() => setIsFocused(false)} // Cập nhật trạng thái khi blur
+          />
+        </View>
         <FlatList
           data={billData}
           renderItem={renderItem}
@@ -211,8 +214,8 @@ export default BillScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: width * 0.04,
+    backgroundColor: '#F3F8FE',
+    padding: width * 0.03,
   },
   header: {
     fontSize: width * 0.06,
@@ -234,7 +237,7 @@ const styles = StyleSheet.create({
   },
   billContainer: {
     backgroundColor: '#fff',
-    padding: width * 0.04,
+    padding: width * 0.03,
     borderRadius: 8,
     marginBottom: height * 0.02,
     shadowColor: '#000',
@@ -244,6 +247,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    elevation: 10,
   },
   billInfo: {
     flex: 3,
@@ -260,7 +264,7 @@ const styles = StyleSheet.create({
   billText1: {
     fontSize: width * 0.04,
     paddingBottom: 8,
-    color: '#999',
+    color: 'black',
   },
   totalText: {
     fontSize: width * 0.04,

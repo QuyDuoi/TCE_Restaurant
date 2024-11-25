@@ -1,5 +1,11 @@
 import * as React from 'react';
-import {View, StyleSheet, useWindowDimensions, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  useWindowDimensions,
+  Text,
+  TextInput,
+} from 'react-native';
 import {
   TabView,
   SceneMap,
@@ -52,6 +58,7 @@ export default function MyTabs(props: Props) {
   const layout = useWindowDimensions();
 
   const [visible, setVisible] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
 
   const [state, setState] = React.useState<State>({
     index: 0,
@@ -106,42 +113,44 @@ export default function MyTabs(props: Props) {
   return (
     <>
       <View style={[hoaStyles.tabViewContainer, {}]}>
-        <InputComponent
-          value={
-            state.index === 0
-              ? state.searchQueryMonAn
-              : state.searchQueryNhomTopping
-          }
-          onChangeText={searchQuery =>
-            setState(prevState => ({
-              ...prevState,
-              [state.index === 0
-                ? 'searchQueryMonAn'
-                : 'searchQueryNhomTopping']: searchQuery,
-            }))
-          }
-          placeholder="Tìm kiếm"
-          styles={{
-            backgroundColor: colors.desc2,
-          }}
-          leftIcon={
-            <Icon
-              name="search"
-              size={17}
-              color={colors.desc}
-              style={{
-                alignSelf: 'center',
-                marginLeft: 10,
-              }}
-            />
-          }
-          allowClear
-          styleIconX={{
-            alignSelf: 'center',
-            paddingRight: 8,
-          }}
-         
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#F1F2FC',
+            marginHorizontal: 10,
+            borderRadius: 10,
+            borderWidth: isFocused ? 1 : 0, // Thay đổi border khi focus
+            borderColor: isFocused ? '#9E81C3' : '#ccc', // Màu sắc border khi focus
+            elevation: 10,
+            marginVertical: 4
+          }}>
+          <Icon
+            name="search"
+            size={18}
+            color={'black'}
+            style={{paddingHorizontal: 15}}
+          />
+          <TextInput
+            value={
+              state.index === 0
+                ? state.searchQueryMonAn
+                : state.searchQueryNhomTopping
+            }
+            onChangeText={searchQuery =>
+              setState(prevState => ({
+                ...prevState,
+                [state.index === 0
+                  ? 'searchQueryMonAn'
+                  : 'searchQueryNhomTopping']: searchQuery,
+              }))
+            }
+            placeholder="Tìm Kiếm "
+            style={{width: '85%', fontSize: 15}}
+            onFocus={() => setIsFocused(true)} // Cập nhật trạng thái khi focus
+            onBlur={() => setIsFocused(false)} // Cập nhật trạng thái khi blur
+          />
+        </View>
         <SpaceComponent height={10} />
         <TabView
           navigationState={state}
@@ -153,7 +162,11 @@ export default function MyTabs(props: Props) {
           initialLayout={{width: layout.width}}
         />
       </View>
-      <SettingModaDanhMuc visible={visible} onClose={handleCloseModal} navigation={props.navigation}/>
+      <SettingModaDanhMuc
+        visible={visible}
+        onClose={handleCloseModal}
+        navigation={props.navigation}
+      />
     </>
   );
 }

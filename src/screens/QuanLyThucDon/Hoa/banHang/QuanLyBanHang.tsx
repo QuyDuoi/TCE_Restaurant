@@ -1,24 +1,19 @@
 import {
   View,
-  Text,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
-  StyleSheet,
+  TextInput,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {MonAn} from '../../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '../../../../store/store';
-import ChiTietHoaDon from '../../../../services/models/ChiTietHoaDonModel';
 import ItemThemMon from '../caLam/chiTietHoaDon/ItemThemMon';
 import {hoaStyles} from '../styles/hoaStyles';
 import {colors} from '../contants/hoaColors';
-import TitleComponent from '../components/TitleComponent';
 import SpaceComponent from '../components/SpaceComponent';
-import InputComponent from '../components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RowComponent from '../components/RowComponent';
 import ButtonComponent from '../components/ButtonComponent';
@@ -26,6 +21,8 @@ import TextComponent from '../components/TextComponent';
 import {Dimensions} from 'react-native';
 import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
 import CardComponent from '../components/CardComponent';
+import {searchMonAn} from '../../../../services/api';
+import {useRef} from 'react';
 
 const MaxHeight = Dimensions.get('window').height;
 
@@ -42,6 +39,9 @@ const QuanLyBanHang = () => {
   const [danhMucList, setDanhMucList] = useState<DanhMuc[]>([]);
   const [idDanhMuc, setIdDanhMuc] = useState('all');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+  const [dsTimKiem, setDsTimKiem] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation<any>();
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
@@ -79,8 +79,6 @@ const QuanLyBanHang = () => {
     //console.log(filterMonAns);
   }, [idDanhMuc]);
 
-  //so luong mon an
-
   const updateSoLuongMon = useCallback(
     (idMonAn: string, soLuong: number, tenMon: string, giaTien: number) => {
       setChiTiets((prev: any) => {
@@ -114,7 +112,7 @@ const QuanLyBanHang = () => {
     },
     [],
   );
-  console.log('render ban hang');
+  console.log('render ban hang 1');
 
   const onMinus = useCallback(
     (idMonAn: string, tenMon: string, giaTien: number) => {
@@ -137,14 +135,13 @@ const QuanLyBanHang = () => {
           setSelectedIndex(index);
         }}
         styles={{
-          borderRadius: 3,
+          borderRadius: 5,
           backgroundColor:
             selectedIndex === index ? colors.orange : colors.orange2,
-          width: '100%',
-          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          paddingHorizontal: 4,
+          paddingHorizontal: 12,
+          paddingVertical: 8,
         }}>
         <TextComponent
           text={item.tenDanhMuc}
@@ -166,52 +163,76 @@ const QuanLyBanHang = () => {
         monAn={item}
         soLuong={soLuong ?? 0}
         onMinus={() => {
-          //console.log(giaMon);
-
           onMinus(item._id as string, item.tenMon as string, item.giaMonAn);
         }}
         onPlus={() => {
-          //console.log(giaMon);
           onPlus(item._id as string, item.tenMon as string, item.giaMonAn);
         }}
       />
     );
   };
 
+  const id_nhaHang = '66fab50fa28ec489c7137537';
+  const timKiemMonAn = async (text: string) => {
+    if (text.trim().length > 0) {
+      setIsLoading(true);
+      try {
+        const data = await searchMonAn(text, id_nhaHang);
+        setDsTimKiem(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setDsTimKiem([]);
+    }
+  };
+
+  const debounceTimKiemMonAn = () => {
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    return (text: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        timKiemMonAn(text);
+      }, 1000); // Đợi 1 giây trước khi gọi hàm
+    };
+  };
+
+  const onChangeText = debounceTimKiemMonAn();
+
   return (
     <>
       <View
         style={[hoaStyles.containerTopping, {backgroundColor: colors.white}]}>
-        <SpaceComponent height={20} />
+        <SpaceComponent height={10} />
         <View style={{paddingHorizontal: 10}}>
-          <View>
-            <InputComponent
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              styles={[
-                {backgroundColor: colors.search, borderRadius: 5, height: 45},
-              ]}
-              placeholder="Tìm kiếm món ăn"
-              allowClear
-              leftIcon={
-                <Icon
-                  name="search"
-                  size={17}
-                  color={colors.desc}
-                  style={{
-                    alignSelf: 'center',
-                    marginLeft: 10,
-                  }}
-                />
-              }
-              styleIconX={{
-                alignSelf: 'center',
-                paddingRight: 8,
-              }}
-              paddingHorizontal={0}
-              borderWidth={1 * 1.5}
-              bgrColor={colors.white}
-              //onSubmitEditing={() => handleSubmitEditing(searchQuery)}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#F1F2FC',
+              marginHorizontal: 10,
+              borderRadius: 10,
+              borderWidth: isFocused ? 1 : 0, // Thay đổi border khi focus
+              borderColor: isFocused ? '#9E81C3' : '#ccc', // Màu sắc border khi focus
+              elevation: 10,
+            }}>
+            <Icon
+              name="search"
+              size={18}
+              color={'black'}
+              style={{paddingHorizontal: 15}}
+            />
+            <TextInput
+              onChangeText={text => onChangeText(text)}
+              placeholder="Tìm Kiếm món ăn"
+              style={{width: '85%', fontSize: 15}}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
             />
           </View>
           <SpaceComponent height={10} />
@@ -231,7 +252,6 @@ const QuanLyBanHang = () => {
                   chiTietHoaDons: chiTiets,
                   onUpdateChiTiets: (updatedItems: any) => {
                     setChiTiets(updatedItems);
-                    //console.log('updatedItem', chiTiets);
                   },
                 });
               }}
@@ -274,20 +294,14 @@ const QuanLyBanHang = () => {
               </View>
             </TouchableOpacity>
           </RowComponent>
-          <View
-            style={{
-              height: 30,
-              flexDirection: 'row',
-            }}>
-            <FlatList
-              data={danhMucList}
-              renderItem={renderItemDanhMuc}
-              horizontal={true}
-              keyExtractor={item => item._id as string}
-              showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <SpaceComponent width={10} />}
-            />
-          </View>
+          <FlatList
+            data={danhMucList}
+            renderItem={renderItemDanhMuc}
+            horizontal={true}
+            keyExtractor={item => item._id as string}
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => <SpaceComponent width={10} />}
+          />
         </View>
         <View
           style={{
@@ -295,7 +309,21 @@ const QuanLyBanHang = () => {
             flex: 1,
             paddingHorizontal: 8,
           }}>
-          {filteredMonAns.length > 0 ? (
+          {isLoading ? (
+            <View
+              style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+              <ActivityIndicator size="large" color={colors.orange} />
+            </View>
+          ) : dsTimKiem.length > 0 ? (
+            <FlatList
+              data={dsTimKiem}
+              renderItem={renderItem}
+              keyExtractor={item => item._id as string}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <SpaceComponent height={6} />}
+              nestedScrollEnabled={true}
+            />
+          ) : filteredMonAns.length > 0 ? (
             <FlatList
               data={filteredMonAns}
               renderItem={renderItem}
@@ -319,13 +347,5 @@ const QuanLyBanHang = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-  button: {
-    width: '40%',
-    height: 35,
-  },
-});
 
 export default QuanLyBanHang;

@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   Image,
   Alert,
@@ -19,7 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {Dropdown} from 'react-native-element-dropdown';
 import {taoFormDataMonAn} from './ThucDonRespository';
-import {themMonAnMoi} from '../../store/Slices/MonAnSlice';
+import {themMonAnMoi} from '../../store/Thunks/monAnThunks';
 import {styles} from './ThemSuaStyle';
 // import { useNavigation } from '@react-navigation/native';
 

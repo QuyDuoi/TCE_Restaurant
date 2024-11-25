@@ -34,7 +34,7 @@ import {
   thanhToanHoaDon,
 } from '../../../../../services/api';
 import {RootState} from '../../../../../store/store';
-import {updateBanThunk} from '../../../../../store/Slices/BanSlice';
+import {capNhatBanThunk} from '../../../../../store/Thunks/banThunks';
 
 interface Props {
   visible: boolean;
@@ -94,9 +94,9 @@ const ModalPTTT = React.memo((props: Props) => {
       //xu ly trang thai ban
       if (banSelected) {
         dispatch(
-          updateBanThunk({
+          capNhatBanThunk({
             id: banSelected._id as string,
-            formData: {
+            ban: {
               ...banSelected,
               trangThai: 'Trống',
               ghiChu: '',

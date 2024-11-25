@@ -51,6 +51,8 @@ const monAnSlice = createSlice({
       .addCase(updateMonAnThunk.fulfilled, (state, action: PayloadAction<MonAn>) => {
         const updatedMonAn = action.payload;
 
+        console.log("Updated món ăn: ", updatedMonAn);
+
         // Tìm và cập nhật món ăn trong danh sách
         const index = state.monAns.findIndex(monAn => monAn._id === updatedMonAn._id);
         if (index !== -1) {

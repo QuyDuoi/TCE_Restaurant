@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   itemBan: {
-    backgroundColor: 'white',
+    backgroundColor: '#F5F5F5',
     marginVertical: 3,
   },
 });

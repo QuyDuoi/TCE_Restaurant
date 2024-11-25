@@ -58,7 +58,7 @@ export const hoaStyles = StyleSheet.create({
   },
   tabViewContainer: {
     flex: 1,
-    marginTop: 10,
+    backgroundColor: 'white'
   },
   tabViewScene: {
     flex: 1,

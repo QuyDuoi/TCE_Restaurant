@@ -81,10 +81,6 @@ const ThongTinKhuVuc = (props: Props) => {
       />
     );
   };
-console.log('bans:', bans);
-console.log('filterData:', filterData);
-
-
 
   const renderItem = ({item}: {item: KhuVuc}) => {
     const isExpand = expandKhuVuc.includes(item._id as string);
@@ -92,7 +88,7 @@ console.log('filterData:', filterData);
     const banList = bansKhuVuc.filter(ban => ban.id_khuVuc === item._id);
 
     return (
-      <View>
+      <View style={{flex: 1}}>
         <ItemKhuVuc
           name={item.tenKhuVuc}
           isExpanded={isExpand}
@@ -102,6 +98,7 @@ console.log('filterData:', filterData);
           onLongPress={() => {
             console.log(item._id);
           }}
+          styles={{borderBottomColor: 'gray', borderBottomWidth: 0.5, backgroundColor: '#F3FEEF'}}
         />
         {isExpand &&
           (banList.length > 0 ? (

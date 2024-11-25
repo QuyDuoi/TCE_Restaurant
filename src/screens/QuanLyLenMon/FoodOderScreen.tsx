@@ -1,26 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
   ActivityIndicator,
-  Dimensions,
+  TouchableOpacity,
 } from 'react-native';
-import {getListChiTietHoaDonTheoCaLam, IPV4} from '../../services/api';
+import {getListChiTietHoaDonTheoCaLam} from '../../services/api';
 import ItemChiTietHoaDon from './ItemChiTietHoaDon';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import {FlatList} from 'react-native-gesture-handler';
 import {ChiTietHoaDon} from '../../store/Slices/ChiTietHoaDonSlice';
 
-const {width, height} = Dimensions.get('window');
-
 const FoodOrderScreen: React.FC = () => {
   const [dsChiTiet, setDsChiTiet] = useState<ChiTietHoaDon[]>([]);
+  const [filter, setFilter] = useState<string>('Chưa hoàn thành'); // Bộ lọc hiện tại
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
-  const [searchQuery, setSearchQuery] = useState(''); // Trạng thái tìm kiếm (có thể phát triển sau)
+  const [tenMons, setTenMons] = useState<string[]>([]); // Danh sách tên món
+  console.log("render lai");
 
   useEffect(() => {
     const fetchChiTietHoaDon = async () => {
@@ -29,9 +28,12 @@ const FoodOrderScreen: React.FC = () => {
         const id_nhaHang = '66fab50fa28ec489c7137537';
         const chiTietHoaDons = await getListChiTietHoaDonTheoCaLam(id_nhaHang);
         setDsChiTiet(chiTietHoaDons);
-        console.log(chiTietHoaDons);
+
+        // Lấy danh sách tên món (unique)
+        const uniqueTenMons = Object.keys(chiTietHoaDons?.theoTenMon || {});
+        setTenMons(uniqueTenMons);
       } catch (error) {
-        console.log('Lỗi khi lấy danh sách chi tiết hóa đơn:', error);
+        console.error('Lỗi khi lấy danh sách chi tiết hóa đơn:', error);
       } finally {
         setIsLoading(false);
       }
@@ -40,23 +42,33 @@ const FoodOrderScreen: React.FC = () => {
     fetchChiTietHoaDon();
   }, []);
 
-  const renderItem = ({item}: {item: ChiTietHoaDon}) => {
-    const monAnImg = item.id_monAn?.anhMonAn
-      ? item.id_monAn.anhMonAn.replace('localhost:3000', IPV4)
-      : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+  const filteredChiTiet = useMemo(() => {
+    if (!dsChiTiet) return []; // If data is not loaded yet
 
-    return (
-      <ItemChiTietHoaDon
-        tenMon={item.id_monAn?.tenMon}
-        trangThai={item.trangThai}
-        soLuong={item.soLuongMon}
-        onClick={() => {}}
-        anhMonAn={monAnImg}
-        ban={item.ban.tenBan}
-        khuVuc={item.khuVuc.tenKhuVuc}
-      />
-    );
-  };
+    if (filter === 'Hoàn thành') {
+      return dsChiTiet.hoanThanh; // Return completed items
+    } else if (filter === 'Chưa hoàn thành') {
+      return dsChiTiet.chuaHoanThanh; // Return not completed items
+    } else if (filter === 'Tất cả') {
+      return [...dsChiTiet.hoanThanh, ...dsChiTiet.chuaHoanThanh]; // Return all items
+    } else {
+      // Filter by dish name
+      return dsChiTiet.theoTenMon[filter] || []; 
+    }
+  }, [filter, dsChiTiet]);
+
+  const renderItem = ({item}: {item: ChiTietHoaDon}) => (
+    <ItemChiTietHoaDon
+      tenMon={item.id_monAn?.tenMon}
+      trangThai={item.trangThai}
+      soLuong={item.soLuongMon}
+      ghiChu={item.ghiChu}
+      onClick={() => {}}
+      anhMonAn={item.id_monAn?.anhMonAn}
+      ban={item.ban?.tenBan}
+      khuVuc={item.khuVuc?.tenKhuVuc}
+    />
+  );
 
   if (isLoading) {
     return (
@@ -71,19 +83,43 @@ const FoodOrderScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={hoaStyles.containerTopping}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Tìm kiếm món ăn"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+    <SafeAreaView style={styles.container}>
+      {/* Danh sách cuộn ngang cho các bộ lọc */}
+      <View>
+        <FlatList
+          data={['Chưa hoàn thành', 'Hoàn thành', ...tenMons]}
+          horizontal
+          keyExtractor={(item, index) => `${item}-${index}`}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterContainer}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                filter === item && styles.filterButtonActive,
+              ]}
+              onPress={() => setFilter(item)}>
+              <Text
+                style={[
+                  styles.filterText,
+                  filter === item && styles.filterTextActive,
+                ]}>
+                {item}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
 
+      {/* Danh sách Chi Tiết Hóa Đơn */}
       <FlatList
-        data={dsChiTiet}
-        keyExtractor={item => item._id} // Đảm bảo _id là một chuỗi
+        data={filteredChiTiet}
+        keyExtractor={item => item._id!}
         renderItem={renderItem}
-        contentContainerStyle={{paddingBottom: 20}} // Để tránh item cuối bị cắt đứt
+        extraData={filter}
+        contentContainerStyle={{paddingBottom: 20}}
+        initialNumToRender={10} // Tăng tốc render
+        windowSize={5} // Hiển thị trước và sau 5 item
       />
     </SafeAreaView>
   );
@@ -92,20 +128,31 @@ const FoodOrderScreen: React.FC = () => {
 export default FoodOrderScreen;
 
 const styles = StyleSheet.create({
-  header: {
-    fontSize: width * 0.06,
-    fontWeight: 'bold',
-    color: '#ff7f50',
-    marginBottom: height * 0.02,
-    textAlign: 'center',
+  container: {
+    flex: 1,
   },
-  searchInput: {
-    backgroundColor: 'white',
-    height: height * 0.07,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: width * 0.03,
-    marginVertical: 5,
+  filterContainer: {
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    height: 40,
+  },
+  filterButton: {
+    backgroundColor: '#FFC5AD',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  filterButtonActive: {
+    backgroundColor: colors.orange,
+  },
+  filterText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  filterTextActive: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });

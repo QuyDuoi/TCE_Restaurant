@@ -14,6 +14,7 @@ export interface ChiTietHoaDon {
   soLuongMon: number;
   giaTien: number;
   trangThai: boolean;
+  ghiChu: string;
   id_monAn: MonAn;
   id_hoaDon: string;
   createdAt?: string;

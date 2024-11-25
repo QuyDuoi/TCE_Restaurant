@@ -25,15 +25,11 @@ interface Props {
   khuVuc: any;
   onClick: () => void;
   anhMonAn: string;
+  ghiChu: string;
 }
 
 const ItemChiTietHoaDon = (props: Props) => {
-  const {tenMon, trangThai, anhMonAn, soLuong, onClick, ban, khuVuc} = props;
-
-  // Handle avatar URL replacement if it's coming from localhost
-  const monAnImg = anhMonAn
-    ? anhMonAn.replace('localhost', IPV4)
-    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
+  const {tenMon, trangThai, anhMonAn, soLuong, onClick, ban, khuVuc, ghiChu} = props;
 
   return (
     <CardComponent
@@ -61,14 +57,13 @@ const ItemChiTietHoaDon = (props: Props) => {
             </Text>
           </View>
           <RowComponent
-            // onPress={onPress}
             styles={{
               paddingHorizontal: 10,
               paddingVertical: 8,
               width: '100%',
             }}>
             <Image
-              source={{uri: monAnImg}}
+              source={{uri: anhMonAn}}
               style={{
                 width: 80,
                 height: 80,
@@ -100,7 +95,7 @@ const ItemChiTietHoaDon = (props: Props) => {
                 </View>
               </View>
               <TextComponent
-                text={'Ghi chú: ' + tenMon}
+                text={`Ghi chú: ${ghiChu == undefined ? "Không có" : ghiChu}`}
                 color="black"
                 numberOfLines={2}
               />

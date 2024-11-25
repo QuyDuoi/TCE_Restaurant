@@ -11,7 +11,6 @@ import RowComponent from './RowComponent';
 import {hoaStyles} from '../styles/hoaStyles';
 import {colors} from '../contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import TextComponent from './TextComponent';
 
 interface Props {
   value: string;
@@ -36,6 +35,7 @@ interface Props {
   borderWidth?: number;
   bgrColor?: string;
   onSubmitEditing?: () => void;
+  backgroundColor?: string;
 }
 
 const InputComponent = (props: Props) => {
@@ -62,6 +62,7 @@ const InputComponent = (props: Props) => {
     borderWidth,
     bgrColor,
     onSubmitEditing,
+    backgroundColor
   } = props;
 
   return type === 'normal' ? (

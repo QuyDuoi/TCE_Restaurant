@@ -4,6 +4,7 @@ import {
   useWindowDimensions,
   ScrollView,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -17,7 +18,6 @@ import {
 import KhongGianComponent from '../KhongGianComponent';
 import ThongTinKhuVuc from '../ThongTinKhuVuc';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
-import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
@@ -47,9 +47,16 @@ const ThongTinKhuVucRoute = ({
   searchQueryKhuVuc: string;
 }) => <View>{<ThongTinKhuVuc searchQueryKhuVuc={searchQueryKhuVuc} />}</View>;
 
-const KhuVucTabView = ({modalLuaChon, setModalLuaChon}: {modalLuaChon: boolean; setModalLuaChon: (val: boolean) => void;}) => {
+const KhuVucTabView = ({
+  modalLuaChon,
+  setModalLuaChon,
+}: {
+  modalLuaChon: boolean;
+  setModalLuaChon: (val: boolean) => void;
+}) => {
   const idNhaHang = '66fab50fa28ec489c7137537';
   const [isLoading, setIsLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const dispatch = useDispatch();
   const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
@@ -112,39 +119,38 @@ const KhuVucTabView = ({modalLuaChon, setModalLuaChon}: {modalLuaChon: boolean; 
 
   return (
     <View style={[hoaStyles.tabViewContainer]}>
-      <InputComponent
-        value={
-          tabState.index === 0
-            ? tabState.searchQueryBan
-            : tabState.searchQueryKhuVuc
-        }
-        onChangeText={searchQueryBan =>
-          setTabState(prevState => ({
-            ...prevState,
-            [tabState.index === 0 ? 'searchQueryBan' : 'searchQueryKhuVuc']:
-              searchQueryBan,
-          }))
-        }
-        placeholder="Tìm Kiếm"
-        leftIcon={
-          <Icon
-            name="search"
-            size={17}
-            color={colors.desc}
-            style={{
-              alignSelf: 'center',
-              marginLeft: 10,
-            }}
-          />
-        }
-        allowClear
-        styleIconX={{
-          alignSelf: 'center',
-          paddingRight: 8,
-        }}
-        bgrColor={colors.white}
-      />
-      <SpaceComponent height={10} />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: '#F1F2FC',
+          marginHorizontal: 10,
+          borderRadius: 10,
+          borderWidth: isFocused ? 1 : 0, // Thay đổi border khi focus
+          borderColor: isFocused ? '#9E81C3' : '#ccc', // Màu sắc border khi focus
+          elevation: 10
+        }}>
+        <Icon name="search" size={18} color={'black'} style={{paddingHorizontal: 15}} />
+        <TextInput
+          value={
+            tabState.index === 0
+              ? tabState.searchQueryBan
+              : tabState.searchQueryKhuVuc
+          }
+          onChangeText={searchQueryBan =>
+            setTabState(prevState => ({
+              ...prevState,
+              [tabState.index === 0 ? 'searchQueryBan' : 'searchQueryKhuVuc']:
+                searchQueryBan,
+            }))
+          }
+          placeholder="Tìm Kiếm "
+          style={{width: '85%', fontSize: 15}}
+          onFocus={() => setIsFocused(true)} // Cập nhật trạng thái khi focus
+          onBlur={() => setIsFocused(false)} // Cập nhật trạng thái khi blur
+        />
+      </View>
+      <SpaceComponent height={5} />
       <TabView
         navigationState={tabState}
         renderScene={
