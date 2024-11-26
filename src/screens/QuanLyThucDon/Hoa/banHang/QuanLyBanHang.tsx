@@ -76,8 +76,7 @@ const QuanLyBanHang = () => {
       return monAn.id_danhMuc === idDanhMuc;
     });
     setFilteredMonAns(filterMonAns);
-    //console.log(filterMonAns);
-  }, [idDanhMuc]);
+  }, [idDanhMuc, monAns]);
 
   const updateSoLuongMon = useCallback(
     (idMonAn: string, soLuong: number, tenMon: string, giaTien: number) => {

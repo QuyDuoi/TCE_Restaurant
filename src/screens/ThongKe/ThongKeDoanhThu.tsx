@@ -10,16 +10,14 @@ import {
   Image,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-// import {PieChart} from 'react-native-chart-kit';
-import { PieChart } from 'react-native-charts-wrapper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {PieChart} from 'react-native-charts-wrapper';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
-
+import {ActivityIndicator} from 'react-native';
+import {styles} from './ThongKeStyle';
 
 const ThongKeDoanhThu = () => {
-  const noDataImageURL = 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRzlNmuaJh6jvjDXesEjjS-1ZqS1GnsE8jb2mY8XjwqrSoim8N4';
-
   const navigation = useNavigation();
   const [revenue, setRevenue] = useState(0);
   const [promotion, setPromotion] = useState(0);
@@ -32,30 +30,38 @@ const ThongKeDoanhThu = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const total = revenue + promotion;
-const revenuePercentage = ((revenue / total) * 100).toFixed(1);
-const promotionPercentage = ((promotion / total) * 100).toFixed(1);
+  const revenuePercentage = ((revenue / total) * 100).toFixed(1);
+  const promotionPercentage = ((promotion / total) * 100).toFixed(1);
 
-const data = {
-  dataSets: [
-    {
-      values:total>0
-      ? [
-        { value: parseFloat(revenuePercentage), label: `${revenuePercentage}%` },
-        { value: parseFloat(promotionPercentage), label: `${promotionPercentage}%` }
-      ]:[],
-      label: '',
-      config: {
-        colors: [processColor('#ff6347'), processColor('#90ee90')],
-        valueTextSize: 0,
-        valueTextColor: processColor('black'),
-        sliceSpace: 5,
-      }
-    }
-  ]
-};
-
+  const data = {
+    dataSets: [
+      {
+        values:
+          total > 0
+            ? [
+                {
+                  value: parseFloat(revenuePercentage),
+                  label: `${revenuePercentage}%`,
+                },
+                {
+                  value: parseFloat(promotionPercentage),
+                  label: `${promotionPercentage}%`,
+                },
+              ]
+            : [],
+        label: '',
+        config: {
+          colors: [processColor('#ff6347'), processColor('#90ee90')],
+          valueTextSize: 0,
+          valueTextColor: processColor('black'),
+          sliceSpace: 5,
+        },
+      },
+    ],
+  };
 
   const options = [
     'Hôm Nay',
@@ -68,6 +74,7 @@ const data = {
 
   const fetchRevenueData = async (type, startDate, endDate) => {
     try {
+      setIsLoading(true); // Bắt đầu tải dữ liệu
       let url = `${ipAddress}thongKeDoanhThu?type=${type}`;
       if (type === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
@@ -84,7 +91,6 @@ const data = {
       const data = await response.json();
       console.log('API Response:', data);
 
-      // Kiểm tra dữ liệu và lấy giá trị từ phần tử đầu tiên nếu tồn tại
       if (data.length > 0) {
         setRevenue(data[0].tongDoanhThu || 0);
         setPromotion(data[0].tongKhuyenMai || 0);
@@ -92,10 +98,10 @@ const data = {
         setRevenue(0);
         setPromotion(0);
       }
-      console.log('Revenue (after fetch):', data[0]?.tongDoanhThu);
-      console.log('Promotion (after fetch):', data[0]?.tongKhuyenMai);
     } catch (error) {
       console.error('Error fetching revenue data:', error);
+    } finally {
+      setIsLoading(false); // Kết thúc tải dữ liệu
     }
   };
 
@@ -181,10 +187,11 @@ const data = {
           <TouchableOpacity
             onPress={() => setShowOptionsModal(true)}
             style={styles.optionsButton}>
-            <Icon name="menu" size={30} color="#000" />
+            <Icon name="line-chart" size={25} color="#000" />
           </TouchableOpacity>
         </View>
       </View>
+
       {/* Modal for Time Selection */}
       <Modal
         transparent={true}
@@ -193,6 +200,9 @@ const data = {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Chọn Mốc Thời Gian
+            </Text>
             <FlatList
               data={options}
               keyExtractor={item => item}
@@ -272,7 +282,7 @@ const data = {
         visible={showOptionsModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Tùy Chọn</Text>
+            <Text style={styles.modalTitle}>Tùy Chọn Thống Kê</Text>
             <TouchableOpacity
               onPress={() => setShowOptionsModal(false)}
               style={styles.modalOption}>
@@ -301,199 +311,86 @@ const data = {
           </View>
         </View>
       </Modal>
-      {console.log('Revenue (before chart render):', revenue)}
-      {console.log('Promotion (before chart render):', promotion)}
-      {/* Chart */}
-      <View style={styles.chartContainer}>
-  {total === 0 ? ( 
-    <Image 
-      source={{ uri: noDataImageURL }}
-      style={{ height: 250, width: 350 }} 
-      resizeMode="contain" 
-    />
-  ) : (
-    <>
-      <PieChart
-        style={{height: 300, width: 300}}
-        chartDescription={{text: ''}}
-        data={data}
-        legend={{enabled: false}}
-        entryLabelColor={processColor('black')}
-        entryLabelTextSize={20}
-        rotationEnabled={true}
-        rotationAngle={45}
-        drawEntryLabels={true}
-        usePercentValues={true}
-        styledCenterText={{
-          text: 'Tổng Doanh Thu',
-          color: processColor('black'),
-          size: 20,
-        }}
-        centerTextRadiusPercent={100}
-        holeRadius={40}
-        holeColor={processColor('transparent')}
-        transparentCircleRadius={45}
-        transparentCircleColor={processColor('#f0f0f088')}
-        maxAngle={360}
-        config={{
-          valueFormatter: "#'%'",
-        }}
-      />
-      <View style={styles.legendContainer}>
-        <View style={styles.legendItemContainer}>
-          <Text style={styles.legendLabel}>
-            Doanh Thu
-          </Text>
-          <View style={[styles.legendItem, {backgroundColor: '#ff6347'}]}>
-            <Text style={styles.legendText}>
-              {revenue.toLocaleString()} VND
-            </Text>
+      <View style={styles.container}>
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+            <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
           </View>
-        </View>
-        <View style={styles.legendItemContainer}>
-          <Text style={styles.legendLabel}>
-            Khuyến Mãi
-          </Text>
-          <View style={[styles.legendItem, {backgroundColor: '#90ee90'}]}>
-            <Text style={styles.legendText}>
-              {promotion.toLocaleString()} VND
-            </Text>
-          </View>
-        </View>
+        ) : (
+          <>
+            <View style={styles.chartContainer}>
+              {total === 0 ? (
+                <View style={{width: '100%', height: '100%'}}>
+                  <Image
+                    source={require('../../image/noData.png')}
+                    style={{width: '100%', height: '50%'}}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.data}>Không có dữ liệu</Text>
+                </View>
+              ) : (
+                <>
+                  <PieChart
+                    style={{height: '50%', width: '95%', marginTop: 10}}
+                    chartDescription={{text: ''}}
+                    data={data}
+                    legend={{enabled: false}}
+                    entryLabelColor={processColor('black')}
+                    entryLabelTextSize={20}
+                    rotationEnabled={true}
+                    rotationAngle={45}
+                    drawEntryLabels={true}
+                    usePercentValues={true}
+                    styledCenterText={{
+                      text: 'Tổng\nDoanh Thu',
+                      color: processColor('black'),
+                      size: 20,
+                    }}
+                    centerTextRadiusPercent={100}
+                    holeRadius={40}
+                    holeColor={processColor('transparent')}
+                    transparentCircleRadius={45}
+                    transparentCircleColor={processColor('#f0f0f088')}
+                    maxAngle={360}
+                    config={{
+                      valueFormatter: "#'%'",
+                    }}
+                  />
+                  <View style={styles.legendContainer}>
+                    <View style={styles.legendItemContainer}>
+                      <Text style={styles.legendLabel}>Doanh Thu</Text>
+                      <View
+                        style={[
+                          styles.legendItem,
+                          {backgroundColor: '#ff6347'},
+                        ]}>
+                        <Text style={styles.legendText}>
+                          {revenue.toLocaleString()} VNĐ
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.legendItemContainer}>
+                      <Text style={styles.legendLabel}>Khuyến Mãi</Text>
+                      <View
+                        style={[
+                          styles.legendItem,
+                          {backgroundColor: '#90ee90'},
+                        ]}>
+                        <Text style={styles.legendText}>
+                          {promotion.toLocaleString()} VNĐ
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+          </>
+        )}
       </View>
-    </>
-  )}
-</View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  noDataText: {
-    fontSize: 20,
-    color: 'gray',
-    textAlign: 'center',
-    marginTop: 200,
-  },
-  rectangle: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 10,
-    backgroundColor: '#ADD8E6',
-  },
-  modalOption: {
-    paddingVertical: 10,
-  },
-  container: {
-    flex: 1,
-
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 19,
-    marginBottom: 16,
-  },
-  optionsButton: {
-    padding: 10,
-    marginRight: 10,
-    marginTop: 0,
-  },
-  Contenttt: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 1,
-  },
-  button: {
-    backgroundColor: '#AAA0E0',
-    padding: 0,
-    borderColor: '#000',
-    borderRadius: 15,
-    marginBottom: -10,
-    marginLeft: 30,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  selectedText: {
-    marginTop: 10,
-    fontSize: 14,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    elevation: 5,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  option: {
-    padding: 15,
-  },
-  optionText: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  closeButton: {
-    backgroundColor: '#f44336',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  closeButtonText: {
-    color: '#fff',
-  },
-  chartContainer: {
-    alignItems: 'center',
-    marginTop: 80,
-  },
-  legendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 30,
-  },
-  legendItemContainer: {
-    alignItems: 'center',
-  },
-  legendItem: {
-    padding: 10,
-    borderRadius: 5,
-  },
-  legendLabel: {
-    fontSize: 16,
-  },
-  legendText: {
-    fontSize: 16,
-    color: 'black',
-  },
-  dateButton: {
-    padding: 10,
-    backgroundColor: '#007BFF',
-    borderRadius: 5,
-    marginVertical: 10,
-  },
-  dateButtonText: {
-    color: '#fff',
-  },
-});
 
 export default ThongKeDoanhThu;
