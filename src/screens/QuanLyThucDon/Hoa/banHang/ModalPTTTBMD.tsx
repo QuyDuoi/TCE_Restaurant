@@ -54,11 +54,12 @@ const ModalPTTTBMD = (props: Props) => {
       //_id la id cua nhan vien
       _id: id_nhanVien,
     };
-    const result = await thanhToanBanHang(dispatch, data as any);
+    // const result = await thanhToanBanHang(dispatch, data as any);
 
-    if (result) {
-      onClose();
-    }
+    // if (result) {
+    //   onClose();
+    // }
+    onClose();
 
     onPaid?.(true);
   };

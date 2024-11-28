@@ -9,7 +9,7 @@ import nhanVienReducer from './Slices/NhanVienSlice';
 import khuVucReducer from './Slices/KhuVucSlice';
 import banReducer from './Slices/BanSlice';
 import caLamReducer from './Slices/CaLamSlice';
-
+import chiTietMonReducer from './Slices/ChiTietMonSlice';
 export const store = configureStore({
   reducer: {
     hoaDons: hoaDonReducer,
@@ -22,6 +22,7 @@ export const store = configureStore({
     khuVuc: khuVucReducer,
     ban: banReducer,
     calam: caLamReducer,
+    chiTietMon: chiTietMonReducer,
   },
 });
 

@@ -3,14 +3,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  StyleSheet,
+  ListRenderItem,
+  VirtualizedList,
   TextInput,
 } from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import {MonAn} from '../../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '../../../../store/store';
-import ItemThemMon from '../caLam/chiTietHoaDon/ItemThemMon';
 import {hoaStyles} from '../styles/hoaStyles';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
@@ -23,27 +25,26 @@ import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
 import CardComponent from '../components/CardComponent';
 import {searchMonAn} from '../../../../services/api';
 import {useRef} from 'react';
+import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
+import ItemThemMonBanHang from './ItemThemMonBanHang';
 
 const MaxHeight = Dimensions.get('window').height;
 
 const QuanLyBanHang = () => {
-  const [visibleModalCart, setVisibleModalCart] = useState(false);
-
-  const [chiTiets, setChiTiets] = useState<
-    {id_monAn: string; soLuongMon: number; tenMon: string; giaTien: number}[]
-  >([]);
-
-  const [searchQuery, setSearchQuery] = useState('');
+  const [cartCount, setCartCount] = useState(0);
 
   const [filteredMonAns, setFilteredMonAns] = useState<MonAn[]>([]);
+
   const [danhMucList, setDanhMucList] = useState<DanhMuc[]>([]);
   const [idDanhMuc, setIdDanhMuc] = useState('all');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
   const [dsTimKiem, setDsTimKiem] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [onChangeChiTiets, setOnChangeChiTiets] = useState(false);
 
   const navigation = useNavigation<any>();
+
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
   const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
 
@@ -71,60 +72,61 @@ const QuanLyBanHang = () => {
   useEffect(() => {
     const filterMonAns = monAns.filter(monAn => {
       if (idDanhMuc === 'all') {
-        return monAns;
+        return true;
       }
       return monAn.id_danhMuc === idDanhMuc;
     });
     setFilteredMonAns(filterMonAns);
   }, [idDanhMuc, monAns]);
 
-  const updateSoLuongMon = useCallback(
-    (idMonAn: string, soLuong: number, tenMon: string, giaTien: number) => {
-      setChiTiets((prev: any) => {
-        const existing = prev.find((item: any) => item.id_monAn === idMonAn);
-        if (existing) {
-          const updateList = prev.map((item: any) =>
-            item.id_monAn === idMonAn
-              ? {
-                  ...item,
-                  soLuongMon: Math.max(0, item.soLuongMon + soLuong),
-                  giaTien: giaTien * Math.max(0, item.soLuongMon + soLuong),
-                }
-              : item,
-          );
+  console.log('render ban hang 1');
 
-          return updateList.filter((item: any) => item.soLuongMon > 0);
-        } else {
-          const newList = [
-            ...prev,
-            {
-              id_monAn: idMonAn,
-              soLuongMon: Math.max(0, soLuong),
-              tenMon,
-              giaTien: giaTien * Math.max(1, soLuong),
-              //giaMon,
-            },
-          ];
-          return newList.filter((item: any) => item.soLuongMon > 0);
-        }
-      });
+  useFocusEffect(
+    useCallback(() => {
+      setOnChangeChiTiets(false);
+    }, []),
+  );
+
+  const chiTietsRef = useRef<
+    {
+      id_monAn: string;
+      soLuongMon: number;
+      tenMon: string;
+      giaTien: number;
+    }[]
+  >([]);
+
+  //update so luong mon
+  const updateQuantityMon = useCallback(
+    (idMonAn: string, newQuantity: number, tenMon: string, giaTien: number) => {
+      const existing = chiTietsRef.current.find(
+        (item: any) => item.id_monAn === idMonAn,
+      );
+      if (existing) {
+        chiTietsRef.current = chiTietsRef.current.map(item =>
+          item.id_monAn === idMonAn
+            ? {...item, soLuongMon: newQuantity, giaTien: giaTien * newQuantity}
+            : item,
+        );
+      } else {
+        chiTietsRef.current.push({
+          id_monAn: idMonAn,
+          soLuongMon: newQuantity,
+          tenMon,
+          giaTien: giaTien * newQuantity,
+        });
+      }
+      chiTietsRef.current = chiTietsRef.current.filter(
+        (item: any) => item.soLuongMon > 0,
+      );
+      setCartCount(
+        chiTietsRef.current.filter((item: any) => item.soLuongMon > 0).length,
+      );
     },
     [],
   );
-  console.log('render ban hang 1');
 
-  const onMinus = useCallback(
-    (idMonAn: string, tenMon: string, giaTien: number) => {
-      updateSoLuongMon(idMonAn, -1, tenMon, giaTien);
-    },
-    [updateSoLuongMon],
-  );
-  const onPlus = useCallback(
-    (idMonAn: string, tenMon: string, giaTien: number) => {
-      updateSoLuongMon(idMonAn, 1, tenMon, giaTien);
-    },
-    [updateSoLuongMon],
-  );
+  //console.log(chiTiets);
 
   const renderItemDanhMuc = ({item, index}: {item: DanhMuc; index: number}) => {
     return (
@@ -153,20 +155,16 @@ const QuanLyBanHang = () => {
 
   const renderItem = ({item}: {item: MonAn}) => {
     const soLuong =
-      chiTiets.find((ct: any) => {
+      chiTietsRef.current.find((ct: any) => {
         return ct.id_monAn ? ct.id_monAn === item._id : null;
       })?.soLuongMon || 0;
 
     return (
-      <ItemThemMon
+      <ItemThemMonBanHang
         monAn={item}
-        soLuong={soLuong ?? 0}
-        onMinus={() => {
-          onMinus(item._id as string, item.tenMon as string, item.giaMonAn);
-        }}
-        onPlus={() => {
-          onPlus(item._id as string, item.tenMon as string, item.giaMonAn);
-        }}
+        intialSoLuong={soLuong}
+        onQuantityChange={updateQuantityMon}
+        onChangeChiTiets={onChangeChiTiets}
       />
     );
   };
@@ -248,9 +246,13 @@ const QuanLyBanHang = () => {
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('ChiTietHoaDonBMD', {
-                  chiTietHoaDons: chiTiets,
+                  chiTietHoaDons: chiTietsRef.current,
                   onUpdateChiTiets: (updatedItems: any) => {
-                    setChiTiets(updatedItems);
+                    chiTietsRef.current = updatedItems;
+                    //setChiTiets(updatedItems);
+                  },
+                  onChangeChiTiets: (value: boolean) => {
+                    setOnChangeChiTiets(value);
                   },
                 });
               }}
@@ -268,7 +270,7 @@ const QuanLyBanHang = () => {
                     paddingRight: 8,
                   }}
                 />
-                {chiTiets.length > 0 && (
+                {cartCount > 0 && (
                   <View
                     style={{
                       backgroundColor: colors.orange,
@@ -280,7 +282,7 @@ const QuanLyBanHang = () => {
                       borderRadius: 8,
                     }}>
                     <TextComponent
-                      text={`${chiTiets.length}`}
+                      text={`${cartCount}`}
                       styles={{
                         textAlign: 'center',
                       }}

@@ -13,7 +13,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ChiTietHoaDon} from '../../../../store/Slices/ChiTietHoaDonSlice';
-import ItemChiTietHoaDon from '../caLam/chiTietHoaDon/ItemChiTietHoaDon';
 import {hoaStyles} from '../styles/hoaStyles';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
@@ -21,13 +20,14 @@ import RowComponent from '../components/RowComponent';
 import TitleComponent from '../components/TitleComponent';
 import SectionComponent from '../components/SectionComponent';
 import ButtonComponent from '../components/ButtonComponent';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {formatDate, formatMoney} from '../utils/formatUtils';
 import TextComponent from '../components/TextComponent';
 import ModalGiamGia from '../caLam/chiTietHoaDon/ModalGiamGia';
 import ModalPTTTBMD from './ModalPTTTBMD';
 import ModalSoLuongBMD from './ModalSoLuongBMD';
 import ItemChiTietHoaDonBMD from './ItemChiTietHoaDonBMD';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {VirtualizedList} from 'react-native';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -36,7 +36,8 @@ interface Props {
 }
 
 const ChiTietHoaDonBMD = (props: Props) => {
-  const {chiTietHoaDons, onUpdateChiTiets} = props.route.params;
+  const {chiTietHoaDons, onUpdateChiTiets, onChangeChiTiets} =
+    props.route.params;
 
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalSoLuongMonBMD, setVisibleModalSoLuongMonBMD] =
@@ -93,14 +94,12 @@ const ChiTietHoaDonBMD = (props: Props) => {
   useEffect(() => {
     if (onPaid) {
       onUpdateChiTiets?.([]);
-
-      //setChiTietHoaDonList([]);
-      //navigation.goBack();
-      //navigation.navigate('BookingFlow');
+      onChangeChiTiets?.(true);
+      setTimeout(() => {
+        onChangeChiTiets?.(false);
+      }, 500);
     }
   }, [onPaid]);
-
-  const dispatch = useDispatch();
 
   //modal so luong mon khi thay doi
   const updateChiTiets = useCallback(
@@ -109,6 +108,11 @@ const ChiTietHoaDonBMD = (props: Props) => {
         item.id_monAn === updatedItem.id_monAn ? updatedItem : item,
       );
 
+      onUpdateChiTiets?.(updatedItem);
+      onChangeChiTiets?.(true);
+      setTimeout(() => {
+        onChangeChiTiets?.(false);
+      }, 500);
       setChiTietHoaDonList(
         updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
       );
@@ -170,6 +174,25 @@ const ChiTietHoaDonBMD = (props: Props) => {
             backgroundColor: colors.white,
           },
         ]}>
+        <SpaceComponent height={15} />
+        <TouchableOpacity
+          onPress={() => {
+            onUpdateChiTiets?.([]);
+            onChangeChiTiets?.(true);
+            setTimeout(() => {
+              onChangeChiTiets?.(false);
+            }, 500);
+            setChiTietHoaDonList([]);
+            onUpdateChiTiets?.([]);
+          }}
+          style={{
+            position: 'absolute',
+            top: 25,
+            right: 25,
+            zIndex: 1,
+          }}>
+          <Icon name="refresh" size={20} color={colors.black} />
+        </TouchableOpacity>
         <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}>
@@ -327,13 +350,17 @@ const ChiTietHoaDonBMD = (props: Props) => {
                 <View
                   style={{
                     flex: 1,
-                    backgroundColor: 1 > 0 ? colors.white : 'transparent',
+                    backgroundColor:
+                      chiTietHoaDonList.length > 0
+                        ? colors.white
+                        : 'transparent',
                   }}>
                   {chiTietHoaDonList.length > 0 ? (
                     <FlatList
                       data={chiTietHoaDonList}
                       renderItem={renderItem}
                       nestedScrollEnabled={true}
+                      keyExtractor={(item, index) => index.toString()}
                     />
                   ) : (
                     <View style={{flex: 1, alignItems: 'center'}}>
@@ -484,7 +511,6 @@ const ChiTietHoaDonBMD = (props: Props) => {
         }}
         item={chiTietSelected}
         updateItem={updateChiTiets}
-        //giaMon={giaMon(chiTietSelected)}
       />
     </>
   );

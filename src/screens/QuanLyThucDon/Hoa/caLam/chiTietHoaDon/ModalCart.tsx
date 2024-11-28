@@ -16,7 +16,7 @@ interface Props {
     id_monAn: string;
     soLuongMon: number;
     tenMon: string;
-    giaMon: string;
+    giaMon: number;
   }[];
   tenBan?: string;
   tenKhuVuc?: string;
@@ -107,7 +107,7 @@ const ModalCart = (props: Props) => {
     id_monAn: string;
     soLuongMon: number;
     tenMon: string;
-    giaMon: string;
+    giaMon: number;
   }) => {
     return (
       <View>

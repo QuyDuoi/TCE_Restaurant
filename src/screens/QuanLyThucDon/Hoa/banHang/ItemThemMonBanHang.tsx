@@ -1,15 +1,17 @@
 import {View, Text, Switch, Image, TouchableOpacity} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import RowComponent from '../../components/RowComponent';
-import {hoaStyles} from '../../styles/hoaStyles';
-import {colors} from '../../contants/hoaColors';
-import TextComponent from '../../components/TextComponent';
-import SpaceComponent from '../../components/SpaceComponent';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {MonAn} from '../../../../store/Slices/MonAnSlice';
+import {IPV4} from '../../../../services/api';
+import CardComponent from '../components/CardComponent';
+import {colors} from '../contants/hoaColors';
+import RowComponent from '../components/RowComponent';
+import {hoaStyles} from '../styles/hoaStyles';
+import TextComponent from '../components/TextComponent';
+import SpaceComponent from '../components/SpaceComponent';
+import {formatMoney} from '../utils/formatUtils';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CardComponent from '../../components/CardComponent';
-import {MonAn} from '../../../../../store/Slices/MonAnSlice';
-import {formatMoney} from '../../utils/formatUtils';
-import {ipAddress, IPV4} from '../../../../../services/api';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../store/store';
 
 interface Props {
   monAn: MonAn;
@@ -18,11 +20,13 @@ interface Props {
     idMonAn: string,
     newQuantity: number,
     tenMon: string,
-    giaMon: number,
+    giaTien: number,
   ) => void;
+  onChangeChiTiets: boolean;
 }
-const ItemThemMon = React.memo((props: Props) => {
-  const {monAn, intialSoLuong, onQuantityChange} = props;
+
+const ItemThemMonFix = React.memo((props: Props) => {
+  const {monAn, intialSoLuong, onQuantityChange, onChangeChiTiets} = props;
 
   const [soLuong, setSoLuong] = useState<number>(intialSoLuong);
 
@@ -37,6 +41,12 @@ const ItemThemMon = React.memo((props: Props) => {
   const handleMinus = useCallback(() => {
     setSoLuong(prev => Math.max(0, prev - 1));
   }, []);
+
+  useEffect(() => {
+    if (onChangeChiTiets) {
+      setSoLuong(intialSoLuong);
+    }
+  }, [onChangeChiTiets]);
 
   useEffect(() => {
     onQuantityChange(
@@ -133,4 +143,4 @@ const ItemThemMon = React.memo((props: Props) => {
   );
 });
 
-export default ItemThemMon;
+export default ItemThemMonFix;

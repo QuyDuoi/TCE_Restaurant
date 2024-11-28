@@ -8,17 +8,19 @@ import {hoaStyles} from '../styles/hoaStyles';
 import TextComponent from '../components/TextComponent';
 import SpaceComponent from '../components/SpaceComponent';
 import {formatMoney} from '../utils/formatUtils';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ButtonComponent from '../components/ButtonComponent';
-import {ipAddress} from '../../../../services/api';
+import {ipAddress, IPV4} from '../../../../services/api';
+import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
+import {RootState} from '../../../../store/store';
+import {MonAn} from '../../../../store/Slices/MonAnSlice';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   item: any;
   giaMon?: number;
-
   updateItem?: (value: any) => void;
 }
 
@@ -28,11 +30,9 @@ const ModalSoLuongBMD = (props: Props) => {
   const [giaTien, setGiaTien] = useState(0);
   const [itemSelected, setItemSelected] = useState<any>(null);
 
-  //console.log('item', item);
-
-  //const giaMotMon = giaMon ? giaMon / item.soLuongMon : 0;
   const giaMotMon = item ? item.giaTien / item.soLuongMon : 0;
-  //console.log('gia mot mon', giaMotMon);
+
+  const monAns = useSelector((state: RootState) => state.monAn.monAns);
 
   useEffect(() => {
     setSoLuong(item?.soLuongMon ?? 0);
@@ -48,8 +48,6 @@ const ModalSoLuongBMD = (props: Props) => {
     setGiaTien(parseInt((giaMotMon * soLuong).toString()));
   }, [soLuong]);
 
-  const dispatch = useDispatch();
-
   const handleConfirm = useCallback(() => {
     const updatedItem = {
       ...itemSelected,
@@ -58,13 +56,25 @@ const ModalSoLuongBMD = (props: Props) => {
     };
     updateItem?.(updatedItem);
 
+    // dispatch(
+    //   addOrUpdate({
+    //     ...itemSelected,
+    //     soLuongMon: soLuong,
+    //     giaTien: giaTien,
+    //   }),
+    // );
+
     //console.log('updatedItem', updatedItem);
 
     onClose();
   }, [soLuong, giaTien]);
 
-  const anhMonAn = item?.id_monAn?.anhMonAn
-    ? item.id_monAn.anhMonAn.replace('localhost', `${ipAddress}`)
+  const monAnSelected = monAns.find(
+    (monAn: MonAn) => monAn._id === item?.id_monAn,
+  );
+
+  const anhMonAn = monAnSelected
+    ? monAnSelected.anhMonAn.replace('localhost', `${ipAddress}`)
     : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
   return (
@@ -100,7 +110,7 @@ const ModalSoLuongBMD = (props: Props) => {
             <View style={{alignItems: 'flex-start'}}>
               <RowComponent onPress={() => {}}>
                 <TextComponent
-                  text={item?.id_monAn?.tenMon ?? ''}
+                  text={monAnSelected?.tenMon ?? ''}
                   fontWeight="bold"
                   color={colors.text2}
                   size={14}

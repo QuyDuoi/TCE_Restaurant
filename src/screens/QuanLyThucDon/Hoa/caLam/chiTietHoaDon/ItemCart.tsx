@@ -11,7 +11,7 @@ interface Props {
     id_monAn: string;
     soLuongMon: number;
     tenMon: string;
-    giaMon: string;
+    giaMon: number;
   };
 }
 
@@ -68,7 +68,7 @@ const ItemCart = (props: Props) => {
               borderRadius: 12,
             }}>
             <TextComponent
-              text={`${formatMoney(chiTiet.giaMon as any)}`}
+              text={`${formatMoney(chiTiet.giaMon)}`}
               color={colors.black}
             />
           </CardComponent>

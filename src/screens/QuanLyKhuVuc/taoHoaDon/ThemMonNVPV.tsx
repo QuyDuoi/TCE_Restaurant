@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   TextInput,
 } from 'react-native';
-import {fetchMonAns, MonAn} from '../../../store/Slices/MonAnSlice';
+import {MonAn} from '../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '../../../store/store';
@@ -48,12 +48,9 @@ const ThemMonNVPV = (props: Props) => {
   const [visibleModalCart, setVisibleModalCart] = useState(false);
 
   const [monAnsList, setMonAnsList] = useState<MonAn[]>([]);
-  const [chiTiets, setChiTiets] = useState<
-    {id_monAn: string; soLuongMon: number; tenMon: string; giaMon: string}[]
-  >([]);
-  const [dataSent, setDataSent] = useState<
-    {id_monAn: string; soLuongMon: number; giaTien: string}[]
-  >([]);
+
+  const [cartCount, setCartCount] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredMonAns, setFilteredMonAns] = useState<MonAn[]>([]);
   const [onChange, setOnChange] = useState(false);
@@ -98,6 +95,15 @@ const ThemMonNVPV = (props: Props) => {
     }
   }, [searchQuery]);
 
+  const chiTietsRef = useRef<
+    {
+      id_monAn: string;
+      soLuongMon: number;
+      tenMon: string;
+      giaMon: number;
+    }[]
+  >([]);
+
   useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
       id_monAn: ct.id_monAn ? ct.id_monAn._id : '',
@@ -105,119 +111,68 @@ const ThemMonNVPV = (props: Props) => {
       tenMon: ct.id_monAn ? ct.id_monAn.tenMon : '',
       giaMon: ct.id_monAn ? ct.id_monAn.giaMonAn : '',
     }));
-    setChiTiets(initialChiTiets.filter((item: any) => item.soLuongMon > 0));
-    setDataSent(initialChiTiets);
+    chiTietsRef.current = initialChiTiets;
   }, [chiTietHoaDon]);
 
-  console.log(dataSent);
+  //console.log(dataSent);
 
   const sortedMonAnsList = useMemo(() => {
-    return monAnsList && chiTiets
+    return monAnsList && chiTietsRef.current
       ? [...monAnsList].sort((a, b) => {
           const aSoLuong =
-            chiTiets.find(ct => ct.id_monAn === a._id)?.soLuongMon || 0;
+            chiTietsRef.current.find(ct => ct.id_monAn === a._id)?.soLuongMon ||
+            0;
           const bSoLuong =
-            chiTiets.find(ct => ct.id_monAn === b._id)?.soLuongMon || 0;
+            chiTietsRef.current.find(ct => ct.id_monAn === b._id)?.soLuongMon ||
+            0;
           return bSoLuong - aSoLuong;
         })
       : [];
   }, [monAnsList]);
 
-  //so luong mon an
-  const updateSoLuongMon = useCallback(
-    (idMonAn: string, soLuong: number, tenMon: string, giaMon: string) => {
-      setChiTiets((prev: any) => {
-        const existing = prev.find((item: any) => item.id_monAn === idMonAn);
-        if (existing) {
-          const updateList = prev.map((item: any) =>
-            item.id_monAn === idMonAn
-              ? {...item, soLuongMon: Math.max(0, item.soLuongMon + soLuong)}
-              : item,
-          );
-
-          return updateList.filter((item: any) => item.soLuongMon > 0);
-        } else {
-          const newList = [
-            ...prev,
-            {
-              id_monAn: idMonAn,
-              soLuongMon: Math.max(0, soLuong),
-              tenMon,
-              giaMon,
-            },
-          ];
-          return newList.filter((item: any) => item.soLuongMon > 0);
-        }
-      });
-      setDataSent((prev: any) => {
-        const existing = prev.find((item: any) => item.id_monAn === idMonAn);
-        if (existing) {
-          const updateList = prev.map((item: any) =>
-            item.id_monAn === idMonAn
-              ? {...item, soLuongMon: Math.max(0, item.soLuongMon + soLuong)}
-              : item,
-          );
-          return updateList;
-        } else {
-          const newList = [
-            ...prev,
-            {
-              id_monAn: idMonAn,
-              soLuongMon: Math.max(0, soLuong),
-              tenMon,
-              giaMon,
-            },
-          ];
-          return newList;
-        }
-      });
+  const updateQuantityMon = useCallback(
+    (idMonAn: string, soLuong: number, tenMon: string, giaMon: number) => {
+      setOnChange(true);
+      const existing = chiTietsRef.current.find(
+        (item: any) => item.id_monAn === idMonAn,
+      );
+      if (existing) {
+        chiTietsRef.current = chiTietsRef.current.map(item =>
+          item.id_monAn === idMonAn ? {...item, soLuongMon: soLuong} : item,
+        );
+      } else if (soLuong > 0) {
+        chiTietsRef.current = [
+          ...chiTietsRef.current,
+          {
+            id_monAn: idMonAn,
+            soLuongMon: soLuong,
+            tenMon,
+            giaMon,
+          },
+        ];
+      }
+      // chiTietsRef.current = chiTietsRef.current.filter(
+      //   (item: any) => item.soLuongMon > 0,
+      // );
+      setCartCount(
+        chiTietsRef.current.filter((item: any) => item.soLuongMon > 0).length,
+      );
     },
     [],
   );
   console.log('render them mon');
 
-  const onMinus = useCallback(
-    (idMonAn: string, tenMon: string, giaMon: string) => {
-      updateSoLuongMon(idMonAn, -1, tenMon, giaMon);
-      setOnChange(true);
-    },
-    [updateSoLuongMon],
-  );
-  const onPlus = useCallback(
-    (idMonAn: string, tenMon: string, giaMon: string) => {
-      updateSoLuongMon(idMonAn, 1, tenMon, giaMon);
-      setOnChange(true);
-    },
-    [updateSoLuongMon],
-  );
-
-  //console.log(dataSent);
-
   const renderItem = ({item}: {item: MonAn}) => {
     const soLuong =
-      chiTiets.find((ct: any) => {
+      chiTietsRef.current.find((ct: any) => {
         return ct.id_monAn ? ct.id_monAn === item._id : null;
       })?.soLuongMon || 0;
-    //console.log(soLuong, item._id);
 
     return (
       <ItemThemMon
         monAn={item}
-        soLuong={soLuong ?? 0}
-        onMinus={() =>
-          onMinus(
-            item._id as string,
-            item.tenMon as string,
-            item.giaMonAn as unknown as string,
-          )
-        }
-        onPlus={() =>
-          onPlus(
-            item._id as string,
-            item.tenMon as string,
-            item.giaMonAn as unknown as string,
-          )
-        }
+        intialSoLuong={soLuong ?? 0}
+        onQuantityChange={updateQuantityMon}
       />
     );
   };
@@ -299,7 +254,7 @@ const ThemMonNVPV = (props: Props) => {
                       paddingRight: 8,
                     }}
                   />
-                  {chiTiets.length > 0 && (
+                  {cartCount > 0 && (
                     <View
                       style={{
                         backgroundColor: colors.orange,
@@ -311,7 +266,7 @@ const ThemMonNVPV = (props: Props) => {
                         borderRadius: 8,
                       }}>
                       <TextComponent
-                        text={`${chiTiets.length}`}
+                        text={`${cartCount}`}
                         styles={{
                           textAlign: 'center',
                         }}
@@ -377,7 +332,7 @@ const ThemMonNVPV = (props: Props) => {
                     dispatch(
                       addNewChiTietHoaDon({
                         id_hoaDon: hoaDon._id,
-                        monAn: dataSent.map((item: any) => ({
+                        monAn: chiTietsRef.current.map((item: any) => ({
                           id_monAn: item.id_monAn,
                           soLuong: item.soLuongMon,
                           giaTien: item.giaMon * item.soLuongMon,
@@ -409,7 +364,9 @@ const ThemMonNVPV = (props: Props) => {
       <ModalCart
         tenBan={tenBan}
         tenKhuVuc={tenKhuVuc}
-        chiTiets={chiTiets}
+        chiTiets={chiTietsRef.current.filter(
+          (item: any) => item.soLuongMon > 0,
+        )}
         visible={visibleModalCart}
         onClose={() => {
           setVisibleModalCart(false);

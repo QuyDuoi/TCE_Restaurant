@@ -1,5 +1,5 @@
-// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.1.7:3000/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+//export const ipAddress = `http://192.168.1.7:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -438,10 +438,7 @@ export const themKhuVuc = async (KhuVuc: KhuVuc) => {
   }
 };
 
-export const capNhatKhuVuc = async (
-  id: string,
-  khuVuc: KhuVuc,
-) => {
+export const capNhatKhuVuc = async (id: string, khuVuc: KhuVuc) => {
   try {
     const response = await fetch(`${ipAddress}capNhatKhuVuc/${id}`, {
       method: 'PUT',

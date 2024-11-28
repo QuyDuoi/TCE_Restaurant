@@ -57,7 +57,7 @@ const ModalChucNang = (props: Props) => {
   }, [bans]);
 
   const hoaDonSelected = hoaDonsChuaThanhToan?.find(
-    hoaDon => hoaDon.id_ban === selectedBan?._id,
+    (hoaDon: HoaDon) => hoaDon.id_ban === selectedBan?._id,
   );
 
   const dispatch = useDispatch();
