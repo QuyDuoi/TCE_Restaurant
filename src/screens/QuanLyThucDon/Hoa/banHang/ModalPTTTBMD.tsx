@@ -13,7 +13,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SectionComponent from '../components/SectionComponent';
 import TextComponent from '../components/TextComponent';
 import {thanhToanBanHang} from '../../../../services/api';
-
+import LoadingModal from 'react-native-loading-modal';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -25,6 +25,7 @@ interface Props {
 
 const ModalPTTTBMD = (props: Props) => {
   const {visible, onClose, totalFinalBill, discount, chiTiets, onPaid} = props;
+  const [isLoading, setIsLoading] = useState(false);
   const id_nhanVien = '67060f3497bc70ba1d9222ac';
   const idNhaHang = '66fab50fa28ec489c7137537';
 
@@ -41,6 +42,7 @@ const ModalPTTTBMD = (props: Props) => {
 
   //xu ly thanh toan
   const handleThanhToan = async () => {
+    setIsLoading(true);
     const data = {
       chiTietHoaDons: chiTiets,
       hoaDon: {
@@ -54,12 +56,15 @@ const ModalPTTTBMD = (props: Props) => {
       //_id la id cua nhan vien
       _id: id_nhanVien,
     };
-    // const result = await thanhToanBanHang(dispatch, data as any);
 
-    // if (result) {
-    //   onClose();
-    // }
-    onClose();
+    //const result = await thanhToanBanHang(dispatch, data as any);
+    if (true) {
+      setTimeout(() => {
+        setIsLoading(false);
+        onClose();
+      }, 1000);
+      console.log(data);
+    }
 
     onPaid?.(true);
   };
@@ -159,6 +164,11 @@ const ModalPTTTBMD = (props: Props) => {
           />
         </RowComponent>
       </ModalComponent>
+      <LoadingModal
+        modalVisible={isLoading}
+        darkMode={false}
+        color={colors.orange}
+      />
     </>
   );
 };

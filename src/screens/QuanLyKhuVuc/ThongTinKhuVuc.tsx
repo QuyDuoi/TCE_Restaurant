@@ -16,6 +16,7 @@ import {useSelector} from 'react-redux';
 import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 import {RootState} from '../../store/store';
 import {Ban} from '../../store/Slices/BanSlice';
+import {SwipeListView} from 'react-native-swipe-list-view';
 
 interface Props {
   searchQueryKhuVuc: string;
@@ -85,7 +86,9 @@ const ThongTinKhuVuc = (props: Props) => {
   const renderItem = ({item}: {item: KhuVuc}) => {
     const isExpand = expandKhuVuc.includes(item._id as string);
 
-    const banList = bansKhuVuc.filter(ban => ban.id_khuVuc === item._id);
+    const banList = bansKhuVuc.filter(
+      ban => ban.id_khuVuc === (item._id as any),
+    );
 
     return (
       <View style={{flex: 1}}>
@@ -98,7 +101,11 @@ const ThongTinKhuVuc = (props: Props) => {
           onLongPress={() => {
             console.log(item._id);
           }}
-          styles={{borderBottomColor: 'gray', borderBottomWidth: 0.5, backgroundColor: '#F3FEEF'}}
+          styles={{
+            borderBottomColor: 'gray',
+            borderBottomWidth: 0.5,
+            backgroundColor: '#F3FEEF',
+          }}
         />
         {isExpand &&
           (banList.length > 0 ? (

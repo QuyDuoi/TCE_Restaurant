@@ -58,7 +58,7 @@ export const hoaStyles = StyleSheet.create({
   },
   tabViewContainer: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   tabViewScene: {
     flex: 1,
@@ -73,6 +73,20 @@ export const hoaStyles = StyleSheet.create({
     marginBottom: 5,
     borderColor: colors.desc2,
   },
+  hiddenDeleteView: {
+    height: '100%',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+  },
+  buttonDelete: {
+    position: 'absolute',
+    right: 0,
+    height: '100%',
+    width: 75,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'red',
+  },
   buttonMoCa: {
     backgroundColor: '#FF602B',
     width: '25%',
@@ -80,12 +94,17 @@ export const hoaStyles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 10,
   },
-  textMoCa: {textAlign: 'center', color: '#fff', fontSize: 15, fontWeight: 'bold'},
+  textMoCa: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
   viewMoCa: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 5
+    paddingTop: 5,
   },
   viewInput: {
     width: '68%',
@@ -95,12 +114,12 @@ export const hoaStyles = StyleSheet.create({
     borderRadius: 15,
     height: 50,
     borderWidth: 0.5,
-    elevation: 10
+    elevation: 10,
   },
   inputMoCa: {
     width: '70%',
     paddingLeft: 10,
-    color: 'black'
+    color: 'black',
   },
   buttonXacNhan: {
     borderBottomRightRadius: 15,
@@ -109,9 +128,11 @@ export const hoaStyles = StyleSheet.create({
     alignItems: 'center',
     width: '30%',
     height: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  textXacNhan:{
-    color: '#fff', fontSize: 15, fontWeight: 'bold'
-  }
+  textXacNhan: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
 });

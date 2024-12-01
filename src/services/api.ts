@@ -1,5 +1,5 @@
-// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.1.3:3000/api/`; // Địa chỉ cơ sở API
+//export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.21:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -15,7 +15,7 @@ import {NhanVienSlice} from '../store/Slices/NhanVienSlice';
 import {AppDispatch} from '../store/store';
 import {hoaDonSlice} from '../store/Slices/HoaDonSlice';
 import {chiTietHoaDonSlice} from '../store/Slices/ChiTietHoaDonSlice';
-import { CaLam } from '../store/Slices/CaLamSlice';
+import {CaLam} from '../store/Slices/CaLamSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -490,7 +490,7 @@ export const moCaLamViec = async (caLam: CaLam): Promise<CaLam> => {
     console.log('Lỗi khi mở ca làm mới: ', error);
     throw error;
   }
-}
+};
 
 export const themNhanVien = async (formData: FormData) => {
   try {

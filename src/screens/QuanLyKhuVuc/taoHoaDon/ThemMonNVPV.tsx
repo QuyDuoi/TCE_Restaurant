@@ -32,6 +32,7 @@ import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent'
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import ModalCart from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalCart';
 import ItemThemMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemThemMon';
+import LoadingModal from 'react-native-loading-modal';
 
 interface Props {
   route?: any;
@@ -55,6 +56,8 @@ const ThemMonNVPV = (props: Props) => {
   const [filteredMonAns, setFilteredMonAns] = useState<MonAn[]>([]);
   const [onChange, setOnChange] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
   const [showNoResult, setShowNoResult] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -114,8 +117,6 @@ const ThemMonNVPV = (props: Props) => {
     chiTietsRef.current = initialChiTiets;
   }, [chiTietHoaDon]);
 
-  //console.log(dataSent);
-
   const sortedMonAnsList = useMemo(() => {
     return monAnsList && chiTietsRef.current
       ? [...monAnsList].sort((a, b) => {
@@ -132,7 +133,6 @@ const ThemMonNVPV = (props: Props) => {
 
   const updateQuantityMon = useCallback(
     (idMonAn: string, soLuong: number, tenMon: string, giaMon: number) => {
-      setOnChange(true);
       const existing = chiTietsRef.current.find(
         (item: any) => item.id_monAn === idMonAn,
       );
@@ -173,6 +173,9 @@ const ThemMonNVPV = (props: Props) => {
         monAn={item}
         intialSoLuong={soLuong ?? 0}
         onQuantityChange={updateQuantityMon}
+        onChange={val => {
+          setOnChange(val);
+        }}
       />
     );
   };
@@ -329,6 +332,7 @@ const ThemMonNVPV = (props: Props) => {
                 title="Thêm món"
                 onPress={() => {
                   if (onChange) {
+                    setIsLoadingModal(true);
                     dispatch(
                       addNewChiTietHoaDon({
                         id_hoaDon: hoaDon._id,
@@ -344,6 +348,7 @@ const ThemMonNVPV = (props: Props) => {
                         dispatch(fetchChiTietHoaDon(hoaDon._id));
                         setTimeout(() => {
                           navigation.goBack();
+                          setIsLoadingModal(false);
                         }, 500);
                       }
                     });
@@ -371,6 +376,11 @@ const ThemMonNVPV = (props: Props) => {
         onClose={() => {
           setVisibleModalCart(false);
         }}
+      />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        darkMode={false}
+        color={colors.orange}
       />
     </>
   );

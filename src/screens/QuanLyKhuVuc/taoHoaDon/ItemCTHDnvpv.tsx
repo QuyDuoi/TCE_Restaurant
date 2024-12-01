@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     paddingVertical: 12,
+    backgroundColor: colors.white,
   },
   indicator: {
     width: '100%',

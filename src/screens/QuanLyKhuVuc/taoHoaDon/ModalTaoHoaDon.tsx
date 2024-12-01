@@ -19,6 +19,8 @@ import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
 import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
+import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
+import {getListHoaDonTheoNhaHang} from '../../../services/api';
 
 interface Props {
   visible: boolean;
@@ -29,6 +31,7 @@ interface Props {
 
 const ModalTaoHoaDon = (props: Props) => {
   const {visible, onClose, selectedBan, onCloseParent} = props;
+  const idNhaHang = '66fab50fa28ec489c7137537';
 
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
@@ -37,21 +40,21 @@ const ModalTaoHoaDon = (props: Props) => {
 
   useEffect(() => {
     if (caLams.length === 0) {
-      dispatch(fetchCaLam("66fab50fa28ec489c7137537") as any);
+      dispatch(fetchCaLam(idNhaHang) as any);
     }
   }, [caLams]);
 
   const caLamHienTai = caLams.find(
     calam => calam.ketThuc === null || calam.ketThuc === undefined,
   );
-  console.log(selectedBan);
+  //console.log(selectedBan);
 
   const handleTaoHoaDon = async () => {
     const data = {
       id_ban: selectedBan?._id,
       id_nhanVien: '671a4d2d9d3c2ab4130e3c6e',
       thoiGianVao: new Date(),
-      id_nhaHang: "66fab50fa28ec489c7137537",
+      id_nhaHang: '66fab50fa28ec489c7137537',
     };
 
     const result = await dispatch(addNewHoaDon(data as any) as any);
@@ -64,8 +67,16 @@ const ModalTaoHoaDon = (props: Props) => {
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
         tenBan: selectedBan?.tenBan,
       });
+      // const dataBan = {
+      //   ...selectedBan,
+      //   trangThai: 'Đang sử dụng',
+      // };
+      // dispatch(capNhatBanThunk({id: selectedBan?._id, ban: dataBan}) as any);
+      // const resultHoaDon = await getListHoaDonTheoNhaHang(idNhaHang);
+      // if (resultHoaDon) {
       onCloseParent();
       onClose();
+      //}
     } else {
       ToastAndroid.show('Lỗi tạo hóa đơn', ToastAndroid.LONG);
     }

@@ -20,6 +20,7 @@ import {useNavigation} from '@react-navigation/native';
 import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
 import {searchMonAn} from '../../../../services/api';
 import debounce from 'lodash';
+import {SwipeListView} from 'react-native-swipe-list-view';
 
 if (
   Platform.OS === 'android' &&
@@ -39,6 +40,9 @@ const DanhMucComponent = (props: Props) => {
   const [expandedDanhMuc, setExpandedDanhMuc] = useState<string[]>([]);
   const [monAnList, setMonAnList] = useState<{[key: string]: MonAn[]}>({});
   const [monAnCounts, setMonAnCounts] = useState<{[key: string]: number}>({});
+  const [monAnCountTrue, setMonAnCountTrue] = useState<{[key: string]: number}>(
+    {},
+  );
   const [filteredMonAn, setFilteredMonAn] = useState<MonAn[]>([]);
   const [hideImage, setHideImage] = useState(true);
 
@@ -50,15 +54,17 @@ const DanhMucComponent = (props: Props) => {
     console.log('Danh sách món ăn mới nhất: ', dsMonAn); // Kiểm tra xem state đã cập nhật chưa
   }, [dsMonAn]);
 
-  useEffect(() => {
+  console.log(monAnCountTrue);
 
+  useEffect(() => {
     // Mở rộng tất cả danh mục
-    const expandedIds = dsDanhMuc.map(item => item._id);
+    const expandedIds = dsDanhMuc.map(item => item._id || '');
     setExpandedDanhMuc(expandedIds);
 
     // Tạo đối tượng đếm số lượng món ăn và nhóm món ăn theo danh mục
     const monAnCountsTemp: {[key: string]: number} = {};
     const monAnListTemp: {[key: string]: MonAn[]} = {};
+    const monAnCountTrueTemp: {[key: string]: number} = {};
 
     // Lặp qua dsMonAn để tính số lượng món ăn cho từng danh mục và nhóm món ăn theo danh mục
     dsMonAn.forEach(monAn => {
@@ -66,14 +72,19 @@ const DanhMucComponent = (props: Props) => {
       if (!monAnCountsTemp[danhMucId]) {
         monAnCountsTemp[danhMucId] = 0;
         monAnListTemp[danhMucId] = [];
+        monAnCountTrueTemp[danhMucId] = 0;
       }
       monAnCountsTemp[danhMucId] += 1;
       monAnListTemp[danhMucId].push(monAn);
+      if (monAn.trangThai === true) {
+        monAnCountTrueTemp[danhMucId] += 1;
+      }
     });
 
     // Cập nhật state
     setMonAnCounts(monAnCountsTemp);
     setMonAnList(monAnListTemp);
+    setMonAnCountTrue(monAnCountTrueTemp);
   }, [dsDanhMuc, dsMonAn]);
 
   useEffect(() => {
@@ -145,17 +156,17 @@ const DanhMucComponent = (props: Props) => {
   };
 
   const renderItem = ({item}: {item: DanhMuc}) => {
-    const isExpanded = expandedDanhMuc.includes(item._id);
-    const monAns = monAnList[item._id] || [];
+    const isExpanded = expandedDanhMuc.includes(item._id || '');
+    const monAns = monAnList[item._id || ''] || [];
 
     return (
       <View style={{backgroundColor: '#F5F5F5'}}>
         <ItemDanhMuc
           nameCategory={item.tenDanhMuc}
-          quantityCurrent={monAnCounts[item._id] || 0}
-          totalFood={monAnCounts[item._id] || 0}
+          quantityCurrent={monAnCountTrue[item._id || ''] || 0}
+          totalFood={monAnCounts[item._id || ''] || 0}
           isExpanded={isExpanded}
-          onPress={() => handleExpandDanhMuc(item._id)}
+          onPress={() => handleExpandDanhMuc(item._id || '')}
         />
         {isExpanded && (
           <View>
@@ -191,6 +202,10 @@ const DanhMucComponent = (props: Props) => {
         )}
       </View>
     );
+  };
+
+  const renderHiddenItem = () => {
+    return <View style={{backgroundColor: 'red', flex: 1}}></View>;
   };
 
   return (

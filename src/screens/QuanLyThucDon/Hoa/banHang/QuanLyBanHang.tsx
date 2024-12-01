@@ -27,6 +27,7 @@ import {searchMonAn} from '../../../../services/api';
 import {useRef} from 'react';
 import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
 import ItemThemMonBanHang from './ItemThemMonBanHang';
+import LoadingModal from 'react-native-loading-modal';
 
 const MaxHeight = Dimensions.get('window').height;
 
@@ -38,10 +39,13 @@ const QuanLyBanHang = () => {
   const [danhMucList, setDanhMucList] = useState<DanhMuc[]>([]);
   const [idDanhMuc, setIdDanhMuc] = useState('all');
   const [selectedIndex, setSelectedIndex] = useState(0);
+
   const [isFocused, setIsFocused] = useState(false);
   const [dsTimKiem, setDsTimKiem] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [onChangeChiTiets, setOnChangeChiTiets] = useState(false);
+  const [MaxToRender, setMaxToRender] = useState(7);
+  const [isEndReached, setIsEndReached] = useState(false);
 
   const navigation = useNavigation<any>();
 
@@ -95,6 +99,14 @@ const QuanLyBanHang = () => {
       giaTien: number;
     }[]
   >([]);
+
+  //load more danh sach
+  const loadMoreListMonAns = () => {
+    setMaxToRender(prev => prev + 7);
+    //setIsEndReached(false);
+  };
+
+  const EndHeightFooter = useRef(0);
 
   //update so luong mon
   const updateQuantityMon = useCallback(
@@ -326,12 +338,33 @@ const QuanLyBanHang = () => {
             />
           ) : filteredMonAns.length > 0 ? (
             <FlatList
-              data={filteredMonAns}
+              data={filteredMonAns.slice(0, MaxToRender)}
               renderItem={renderItem}
               keyExtractor={item => item._id as string}
               showsVerticalScrollIndicator={false}
               ItemSeparatorComponent={() => <SpaceComponent height={6} />}
               nestedScrollEnabled={true}
+              onStartReachedThreshold={0.1}
+              onStartReached={() => {
+                setIsEndReached(false);
+              }}
+              onEndReached={() => {
+                setIsEndReached(true);
+                loadMoreListMonAns();
+              }}
+              ListFooterComponent={() =>
+                isEndReached &&
+                MaxToRender < filteredMonAns.length && (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: 100,
+                    }}>
+                    <ActivityIndicator size="large" color={colors.orange} />
+                  </View>
+                )
+              }
             />
           ) : (
             <View

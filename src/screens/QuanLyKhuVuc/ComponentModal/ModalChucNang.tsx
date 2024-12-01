@@ -54,9 +54,9 @@ const ModalChucNang = (props: Props) => {
         setHoaDonsChuaThanhToan([]); // Đảm bảo state không bị thay đổi vô hạn
       }
     };
-  
+
     fetchHoaDon();
-  }, [])
+  }, [bans]);
 
   const hoaDonSelected = Array.isArray(hoaDonsChuaThanhToan)
     ? hoaDonsChuaThanhToan.find(hoaDon => hoaDon.id_ban === selectedBan?._id)
@@ -84,8 +84,6 @@ const ModalChucNang = (props: Props) => {
 
     onClose();
   };
-
-  //console.log('selectedBan', hoaDonSelected);
 
   return (
     <>
@@ -144,7 +142,7 @@ const ModalChucNang = (props: Props) => {
                 ) {
                   navigation.navigate('ChiTietHoaDonNVPV', {
                     hoaDon: hoaDonSelected,
-                    tenKhuVuc: selectedBan?.id_khuVuc?.tenKhuVuc,
+                    tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
                     tenBan: selectedBan?.tenBan,
                   });
                   onClose();

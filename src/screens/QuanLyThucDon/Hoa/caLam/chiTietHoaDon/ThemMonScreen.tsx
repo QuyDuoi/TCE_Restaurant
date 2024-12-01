@@ -126,7 +126,6 @@ const ThemMonScreen = (props: Props) => {
 
   const updateQuantityMon = useCallback(
     (idMonAn: string, soLuong: number, tenMon: string, giaMon: number) => {
-      setOnChange(true);
       const existing = chiTietsRef.current.find(
         (item: any) => item.id_monAn === idMonAn,
       );
@@ -160,6 +159,9 @@ const ThemMonScreen = (props: Props) => {
         monAn={item}
         intialSoLuong={soLuong}
         onQuantityChange={updateQuantityMon}
+        onChange={val => {
+          setOnChange(val);
+        }}
       />
     );
   };

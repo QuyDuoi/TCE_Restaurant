@@ -45,9 +45,10 @@ interface Props {
 const ChiTietHoaDonScreen = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam, type} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
-  //console.log(hoaDon, tenKhuVuc, tenBan);
+
   console.log('render chi tiet hoa don');
-  //console.log(hoaDon._id);
+
+  console.log(type);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -86,35 +87,41 @@ const ChiTietHoaDonScreen = (props: Props) => {
     return (total += item.giaTien);
   }, 0);
 
-  let totalFinalBillCal = () => {
+  let totalFinalBillCal = useCallback(() => {
     if (isPercent) {
       return totalBillCal - (totalBillCal * discount) / 100;
     } else {
       return totalBillCal - discount;
     }
-  };
+  }, [isPercent, discount, totalBillCal]);
 
-  let discountCalculate = () => {
+  let discountCalculate = useCallback(() => {
     if (isPercent) {
       return (discount * totalBillCal) / 100;
     } else {
       return discount;
     }
-  };
+  }, [isPercent, discount, totalBillCal]);
 
   useEffect(() => {
+    console.log('set total bill');
+
     if (hoaDon) {
       setTotalBill(totalBillCal);
     }
   }, [totalBillCal, chiTietHoaDons]);
 
   useEffect(() => {
+    console.log('set total final bill');
+
     setTotalFinalBill(totalFinalBillCal());
   }, [totalFinalBillCal, isPercent, discount]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log('fetch chi tiet hoa don');
+
     if (hoaDon) {
       dispatch(fetchChiTietHoaDon(hoaDon._id) as any);
     }
@@ -130,6 +137,8 @@ const ChiTietHoaDonScreen = (props: Props) => {
   }, [hoaDon]);
 
   useEffect(() => {
+    console.log('set is paid');
+
     if (hoaDon.trangThai === 'Đã Thanh Toán') {
       setIsPaid(true);
     } else if (hoaDon.trangThai === null) {
@@ -147,13 +156,10 @@ const ChiTietHoaDonScreen = (props: Props) => {
     setVisibleModalPTTT(prev => !prev);
   }, []);
 
-  const handleOpenModalSoLuongMon = useCallback(
-    (item: ChiTietHoaDon) => {
-      setChiTietSelected(item);
-      setVisibleModalSoLuongMon(true);
-    },
-    [setChiTietSelected],
-  );
+  const handleOpenModalSoLuongMon = useCallback((item: ChiTietHoaDon) => {
+    setChiTietSelected(item);
+    setVisibleModalSoLuongMon(true);
+  }, []);
 
   const nhanVienThanhToan = nhanviens.find(
     item => item._id === hoaDon.id_nhanVien,

@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     paddingVertical: 12,
+    backgroundColor: 'white',
   },
   indicator: {
     width: '100%',

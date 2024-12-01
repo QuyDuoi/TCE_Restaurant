@@ -20,9 +20,10 @@ interface Props {
     tenMon: string,
     giaMon: number,
   ) => void;
+  onChange?: (val: boolean) => void;
 }
 const ItemThemMon = React.memo((props: Props) => {
-  const {monAn, intialSoLuong, onQuantityChange} = props;
+  const {monAn, intialSoLuong, onQuantityChange, onChange} = props;
 
   const [soLuong, setSoLuong] = useState<number>(intialSoLuong);
 
@@ -111,7 +112,12 @@ const ItemThemMon = React.memo((props: Props) => {
                 marginRight: 8,
               }}>
               <RowComponent styles={{alignItems: 'center'}}>
-                <TouchableOpacity style={{padding: 5}} onPress={handleMinus}>
+                <TouchableOpacity
+                  style={{padding: 5}}
+                  onPress={() => {
+                    onChange?.(true);
+                    handleMinus();
+                  }}>
                   <Icon name="minus" size={14} color={colors.text2} />
                 </TouchableOpacity>
                 <SpaceComponent width={10} />
@@ -121,7 +127,12 @@ const ItemThemMon = React.memo((props: Props) => {
                   size={16}
                 />
                 <SpaceComponent width={10} />
-                <TouchableOpacity style={{padding: 5}} onPress={handlePlus}>
+                <TouchableOpacity
+                  style={{padding: 5}}
+                  onPress={() => {
+                    onChange?.(true);
+                    handlePlus();
+                  }}>
                   <Icon name="plus" size={14} color={colors.text2} />
                 </TouchableOpacity>
               </RowComponent>

@@ -28,6 +28,8 @@ import ModalSoLuongBMD from './ModalSoLuongBMD';
 import ItemChiTietHoaDonBMD from './ItemChiTietHoaDonBMD';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {VirtualizedList} from 'react-native';
+import {SwipeListView} from 'react-native-swipe-list-view';
+import LoadingModal from 'react-native-loading-modal';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -46,6 +48,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
   const [onPaid, setOnPaid] = useState(false);
   const [discount, setDiscount] = useState<number | null>(null);
   const [isPercent, setIsPercent] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const [totalBill, setTotalBill] = useState(0);
   const [totalFinalBill, setTotalFinalBill] = useState(0);
@@ -143,6 +146,27 @@ const ChiTietHoaDonBMD = (props: Props) => {
     [setChiTietSelected],
   );
 
+  const handleDeleteItemChiTiet = useCallback(
+    (itemSelected: any) => {
+      const updatedChiTietHoaDons = chiTietHoaDonList.filter(
+        item => item.id_monAn !== itemSelected.id_monAn,
+      );
+      onUpdateChiTiets?.(
+        updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
+      );
+      setChiTietHoaDonList(
+        updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
+      );
+      onChangeChiTiets?.(true);
+      setTimeout(() => {
+        onChangeChiTiets?.(false);
+      }, 500);
+    },
+    [chiTietHoaDonList],
+  );
+
+  //console.log(chiTietHoaDonList);
+
   // const nhanVienThanhToan = nhanviens.find(
   //   item => item._id === hoaDon?.id_nhanVien,
   // );
@@ -165,6 +189,21 @@ const ChiTietHoaDonBMD = (props: Props) => {
     );
   };
 
+  const renderHiddenItem = ({item}: {item: any}) => {
+    return (
+      <View style={hoaStyles.hiddenDeleteView}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={hoaStyles.buttonDelete}
+          onPress={() => {
+            handleDeleteItemChiTiet(item);
+          }}>
+          <Icon name="trash" size={20} color={colors.white} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <>
       <View
@@ -177,10 +216,13 @@ const ChiTietHoaDonBMD = (props: Props) => {
         <SpaceComponent height={15} />
         <TouchableOpacity
           onPress={() => {
+            //reset chi tiet
+            setIsLoadingModal(true);
             onUpdateChiTiets?.([]);
             onChangeChiTiets?.(true);
             setTimeout(() => {
               onChangeChiTiets?.(false);
+              setIsLoadingModal(false);
             }, 500);
             setChiTietHoaDonList([]);
             onUpdateChiTiets?.([]);
@@ -356,11 +398,18 @@ const ChiTietHoaDonBMD = (props: Props) => {
                         : 'transparent',
                   }}>
                   {chiTietHoaDonList.length > 0 ? (
-                    <FlatList
+                    <SwipeListView
                       data={chiTietHoaDonList}
                       renderItem={renderItem}
                       nestedScrollEnabled={true}
                       keyExtractor={(item, index) => index.toString()}
+                      renderHiddenItem={renderHiddenItem}
+                      disableRightSwipe={true}
+                      rightOpenValue={-75}
+                      stopRightSwipe={-105}
+                      previewRowKey={'0'}
+                      previewOpenValue={-40}
+                      previewOpenDelay={2000}
                     />
                   ) : (
                     <View style={{flex: 1, alignItems: 'center'}}>
@@ -512,6 +561,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
         item={chiTietSelected}
         updateItem={updateChiTiets}
       />
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 };

@@ -14,6 +14,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
+  updateChiTietHoaDonThunk,
 } from '../../../store/Slices/ChiTietHoaDonSlice';
 import ItemChiTietHoaDon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemChiTietHoaDon';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -35,6 +36,9 @@ import ModalSoLuongMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalSo
 import ItemCTHDnvpv from './ItemCTHDnvpv';
 import {random} from 'lodash';
 import UnsavedChangesModal from '../../../customcomponent/modalSave';
+import {SwipeListView} from 'react-native-swipe-list-view';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import LoadingModal from 'react-native-loading-modal';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -45,14 +49,11 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
   //console.log(hoaDon._id);
+  //console.log(tenKhuVuc);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
-
-  //console.log(chiTietHoaDons[0]._id);
-
-  //console.log('chi tiet hoa don', chiTietHoaDons.length);
 
   const navigation = useNavigation<any>();
 
@@ -62,7 +63,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);
   const [visibleModalSoLuongMon, setVisibleModalSoLuongMon] = useState(false);
-
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [discount, setDiscount] = useState(
     hoaDon.tienGiamGia ? hoaDon.tienGiamGia : null,
   );
@@ -151,6 +152,34 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     [setChiTietSelected],
   );
 
+  const handleDeleteChiTietHoaDon = async (item: ChiTietHoaDon) => {
+    setIsLoadingModal(true);
+    const data = {
+      soLuongMon: 0,
+      giaTien: 0,
+    };
+    const result = await dispatch(
+      updateChiTietHoaDonThunk({
+        id: item._id as any,
+        formData: data as any,
+      }) as any,
+    );
+    if (result.type.endsWith('fulfilled')) {
+      setIsLoadingModal(false);
+      const resultFetch = await dispatch(
+        fetchChiTietHoaDon(hoaDon._id as any) as any,
+      );
+      setIsLoadingModal(true);
+      if (resultFetch.type.endsWith('fulfilled')) {
+        setTimeout(() => {
+          setIsLoadingModal(false);
+        }, 1000);
+      }
+    } else {
+      console.log(result.payload);
+    }
+  };
+
   const nhanVienThanhToan = nhanviens.find(
     item => item._id === hoaDon.id_nhanVien,
   );
@@ -170,6 +199,21 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             key={item._id}
           />
         ) : null}
+      </View>
+    );
+  };
+
+  const renderHiddenItemChiTietHoaDon = ({item}: {item: ChiTietHoaDon}) => {
+    return (
+      <View style={hoaStyles.hiddenDeleteView}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={hoaStyles.buttonDelete}
+          onPress={() => {
+            handleDeleteChiTietHoaDon(item);
+          }}>
+          <Icon name="trash" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -361,10 +405,18 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                       chiTietHoaDons.length > 0 ? colors.white : 'transparent',
                   }}>
                   {chiTietHoaDons.length > 0 ? (
-                    <FlatList
+                    <SwipeListView
                       data={chiTietHoaDons}
                       renderItem={renderItem}
                       nestedScrollEnabled={true}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderHiddenItem={renderHiddenItemChiTietHoaDon}
+                      disableRightSwipe={true}
+                      rightOpenValue={-75}
+                      stopRightSwipe={-105}
+                      previewRowKey={'0'}
+                      previewOpenValue={-40}
+                      previewOpenDelay={2000}
                     />
                   ) : (
                     <View style={{flex: 1, alignItems: 'center'}}>
@@ -507,6 +559,11 @@ const ChiTietHoaDonNVPV = (props: Props) => {
         }}
         item={chiTietSelected}
         hoaDon={hoaDon}
+      />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        darkMode={false}
+        color={colors.orange}
       />
     </>
   );
