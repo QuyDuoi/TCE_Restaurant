@@ -1,5 +1,5 @@
-export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-//export const ipAddress = `http://192.168.1.7:3000/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.3:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -11,11 +11,11 @@ import HoaDon from './models/HoaDonModel';
 import ChiTietHoaDon from './models/ChiTietHoaDonModel';
 import Ban from './models/BanModel';
 import KhuVuc from './models/KhuVucModel';
-import CaLam from './models/CaLamModel';
 import {NhanVienSlice} from '../store/Slices/NhanVienSlice';
 import {AppDispatch} from '../store/store';
 import {hoaDonSlice} from '../store/Slices/HoaDonSlice';
 import {chiTietHoaDonSlice} from '../store/Slices/ChiTietHoaDonSlice';
+import { CaLam } from '../store/Slices/CaLamSlice';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -172,12 +172,12 @@ export const getListHoaDonTheoNhaHang = async (
 };
 
 // Thêm mới HoaDon
-export const addHoaDon = async (formData: HoaDon): Promise<HoaDon> => {
+export const addHoaDon = async (hoaDon: HoaDon): Promise<HoaDon> => {
   try {
     const response = await fetch(`${ipAddress}themHoaDonMoi`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
+      body: JSON.stringify(hoaDon),
     });
     if (!response.ok) {
       throw new Error('Lỗi khi thêm mới Hóa Đơn');
@@ -473,6 +473,25 @@ export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
   }
 };
 
+export const moCaLamViec = async (caLam: CaLam): Promise<CaLam> => {
+  try {
+    const response = await fetch(`${ipAddress}moCaLamViec`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(caLam),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Lỗi khi tạo ca làm!');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi khi mở ca làm mới: ', error);
+    throw error;
+  }
+}
+
 export const themNhanVien = async (formData: FormData) => {
   try {
     const response = await fetch(`${ipAddress}themNhanVien`, {
@@ -571,10 +590,10 @@ export const loginNhanVien = async (idToken: string) => {
   }
 };
 
-export const getListCaLam = async (id_nhanVien: string): Promise<CaLam[]> => {
+export const getListCaLam = async (id_nhaHang: string): Promise<CaLam[]> => {
   try {
     const response = await fetch(
-      `${ipAddress}layDsCaLamViec?id_nhanVien=${id_nhanVien}`,
+      `${ipAddress}layDsCaLamViec?id_nhaHang=${id_nhaHang}`,
     );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Ca Lam');
@@ -586,6 +605,7 @@ export const getListCaLam = async (id_nhanVien: string): Promise<CaLam[]> => {
     return [];
   }
 };
+
 export const getListChiTietHoaDonTheoCaLam = async (id_nhaHang: string) => {
   try {
     const response = await fetch(
@@ -595,14 +615,18 @@ export const getListChiTietHoaDonTheoCaLam = async (id_nhaHang: string) => {
         headers: {'Content-Type': 'application/json'},
       },
     );
+
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Chi tiết hóa đơn theo ca làm');
+      // Kiểm tra xem backend trả về lỗi có chi tiết hay không
+      const errorResponse = await response.json().catch(() => null);
+      const errorMessage = errorResponse?.msg || 'Lỗi server khi xử lý yêu cầu';
+      throw new Error(errorMessage);
     }
+
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.log('Lỗi khi lấy danh sách: ', error);
-    return [];
+  } catch (error: any) {
+    throw new Error(error.message || 'Không thể kết nối tới server');
   }
 };
 

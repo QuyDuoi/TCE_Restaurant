@@ -7,6 +7,7 @@ import {
   thanhToanHoaDon,
 } from '../../services/api';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
+import { fetchKhuVucVaBan } from '../Thunks/khuVucThunks';
 
 // Interface định nghĩa cho HoaDon
 export interface HoaDon {
@@ -22,6 +23,7 @@ export interface HoaDon {
   thoiGianRa?: Date;
   tongTien?: number;
   id_caLamViec?: string;
+  id_nhaHang?: string;
 }
 
 export interface HoaDonState {
@@ -67,11 +69,11 @@ export const fetchHoaDonTheoNhaHang = createAsyncThunk(
 // Async thunk để thêm mới HoaDon
 export const addNewHoaDon = createAsyncThunk(
   'hoaDon/addHoaDon',
-  async (formData: HoaDon, thunkAPI) => {
+  async (hoaDon: HoaDon, thunkAPI) => {
     try {
-      const data = await addHoaDon(formData);
+      const data = await addHoaDon(hoaDon);
       //console.log(data);
-
+      thunkAPI.dispatch(fetchKhuVucVaBan(hoaDon.id_nhaHang as any));
       return data;
     } catch (error: any) {
       console.log('Lỗi thêm mới:', error);

@@ -8,15 +8,12 @@ import {
 } from 'react-native';
 import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
-import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import DatBanModal from './DatBanModal'; // Import modal đặt bàn
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
-import {Ban, updateBanThunk} from '../../../store/Slices/BanSlice';
-import {KhuVuc} from '../../../store/Slices/KhuVucSlice';
+import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
 import TableBookingDetail from '../../../customcomponent/ItemChiTietDatBan';
-import BookingFlow from '../../../customcomponent/BookingFlow';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import ModalTaoHoaDon from '../taoHoaDon/ModalTaoHoaDon';
@@ -25,7 +22,6 @@ import {HoaDon} from '../../../store/Slices/HoaDonSlice';
 import {getListHoaDonTheoNhaHang} from '../../../services/api';
 import UnsavedChangesModal from '../../../customcomponent/modalSave';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {updateMonAn} from '../../QuanLyThucDon/CallApiThucDon';
 
 interface Props {
   isVisible: boolean;
@@ -50,15 +46,21 @@ const ModalChucNang = (props: Props) => {
 
   useEffect(() => {
     const fetchHoaDon = async () => {
-      const hoaDons = await getListHoaDonTheoNhaHang(idNhaHang);
-      setHoaDonsChuaThanhToan(hoaDons);
+      try {
+        const hoaDons = await getListHoaDonTheoNhaHang(idNhaHang);
+        setHoaDonsChuaThanhToan(Array.isArray(hoaDons) ? hoaDons : []);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách hóa đơn:', error);
+        setHoaDonsChuaThanhToan([]); // Đảm bảo state không bị thay đổi vô hạn
+      }
     };
+  
     fetchHoaDon();
-  }, [bans]);
+  }, [])
 
-  const hoaDonSelected = hoaDonsChuaThanhToan?.find(
-    (hoaDon: HoaDon) => hoaDon.id_ban === selectedBan?._id,
-  );
+  const hoaDonSelected = Array.isArray(hoaDonsChuaThanhToan)
+    ? hoaDonsChuaThanhToan.find(hoaDon => hoaDon.id_ban === selectedBan?._id)
+    : undefined;
 
   const dispatch = useDispatch();
 
@@ -69,7 +71,7 @@ const ModalChucNang = (props: Props) => {
     };
 
     const result = await dispatch(
-      updateBanThunk({id: selectedBan._id, formData: data}) as any,
+      capNhatBanThunk({id: selectedBan._id, ban: data}) as any,
     );
 
     if (result.type.endsWith('fulfilled')) {

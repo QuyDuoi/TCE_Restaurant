@@ -3,6 +3,9 @@ import {
   ScrollView,
   FlatList,
   RefreshControl,
+  TouchableOpacity,
+  Text,
+  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -12,12 +15,15 @@ import ItemCaLam from './ItemCaLam';
 import SpaceComponent from '../components/SpaceComponent';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
-import {CaLam, fetchCaLam} from '../../../../store/Slices/CaLamSlice';
-import {
-  NhanVienSlice,
-} from '../../../../store/Slices/NhanVienSlice';
+import {AppDispatch, RootState} from '../../../../store/store';
+import {CaLam, fetchCaLam, moCaLam} from '../../../../store/Slices/CaLamSlice';
+import {NhanVienSlice} from '../../../../store/Slices/NhanVienSlice';
 import ModalDate from './ModalDate';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface Props {
   setFilterHandler: any;
@@ -28,16 +34,26 @@ const QuanLyCaLam = (props: Props) => {
   console.log('render quan ly ca lam');
 
   const navigation = useNavigation<any>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
+  const [isInputVisible, setIsInputVisible] = useState(false);
+  const opacity = useSharedValue(0); // Giá trị dùng để điều chỉnh độ trong suốt
+  const translateX = useSharedValue(300); // Giá trị dùng để điều chỉnh vị trí X (bắt đầu từ ngoài màn hình)
 
   const [caLamFilter, setCaLamFilter] = useState<
     (CaLam & {nv: NhanVienSlice})[]
   >([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [refreshing, setRefreshing] = useState(false);
+  const [trangThaiCa, setTrangThaiCa] = useState(true);
+  const [soDuBanDau, setSoDuBanDau] = useState('');
+  const id_nhaHang = '66fab50fa28ec489c7137537';
+  const id_nhanVien = '67060ef797bc70ba1d9222ab';
+
+  const caLams = useSelector((state: RootState) => state.calam.caLams);
+  const checkCaLam = caLams.filter(caLam => !caLam.ketThuc);
 
   //thuc thi nut loc ben drawer
   useEffect(() => {
@@ -45,15 +61,50 @@ const QuanLyCaLam = (props: Props) => {
   }, [setFilterHandler]);
 
   useEffect(() => {
-    dispatch(fetchCaLam() as any);
+    dispatch(fetchCaLam(id_nhaHang) as any);
+    if (checkCaLam) {
+      setTrangThaiCa(true);
+    } else {
+      setTrangThaiCa(false);
+    }
   }, [dispatch]);
-
-  const caLams = useSelector((state: RootState) => state.calam.caLams);
 
   const sortedCaLam = (caLams: CaLam[]) => {
     return [...caLams].sort((a, b) => {
       return new Date(b.batDau).getTime() - new Date(a.batDau).getTime();
     });
+  };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: withTiming(opacity.value, {duration: 500}), // Hiệu ứng opacity
+    transform: [
+      {
+        translateX: withTiming(translateX.value, {duration: 500}), // Hiệu ứng di chuyển ngang
+      },
+    ],
+  }));
+
+  const handleMoCa = () => {
+    setIsInputVisible(true);
+    opacity.value = 1; // Hiện view
+    translateX.value = 0; // Di chuyển về vị trí trung tâm
+  };
+
+  const handleXacNhan = () => {
+    opacity.value = 0; // Ẩn view
+    translateX.value = 300; // Di chuyển trở lại ngoài màn hình bên phải
+    setTimeout(() => setIsInputVisible(false), 500); // Sau 500ms (bằng với thời gian hiệu ứng), ẩn hoàn toàn View
+    const newCaLam = {
+      soDuBanDau,
+      id_nhanVien: id_nhanVien,
+      id_nhaHang: id_nhaHang,
+    };
+
+    try {
+      dispatch(moCaLam(newCaLam)).unwrap(); // Gửi action moCaLam
+    } catch (error) {
+      console.error('Lỗi khi mở ca làm:', error);
+    }
   };
 
   useEffect(() => {
@@ -74,9 +125,9 @@ const QuanLyCaLam = (props: Props) => {
   const renderItem = ({item}: {item: CaLam & {nv: NhanVienSlice}}) => {
     return (
       <ItemCaLam
-        batDau={item.batDau.toLocaleString('vi-VN')}
+        batDau={item.batDau?.toLocaleString('vi-VN')}
         ketThuc={item.ketThuc?.toLocaleString('vi-VN')}
-        nhanVienMoCa={item.id_nhanVien.hoTen}
+        nhanVienMoCa={item.id_nhanVien?.hoTen}
         onPress={() => {
           navigation.navigate('ChiTietCaLam', {caLam: item});
         }}
@@ -86,11 +137,14 @@ const QuanLyCaLam = (props: Props) => {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setDate(null);
-      dispatch(fetchCaLam() as any);
+    setDate(null);
+    try {
+      dispatch(fetchCaLam(id_nhaHang) as any);
+    } catch (error) {
+      console.log(error);
+    } finally {
       setRefreshing(false);
-    }, 2000);
+    }
   };
 
   const closeFilterDialog = () => {
@@ -100,9 +154,34 @@ const QuanLyCaLam = (props: Props) => {
   return (
     <>
       <View style={{backgroundColor: colors.gray}}>
-        <View style={[hoaStyles.container, {marginBottom: 20}]}>
-          <SpaceComponent height={10} />
-          <View style={{flex: 1}}>
+        <View style={[hoaStyles.container]}>
+          {!trangThaiCa && (
+            <View style={hoaStyles.viewMoCa}>
+              <TouchableOpacity
+                style={hoaStyles.buttonMoCa}
+                onPress={handleMoCa}>
+                <Text style={hoaStyles.textMoCa}>Mở ca mới</Text>
+              </TouchableOpacity>
+
+              {isInputVisible && (
+                <Animated.View style={[hoaStyles.viewInput, animatedStyle]}>
+                  <TextInput
+                    onChangeText={setSoDuBanDau}
+                    keyboardType="numeric"
+                    placeholderTextColor="black"
+                    placeholder="Nhập số dư ban đầu"
+                    style={hoaStyles.inputMoCa}
+                  />
+                  <TouchableOpacity
+                    style={hoaStyles.buttonXacNhan}
+                    onPress={handleXacNhan}>
+                    <Text style={hoaStyles.textXacNhan}>Xác nhận</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              )}
+            </View>
+          )}
+          <View style={{flex: 1, paddingHorizontal: 10, marginTop: 10}}>
             {date && caLamFilter.length > 0 ? (
               <FlatList
                 data={sortedCaLam(caLamFilter) as any}

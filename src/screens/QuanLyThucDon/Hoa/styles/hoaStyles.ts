@@ -73,4 +73,45 @@ export const hoaStyles = StyleSheet.create({
     marginBottom: 5,
     borderColor: colors.desc2,
   },
+  buttonMoCa: {
+    backgroundColor: '#FF602B',
+    width: '25%',
+    padding: 12,
+    marginHorizontal: 10,
+    borderRadius: 10,
+  },
+  textMoCa: {textAlign: 'center', color: '#fff', fontSize: 15, fontWeight: 'bold'},
+  viewMoCa: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 5
+  },
+  viewInput: {
+    width: '68%',
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 15,
+    height: 50,
+    borderWidth: 0.5,
+    elevation: 10
+  },
+  inputMoCa: {
+    width: '70%',
+    paddingLeft: 10,
+    color: 'black'
+  },
+  buttonXacNhan: {
+    borderBottomRightRadius: 15,
+    borderTopRightRadius: 15,
+    backgroundColor: '#F6BE45',
+    alignItems: 'center',
+    width: '30%',
+    height: '100%',
+    justifyContent: 'center'
+  },
+  textXacNhan:{
+    color: '#fff', fontSize: 15, fontWeight: 'bold'
+  }
 });

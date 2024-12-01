@@ -18,7 +18,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
-import {fetchBans, updateBanThunk} from '../../../store/Slices/BanSlice';
 import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
 
 interface Props {
@@ -38,21 +37,21 @@ const ModalTaoHoaDon = (props: Props) => {
 
   useEffect(() => {
     if (caLams.length === 0) {
-      dispatch(fetchCaLam() as any);
+      dispatch(fetchCaLam("66fab50fa28ec489c7137537") as any);
     }
   }, [caLams]);
 
   const caLamHienTai = caLams.find(
     calam => calam.ketThuc === null || calam.ketThuc === undefined,
   );
-  //console.log(selectedBan);
+  console.log(selectedBan);
 
   const handleTaoHoaDon = async () => {
     const data = {
       id_ban: selectedBan?._id,
       id_nhanVien: '671a4d2d9d3c2ab4130e3c6e',
       thoiGianVao: new Date(),
-      id_caLamViec: caLamHienTai?._id,
+      id_nhaHang: "66fab50fa28ec489c7137537",
     };
 
     const result = await dispatch(addNewHoaDon(data as any) as any);
@@ -65,19 +64,6 @@ const ModalTaoHoaDon = (props: Props) => {
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
         tenBan: selectedBan?.tenBan,
       });
-      //tam thoi
-      dispatch(
-        updateBanThunk({
-          id: selectedBan?._id as string,
-          formData: {
-            tenBan: selectedBan?.tenBan,
-            sucChua: selectedBan?.sucChua,
-            ghiChu: selectedBan?.ghiChu,
-            id_khuVuc: selectedBan?.id_khuVuc._id,
-            trangThai: 'Đang sử dụng',
-          },
-        }) as any,
-      );
       onCloseParent();
       onClose();
     } else {

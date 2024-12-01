@@ -10,7 +10,7 @@ export interface Ban {
   sucChua: number;
   trangThai: string;
   ghiChu: string;
-  maQRCode: string;
+  maQRCode?: string;
   id_khuVuc: KhuVuc;
 }
 

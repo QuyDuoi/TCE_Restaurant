@@ -3,22 +3,23 @@ import {
   getListCaLam,
   getListChiTietHoaDonTheoCaLam,
   getListNhanVien,
+  moCaLamViec
 } from '../../services/api';
 import {NhanVienSlice} from './NhanVienSlice';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
 
 export interface CaLam {
   _id?: string;
-  batDau: Date;
+  batDau?: Date;
   ketThuc?: Date;
-  soDuBanDau: number;
-  soDuHienTai: number;
-  tongTienMat: number;
-  tongChuyenKhoan: number;
-  tongDoanhThu: number;
-  tongThu: number;
-  tongChi: number;
-  id_nhanVien: NhanVienSlice;
+  soDuBanDau: string;
+  soDuHienTai?: number;
+  tongTienMat?: number;
+  tongChuyenKhoan?: number;
+  tongDoanhThu?: number;
+  tongThu?: number;
+  tongChi?: number;
+  id_nhanVien: string;
   id_nhaHang: string;
 }
 
@@ -36,24 +37,21 @@ const initialState: CaLamState = {
   chiTietHoaDons: [],
 };
 
-export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async () => {
+export const fetchCaLam = createAsyncThunk('caLam/fetchCaLam', async (id_nhaHang: string) => {
   //const caLamData = await getListCalam(id_nhanVien);
-  const nhanViens = await getListNhanVien();
-  const allCaLamResponse = await Promise.all(
-    nhanViens.map(nv => {
-      return getListCaLam(nv._id as string);
-    }),
-  );
-  const allCaLams = allCaLamResponse.flatMap((response: any, index: number) => {
-    return response.map((caLam: CaLam) => {
-      return {
-        ...caLam,
-        id_nhanVien: nhanViens[index],
-      };
-    });
-  });
-  return allCaLams;
+  const caLams = await getListCaLam(id_nhaHang);
+  return caLams;
 });
+
+export const moCaLam = createAsyncThunk('caLam/moCaLam', async (caLam: CaLam, thunkAPI) => {
+  try {
+    const data = await moCaLamViec(caLam);
+    return data;
+  } catch (error) {
+    console.log('Lỗi thêm mới:', error);
+      return thunkAPI.rejectWithValue(error.message || 'Lỗi khi mở ca làm');
+  }
+})
 
 export const fetchChiTietHoaDonTheoCaLam = createAsyncThunk('caLam/fetchChiTietHoaDon', async (id_caLamViec: string, thunkAPI) => {
   try {
@@ -101,7 +99,18 @@ const caLamSlice = createSlice({
       .addCase(fetchChiTietHoaDonTheoCaLam.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || null;
-      });
+      })
+      .addCase(
+        moCaLam.fulfilled,
+        (state, action: PayloadAction<CaLam>) => {
+          state.caLams.unshift(action.payload);
+          state.status = 'succeeded';
+        },
+      )
+      .addCase(moCaLam.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Lỗi không xác định!';
+      })
   },
 });
 

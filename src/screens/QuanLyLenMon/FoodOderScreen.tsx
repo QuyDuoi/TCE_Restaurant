@@ -6,6 +6,7 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import {getListChiTietHoaDonTheoCaLam} from '../../services/api';
 import ItemChiTietHoaDon from './ItemChiTietHoaDon';
@@ -19,26 +20,26 @@ const FoodOrderScreen: React.FC = () => {
   const [filter, setFilter] = useState<string>('Chưa hoàn thành'); // Bộ lọc hiện tại
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
   const [tenMons, setTenMons] = useState<string[]>([]); // Danh sách tên món
-  console.log("render lai");
+  const [error, setError] = useState(''); // Trạng thái lỗi
+
+  const fetchChiTietHoaDon = async () => {
+    setIsLoading(true);
+    setError(''); // Xóa lỗi cũ khi bắt đầu fetch
+    try {
+      const id_nhaHang = '66fab50fa28ec489c7137537';
+      const chiTietHoaDons = await getListChiTietHoaDonTheoCaLam(id_nhaHang);
+      setDsChiTiet(chiTietHoaDons);
+
+      const uniqueTenMons = Object.keys(chiTietHoaDons?.theoTenMon || {});
+      setTenMons(uniqueTenMons);
+    } catch (error: any) {
+      setError(error.message || 'Không thể kết nối tới server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchChiTietHoaDon = async () => {
-      setIsLoading(true);
-      try {
-        const id_nhaHang = '66fab50fa28ec489c7137537';
-        const chiTietHoaDons = await getListChiTietHoaDonTheoCaLam(id_nhaHang);
-        setDsChiTiet(chiTietHoaDons);
-
-        // Lấy danh sách tên món (unique)
-        const uniqueTenMons = Object.keys(chiTietHoaDons?.theoTenMon || {});
-        setTenMons(uniqueTenMons);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách chi tiết hóa đơn:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchChiTietHoaDon();
   }, []);
 
@@ -53,7 +54,7 @@ const FoodOrderScreen: React.FC = () => {
       return [...dsChiTiet.hoanThanh, ...dsChiTiet.chuaHoanThanh]; // Return all items
     } else {
       // Filter by dish name
-      return dsChiTiet.theoTenMon[filter] || []; 
+      return dsChiTiet.theoTenMon[filter] || [];
     }
   }, [filter, dsChiTiet]);
 
@@ -84,43 +85,62 @@ const FoodOrderScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Danh sách cuộn ngang cho các bộ lọc */}
-      <View>
-        <FlatList
-          data={['Chưa hoàn thành', 'Hoàn thành', ...tenMons]}
-          horizontal
-          keyExtractor={(item, index) => `${item}-${index}`}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterContainer}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filter === item && styles.filterButtonActive,
-              ]}
-              onPress={() => setFilter(item)}>
-              <Text
-                style={[
-                  styles.filterText,
-                  filter === item && styles.filterTextActive,
-                ]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
+      {error ? (
+        // View lỗi nếu `error` không rỗng
+        <View style={styles.errorContainer}>
+          <Image style={styles.image} source={require('../../image/waitingOrder.png')}/>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => {
+              setError('');
+              setIsLoading(true);
+              // Gọi lại hàm fetch
+              fetchChiTietHoaDon();
+            }}>
+            <Text style={styles.retryText}>Thử lại</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        // Hiển thị danh sách item nếu không có lỗi
+        <>
+          <View>
+            <FlatList
+              data={['Chưa hoàn thành', 'Hoàn thành', ...tenMons]}
+              horizontal
+              keyExtractor={(item, index) => `${item}-${index}`}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterContainer}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={[
+                    styles.filterButton,
+                    filter === item && styles.filterButtonActive,
+                  ]}
+                  onPress={() => setFilter(item)}>
+                  <Text
+                    style={[
+                      styles.filterText,
+                      filter === item && styles.filterTextActive,
+                    ]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
 
-      {/* Danh sách Chi Tiết Hóa Đơn */}
-      <FlatList
-        data={filteredChiTiet}
-        keyExtractor={item => item._id!}
-        renderItem={renderItem}
-        extraData={filter}
-        contentContainerStyle={{paddingBottom: 20}}
-        initialNumToRender={10} // Tăng tốc render
-        windowSize={5} // Hiển thị trước và sau 5 item
-      />
+          <FlatList
+            data={filteredChiTiet}
+            keyExtractor={item => item._id!}
+            renderItem={renderItem}
+            extraData={filter}
+            contentContainerStyle={{paddingBottom: 20}}
+            initialNumToRender={10} // Tăng tốc render
+            windowSize={5} // Hiển thị trước và sau 5 item
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -130,6 +150,27 @@ export default FoodOrderScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 18,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: colors.orange,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  retryText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   filterContainer: {
     paddingHorizontal: 10,
@@ -155,4 +196,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  image: {
+    width: 200,
+    height: 200,
+    marginTop: 20
+  }
 });
