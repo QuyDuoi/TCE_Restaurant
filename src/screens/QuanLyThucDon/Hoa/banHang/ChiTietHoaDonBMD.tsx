@@ -41,11 +41,13 @@ const ChiTietHoaDonBMD = (props: Props) => {
   const {chiTietHoaDons, onUpdateChiTiets, onChangeChiTiets} =
     props.route.params;
 
+  //console.log('chiTietHoaDons', chiTietHoaDons);
+
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalSoLuongMonBMD, setVisibleModalSoLuongMonBMD] =
     useState(false);
   const [visibleModalPTTTBMD, setVisibleModalPTTTBMD] = useState(false);
-  const [onPaid, setOnPaid] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
   const [discount, setDiscount] = useState<number | null>(null);
   const [isPercent, setIsPercent] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
@@ -57,6 +59,10 @@ const ChiTietHoaDonBMD = (props: Props) => {
   const [chiTietSelected, setChiTietSelected] = useState<ChiTietHoaDon | null>(
     null,
   );
+  //TAM THOI
+  const [typeModalSoLuongMon, setTypeModalSoLuongMon] = useState<
+    'edit' | 'onlySL' | null
+  >(null);
 
   const navigation = useNavigation<any>();
 
@@ -95,16 +101,38 @@ const ChiTietHoaDonBMD = (props: Props) => {
   }, [totalFinalBillCal, isPercent, discount]);
 
   useEffect(() => {
-    if (onPaid) {
+    if (isPaid) {
       onUpdateChiTiets?.([]);
       onChangeChiTiets?.(true);
       setTimeout(() => {
         onChangeChiTiets?.(false);
       }, 500);
     }
-  }, [onPaid]);
+  }, [isPaid]);
 
-  //modal so luong mon khi thay doi
+  //DE TEN MON SE NGAN GON HON
+  const handleUpdateMonAnTuChon = useCallback(
+    (updatedItem: any) => {
+      const updatedChiTietHoaDons = chiTietHoaDonList.map((item: any) =>
+        item.tenMon === updatedItem.tenMon ? updatedItem : item,
+      );
+
+      onUpdateChiTiets?.(updatedItem);
+      onChangeChiTiets?.(true);
+      setTimeout(() => {
+        onChangeChiTiets?.(false);
+      }, 500);
+      setChiTietHoaDonList(
+        updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
+      );
+      onUpdateChiTiets?.(
+        updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
+      );
+    },
+    [chiTietHoaDonList],
+  );
+
+  //MODAL SO LUONG MON KHI THAY DOI
   const updateChiTiets = useCallback(
     (updatedItem: any) => {
       const updatedChiTietHoaDons = chiTietHoaDonList.map((item: any) =>
@@ -145,9 +173,30 @@ const ChiTietHoaDonBMD = (props: Props) => {
     },
     [setChiTietSelected],
   );
+  //DE TEN MON SE NGAN GON HON
+  const handleDeleteMonAnTuChon = useCallback(
+    (itemSelected: any) => {
+      //DE ID_MONAN HOAC TEN MON
+      const updatedChiTietHoaDons = chiTietHoaDonList.filter(
+        item => item.tenMon !== itemSelected.tenMon,
+      );
+      onUpdateChiTiets?.(
+        updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
+      );
+      setChiTietHoaDonList(
+        updatedChiTietHoaDons.filter(item => item.soLuongMon > 0),
+      );
+      onChangeChiTiets?.(true);
+      setTimeout(() => {
+        onChangeChiTiets?.(false);
+      }, 500);
+    },
+    [chiTietHoaDonList],
+  );
 
   const handleDeleteItemChiTiet = useCallback(
     (itemSelected: any) => {
+      //DE ID_MONAN HOAC TEN MON
       const updatedChiTietHoaDons = chiTietHoaDonList.filter(
         item => item.id_monAn !== itemSelected.id_monAn,
       );
@@ -165,7 +214,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
     [chiTietHoaDonList],
   );
 
-  //console.log(chiTietHoaDonList);
+  console.log('chiTietHoaDonList', chiTietHoaDonList);
 
   // const nhanVienThanhToan = nhanviens.find(
   //   item => item._id === hoaDon?.id_nhanVien,
@@ -177,6 +226,19 @@ const ChiTietHoaDonBMD = (props: Props) => {
         {item.id_monAn ? (
           <ItemChiTietHoaDonBMD
             onLongPress={() => {
+              setTypeModalSoLuongMon('onlySL');
+              handleOpenModalSoLuongMonBMD(item);
+            }}
+            nameMonAn={item.tenMon}
+            soLuong={item.soLuongMon}
+            gia={item?.giaTien}
+            key={item._id}
+            id_monAn={item.id_monAn}
+          />
+        ) : (
+          <ItemChiTietHoaDonBMD
+            onLongPress={() => {
+              setTypeModalSoLuongMon('onlySL');
               handleOpenModalSoLuongMonBMD(item);
             }}
             nameMonAn={item.tenMon}
@@ -184,19 +246,33 @@ const ChiTietHoaDonBMD = (props: Props) => {
             gia={item?.giaTien}
             key={item._id}
           />
-        ) : null}
+        )}
       </View>
     );
   };
 
   const renderHiddenItem = ({item}: {item: any}) => {
     return (
-      <View style={hoaStyles.hiddenDeleteView}>
+      <View style={hoaStyles.hiddenOptionView}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={hoaStyles.buttonEdit}
+          onPress={() => {
+            //TAM THOI
+            setTypeModalSoLuongMon('edit');
+            item.id_monAn
+              ? handleOpenModalSoLuongMonBMD(item)
+              : handleOpenModalSoLuongMonBMD(item);
+          }}>
+          <Icon name="edit" size={20} color={colors.white} />
+        </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.5}
           style={hoaStyles.buttonDelete}
           onPress={() => {
-            handleDeleteItemChiTiet(item);
+            item.id_monAn
+              ? handleDeleteItemChiTiet(item)
+              : handleDeleteMonAnTuChon(item);
           }}>
           <Icon name="trash" size={20} color={colors.white} />
         </TouchableOpacity>
@@ -214,27 +290,29 @@ const ChiTietHoaDonBMD = (props: Props) => {
           },
         ]}>
         <SpaceComponent height={15} />
-        <TouchableOpacity
-          onPress={() => {
-            //reset chi tiet
-            setIsLoadingModal(true);
-            onUpdateChiTiets?.([]);
-            onChangeChiTiets?.(true);
-            setTimeout(() => {
-              onChangeChiTiets?.(false);
-              setIsLoadingModal(false);
-            }, 500);
-            setChiTietHoaDonList([]);
-            onUpdateChiTiets?.([]);
-          }}
-          style={{
-            position: 'absolute',
-            top: 25,
-            right: 25,
-            zIndex: 1,
-          }}>
-          <Icon name="refresh" size={20} color={colors.black} />
-        </TouchableOpacity>
+        {!isPaid && (
+          <TouchableOpacity
+            onPress={() => {
+              //reset chi tiet
+              setIsLoadingModal(true);
+              onUpdateChiTiets?.([]);
+              onChangeChiTiets?.(true);
+              setTimeout(() => {
+                onChangeChiTiets?.(false);
+                setIsLoadingModal(false);
+              }, 500);
+              setChiTietHoaDonList([]);
+              onUpdateChiTiets?.([]);
+            }}
+            style={{
+              position: 'absolute',
+              top: 25,
+              right: 25,
+              zIndex: 1,
+            }}>
+            <Icon name="refresh" size={20} color={colors.black} />
+          </TouchableOpacity>
+        )}
         <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}>
@@ -257,9 +335,9 @@ const ChiTietHoaDonBMD = (props: Props) => {
                     fontWeight="bold"
                   />
                   <TextComponent
-                    text={onPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                    text={isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
                     fontWeight={'500'}
-                    color={onPaid ? colors.status : colors.status2}
+                    color={isPaid ? colors.status : colors.status2}
                   />
                 </RowComponent>
               </SectionComponent>
@@ -280,6 +358,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
               <RowComponent justify="space-between">
                 <TextComponent text="Giảm giá: " styles={styles.text} />
                 <TouchableOpacity
+                  disabled={isPaid}
                   style={{
                     width: '40%',
                     alignItems: 'center',
@@ -405,8 +484,9 @@ const ChiTietHoaDonBMD = (props: Props) => {
                       keyExtractor={(item, index) => index.toString()}
                       renderHiddenItem={renderHiddenItem}
                       disableRightSwipe={true}
-                      rightOpenValue={-75}
-                      stopRightSwipe={-105}
+                      rightOpenValue={-110}
+                      stopRightSwipe={-120}
+                      disableLeftSwipe={isPaid ? true : false}
                       previewRowKey={'0'}
                       previewOpenValue={-40}
                       previewOpenDelay={2000}
@@ -438,7 +518,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
                 paddingHorizontal: 5,
               },
             ]}>
-            {onPaid ? (
+            {isPaid ? (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
                   <TextComponent text="NV thanh toán: " styles={styles.text} />
@@ -509,8 +589,8 @@ const ChiTietHoaDonBMD = (props: Props) => {
           </View>
           <RowComponent
             styles={{marginVertical: 8}}
-            justify={!onPaid ? 'space-between' : 'center'}>
-            {!onPaid && (
+            justify={!isPaid ? 'space-between' : 'center'}>
+            {!isPaid && (
               <ButtonComponent
                 title="Thanh toán"
                 onPress={handleOpenModalPTTTBMD}
@@ -551,15 +631,17 @@ const ChiTietHoaDonBMD = (props: Props) => {
         totalFinalBill={totalFinalBill}
         discount={discountCalculate()}
         chiTiets={chiTietHoaDonList}
-        onPaid={value => setOnPaid(value)}
+        onPaid={value => setIsPaid(value)}
       />
       <ModalSoLuongBMD
-        visible={visibleModalSoLuongMonBMD}
+        visible={isPaid ? false : visibleModalSoLuongMonBMD}
         onClose={() => {
           setVisibleModalSoLuongMonBMD(false);
         }}
         item={chiTietSelected}
         updateItem={updateChiTiets}
+        onUpdateMonAnTuChon={handleUpdateMonAnTuChon}
+        type={typeModalSoLuongMon ?? undefined}
       />
       <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>

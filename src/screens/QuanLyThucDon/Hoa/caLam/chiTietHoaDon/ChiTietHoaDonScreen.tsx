@@ -22,7 +22,7 @@ import ModalPTTT from './ModalPTTT';
 import ButtonComponent from '../../components/ButtonComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../../store/store';
-import {formatDate, formatMoney} from '../../utils/formatUtils';
+import {formatDate, formatMoney, formatTime} from '../../utils/formatUtils';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import ModalSoLuongMon from './ModalSoLuongMon';
 import {
@@ -48,7 +48,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
 
   console.log('render chi tiet hoa don');
 
-  console.log(type);
+  //console.log(type);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -104,24 +104,18 @@ const ChiTietHoaDonScreen = (props: Props) => {
   }, [isPercent, discount, totalBillCal]);
 
   useEffect(() => {
-    console.log('set total bill');
-
     if (hoaDon) {
       setTotalBill(totalBillCal);
     }
   }, [totalBillCal, chiTietHoaDons]);
 
   useEffect(() => {
-    console.log('set total final bill');
-
     setTotalFinalBill(totalFinalBillCal());
   }, [totalFinalBillCal, isPercent, discount]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('fetch chi tiet hoa don');
-
     if (hoaDon) {
       dispatch(fetchChiTietHoaDon(hoaDon._id) as any);
     }
@@ -168,13 +162,13 @@ const ChiTietHoaDonScreen = (props: Props) => {
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
     return (
       <View>
-        {item.id_monAn ? (
+        {item.monAn ? (
           <ItemChiTietHoaDon
             onLongPress={() => {
               handleOpenModalSoLuongMon(item);
               //console.log('long press', item._id);
             }}
-            nameMonAn={item.id_monAn.tenMon}
+            nameMonAn={item.monAn.tenMon}
             soLuong={item.soLuongMon}
             gia={item.giaTien}
             key={item._id}
@@ -257,7 +251,15 @@ const ChiTietHoaDonScreen = (props: Props) => {
                       styles={[styles.text, {}]}
                     />
                     <TextComponent
-                      text={isPaid ? '18:20 | 20/10/2024' : 'Chưa Thanh Toán'}
+                      text={
+                        isPaid
+                          ? `${
+                              formatTime(new Date(hoaDon.thoiGianRa)) +
+                              ' | ' +
+                              formatDate(new Date(hoaDon.thoiGianRa))
+                            }`
+                          : 'Chưa Thanh Toán'
+                      }
                       styles={[
                         styles.text2,
                         {color: !isPaid ? colors.red : undefined},
@@ -300,7 +302,11 @@ const ChiTietHoaDonScreen = (props: Props) => {
                         color={colors.desc}
                       />
                       <TextComponent
-                        text={'18:20 | 20/10/2024'}
+                        text={`${
+                          formatTime(new Date(hoaDon.thoiGianRa)) +
+                          ' | ' +
+                          formatDate(new Date(hoaDon.thoiGianRa))
+                        }`}
                         color={colors.desc}
                       />
                     </RowComponent>
@@ -310,6 +316,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
               )}
             </View>
           )}
+          <SpaceComponent height={isPaid ? 5 : 0} />
           {isPaid && (
             <View style={styles.sectionContainer}>
               <SectionComponent styles={styles.section}>
@@ -321,7 +328,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
                   />
                   <TextComponent
                     text={
-                      hoaDon?.hinhThucThanhToan ? 'Chuyyển khoản' : 'Tiền mặt'
+                      hoaDon?.hinhThucThanhToan ? 'Chuyển khoản' : 'Tiền mặt'
                     }
                     color={colors.desc}
                   />

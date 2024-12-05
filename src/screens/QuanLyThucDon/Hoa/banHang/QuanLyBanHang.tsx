@@ -28,6 +28,7 @@ import {useRef} from 'react';
 import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
 import ItemThemMonBanHang from './ItemThemMonBanHang';
 import LoadingModal from 'react-native-loading-modal';
+import ModalMonTuChon from './ModalMonTuChon';
 
 const MaxHeight = Dimensions.get('window').height;
 
@@ -47,6 +48,7 @@ const QuanLyBanHang = () => {
   const [MaxToRender, setMaxToRender] = useState(7);
   const [isEndReached, setIsEndReached] = useState(false);
 
+  const [visibleModalMonTuChon, setVisibleModalMonTuChon] = useState(false);
   const navigation = useNavigation<any>();
 
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
@@ -93,24 +95,55 @@ const QuanLyBanHang = () => {
 
   const chiTietsRef = useRef<
     {
-      id_monAn: string;
+      id_monAn?: string;
       soLuongMon: number;
       tenMon: string;
       giaTien: number;
+      ghiChu?: string;
+      giaMonAn?: number;
     }[]
   >([]);
 
-  //load more danh sach
+  const handleDataMonTuChon = useCallback(
+    (data: any) => {
+      if (!onChangeChiTiets) {
+        chiTietsRef.current.push({
+          ...data,
+        });
+        //GIAI PHAP TRUNG LAP TEN MON AN TU CHON(NOT ID)
+        const map = new Map(
+          chiTietsRef.current
+            .filter((item: any) => item.soLuongMon > 0)
+            .map((item: any) => [item.tenMon, item]),
+        );
+        chiTietsRef.current = Array.from(map.values());
+        setCartCount(map.size);
+      }
+    },
+    [onChangeChiTiets],
+  );
+
+  //GIAI PHAP TY FIX
+  useEffect(() => {
+    setCartCount(
+      chiTietsRef.current.filter((item: any) => item.soLuongMon > 0).length,
+    );
+  }, [chiTietsRef.current]);
+
+  //load more danh sach (not mutate)
   const loadMoreListMonAns = () => {
     setMaxToRender(prev => prev + 7);
-    //setIsEndReached(false);
   };
-
-  const EndHeightFooter = useRef(0);
 
   //update so luong mon
   const updateQuantityMon = useCallback(
-    (idMonAn: string, newQuantity: number, tenMon: string, giaTien: number) => {
+    (
+      idMonAn: string,
+      newQuantity: number,
+      tenMon: string,
+      giaTien: number,
+      ghiChu?: string,
+    ) => {
       const existing = chiTietsRef.current.find(
         (item: any) => item.id_monAn === idMonAn,
       );
@@ -126,6 +159,7 @@ const QuanLyBanHang = () => {
           soLuongMon: newQuantity,
           tenMon,
           giaTien: giaTien * newQuantity,
+          ghiChu: ghiChu ?? '',
         });
       }
       chiTietsRef.current = chiTietsRef.current.filter(
@@ -137,8 +171,6 @@ const QuanLyBanHang = () => {
     },
     [],
   );
-
-  //console.log(chiTiets);
 
   const renderItemDanhMuc = ({item, index}: {item: DanhMuc; index: number}) => {
     return (
@@ -176,6 +208,7 @@ const QuanLyBanHang = () => {
         monAn={item}
         intialSoLuong={soLuong}
         onQuantityChange={updateQuantityMon}
+        //CAP NHAT BEN ITEM
         onChangeChiTiets={onChangeChiTiets}
       />
     );
@@ -248,7 +281,9 @@ const QuanLyBanHang = () => {
           <RowComponent justify="space-between" styles={{marginVertical: 6}}>
             <ButtonComponent
               title="Thêm món tự chọn"
-              onPress={() => {}}
+              onPress={() => {
+                setVisibleModalMonTuChon(true);
+              }}
               styles={{height: 35, paddingHorizontal: 5}}
               titleSize={15}
               bgrColor={'#FEF3EF'}
@@ -378,6 +413,11 @@ const QuanLyBanHang = () => {
           )}
         </View>
       </View>
+      <ModalMonTuChon
+        visible={visibleModalMonTuChon}
+        onClose={() => setVisibleModalMonTuChon(false)}
+        onSendData={handleDataMonTuChon}
+      />
     </>
   );
 };

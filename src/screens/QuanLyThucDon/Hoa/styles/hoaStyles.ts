@@ -73,20 +73,7 @@ export const hoaStyles = StyleSheet.create({
     marginBottom: 5,
     borderColor: colors.desc2,
   },
-  hiddenDeleteView: {
-    height: '100%',
-    flexDirection: 'row',
-    backgroundColor: 'white',
-  },
-  buttonDelete: {
-    position: 'absolute',
-    right: 0,
-    height: '100%',
-    width: 75,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-  },
+
   buttonMoCa: {
     backgroundColor: '#FF602B',
     width: '25%',
@@ -134,5 +121,26 @@ export const hoaStyles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     fontWeight: 'bold',
+  },
+  hiddenOptionView: {
+    height: '100%',
+    flexDirection: 'row',
+    backgroundColor: 'blue',
+    position: 'absolute',
+    right: 0,
+  },
+  buttonDelete: {
+    height: '100%',
+    width: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'red',
+  },
+  buttonEdit: {
+    height: '100%',
+    width: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'green',
   },
 });

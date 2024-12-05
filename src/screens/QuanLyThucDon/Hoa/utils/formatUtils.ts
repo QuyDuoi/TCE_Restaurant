@@ -15,8 +15,8 @@ export const formatTime = (time: Date) => {
   }
 
   const newTime = new Date(time);
-  const hours = newTime.getHours() - 7;
-  const minutes = time.getMinutes();
+  const hours = newTime.getHours();
+  const minutes = newTime.getMinutes();
   return `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
 };
 

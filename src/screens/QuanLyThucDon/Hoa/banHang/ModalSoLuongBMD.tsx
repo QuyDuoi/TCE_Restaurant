@@ -15,20 +15,28 @@ import {ipAddress, IPV4} from '../../../../services/api';
 import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
 import {RootState} from '../../../../store/store';
 import {MonAn} from '../../../../store/Slices/MonAnSlice';
+import InputComponent from '../components/InputComponent';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   item: any;
-  giaMon?: number;
   updateItem?: (value: any) => void;
+  onUpdateMonAnTuChon?: (value: any) => void;
+  giaMon?: number;
+  type?: any;
 }
 
 const ModalSoLuongBMD = (props: Props) => {
-  const {visible, onClose, item, updateItem, giaMon} = props;
+  const {visible, onClose, item, updateItem, onUpdateMonAnTuChon, type} = props;
   const [soLuong, setSoLuong] = useState(0);
   const [giaTien, setGiaTien] = useState(0);
   const [itemSelected, setItemSelected] = useState<any>(null);
+
+  //VUA UPDATE
+  const [ghiChuUpdate, setGhiChuUpdate] = useState('');
+
+  //console.log('type', type);
 
   const giaMotMon = item ? item.giaTien / item.soLuongMon : 0;
 
@@ -37,6 +45,7 @@ const ModalSoLuongBMD = (props: Props) => {
   useEffect(() => {
     setSoLuong(item?.soLuongMon ?? 0);
     setGiaTien(item?.giaTien ?? 0);
+    setGhiChuUpdate(item?.ghiChu ?? '');
     setItemSelected(item);
   }, [item]);
 
@@ -53,21 +62,14 @@ const ModalSoLuongBMD = (props: Props) => {
       ...itemSelected,
       soLuongMon: soLuong,
       giaTien: giaTien,
+      ghiChu: ghiChuUpdate,
     };
-    updateItem?.(updatedItem);
-
-    // dispatch(
-    //   addOrUpdate({
-    //     ...itemSelected,
-    //     soLuongMon: soLuong,
-    //     giaTien: giaTien,
-    //   }),
-    // );
-
-    //console.log('updatedItem', updatedItem);
-
+    //DE ID_MONAN HOAC TEN MON
+    item?.id_monAn
+      ? updateItem?.(updatedItem)
+      : onUpdateMonAnTuChon?.(updatedItem);
     onClose();
-  }, [soLuong, giaTien]);
+  }, [soLuong, giaTien, ghiChuUpdate]);
 
   const monAnSelected = monAns.find(
     (monAn: MonAn) => monAn._id === item?.id_monAn,
@@ -82,7 +84,7 @@ const ModalSoLuongBMD = (props: Props) => {
       visible={visible}
       onClose={onClose}
       borderRadius={1}
-      title="Cap nhat so luong">
+      title={type === 'edit' ? 'Cap nhat' : 'Cap nhat so luong'}>
       <CardComponent
         styles={{
           marginVertical: 16,
@@ -95,12 +97,22 @@ const ModalSoLuongBMD = (props: Props) => {
         bgrColor={colors.white}
         borderWidth={1}>
         <RowComponent justify="space-between" styles={[{}]}>
-          <Image
-            source={{
-              uri: anhMonAn,
-            }}
-            style={[hoaStyles.image]}
-          />
+          {item?.id_monAn ? (
+            <Image
+              source={{
+                uri: anhMonAn,
+              }}
+              style={[hoaStyles.image]}
+            />
+          ) : (
+            <View
+              style={[
+                hoaStyles.image,
+                {alignItems: 'center', justifyContent: 'center'},
+              ]}>
+              <TextComponent text="TÙY CHỌN" color={colors.text2} />
+            </View>
+          )}
 
           <View
             style={{
@@ -110,7 +122,7 @@ const ModalSoLuongBMD = (props: Props) => {
             <View style={{alignItems: 'flex-start'}}>
               <RowComponent onPress={() => {}}>
                 <TextComponent
-                  text={monAnSelected?.tenMon ?? ''}
+                  text={item?.tenMon ?? ''}
                   fontWeight="bold"
                   color={colors.text2}
                   size={14}
@@ -158,6 +170,17 @@ const ModalSoLuongBMD = (props: Props) => {
           </View>
         </RowComponent>
       </CardComponent>
+      {type === 'edit' && (
+        <InputComponent
+          value={ghiChuUpdate}
+          onChangeText={text => setGhiChuUpdate(text)}
+          placeholder="Ghi chú"
+          styles={[styles.input2]}
+          numberOfLines={5}
+          type="normal"
+          multiline={true}
+        />
+      )}
       <RowComponent justify="space-between" styles={{paddingHorizontal: 5}}>
         <ButtonComponent
           title="Dong"
@@ -189,6 +212,18 @@ const styles = StyleSheet.create({
   button: {
     width: '40%',
     height: 35,
+  },
+  input2: {
+    paddingVertical: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: colors.desc2,
+    textAlignVertical: 'top',
+    marginTop: 5,
+    marginBottom: 10,
+    height: undefined,
+    minHeight: 100,
+    //width: '90%',
   },
 });
 

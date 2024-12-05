@@ -36,6 +36,7 @@ interface Props {
   bgrColor?: string;
   onSubmitEditing?: () => void;
   backgroundColor?: string;
+  multiline?: boolean;
 }
 
 const InputComponent = (props: Props) => {
@@ -62,7 +63,8 @@ const InputComponent = (props: Props) => {
     borderWidth,
     bgrColor,
     onSubmitEditing,
-    backgroundColor
+    backgroundColor,
+    multiline,
   } = props;
 
   return type === 'normal' ? (
@@ -87,6 +89,7 @@ const InputComponent = (props: Props) => {
               keyboardType={keyboardType ?? 'default'}
               readOnly={readonly ?? false}
               onPress={onPress}
+              multiline={multiline ? multiline : undefined}
             />
             {rightIcon && rightIcon}
           </RowComponent>
@@ -110,6 +113,7 @@ const InputComponent = (props: Props) => {
           autoFocus={autoFocus ?? false}
           readOnly={readonly ?? false}
           onSubmitEditing={onSubmitEditing ? onSubmitEditing : undefined}
+          multiline={multiline ? multiline : undefined}
         />
       )}
     </View>

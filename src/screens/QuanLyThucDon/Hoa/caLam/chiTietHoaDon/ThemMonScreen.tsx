@@ -98,10 +98,10 @@ const ThemMonScreen = (props: Props) => {
 
   useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
-      id_monAn: ct.id_monAn ? ct.id_monAn._id : '',
-      soLuongMon: ct.soLuongMon ? (ct.id_monAn ? ct.soLuongMon : 0) : 0,
-      tenMon: ct.id_monAn ? ct.id_monAn.tenMon : '',
-      giaMon: ct.id_monAn ? ct.id_monAn.giaMonAn : '',
+      id_monAn: ct.id_monAn ? ct.id_monAn : '',
+      soLuongMon: ct.soLuongMon ? ct.soLuongMon : 0,
+      tenMon: ct.monAn ? ct.monAn.tenMon : '',
+      giaMon: ct.monAn ? ct.monAn.giaMonAn : '',
     }));
     chiTietsRef.current = initialChiTiets;
   }, [chiTietHoaDon]);

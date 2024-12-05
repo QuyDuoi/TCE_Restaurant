@@ -57,13 +57,16 @@ const ModalPTTTBMD = (props: Props) => {
       _id: id_nhanVien,
     };
 
-    //const result = await thanhToanBanHang(dispatch, data as any);
-    if (true) {
+    const result = await thanhToanBanHang(dispatch, data as any);
+    if (result) {
       setTimeout(() => {
         setIsLoading(false);
         onClose();
       }, 1000);
-      console.log(data);
+    } else {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
 
     onPaid?.(true);

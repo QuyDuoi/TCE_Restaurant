@@ -44,6 +44,11 @@ const ThemMonNVPV = (props: Props) => {
   const {route} = props;
   const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc} = route.params;
 
+  // console.log(
+  //   'chi tiet hoa don',
+  //   chiTietHoaDon.map((item: any) => item.monAn),
+  // );
+
   const idNhaHang = '66fab50fa28ec489c7137537';
 
   const [visibleModalCart, setVisibleModalCart] = useState(false);
@@ -107,16 +112,18 @@ const ThemMonNVPV = (props: Props) => {
     }[]
   >([]);
 
+  //CAN FIX
   useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
-      id_monAn: ct.id_monAn ? ct.id_monAn._id : '',
-      soLuongMon: ct.soLuongMon ? (ct.id_monAn ? ct.soLuongMon : 0) : 0,
-      tenMon: ct.id_monAn ? ct.id_monAn.tenMon : '',
-      giaMon: ct.id_monAn ? ct.id_monAn.giaMonAn : '',
+      id_monAn: ct.id_monAn ? ct.id_monAn : '',
+      soLuongMon: ct.soLuongMon ? ct.soLuongMon : 0,
+      tenMon: ct.monAn ? ct.monAn.tenMon : '',
+      giaMon: ct.monAn ? ct.monAn.giaMonAn : 0,
     }));
     chiTietsRef.current = initialChiTiets;
   }, [chiTietHoaDon]);
 
+  //FIND THEO TEN MON
   const sortedMonAnsList = useMemo(() => {
     return monAnsList && chiTietsRef.current
       ? [...monAnsList].sort((a, b) => {
@@ -160,8 +167,9 @@ const ThemMonNVPV = (props: Props) => {
     },
     [],
   );
-  console.log('render them mon');
 
+  console.log('render them mon');
+  //GIAI PHAP TEN MON
   const renderItem = ({item}: {item: MonAn}) => {
     const soLuong =
       chiTietsRef.current.find((ct: any) => {

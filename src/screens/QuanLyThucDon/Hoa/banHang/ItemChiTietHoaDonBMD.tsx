@@ -3,28 +3,37 @@ import React from 'react';
 import {colors} from '../contants/hoaColors';
 import TextComponent from '../components/TextComponent';
 import RowComponent from '../components/RowComponent';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface Props {
   onLongPress: () => void;
   nameMonAn: string;
   soLuong: number;
   gia: number;
+  id_monAn?: string;
 }
 
 const ItemChiTietHoaDonBMD = (props: Props) => {
-  const {onLongPress, nameMonAn, soLuong, gia} = props;
+  const {onLongPress, nameMonAn, soLuong, gia, id_monAn} = props;
+  //console.log('id_monAn', id_monAn);
+
   return (
     <View>
       <View style={styles.container}>
         <RowComponent justify="space-between" styles={{paddingHorizontal: 8}}>
-          <View style={{width: '50%', alignItems: 'flex-start'}}>
+          <RowComponent styles={{width: '50%', alignItems: 'flex-start'}}>
+            {!id_monAn ? (
+              <View style={{marginRight: 5}}>
+                <Icon name={'bars'} size={20} color={colors.blue} />
+              </View>
+            ) : null}
             <TextComponent
               text={nameMonAn ?? 'com ga'}
               styles={styles.text}
               numberOfLines={1}
               ellipsizeMode="tail"
             />
-          </View>
+          </RowComponent>
           <RowComponent
             onLongPress={onLongPress}
             styles={{alignItems: 'center'}}>

@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -48,8 +49,6 @@ interface Props {
 const ChiTietHoaDonNVPV = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
   const idNhaHang = '66fab50fa28ec489c7137537';
-  //console.log(hoaDon._id);
-  //console.log(tenKhuVuc);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -152,6 +151,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     [setChiTietSelected],
   );
 
+  //DELETE
   const handleDeleteChiTietHoaDon = async (item: ChiTietHoaDon) => {
     setIsLoadingModal(true);
     const data = {
@@ -176,6 +176,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
         }, 1000);
       }
     } else {
+      setIsLoadingModal(false);
       console.log(result.payload);
     }
   };
@@ -185,14 +186,15 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   );
 
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
-    return (
+    //UPDATE MODEL CHITIETHOADON
+    return chiTietHoaDons.length > 0 ? (
       <View>
-        {item.id_monAn ? (
+        {item.monAn ? (
           <ItemCTHDnvpv
             onLongPress={() => {
               handleOpenModalSoLuongMon(item);
             }}
-            nameMonAn={item.id_monAn.tenMon}
+            nameMonAn={item.monAn.tenMon}
             soLuong={item.soLuongMon}
             giaTien={item.giaTien}
             trangThai={item.trangThai}
@@ -200,22 +202,30 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           />
         ) : null}
       </View>
-    );
+    ) : null;
   };
 
   const renderHiddenItemChiTietHoaDon = ({item}: {item: ChiTietHoaDon}) => {
-    return (
-      <View style={hoaStyles.hiddenDeleteView}>
+    return item.monAn ? (
+      <View style={hoaStyles.hiddenOptionView}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={hoaStyles.buttonEdit}
+          onPress={() => {
+            ToastAndroid.show('Dang cap nhat', ToastAndroid.SHORT);
+          }}>
+          <Icon name="edit" size={20} color={colors.white} />
+        </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.5}
           style={hoaStyles.buttonDelete}
           onPress={() => {
             handleDeleteChiTietHoaDon(item);
           }}>
-          <Icon name="trash" size={24} color="white" />
+          <Icon name="trash" size={20} color={colors.white} />
         </TouchableOpacity>
       </View>
-    );
+    ) : null;
   };
 
   return (
@@ -410,13 +420,22 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                       renderItem={renderItem}
                       nestedScrollEnabled={true}
                       keyExtractor={(item, index) => index.toString()}
-                      renderHiddenItem={renderHiddenItemChiTietHoaDon}
+                      renderHiddenItem={
+                        chiTietHoaDons.length > 0
+                          ? renderHiddenItemChiTietHoaDon
+                          : undefined
+                      }
+                      ListEmptyComponent={() => (
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                          <SpaceComponent height={36} />
+                        </View>
+                      )}
                       disableRightSwipe={true}
-                      rightOpenValue={-75}
-                      stopRightSwipe={-105}
-                      previewRowKey={'0'}
-                      previewOpenValue={-40}
-                      previewOpenDelay={2000}
+                      rightOpenValue={-110}
+                      stopRightSwipe={-120}
+                      previewRowKey={chiTietHoaDons.length > 0 ? '0' : ''}
+                      previewOpenValue={chiTietHoaDons.length > 0 ? -40 : 0}
+                      previewOpenDelay={chiTietHoaDons.length > 0 ? 2000 : 0}
                     />
                   ) : (
                     <View style={{flex: 1, alignItems: 'center'}}>

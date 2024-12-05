@@ -15,12 +15,14 @@ export interface ChiTietHoaDon {
   giaTien: number;
   trangThai: boolean;
   ghiChu: string;
-  id_monAn: MonAn;
+  id_monAn: string;
   id_hoaDon: string;
   createdAt?: string;
   updatedAt?: string;
   ban?: any;
   khuVuc?: any;
+  //UPDAATE MODEL CHITIETHOADON
+  monAn?: any;
 }
 
 export interface ChiTietHoaDonState {
@@ -183,5 +185,5 @@ export const chiTietHoaDonSlice = createSlice({
   },
 });
 
-export const { themChiTietHoaDons } = chiTietHoaDonSlice.actions;
+export const {themChiTietHoaDons} = chiTietHoaDonSlice.actions;
 export default chiTietHoaDonSlice.reducer;
