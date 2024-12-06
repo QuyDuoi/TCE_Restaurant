@@ -1,4 +1,11 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
@@ -10,6 +17,7 @@ import AlertDialog from '../../customcomponent/alertDialog';
 import ButtonComponent from './Hoa/components/ButtonComponent';
 import {colors} from './Hoa/contants/hoaColors';
 import axios from 'axios';
+import {ipAddress} from '../../services/api';
 
 function CapNhatDanhMuc(): React.JSX.Element {
   const navigation = useNavigation();
@@ -52,25 +60,25 @@ function CapNhatDanhMuc(): React.JSX.Element {
 
   const saveChanges = async () => {
     try {
-      const response = await axios.post(`http://192.168.1.6:3000/api/sapXepDanhMuc`, {
+      const response = await axios.post(`${ipAddress}sapXepDanhMuc`, {
         id_nhaHang: '66fab50fa28ec489c7137537', // Đảm bảo bạn thay thế bằng ID thực
         danhMucs: localDanhMucs, // Gửi mảng danh mục với thứ tự đã thay đổi
       });
-  
+
       if (response.status === 200) {
         // Nếu thành công, cập nhật redux
         dispatch(updateDanhMucOrder(localDanhMucs));
+        ToastAndroid.show('Sắp xếp danh mục thành công!', ToastAndroid.SHORT);
       }
     } catch (error) {
-      console.log("Lỗi khi sắp xếp: " + error.message);
-      
+      console.log('Lỗi khi sắp xếp: ' + error.message);
     }
   };
 
   const renderItem = ({item}: {item: DanhMuc}) => (
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => {
+      onLongPress={() => {
         setDanhMucInfo(item);
         setModalCapNhat(true);
       }}>

@@ -54,6 +54,9 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
 
+  console.log(chiTietHoaDons);
+  
+
   const navigation = useNavigation<any>();
 
   const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);

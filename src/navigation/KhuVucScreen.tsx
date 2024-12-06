@@ -5,6 +5,7 @@ import KhuVucTabView from '../screens/QuanLyKhuVuc/Component/KhuVucTabView';
 import ChiTietHoaDonNVPV from '../screens/QuanLyKhuVuc/taoHoaDon/ChiTietHoaDonNVPV';
 import ThemMonNVPV from '../screens/QuanLyKhuVuc/taoHoaDon/ThemMonNVPV';
 import {Text, TouchableOpacity} from 'react-native';
+import DatLichHen from '../screens/QuanLyKhuVuc/DatLichHen';
 
 const KhuVucStack = createNativeStackNavigator();
 
@@ -65,6 +66,11 @@ const KhuVucStackScreen = ({
       <KhuVucStack.Screen
         name="ThemMonNVPV"
         component={ThemMonNVPV}
+        options={{headerShown: false}}
+      />
+      <KhuVucStack.Screen
+        name="DatLichHen"
+        component={DatLichHen}
         options={{headerShown: false}}
       />
     </KhuVucStack.Navigator>

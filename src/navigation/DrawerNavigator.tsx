@@ -20,9 +20,10 @@ import QuanLyBanHang from '../screens/QuanLyThucDon/Hoa/banHang/QuanLyBanHang';
 import ChiTietHoaDonBMD from '../screens/QuanLyThucDon/Hoa/banHang/ChiTietHoaDonBMD';
 import BookingFlow from '../customcomponent/BookingFlow';
 import CustomDrawer from './CustomDrawer';
-import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {TextInput, View} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {View} from 'react-native';
 
 const Drawer = createDrawerNavigator();
 const BillStack = createNativeStackNavigator();
@@ -193,7 +194,7 @@ function DrawerNavigator(): React.JSX.Element {
                   width: 30,
                   alignItems: 'center',
                 }}>
-                <Icon name="map-marker" color={color} size={23} />
+                <Ionicons name="grid" color={color} size={23} />
               </View>
             ),
           }}
@@ -209,7 +210,7 @@ function DrawerNavigator(): React.JSX.Element {
                   width: 30,
                   alignItems: 'center',
                 }}>
-                <Icon name="map-marker" color={color} size={23} />
+                <MaterialIcons name="room-service" color={color} size={23} />
               </View>
             ),
           }}
@@ -241,7 +242,7 @@ function DrawerNavigator(): React.JSX.Element {
                   width: 30,
                   alignItems: 'center',
                 }}>
-                <Icon name="map-marker" color={color} size={23} />
+                <Icon name="inbox" color={color} size={23} />
               </View>
             ),
           }}
@@ -256,7 +257,7 @@ function DrawerNavigator(): React.JSX.Element {
                   width: 30,
                   alignItems: 'center',
                 }}>
-                <Icon name="map-marker" color={color} size={23} />
+                <Icon name="line-chart" color={color} size={23} />
               </View>
             ),
           }}>

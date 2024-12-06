@@ -2,19 +2,13 @@ import {
   View,
   Text,
   useWindowDimensions,
-  ScrollView,
   ActivityIndicator,
   TextInput,
+  ToastAndroid,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
-import {
-  SceneMap,
-  TabBar,
-  TabBarItem,
-  TabBarProps,
-  TabView,
-} from 'react-native-tab-view';
+import {TabBar, TabBarItem, TabBarProps, TabView} from 'react-native-tab-view';
 import KhongGianComponent from '../KhongGianComponent';
 import ThongTinKhuVuc from '../ThongTinKhuVuc';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
@@ -24,6 +18,8 @@ import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
 import {RootState} from '../../../store/store';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalChucNangKhuVuc from '../ModalChucNangKhuVuc';
+import ModalThemSuaKhuVuc from '../ModalThemSuaKhuVuc';
+import ModalThemSuaBan from '../ModalThemSuaBan';
 
 interface Route {
   key: string;
@@ -57,6 +53,16 @@ const KhuVucTabView = ({
   const idNhaHang = '66fab50fa28ec489c7137537';
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isThemKhuVucVisible, setIsThemKhuVucVisible] = useState(false);
+  const [isThemBanVisible, setIsThemBanVisible] = useState(false);
+
+  const handleThemKhuVuc = () => {
+    setIsThemKhuVucVisible(true);
+  };
+
+  const handleThemBan = () => {
+    setIsThemBanVisible(true);
+  }
 
   const dispatch = useDispatch();
   const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
@@ -128,9 +134,14 @@ const KhuVucTabView = ({
           borderRadius: 10,
           borderWidth: isFocused ? 1 : 0, // Thay đổi border khi focus
           borderColor: isFocused ? '#9E81C3' : '#ccc', // Màu sắc border khi focus
-          elevation: 10
+          elevation: 10,
         }}>
-        <Icon name="search" size={18} color={'black'} style={{paddingHorizontal: 15}} />
+        <Icon
+          name="search"
+          size={18}
+          color={'black'}
+          style={{paddingHorizontal: 15}}
+        />
         <TextInput
           value={
             tabState.index === 0
@@ -174,6 +185,32 @@ const KhuVucTabView = ({
       <ModalChucNangKhuVuc
         modalLuaChon={modalLuaChon}
         setModalLuaChon={setModalLuaChon}
+        onThemKhuVuc={handleThemKhuVuc}
+        onThemBan={handleThemBan}
+      />
+      <ModalThemSuaKhuVuc
+        visible={isThemKhuVucVisible}
+        onClose={() => setIsThemKhuVucVisible(false)}
+        onActionComplete={(success, message) => {
+          if (success) {
+            ToastAndroid.show(message, ToastAndroid.SHORT); // Hiển thị thông báo thành công
+          } else {
+            ToastAndroid.show(message, ToastAndroid.SHORT);
+          }
+          setIsThemKhuVucVisible(false);
+        }}
+      />
+      <ModalThemSuaBan
+        visible={isThemBanVisible}
+        onClose={() => setIsThemBanVisible(false)}
+        onActionComplete={(success, message) => {
+          if (success) {
+            ToastAndroid.show(message, ToastAndroid.SHORT); // Hiển thị thông báo thành công
+          } else {
+            ToastAndroid.show(message, ToastAndroid.SHORT);
+          }
+          setIsThemKhuVucVisible(false);
+        }}
       />
     </View>
   );

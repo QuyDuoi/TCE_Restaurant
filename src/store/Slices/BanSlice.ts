@@ -8,7 +8,7 @@ export interface Ban {
   _id?: string;
   tenBan: string;
   sucChua: number;
-  trangThai: string;
+  trangThai?: boolean;
   ghiChu: string;
   maQRCode?: string;
   id_khuVuc: KhuVuc;

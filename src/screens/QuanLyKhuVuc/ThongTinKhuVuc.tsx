@@ -1,11 +1,12 @@
+import React, {useEffect, useState} from 'react';
 import {
   View,
   FlatList,
   Platform,
   UIManager,
   LayoutAnimation,
+  ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import ItemKhuVuc from './Component/ItemKhuVuc';
 import ItemBan from './Component/ItemBan';
@@ -16,7 +17,7 @@ import {useSelector} from 'react-redux';
 import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 import {RootState} from '../../store/store';
 import {Ban} from '../../store/Slices/BanSlice';
-import {SwipeListView} from 'react-native-swipe-list-view';
+import ModalThemSuaKhuVuc from './ModalThemSuaKhuVuc';
 
 interface Props {
   searchQueryKhuVuc: string;
@@ -31,12 +32,11 @@ if (
 
 const ThongTinKhuVuc = (props: Props) => {
   const {searchQueryKhuVuc} = props;
-
+  const [isCapNhatKhuVuc, setIsCapNhatKhuVuc] = useState(false);
+  const [selectedKhuVuc, setSelectedKhuVuc] = useState<KhuVuc | null>(null); // State để giữ khu vực được chọn
   const [bansKhuVuc, setBansKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
-
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
-
   const [expandKhuVuc, setExpandKhuVuc] = useState<string[]>([]);
 
   useEffect(() => {
@@ -99,7 +99,9 @@ const ThongTinKhuVuc = (props: Props) => {
             handleExpandKhuVuc(item._id as string);
           }}
           onLongPress={() => {
-            console.log(item._id);
+            // Mở modal cập nhật khu vực khi nhấn giữ lâu
+            setSelectedKhuVuc(item);
+            setIsCapNhatKhuVuc(true);
           }}
           styles={{
             borderBottomColor: 'gray',
@@ -133,31 +135,51 @@ const ThongTinKhuVuc = (props: Props) => {
       </View>
     );
   };
-  return khuVucs.length > 0 ? (
-    <View style={[hoaStyles.containerTopping, {}]}>
-      {
-        <FlatList
-          data={filterData}
-          renderItem={renderItem}
-          keyExtractor={item => item._id as string}
-          showsVerticalScrollIndicator={false}
+
+  return (
+    <>
+      {khuVucs.length > 0 ? (
+        <View style={[hoaStyles.containerTopping, {}]}>
+          <FlatList
+            data={filterData}
+            renderItem={renderItem}
+            keyExtractor={item => item._id as string}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      ) : (
+        <View
+          style={[
+            hoaStyles.containerTopping,
+            {
+              justifyContent: 'center',
+            },
+          ]}>
+          <TitleComponent
+            text="Chưa có khu vực được tạo"
+            color={colors.desc}
+            styles={{alignSelf: 'center'}}
+          />
+        </View>
+      )}
+      {/* Modal cập nhật khu vực */}
+      {selectedKhuVuc && (
+        <ModalThemSuaKhuVuc
+          visible={isCapNhatKhuVuc}
+          onClose={() => setIsCapNhatKhuVuc(false)}
+          idKhuVucUd={selectedKhuVuc._id}
+          tenKhuVucUd={selectedKhuVuc.tenKhuVuc}
+          onActionComplete={(success, message) => {
+            if (success) {
+              ToastAndroid.show(message, ToastAndroid.SHORT); // Hiển thị thông báo thành công
+            } else {
+              ToastAndroid.show(message, ToastAndroid.SHORT);
+            }
+            setIsCapNhatKhuVuc(false);
+          }}
         />
-      }
-    </View>
-  ) : (
-    <View
-      style={[
-        hoaStyles.containerTopping,
-        {
-          justifyContent: 'center',
-        },
-      ]}>
-      <TitleComponent
-        text="Chưa có khu vực được tạo"
-        color={colors.desc}
-        styles={{alignSelf: 'center'}}
-      />
-    </View>
+      )}
+    </>
   );
 };
 

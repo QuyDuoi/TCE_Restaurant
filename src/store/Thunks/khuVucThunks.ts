@@ -32,7 +32,7 @@ export const fetchKhuVucVaBan = createAsyncThunk(
         const data = await themKhuVuc(khuVuc);
         return data;
       } catch (error: any) {
-        console.log('Lỗi thêm mới:', error);
+        console.log('Lỗi thêm mới:', error.message);
         return thunkAPI.rejectWithValue(error.message || 'Error adding KhuVuc');
       }
     },
@@ -40,9 +40,9 @@ export const fetchKhuVucVaBan = createAsyncThunk(
   
   export const capNhatKhuVucThunk = createAsyncThunk(
     'khuVucs/capNhatKhuVuc',
-    async ({id, formData}: {id: string; formData: KhuVuc}, thunkAPI) => {
+    async ({id, khuVuc}: {id: string; khuVuc: KhuVuc}, thunkAPI) => {
       try {
-        const data = await capNhatKhuVuc(id, formData);
+        const data = await capNhatKhuVuc(id, khuVuc);
         return data;
       } catch (error: any) {
         console.log('Lỗi cập nhật:', error);

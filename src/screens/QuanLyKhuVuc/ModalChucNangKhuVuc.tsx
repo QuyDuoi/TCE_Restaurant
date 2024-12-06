@@ -1,13 +1,19 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
+import {useNavigation} from '@react-navigation/native';
 
 function ModalChucNangKhuVuc({
   modalLuaChon,
   setModalLuaChon,
+  onThemKhuVuc,
+  onThemBan,
 }: {
   modalLuaChon: boolean;
   setModalLuaChon: (val: boolean) => void;
+  onThemKhuVuc: () => void;
+  onThemBan: () => void;
 }): React.JSX.Element {
+  const navigation = useNavigation();
   return (
     <Modal
       visible={modalLuaChon}
@@ -20,13 +26,28 @@ function ModalChucNangKhuVuc({
       />
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
-          <TouchableOpacity onPress={() => {}} style={styles.modalButton}>
+          <TouchableOpacity
+            onPress={() => {
+              setModalLuaChon(false); // Đóng modal chức năng
+              onThemKhuVuc(); // Gọi hàm mở modal thêm khu vực
+            }}
+            style={styles.modalButton}>
             <Text style={styles.textButImage}>Thêm khu vực</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}} style={styles.modalButton}>
+          <TouchableOpacity
+            onPress={() => {
+              setModalLuaChon(false);
+              onThemBan();
+            }}
+            style={styles.modalButton}>
             <Text style={styles.textButImage}>Thêm bàn</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}} style={styles.modalButton}>
+          <TouchableOpacity
+            onPress={() => {
+              setModalLuaChon(false);
+              navigation.navigate('DatLichHen');
+            }}
+            style={styles.modalButton}>
             <Text style={styles.textButImage}>Đặt lịch hẹn</Text>
           </TouchableOpacity>
         </View>

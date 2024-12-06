@@ -348,13 +348,14 @@ export const getListBan = async (idKhuVuc: string): Promise<Ban[]> => {
 // Thêm mới Bàn
 export const themBan = async (ban: Ban) => {
   try {
-    const response = await fetch(`${ipAddress}addBan`, {
+    const response = await fetch(`${ipAddress}themBan`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(ban),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Bàn');
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Lỗi không xác định');
     }
     const data = await response.json();
     return data;
@@ -373,7 +374,8 @@ export const capNhatBan = async (id: string, ban: Ban) => {
       body: JSON.stringify(ban),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật Bàn');
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Lỗi không xác định');
     }
     const data = await response.json();
     return data;
@@ -420,15 +422,16 @@ export const layDsKhuVuc = async (id_nhaHang: string) => {
   }
 };
 
-export const themKhuVuc = async (KhuVuc: KhuVuc) => {
+export const themKhuVuc = async (khuVuc: KhuVuc) => {
   try {
     const response = await fetch(`${ipAddress}themKhuVuc`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(KhuVuc),
+      body: JSON.stringify(khuVuc),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Khu Vực');
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Lỗi không xác định');
     }
     const data = await response.json();
     return data;

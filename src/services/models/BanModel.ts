@@ -1,19 +1,18 @@
-import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 
 export default class Ban {
   _id?: string;
   tenBan: string;
   sucChua: number;
-  trangThai: string;
-  ghiChu: string;
-  id_khuVuc: KhuVuc;
+  trangThai?: string;
+  ghiChu?: string;
+  id_khuVuc: string;
 
   constructor(
     tenBan: string,
     sucChua: number,
     trangThai: string,
     ghiChu: string,
-    id_khuVuc: KhuVuc,
+    id_khuVuc: string,
     _id?: string,
   ) {
     this.tenBan = tenBan;

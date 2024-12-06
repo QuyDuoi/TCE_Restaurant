@@ -105,6 +105,8 @@ const BillScreen: React.FC = () => {
     if (khuVucStatus === 'idle') {
       dispatch(fetchKhuVucVaBan(idNhaHang) as any);
     }
+    console.log(khuVucs);
+
     fetchHoaDonNhaHang();
   }, [dispatch, bans, khuVucs]);
 
@@ -125,12 +127,14 @@ const BillScreen: React.FC = () => {
 
   const getBanKhuVuc = (idBan?: string) => {
     if (!idBan) return {tenKhuVuc: '', tenBan: ''};
-    const ban: any = bans.find(item => item._id === idBan);
-    const khuVuc: any = khuVucs.find(item => item._id === ban.id_khuVuc);
 
+    const ban = bans.find(item => item._id === idBan);
+    if (!ban) return {tenKhuVuc: 'Trống', tenBan: 'Không tồn tại'};
+
+    const khuVuc = khuVucs.find(item => item._id === ban.id_khuVuc);
     return {
-      tenKhuVuc: khuVuc?.tenKhuVuc,
-      tenBan: ban?.tenBan,
+      tenKhuVuc: khuVuc?.tenKhuVuc || 'Không tồn tại',
+      tenBan: ban.tenBan || 'Không xác định',
     };
   };
 

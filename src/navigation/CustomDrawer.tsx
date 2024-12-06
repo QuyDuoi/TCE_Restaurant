@@ -6,10 +6,9 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import TextComponent from '../screens/QuanLyThucDon/Hoa/components/TextComponent';
-import RowComponent from '../screens/QuanLyThucDon/Hoa/components/RowComponent';
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import SpaceComponent from '../screens/QuanLyThucDon/Hoa/components/SpaceComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const CustomDrawer = (props: any) => {
   return (
@@ -68,7 +67,7 @@ const CustomDrawer = (props: any) => {
         </View>
       </DrawerContentScrollView>
       <DrawerItem
-        icon={() => <Icon name="home" size={20} color={colors.black} />}
+        icon={() => <Icon name="logout" size={23} color={colors.black} />}
         label="Logout"
         onPress={() => {
           console.log('Logout');

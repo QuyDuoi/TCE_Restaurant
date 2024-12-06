@@ -6,7 +6,7 @@ import { themKhuVucThunk, capNhatKhuVucThunk, fetchKhuVucVaBan } from '../Thunks
 export interface KhuVuc {
   _id?: string;
   tenKhuVuc: string;
-  id_NhaHang?: string;
+  id_nhaHang?: string;
 }
 
 // Định nghĩa state cho KhuVuc

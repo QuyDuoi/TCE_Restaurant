@@ -3,7 +3,7 @@ import {View, Text, Modal, StyleSheet, ToastAndroid} from 'react-native';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent'; // Điều chỉnh đường dẫn import theo cấu trúc project của bạn
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors'; // Điều chỉnh đường dẫn import theo cấu trúc project của bạn
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
-import {updateBanThunk} from '../../../store/Slices/BanSlice';
+import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
 import {useDispatch} from 'react-redux';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
@@ -18,20 +18,20 @@ interface Props {
   isVisible: boolean;
   onClose: () => void;
   onCloseParent: () => void;
-  selectedBan: any;
+  selectedBan?: any;
 }
 
 const DatBanModal = (props: Props) => {
   const {isVisible, onClose, onCloseParent, selectedBan} = props;
 
-  const [ghiChu, setGhiChu] = useState('ghichu');
+  const [ghiChu, setGhiChu] = useState('');
   const [date, setDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isVisibleModalDate, setIsVisibleModalDate] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [isVisibleModalTime, setIsVisibleModalTime] = useState(false);
   const [time, setTime] = useState(new Date());
-  const [hoTen, setHoTen] = useState('Nguyen van a');
+  const [hoTen, setHoTen] = useState('');
 
   const dispatch = useDispatch();
 
@@ -44,9 +44,9 @@ const DatBanModal = (props: Props) => {
       trangThai: 'Đã đặt',
     };
     const result = await dispatch(
-      updateBanThunk({
+      capNhatBanThunk({
         id: selectedBan?._id,
-        formData: datBanData as any,
+        ban: datBanData as any,
       }) as any,
     );
 

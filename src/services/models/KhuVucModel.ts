@@ -1,11 +1,11 @@
 export default class KhuVuc {
     _id?: string;
     tenKhuVuc: string;
-    id_NhaHang: string;
+    id_nhaHang?: string;
 
-    constructor(tenKhuVuc: string, id_NhaHang: string, _id?: string) {
+    constructor(tenKhuVuc: string, id_nhaHang: string, _id?: string) {
         this.tenKhuVuc = tenKhuVuc;
-        this.id_NhaHang = id_NhaHang;
+        this.id_nhaHang = id_nhaHang;
         this._id = _id;
     }
 }

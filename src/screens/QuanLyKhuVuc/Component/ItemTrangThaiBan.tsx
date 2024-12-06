@@ -1,14 +1,10 @@
 import {
   View,
-  Text,
   Image,
   StyleSheet,
   TouchableOpacity,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import React from 'react';
-import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
