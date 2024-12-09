@@ -189,11 +189,15 @@ const BillScreen: React.FC = () => {
             onBlur={() => setIsFocused(false)} // Cập nhật trạng thái khi blur
           />
         </View>
-        <FlatList
-          data={billData}
-          renderItem={renderItem}
-          keyExtractor={item => item._id as string}
-        />
+        {billData?.length > 0 ? (
+          <FlatList
+            data={billData}
+            renderItem={renderItem}
+            keyExtractor={item => item._id as string}
+          />
+        ) : (
+          <Text style={styles.emptyText}>Chưa có hóa đơn nào được tạo!</Text>
+        )}
       </SafeAreaView>
       <ModalPTTT
         visible={isVisivleModalPTTT}
@@ -302,5 +306,12 @@ const styles = StyleSheet.create({
   },
   paymentText: {
     color: '#fff',
+  },
+  emptyText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: 'red',
+    marginTop: 20,
+    fontWeight: 'bold',
   },
 });

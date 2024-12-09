@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from 'react-native';
 import {getListChiTietHoaDonTheoCaLam} from '../../services/api';
 import ItemChiTietHoaDon from './ItemChiTietHoaDon';
@@ -19,11 +20,12 @@ const FoodOrderScreen: React.FC = () => {
   const [dsChiTiet, setDsChiTiet] = useState<ChiTietHoaDon[]>([]);
   const [filter, setFilter] = useState<string>('Chưa hoàn thành'); // Bộ lọc hiện tại
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
+  const [isRefreshing, setIsRefreshing] = useState(false); // Trạng thái refreshing
   const [tenMons, setTenMons] = useState<string[]>([]); // Danh sách tên món
   const [error, setError] = useState(''); // Trạng thái lỗi
 
-  const fetchChiTietHoaDon = async () => {
-    setIsLoading(true);
+  const fetchChiTietHoaDon = async (refresh = false) => {
+    if (!refresh) setIsLoading(true);
     setError(''); // Xóa lỗi cũ khi bắt đầu fetch
     try {
       const id_nhaHang = '66fab50fa28ec489c7137537';
@@ -36,6 +38,7 @@ const FoodOrderScreen: React.FC = () => {
       setError(error.message || 'Không thể kết nối tới server.');
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false); // Kết thúc hiệu ứng refreshing
     }
   };
 
@@ -88,7 +91,7 @@ const FoodOrderScreen: React.FC = () => {
       {error ? (
         // View lỗi nếu `error` không rỗng
         <View style={styles.errorContainer}>
-          <Image style={styles.image} source={require('../../image/waitingOrder.png')}/>
+          <Image style={styles.image} source={require('../../image/waitingOrder.png')} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -138,6 +141,16 @@ const FoodOrderScreen: React.FC = () => {
             contentContainerStyle={{paddingBottom: 20}}
             initialNumToRender={10} // Tăng tốc render
             windowSize={5} // Hiển thị trước và sau 5 item
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={() => {
+                  setIsRefreshing(true);
+                  fetchChiTietHoaDon(true); // Làm mới danh sách
+                }}
+                colors={[colors.primary, colors.orange]} // Màu sắc hiệu ứng
+              />
+            }
           />
         </>
       )}
@@ -199,6 +212,6 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    marginTop: 20
-  }
+    marginTop: 20,
+  },
 });

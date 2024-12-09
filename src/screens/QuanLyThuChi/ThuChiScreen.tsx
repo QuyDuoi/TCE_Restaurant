@@ -1,5 +1,3 @@
-export const api_IPV4 = 'https://tce-restaurant-api.onrender.com/api';
-
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -14,6 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ItemThuChi from './ItemThuChi';
 import FilterOptionItem from './FilterOptionItem'; // Import Component mới
 import {useNavigation} from '@react-navigation/native';
+import { ipAddress } from '../../services/api';
 
 const ThuChiScreen = ({route}) => {
   const navigation = useNavigation();
@@ -44,7 +43,7 @@ const ThuChiScreen = ({route}) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${api_IPV4}/layDsThuChi?id_caLamViec=${id_caLamViec}`,
+        `${ipAddress}/layDsThuChi?id_caLamViec=${id_caLamViec}`,
       );
       const result = await response.json();
 

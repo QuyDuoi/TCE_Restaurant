@@ -17,7 +17,7 @@ import {useSelector} from 'react-redux';
 import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 import {RootState} from '../../store/store';
 import {Ban} from '../../store/Slices/BanSlice';
-import ModalThemSuaKhuVuc from './ModalThemSuaKhuVuc';
+import ModalThemSuaKhuVuc from './ComponentModal/ModalThemSuaKhuVuc';
 
 interface Props {
   searchQueryKhuVuc: string;
@@ -73,14 +73,7 @@ const ThongTinKhuVuc = (props: Props) => {
   });
 
   const renderItemBan = ({item}: {item: Ban}) => {
-    return (
-      <ItemBan
-        name={item.tenBan}
-        capacity={item.sucChua}
-        maQRCode={item.maQRCode}
-        onPress={() => console.log(item._id)}
-      />
-    );
+    return <ItemBan ban={item} onPress={() => console.log(item._id)} />;
   };
 
   const renderItem = ({item}: {item: KhuVuc}) => {

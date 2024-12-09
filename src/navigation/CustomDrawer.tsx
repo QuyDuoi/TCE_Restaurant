@@ -27,13 +27,13 @@ const CustomDrawer = (props: any) => {
           />
           <View>
             <TextComponent
-              text="Nguyễn Văn a truong b"
+              text="Nguyễn Văn A"
               styles={styles.text2}
               numberOfLines={1}
             />
             <SpaceComponent height={2} />
             <TextComponent
-              text="vi tri nhan vien"
+              text="Vị trí nhân viên"
               styles={styles.text1}
               numberOfLines={1}
             />
@@ -47,12 +47,12 @@ const CustomDrawer = (props: any) => {
             width: '60%',
           }}>
           <TextComponent
-            text="ten nha hanggggggggggggggggggggggg"
+            text="Tên nhà hàng"
             styles={styles.text3}
             numberOfLines={1}
           />
           <TextComponent
-            text="dia chi nha hang"
+            text="Địa chỉ nhà hàng"
             styles={styles.text3}
             numberOfLines={1}
           />

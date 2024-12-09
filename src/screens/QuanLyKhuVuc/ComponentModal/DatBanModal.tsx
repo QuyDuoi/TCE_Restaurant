@@ -17,7 +17,7 @@ import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 interface Props {
   isVisible: boolean;
   onClose: () => void;
-  onCloseParent: () => void;
+  onCloseParent?: () => void;
   selectedBan?: any;
 }
 

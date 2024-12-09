@@ -27,7 +27,6 @@ interface Props {
 }
 
 const KhongGianComponent = (props: Props) => {
-  //const idNhaHang = '66fab50fa28ec489c7137537';
 
   console.log('render khong gian component');
 

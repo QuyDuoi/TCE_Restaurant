@@ -19,6 +19,7 @@ function DatLichHen(): React.JSX.Element {
 
   const [lichDatBans, setLichDatBans] = useState([]);
   const [isVisibleDatBan, setIsVisibleDatBan] = useState(false);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const id_nhaHang = '66fab50fa28ec489c7137537';
 
@@ -29,7 +30,6 @@ function DatLichHen(): React.JSX.Element {
         setLichDatBans(result);
       } catch (error) {
         // setError(error);
-        console.log(error);
       } finally {
         setIsLoading(false);
       }
@@ -61,21 +61,26 @@ function DatLichHen(): React.JSX.Element {
           title="Tạo lịch hẹn"
           titleSize={14}
           titleColor={colors.price}
-          onPress={() => {}}
+          onPress={() => {
+            setIsVisibleDatBan(true);
+          }}
           styles={styles.cuttom}
         />
       </View>
       <View style={styles.containerList}>
-        <FlatList
-          data={lichDatBans}
-          renderItem={renderItem}
-          keyExtractor={item => item._id || ''}
-        />
+        {lichDatBans.length > 0 ? (
+          <FlatList
+            data={lichDatBans}
+            renderItem={renderItem}
+            keyExtractor={item => item._id || ''}
+          />
+        ) : (
+          <Text style={styles.emptyText}>Không có lịch đặt bàn nào!</Text>
+        )}
       </View>
       <DatBanModal
         isVisible={isVisibleDatBan}
         onClose={() => setIsVisibleDatBan(false)}
-        onCloseParent={onCloseParent}
       />
     </View>
   );
@@ -126,5 +131,12 @@ const styles = StyleSheet.create({
   },
   tieuDe: {
     flexDirection: 'row',
+  },
+  emptyText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: 'red',
+    marginTop: 20,
+    fontWeight: 'bold'
   },
 });

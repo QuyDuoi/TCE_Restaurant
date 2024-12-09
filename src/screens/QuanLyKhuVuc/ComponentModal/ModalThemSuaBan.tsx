@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../store/store';
-import {capNhatBanThunk, themBanThunk} from '../../store/Thunks/banThunks';
-import Ban from '../../services/models/BanModel';
-import { styles } from './StyleThemSuaBan';
+import {AppDispatch, RootState} from '../../../store/store';
+import {capNhatBanThunk, themBanThunk} from '../../../store/Thunks/banThunks';
+import Ban from '../../../services/models/BanModel';
+import {styles} from '../StyleThemSuaBan';
 
 interface ModalThemSuaBanProps {
   visible: boolean;
@@ -66,7 +66,9 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
     if (handleValidation()) {
       try {
         if (banData) {
-          await dispatch(capNhatBanThunk({id: thongTinBan._id, thongTinBan})).unwrap();
+          await dispatch(
+            capNhatBanThunk({id: thongTinBan._id, thongTinBan}),
+          ).unwrap();
           onActionComplete(true, 'Cập nhật bàn thành công!');
         } else {
           await dispatch(themBanThunk(thongTinBan)).unwrap();
@@ -121,7 +123,9 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
             value={thongTinBan.tenBan}
             onChangeText={text => capNhatDuLieu('tenBan', text)}
           />
-          {errors.tenBan && <Text style={styles.errorText}>{errors.tenBan}</Text>}
+          {errors.tenBan && (
+            <Text style={styles.errorText}>{errors.tenBan}</Text>
+          )}
 
           {/* Sức chứa */}
           <Text style={styles.label}>
@@ -130,7 +134,7 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
           <TextInput
             style={[styles.input, errors.sucChua && styles.errorBorder]}
             placeholder="Nhập sức chứa"
-            value={thongTinBan.sucChua}
+            value={String(thongTinBan.sucChua)}
             keyboardType="numeric"
             onChangeText={text => capNhatDuLieu('sucChua', Number(text))}
           />
@@ -152,7 +156,5 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
     </Modal>
   );
 };
-
-
 
 export default ModalThemSuaBan;

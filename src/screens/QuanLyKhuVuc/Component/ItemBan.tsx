@@ -1,90 +1,160 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  ToastAndroid,
+} from 'react-native';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {Ban} from '../../../store/Slices/BanSlice';
+import ModalShowQrCode from '../ComponentModal/ModalShowQrCode';
+import ModalThemSuaBan from '../ComponentModal/ModalThemSuaBan';
 
 interface Props {
-  name: string;
-  capacity: number;
-  maQRCode: string; // URL QR code nhận từ backend
+  ban: Ban;
   onPress?: () => void;
 }
 
 const ItemBan = (props: Props) => {
-  const {name, capacity, maQRCode, onPress} = props;
+  const {ban, onPress} = props;
+  const [isExpanded, setIsExpanded] = useState(false); // Trạng thái mở/đóng
+  const slideAnim = useRef(new Animated.Value(0)).current; // Animation trượt
+  const [isModalQRCode, setIsModalQRCode] = useState(false);
+  const [isModalSuaBan, setIsModalSuaBan] = useState(false);
+
+  // Hàm xử lý hiệu ứng trượt
+  const toggleExpand = () => {
+    if (isExpanded) {
+      // Thu lại
+      Animated.timing(slideAnim, {
+        toValue: 0, // Quay về vị trí ban đầu
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => setIsExpanded(false));
+    } else {
+      // Mở ra
+      Animated.timing(slideAnim, {
+        toValue: -80, // Trượt sang trái
+        duration: 350,
+        useNativeDriver: true,
+      }).start(() => setIsExpanded(true));
+    }
+  };
 
   return (
     <TouchableOpacity
-      style={styles.itemBan}
-      onPress={onPress}
+      onPress={() => {
+        toggleExpand(); // Hiệu ứng trượt
+        if (onPress) {
+          onPress(); // Gọi sự kiện onPress từ props
+        }
+      }}
       activeOpacity={0.6}>
-      <View style={styles.row}>
-        {/* Hiển thị hình ảnh QR code */}
-        {maQRCode ? (
-          <Image
-            source={{
-              uri: maQRCode,
-            }}
-            style={styles.qrImage}
-          />
-        ) : (
-          <Image
-            style={styles.imageNoQR}
-            source={require('../../../image/QRCode.jpg')}
-          />
-        )}
+      <View style={styles.container}>
+        {/* Nội dung bàn */}
+        <Animated.View
+          style={[
+            styles.content,
+            {
+              transform: [{translateX: slideAnim}], // Áp dụng hiệu ứng trượt
+            },
+          ]}>
+          {ban.maQRCode ? (
+            <Image source={{uri: ban.maQRCode}} style={styles.qrImage} />
+          ) : (
+            <Image
+              style={styles.imageNoQR}
+              source={require('../../../image/QRCode.jpg')}
+            />
+          )}
+          <View style={styles.info}>
+            <RowComponent justify="flex-start">
+              <TextComponent
+                text={`${ban.tenBan.length === 1 ? 'Bàn ' : ''}`}
+                color={colors.black}
+                fontWeight="bold"
+                size={16}
+              />
+              <TextComponent
+                text={ban.tenBan || 'Ngoài đường'}
+                size={16}
+                color={colors.black}
+                fontWeight="bold"
+              />
+            </RowComponent>
+            <TextComponent
+              text={`Sức chứa: ${ban.sucChua || 100} người`}
+              size={15}
+              color="black"
+            />
+          </View>
+        </Animated.View>
 
-        {/* Thông tin bàn */}
-        <View style={styles.ttban}>
-          <RowComponent justify="flex-start">
-            <TextComponent
-              text={`${name.length == 1 ? 'Bàn ' : ''}`}
-              color={colors.black}
-              fontWeight="bold"
-              size={16}
-            />
-            <TextComponent
-              text={`${name ? name : 'Ngoài đường'}`}
-              size={16}
-              color={colors.black}
-              fontWeight="bold"
-            />
-          </RowComponent>
-          <TextComponent
-            text={`Sức chứa: ${capacity ? capacity : '100'} người`}
-            size={15}
-            color={'black'}
-          />
-        </View>
+        {/* Nút tương tác */}
+        {isExpanded && (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => setIsModalQRCode(true)}>
+              <Icon name="qrcode" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, {backgroundColor: 'green'}]}
+              onPress={() => {
+                setIsModalSuaBan(true);
+                console.log(ban);
+              }}>
+              <Icon name="pencil" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
+      <ModalShowQrCode
+        visible={isModalQRCode}
+        onClose={() => {
+          setIsModalQRCode(false);
+        }}
+        maQRCode={ban.maQRCode}
+      />
+      <ModalThemSuaBan
+        visible={isModalSuaBan}
+        onClose={() => {
+          setIsModalSuaBan(false);
+        }}
+        banData={ban}
+        onActionComplete={(success, message) => {
+          if (success) {
+            ToastAndroid.show(message, ToastAndroid.SHORT); // Hiển thị thông báo thành công
+          } else {
+            ToastAndroid.show(message, ToastAndroid.SHORT);
+          }
+          setIsModalSuaBan(false);
+        }}
+      />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  row: {
+  container: {
+    marginVertical: 3,
+    backgroundColor: '#F5F5F5',
+    overflow: 'hidden', // Giới hạn nội dung khi trượt
+  },
+  content: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  text: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#000',
-  },
-  capacity: {
-    fontSize: 15,
-    color: '#666',
+    padding: 10,
   },
   qrImage: {
     width: 60,
     height: 60,
     marginRight: 10,
-  },
-  ttban: {
-    marginLeft: 5,
-    paddingVertical: 5,
-    marginBottom: 8,
   },
   imageNoQR: {
     width: 60,
@@ -93,9 +163,25 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     marginRight: 10,
   },
-  itemBan: {
-    backgroundColor: '#F5F5F5',
-    marginVertical: 3,
+  info: {
+    flex: 1,
+    paddingVertical: 5,
+  },
+  actions: {
+    position: 'absolute',
+    right: 10,
+    top: '50%',
+    flexDirection: 'row',
+    transform: [{translateY: -15}], // Căn giữa theo chiều dọc
+  },
+  actionButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginHorizontal: 5,
   },
 });
 

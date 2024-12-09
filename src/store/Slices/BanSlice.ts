@@ -42,7 +42,7 @@ const banSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(themBanThunk.fulfilled, (state, action: PayloadAction<Ban>) => {
-        state.bans.unshift(action.payload);
+        state.bans.unshift(action.payload.ban);
         state.status = 'succeeded';
       })
       .addCase(themBanThunk.rejected, (state, action) => {

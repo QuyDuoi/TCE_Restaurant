@@ -17,9 +17,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
 import {RootState} from '../../../store/store';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
-import ModalChucNangKhuVuc from '../ModalChucNangKhuVuc';
-import ModalThemSuaKhuVuc from '../ModalThemSuaKhuVuc';
-import ModalThemSuaBan from '../ModalThemSuaBan';
+import ModalChucNangKhuVuc from '../ComponentModal/ModalChucNangKhuVuc';
+import ModalThemSuaKhuVuc from '../ComponentModal/ModalThemSuaKhuVuc';
+import ModalThemSuaBan from '../ComponentModal/ModalThemSuaBan';
 
 interface Route {
   key: string;
@@ -62,7 +62,7 @@ const KhuVucTabView = ({
 
   const handleThemBan = () => {
     setIsThemBanVisible(true);
-  }
+  };
 
   const dispatch = useDispatch();
   const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
@@ -71,15 +71,8 @@ const KhuVucTabView = ({
     if (khuVucStatus === 'idle') {
       setIsLoading(true);
       dispatch(fetchKhuVucVaBan(idNhaHang) as any);
-    } else if (khuVucStatus === 'succeeded') {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-    } else if (khuVucStatus === 'failed') {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-    }
+    } 
+    setIsLoading(false);
   }, [dispatch, khuVucStatus]);
 
   const layout = useWindowDimensions();

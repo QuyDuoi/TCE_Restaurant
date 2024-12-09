@@ -106,11 +106,6 @@ const TableBookingDetail = (props: Props) => {
               onPress={onClose}>
               <Text style={stylesContainer.closeButtonText}>Đóng</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={stylesContainer.confirmButton}
-              onPress={onEdit}>
-              <Text style={stylesContainer.confirmButtonText}>Xác nhận</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -146,13 +141,11 @@ const stylesContainer = StyleSheet.create({
     marginBottom: 10,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
   },
   closeButton: {
     height: 45,
-    flex: 1,
     padding: 10,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
@@ -161,6 +154,7 @@ const stylesContainer = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    width: '40%'
   },
   confirmButton: {
     flex: 1,
@@ -174,7 +168,7 @@ const stylesContainer = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 16,
-    color: '#5c5c5c',
+    color: 'black',
     fontWeight: '500',
   },
   confirmButtonText: {

@@ -3,9 +3,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
-  StyleSheet,
-  ListRenderItem,
-  VirtualizedList,
   TextInput,
 } from 'react-native';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
@@ -25,9 +22,7 @@ import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
 import CardComponent from '../components/CardComponent';
 import {searchMonAn} from '../../../../services/api';
 import {useRef} from 'react';
-import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
 import ItemThemMonBanHang from './ItemThemMonBanHang';
-import LoadingModal from 'react-native-loading-modal';
 import ModalMonTuChon from './ModalMonTuChon';
 
 const MaxHeight = Dimensions.get('window').height;

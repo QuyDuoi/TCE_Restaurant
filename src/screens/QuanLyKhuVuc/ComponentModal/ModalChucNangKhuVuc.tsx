@@ -88,5 +88,6 @@ const styles = StyleSheet.create({
   },
   textButImage: {
     fontSize: 18,
+    color: 'black',
   },
 });

@@ -212,14 +212,6 @@ function ManThemMonAn(): React.JSX.Element {
             textAlignVertical="top"
           />
         </View>
-
-        {/* Nhóm Topping */}
-        <View style={styles.row}>
-          <Text style={styles.label}>Nhóm Topping</Text>
-          <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryButtonText}>Chọn nhóm Topping</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>

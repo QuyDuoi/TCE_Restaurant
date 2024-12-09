@@ -7,13 +7,13 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import type {AppDispatch} from '../../store/store';
+import type {AppDispatch} from '../../../store/store';
 import {useDispatch} from 'react-redux';
 import {
   capNhatKhuVucThunk,
   themKhuVucThunk,
-} from '../../store/Thunks/khuVucThunks';
-import KhuVuc from '../../services/models/KhuVucModel';
+} from '../../../store/Thunks/khuVucThunks';
+import KhuVuc from '../../../services/models/KhuVucModel';
 
 interface KhuVucModalProps {
   visible: boolean;
@@ -63,7 +63,7 @@ function ModalThemSuaKhuVuc(props: KhuVucModalProps): React.JSX.Element {
       } catch (error: any) {
         setError(error);
         // onActionComplete(false, error);
-      } 
+      }
     }
   };
 
