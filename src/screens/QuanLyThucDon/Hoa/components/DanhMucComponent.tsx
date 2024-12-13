@@ -22,8 +22,8 @@ import {searchMonAn} from '../../../../services/api';
 import debounce from 'lodash';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import {UserLogin} from '../../../../navigation/CustomDrawer';
-import { fetchDanhMucVaMonAn } from '../../../../store/Thunks/danhMucThunks';
-import { fetchKhuVucVaBan } from '../../../../store/Thunks/khuVucThunks';
+import {fetchDanhMucVaMonAn} from '../../../../store/Thunks/danhMucThunks';
+import {fetchKhuVucVaBan} from '../../../../store/Thunks/khuVucThunks';
 
 if (
   Platform.OS === 'android' &&
@@ -54,13 +54,14 @@ const DanhMucComponent = (props: Props) => {
   const user: UserLogin = useSelector(state => state.user);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
-
+  const id_nhaHang = user.id_nhaHang._id;
+  
   useEffect(() => {
-    console.log("user o mon an ", user);
-    const id_nhaHang = user.id_nhaHang._id;
-    if (Array.isArray(dsMonAn) && dsMonAn.length === 0) {
-      dispatch(fetchDanhMucVaMonAn(id_nhaHang));
-      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    if (user) {
+      if (Array.isArray(dsMonAn) && dsMonAn.length === 0) {
+        dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+        dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+      }
     }
   }, []);
 
@@ -111,10 +112,10 @@ const DanhMucComponent = (props: Props) => {
   //xu ly tim kiem
   const debounceSearch = useRef(
     debounce.debounce(
-      async (text: string, id_NhaHang: string) => {
+      async (text: string, id_nhaHang: string) => {
         if (text.trim().length > 0) {
           try {
-            const data = await searchMonAn(text, id_NhaHang);
+            const data = await searchMonAn(text, id_nhaHang);
             setFilteredMonAn(data);
           } catch (error) {
             console.log(error);
@@ -132,7 +133,7 @@ const DanhMucComponent = (props: Props) => {
   useEffect(() => {
     if (searchQueryMonAn.trim().length > 0) {
       setIsLoading(true);
-      debounceSearch.current(searchQueryMonAn, '66fab50fa28ec489c7137537');
+      debounceSearch.current(searchQueryMonAn, id_nhaHang);
       setHideImage(false);
     } else if (searchQueryMonAn.trim().length === 0) {
       setIsLoading(true);

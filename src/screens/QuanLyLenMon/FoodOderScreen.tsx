@@ -15,6 +15,9 @@ import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import {FlatList} from 'react-native-gesture-handler';
 import {ChiTietHoaDon} from '../../store/Slices/ChiTietHoaDonSlice';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {useSelector} from 'react-redux';
+import {io} from 'socket.io-client';
 
 const FoodOrderScreen: React.FC = () => {
   const [dsChiTiet, setDsChiTiet] = useState<ChiTietHoaDon[]>([]);
@@ -23,12 +26,13 @@ const FoodOrderScreen: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false); // Trạng thái refreshing
   const [tenMons, setTenMons] = useState<string[]>([]); // Danh sách tên món
   const [error, setError] = useState(''); // Trạng thái lỗi
+  const user: UserLogin = useSelector(state => state.user);
+  const id_nhaHang = user.id_nhaHang._id;
 
   const fetchChiTietHoaDon = async (refresh = false) => {
     if (!refresh) setIsLoading(true);
     setError(''); // Xóa lỗi cũ khi bắt đầu fetch
     try {
-      const id_nhaHang = '66fab50fa28ec489c7137537';
       const chiTietHoaDons = await getListChiTietHoaDonTheoCaLam(id_nhaHang);
       setDsChiTiet(chiTietHoaDons);
 
@@ -44,6 +48,18 @@ const FoodOrderScreen: React.FC = () => {
 
   useEffect(() => {
     fetchChiTietHoaDon();
+  }, []);
+
+  useEffect(() => {
+    const socket = io('https://tce-restaurant-api.onrender.com');
+    socket.on('lenMon', () => {
+      fetchChiTietHoaDon();
+    });
+
+    // Cleanup khi component unmount
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const filteredChiTiet = useMemo(() => {
@@ -91,7 +107,10 @@ const FoodOrderScreen: React.FC = () => {
       {error ? (
         // View lỗi nếu `error` không rỗng
         <View style={styles.errorContainer}>
-          <Image style={styles.image} source={require('../../image/waitingOrder.png')} />
+          <Image
+            style={styles.image}
+            source={require('../../image/waitingOrder.png')}
+          />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}

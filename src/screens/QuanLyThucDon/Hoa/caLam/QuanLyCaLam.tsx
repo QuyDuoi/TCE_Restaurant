@@ -40,7 +40,6 @@ const QuanLyCaLam = (props: Props) => {
 
   const [visibleModalSelectDate, setVisibleModalSelectDate] = useState(false);
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
-  const [date, setDate] = useState<Date | null>(null);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
 
@@ -51,7 +50,6 @@ const QuanLyCaLam = (props: Props) => {
   const [caLamFilter, setCaLamFilter] = useState<
     (CaLam & {nv: NhanVienSlice})[]
   >([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const [trangThaiCa, setTrangThaiCa] = useState(true);
   const [soDuBanDau, setSoDuBanDau] = useState('');

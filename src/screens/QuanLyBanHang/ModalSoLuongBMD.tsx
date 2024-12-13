@@ -1,21 +1,21 @@
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import ModalComponent from '../components/ModalComponent';
-import CardComponent from '../components/CardComponent';
-import {colors} from '../contants/hoaColors';
-import RowComponent from '../components/RowComponent';
-import {hoaStyles} from '../styles/hoaStyles';
-import TextComponent from '../components/TextComponent';
-import SpaceComponent from '../components/SpaceComponent';
-import {formatMoney} from '../utils/formatUtils';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {formatMoney} from '../QuanLyThucDon/Hoa/utils/formatUtils';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ButtonComponent from '../components/ButtonComponent';
-import {ipAddress, IPV4} from '../../../../services/api';
-import {addOrUpdate} from '../../../../store/Slices/ChiTietMonSlice';
-import {RootState} from '../../../../store/store';
-import {MonAn} from '../../../../store/Slices/MonAnSlice';
-import InputComponent from '../components/InputComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {ipAddress, IPV4} from '../../services/api';
+import {addOrUpdate} from '../../store/Slices/ChiTietMonSlice';
+import {RootState} from '../../store/store';
+import {MonAn} from '../../store/Slices/MonAnSlice';
+import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
 
 interface Props {
   visible: boolean;

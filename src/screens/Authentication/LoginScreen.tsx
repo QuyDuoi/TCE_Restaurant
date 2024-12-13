@@ -67,6 +67,8 @@ const LoginScreen = () => {
           JSON.stringify(refreshToken),
         );
 
+        console.log("Nhan viên"+nhanVien);
+      
         dispath(setUser(nhanVien));
 
         // Tạo thời gian hết hạn là 23:59 hôm nay

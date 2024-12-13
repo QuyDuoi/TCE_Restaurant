@@ -1,17 +1,17 @@
 import {View, Text, Switch, Image, TouchableOpacity} from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {MonAn} from '../../../../store/Slices/MonAnSlice';
-import {IPV4} from '../../../../services/api';
-import CardComponent from '../components/CardComponent';
-import {colors} from '../contants/hoaColors';
-import RowComponent from '../components/RowComponent';
-import {hoaStyles} from '../styles/hoaStyles';
-import TextComponent from '../components/TextComponent';
-import SpaceComponent from '../components/SpaceComponent';
-import {formatMoney} from '../utils/formatUtils';
+import {MonAn} from '../../store/Slices/MonAnSlice';
+import {IPV4} from '../../services/api';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {formatMoney} from '../QuanLyThucDon/Hoa/utils/formatUtils';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+import {RootState} from '../../store/store';
 
 interface Props {
   monAn: MonAn;

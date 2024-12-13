@@ -22,6 +22,8 @@ import {searchBan} from '../../services/api';
 import debounce from 'lodash';
 import ItemBanSearch from './Component/ItemBanSearch';
 import {UserLogin} from '../../navigation/CustomDrawer';
+import io from 'socket.io-client';
+import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 
 interface Props {
   searchQueryBan: string;
@@ -42,6 +44,8 @@ const KhongGianComponent = (props: Props) => {
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const user: UserLogin = useSelector(state => state.user);
+
+  const dispatch = useDispatch();
 
   const debouncedSearchQueryBan = useRef(
     debounce.debounce(async (text: string) => {
@@ -74,6 +78,21 @@ const KhongGianComponent = (props: Props) => {
       debouncedSearchQueryBan.current.cancel();
     };
   }, [searchQueryBan]);
+
+  // Kết nối socket.io
+  useEffect(() => {
+    const socket = io('https://tce-restaurant-api.onrender.com');
+    const id_nhaHang = user.id_nhaHang._id;
+
+    socket.on('themHoaDon', () => {
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    });
+
+    // Cleanup khi component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
   const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');

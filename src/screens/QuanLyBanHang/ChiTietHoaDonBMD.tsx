@@ -1,33 +1,28 @@
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  FlatList,
   ToastAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {ChiTietHoaDon} from '../../../../store/Slices/ChiTietHoaDonSlice';
-import {hoaStyles} from '../styles/hoaStyles';
-import {colors} from '../contants/hoaColors';
-import SpaceComponent from '../components/SpaceComponent';
-import RowComponent from '../components/RowComponent';
-import TitleComponent from '../components/TitleComponent';
-import SectionComponent from '../components/SectionComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import {formatDate, formatMoney} from '../utils/formatUtils';
-import TextComponent from '../components/TextComponent';
-import ModalGiamGia from '../caLam/chiTietHoaDon/ModalGiamGia';
-import ModalPTTTBMD from './ModalPTTTBMD';
-import ModalSoLuongBMD from './ModalSoLuongBMD';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
+import {useNavigation} from '@react-navigation/native';
+import {ChiTietHoaDon} from '../../store/Slices/ChiTietHoaDonSlice';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
+import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {formatMoney} from '../QuanLyThucDon/Hoa/utils/formatUtils';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import ModalGiamGia from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalGiamGia';
 import ItemChiTietHoaDonBMD from './ItemChiTietHoaDonBMD';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {VirtualizedList} from 'react-native';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import LoadingModal from 'react-native-loading-modal';
 
@@ -40,8 +35,6 @@ interface Props {
 const ChiTietHoaDonBMD = (props: Props) => {
   const {chiTietHoaDons, onUpdateChiTiets, onChangeChiTiets} =
     props.route.params;
-
-  //console.log('chiTietHoaDons', chiTietHoaDons);
 
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalSoLuongMonBMD, setVisibleModalSoLuongMonBMD] =
@@ -65,9 +58,6 @@ const ChiTietHoaDonBMD = (props: Props) => {
   >(null);
 
   const navigation = useNavigation<any>();
-
-  const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);
-  const calams = useSelector((state: RootState) => state.calam.caLams);
 
   let totalFinalBillCal = () => {
     if (isPercent) {

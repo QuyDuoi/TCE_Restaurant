@@ -1,12 +1,12 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React, {useId, useRef, useState} from 'react';
-import ModalComponent from '../components/ModalComponent';
-import TextComponent from '../components/TextComponent';
-import RowComponent from '../components/RowComponent';
-import {colors} from '../contants/hoaColors';
-import InputComponent from '../components/InputComponent';
-import SpaceComponent from '../components/SpaceComponent';
-import ButtonComponent from '../components/ButtonComponent';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 
 interface Props {
   visible: boolean;
@@ -17,10 +17,10 @@ interface Props {
 const ModalMonTuChon = (props: Props) => {
   const {visible, onClose, onSendData} = props;
 
-  const [tenMonTuChon, setTenMonTuChon] = useState('Com ga');
+  const [tenMonTuChon, setTenMonTuChon] = useState('');
   const [giaMonTuChon, setGiaMonTuChon] = useState('');
   const [soLuongMonTuChon, setSoLuongMonTuChon] = useState('');
-  const [ghiChuMonTuChon, setGhiChuMonTuChon] = useState('Ghi chú');
+  const [ghiChuMonTuChon, setGhiChuMonTuChon] = useState('');
 
   const handleSendData = () => {
     const dataSend = {
@@ -31,7 +31,6 @@ const ModalMonTuChon = (props: Props) => {
       ghiChu: ghiChuMonTuChon,
     };
     onSendData(dataSend);
-    //console.log('dataSend', dataSend);
     onClose();
   };
 
@@ -118,7 +117,7 @@ const ModalMonTuChon = (props: Props) => {
         value={ghiChuMonTuChon}
         onChangeText={text => setGhiChuMonTuChon(text)}
         placeholder="Ghi chú"
-        styles={[styles.input2]}
+        styles={[styles.input2, {padding: 10}]}
         numberOfLines={5}
         type="normal"
         multiline={true}

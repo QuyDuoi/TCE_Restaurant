@@ -70,7 +70,15 @@ export const styles = StyleSheet.create({
     paddingLeft: 3,
   },
   input: {
-    borderWidth: 0,
+    borderWidth: 0.2,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    fontSize: 16,
+    height: 45,
+    color: 'black',
+  },
+  vaiTro: {
+    borderWidth: 0.2,
     borderColor: '#ccc',
     borderRadius: 8,
     fontSize: 16,
@@ -120,7 +128,7 @@ export const styles = StyleSheet.create({
   },
   itemText: {
     color: 'black',
-    fontSize: 16
+    fontSize: 16,
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -155,5 +163,8 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
+  },
+  errorText: {
+    color: 'red',
   },
 });

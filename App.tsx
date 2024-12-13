@@ -8,9 +8,21 @@ import LoginScreen from './src/screens/Authentication/LoginScreen';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import moment from 'moment';
 import {ActivityIndicator, Text, View} from 'react-native';
-import { styles } from './src/navigation/CustomDrawer';
+import {styles} from './src/navigation/CustomDrawer';
+import DeletePostModal from './src/customcomponent/modalDelete';
+import {ToastProvider} from './src/customcomponent/CustomToast';
 
 const Stack = createStackNavigator();
+
+// function App(): React.JSX.Element {
+//   return (
+//     <Provider store={store}>
+//       <View style={{flex: 1}}>
+//           <DeletePostModal/>
+//       </View>
+//     </Provider>
+//   )
+// }
 
 function App(): React.JSX.Element {
   const [initializing, setInitializing] = useState(true);
@@ -68,18 +80,20 @@ function App(): React.JSX.Element {
 
   return (
     <Provider store={store}>
-      <NavigationContainer independent={true}>
-        <Stack.Navigator initialRouteName={userInfo ? 'Drawer' : 'Login'}>
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen name="Drawer" options={{headerShown: false}}>
-            {props => <DrawerNavigator {...props} userInfo={thongTin} />}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ToastProvider>
+        <NavigationContainer independent={true}>
+          <Stack.Navigator initialRouteName={userInfo ? 'Drawer' : 'Login'}>
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen name="Drawer" options={{headerShown: false}}>
+              {props => <DrawerNavigator {...props} userInfo={thongTin} />}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ToastProvider>
     </Provider>
   );
 }

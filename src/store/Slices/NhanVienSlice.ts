@@ -53,22 +53,31 @@ export const addNewNhanVien = createAsyncThunk('NhanVienSlice/addNhanVien', asyn
 });
 
 export const updateNhanVienThunk = createAsyncThunk<
-    NhanVienSlice, // Kiểu dữ liệu trả về khi thành công
-    { id: string, formData: FormData }, // Kiểu dữ liệu tham số truyền vào
-    { rejectValue: string } // Kiểu dữ liệu trả về khi thất bại
+  NhanVienSlice, // Kiểu dữ liệu trả về khi thành công
+  { id: string; formData: FormData }, // Kiểu dữ liệu tham số truyền vào
+  { rejectValue: { error: string; msg: string } } // Kiểu dữ liệu trả về khi thất bại
 >(
-    'nhanViens/updateNhanVien',
-    async ({ id, formData }, thunkAPI) => {
-        try {
-            const data = await updateNhanVien(id, formData);
-            console.log("Da duoc tien hanh");
-
-            return data;
-        } catch (error: any) {
-            console.log('Lỗi cập nhật:', error);
-            return thunkAPI.rejectWithValue(error.message || 'Error updating NhanVien');
-        }
+  'nhanViens/updateNhanVien',
+  async ({ id, formData }, thunkAPI) => {
+    try {
+      const data = await updateNhanVien(id, formData);
+      console.log('Cập nhật nhân viên thành công');
+      return data; // Trả về kết quả thành công
+    } catch (error: any) {
+      // Kiểm tra nếu lỗi có cấu trúc
+      if (error.error && error.msg) {
+        return thunkAPI.rejectWithValue({
+          error: error.error,
+          msg: error.msg,
+        });
+      }
+      // Trả về lỗi không xác định
+      return thunkAPI.rejectWithValue({
+        error: 'unknown_error',
+        msg: error.message || 'Lỗi không xác định',
+      });
     }
+  }
 );
 
 export const deleteNhanVienThunk = createAsyncThunk(

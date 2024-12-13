@@ -6,26 +6,26 @@ import {
   TextInput,
 } from 'react-native';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
-import {MonAn} from '../../../../store/Slices/MonAnSlice';
+import {MonAn} from '../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {AppDispatch, RootState} from '../../../../store/store';
-import {hoaStyles} from '../styles/hoaStyles';
-import {colors} from '../contants/hoaColors';
-import SpaceComponent from '../components/SpaceComponent';
+import {AppDispatch, RootState} from '../../store/store';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RowComponent from '../components/RowComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import TextComponent from '../components/TextComponent';
-import {Dimensions} from 'react-native';
-import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
-import CardComponent from '../components/CardComponent';
-import {searchMonAn} from '../../../../services/api';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import {DanhMuc} from '../../store/Slices/DanhMucSlice';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import {searchMonAn} from '../../services/api';
 import {useRef} from 'react';
 import ItemThemMonBanHang from './ItemThemMonBanHang';
 import ModalMonTuChon from './ModalMonTuChon';
-
-const MaxHeight = Dimensions.get('window').height;
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {io} from 'socket.io-client';
+import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
 
 const QuanLyBanHang = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -46,10 +46,21 @@ const QuanLyBanHang = () => {
   const [visibleModalMonTuChon, setVisibleModalMonTuChon] = useState(false);
   const navigation = useNavigation<any>();
 
+  const user: UserLogin = useSelector(state => state.user);
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
   const danhMucs = useSelector((state: RootState) => state.danhMuc.danhMucs);
+  const dispatch = useDispatch<AppDispatch>();
+  const id_nhaHang = user.id_nhaHang._id;
 
   useEffect(() => {
+    if (user) {
+      if (Array.isArray(monAns) && monAns.length === 0) {
+        setIsLoading(true); // Bắt đầu trạng thái loading
+        dispatch(fetchDanhMucVaMonAn(id_nhaHang)).finally(() => {
+          setIsLoading(false); // Kết thúc trạng thái loading
+        });
+      }
+    }
     if (danhMucs.length > 0) {
       const danhMucList = [...danhMucs];
       danhMucList.unshift({
@@ -71,6 +82,20 @@ const QuanLyBanHang = () => {
   }, [danhMucs]);
 
   useEffect(() => {
+    const socket = io('https://tce-restaurant-api.onrender.com');
+    const id_nhaHang = user.id_nhaHang._id;
+
+    socket.on('doiTrangThaiMon', () => {
+      dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+    });
+
+    // Cleanup khi component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     const filterMonAns = monAns.filter(monAn => {
       if (idDanhMuc === 'all') {
         return true;
@@ -79,8 +104,6 @@ const QuanLyBanHang = () => {
     });
     setFilteredMonAns(filterMonAns);
   }, [idDanhMuc, monAns]);
-
-  console.log('render ban hang 1');
 
   useFocusEffect(
     useCallback(() => {
@@ -209,20 +232,23 @@ const QuanLyBanHang = () => {
     );
   };
 
-  const id_nhaHang = '66fab50fa28ec489c7137537';
   const timKiemMonAn = async (text: string) => {
     if (text.trim().length > 0) {
       setIsLoading(true);
       try {
         const data = await searchMonAn(text, id_nhaHang);
-        setDsTimKiem(data);
+        if (data.length === 0) {
+          setDsTimKiem([]);
+        } else {
+          setDsTimKiem(data);
+        }
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
       }
     } else {
-      setDsTimKiem([]);
+      setDsTimKiem(filteredMonAns);
     }
   };
 
@@ -235,7 +261,7 @@ const QuanLyBanHang = () => {
       }
       timeoutRef.current = setTimeout(() => {
         timKiemMonAn(text);
-      }, 1000); // Đợi 1 giây trước khi gọi hàm
+      }, 1500);
     };
   };
 
@@ -366,6 +392,15 @@ const QuanLyBanHang = () => {
               ItemSeparatorComponent={() => <SpaceComponent height={6} />}
               nestedScrollEnabled={true}
             />
+          ) : dsTimKiem.length === 0 ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flex: 1,
+              }}>
+              <TextComponent text="Không tìm thấy món ăn phù hợp!" />
+            </View>
           ) : filteredMonAns.length > 0 ? (
             <FlatList
               data={filteredMonAns.slice(0, MaxToRender)}

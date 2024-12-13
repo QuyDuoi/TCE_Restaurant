@@ -1,5 +1,5 @@
-//export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.1.6:3000/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `http://192.168.1.6:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -520,12 +520,14 @@ export const updateNhanVien = async (id: string, formData: FormData) => {
       body: formData,
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật Nhân viên');
+      const errorData = await response.json(); // Nhận thông báo lỗi từ backend
+      
+      throw { error: errorData.error, msg: errorData.msg };
+    } else {
+      const data = await response.json();
+      return data;
     }
-    const data = await response.json();
-    return data;
   } catch (error) {
-    console.log('Lỗi cập nhật Nhân viên: ', error);
     throw error;
   }
 };

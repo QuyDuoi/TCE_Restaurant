@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Image,
-  Modal,
-  ActivityIndicator,
 } from 'react-native';
 import {
   DrawerContentScrollView,

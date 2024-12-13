@@ -67,7 +67,6 @@ const NhanVienComponent = props => {
     const id_nhaHang = user.id_nhaHang._id;
     if (status === 'idle') {
       dispatch(fetchNhanViens());
-      dispatch(fetchDanhMucVaMonAn(id_nhaHang));
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
       setIsLoading(true);
     } else if (status === 'succeeded') {
