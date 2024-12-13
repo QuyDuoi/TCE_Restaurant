@@ -4,6 +4,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ToastAndroid,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 
 import React, {useEffect, useState, useCallback} from 'react';
@@ -54,6 +56,8 @@ const ModalPTTT = React.memo((props: Props) => {
 
   const [chuyenKhoan, setChuyenKhoan] = useState(true);
   const [isPercent, setIsPercent] = useState(true);
+  const [apiQR, setApiQR] = useState('');
+  const [isLoadingQR, setIsLoadingQR] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -74,6 +78,29 @@ const ModalPTTT = React.memo((props: Props) => {
     });
     onClose(); // Đóng modal sau khi điều hướng
   };
+
+  //IMAGE QR
+  const idBank = '970422';
+  const stk = '0393911183';
+  const templateQR = '1Lh5PBl';
+  useEffect(() => {
+    const getQR = async () => {
+      try {
+        setIsLoadingQR(true);
+        const response = await fetch(
+          `https://api.vietqr.io/image/${idBank}-${stk}-${templateQR}.jpg?amount=${totalFinalBill}`,
+        );
+        setApiQR(response.url);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoadingQR(false);
+      }
+    };
+    //console.log(apiQR);
+
+    getQR();
+  }, [totalFinalBill]);
 
   //xu ly thanh toan
   const handleThanhToan = async () => {
@@ -176,15 +203,19 @@ const ModalPTTT = React.memo((props: Props) => {
         </RowComponent>
         {chuyenKhoan && (
           <SectionComponent styles={[styles.contaierImage]}>
-            <TextComponent
-              text="Ảnh QR"
-              styles={[
-                styles.image,
-                {
-                  backgroundColor: 'green',
-                },
-              ]}
-            />
+            {isLoadingQR ? (
+              <ActivityIndicator
+                size="large"
+                color={colors.orange}
+                style={styles.image}
+              />
+            ) : (
+              <Image
+                source={{uri: apiQR}}
+                style={styles.image}
+                resizeMode="contain"
+              />
+            )}
           </SectionComponent>
         )}
         <RowComponent styles={{marginVertical: 8}} justify="space-between">

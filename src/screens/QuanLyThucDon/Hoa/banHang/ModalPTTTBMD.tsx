@@ -1,5 +1,13 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+  ToastAndroid,
+} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import ModalComponent from '../components/ModalComponent';
@@ -33,8 +41,35 @@ const ModalPTTTBMD = (props: Props) => {
 
   const [chuyenKhoan, setChuyenKhoan] = useState(true);
   const [isPercent, setIsPercent] = useState(true);
+  const [apiQr, setApiQr] = useState(
+    'https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500',
+  );
+  const [isLoadingQr, setIsLoadingQr] = useState(false);
 
   const dispatch = useDispatch();
+
+  const idBank = '970422';
+  const stk = '0393911183';
+  const templateQR = '1Lh5PBl';
+
+  useEffect(() => {
+    //LOAD QR
+
+    const getQrCode = async () => {
+      try {
+        setIsLoadingQr(true);
+        const result = await fetch(
+          `https://api.vietqr.io/image/${idBank}-${stk}-${templateQR}.jpg?amount=${totalFinalBill}`,
+        );
+        setApiQr(result.url);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoadingQr(false);
+      }
+    };
+    getQrCode();
+  }, [totalFinalBill]);
 
   const handleChangeChuyenKhoan = useCallback((value: boolean) => {
     setChuyenKhoan(value);
@@ -59,6 +94,7 @@ const ModalPTTTBMD = (props: Props) => {
 
     const result = await thanhToanBanHang(dispatch, data as any);
     if (result) {
+      ToastAndroid.show('Thanh toán thành công', ToastAndroid.SHORT);
       setTimeout(() => {
         setIsLoading(false);
         onClose();
@@ -130,15 +166,20 @@ const ModalPTTTBMD = (props: Props) => {
         </RowComponent>
         {chuyenKhoan && (
           <SectionComponent styles={[styles.contaierImage]}>
-            <TextComponent
-              text="Ảnh QR"
-              styles={[
-                styles.image,
-                {
-                  backgroundColor: 'green',
-                },
-              ]}
-            />
+            {isLoadingQr ? (
+              <ActivityIndicator
+                size="large"
+                color={colors.orange}
+                style={styles.image}
+              />
+            ) : (
+              <Image
+                source={{
+                  uri: apiQr,
+                }}
+                style={[styles.image]}
+              />
+            )}
           </SectionComponent>
         )}
         <RowComponent styles={{marginVertical: 8}} justify="space-between">
@@ -186,8 +227,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 200,
+    height: 195,
   },
   content: {
     flexDirection: 'row',

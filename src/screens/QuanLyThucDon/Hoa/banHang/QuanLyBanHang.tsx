@@ -40,7 +40,7 @@ const QuanLyBanHang = () => {
   const [dsTimKiem, setDsTimKiem] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [onChangeChiTiets, setOnChangeChiTiets] = useState(false);
-  const [MaxToRender, setMaxToRender] = useState(7);
+  const [MaxToRender, setMaxToRender] = useState(12);
   const [isEndReached, setIsEndReached] = useState(false);
 
   const [visibleModalMonTuChon, setVisibleModalMonTuChon] = useState(false);

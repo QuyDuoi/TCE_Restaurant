@@ -131,7 +131,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
   }, [hoaDon]);
 
   useEffect(() => {
-    console.log('set is paid');
+    //console.log('set is paid');
 
     if (hoaDon.trangThai === 'Đã Thanh Toán') {
       setIsPaid(true);
@@ -351,7 +351,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
               <RowComponent justify="space-between">
                 <TextComponent text="Giảm giá: " styles={styles.text} />
                 <TouchableOpacity
-                  //disabled={isPaid}
                   style={{
                     width: '40%',
                     alignItems: 'center',

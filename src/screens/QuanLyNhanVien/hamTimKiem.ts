@@ -1,5 +1,5 @@
-import { NhanVien } from "../../store/Slices/NhanVienSlice";
-import { FiltersModelTest } from "./NhanVienComponent";
+import {NhanVien} from '../../store/Slices/NhanVienSlice';
+import {FiltersModelTest} from './NhanVienComponent';
 
 // Hàm loại bỏ dấu tiếng Việt
 export const removeVietnameseTones = (str: string): string => {
@@ -14,7 +14,7 @@ export const removeVietnameseTones = (str: string): string => {
 export const applyFilters = (
   nhanVienList: NhanVien[], // Danh sách nhân viên gốc
   searchQuery: string, // Từ khóa tìm kiếm
-  filters: FiltersModelTest // Các điều kiện lọc
+  filters: FiltersModelTest, // Các điều kiện lọc
 ) => {
   if (!filters) {
     console.error('Filters is undefined, using default filters.');
@@ -33,7 +33,9 @@ export const applyFilters = (
     .map(([key]) => key);
 
   // Loại bỏ dấu cho chuỗi tìm kiếm
-  const normalizedSearchQuery = removeVietnameseTones(searchQuery.toLowerCase());
+  const normalizedSearchQuery = removeVietnameseTones(
+    searchQuery.toLowerCase(),
+  );
 
   // Lọc danh sách nhân viên dựa trên tên và điều kiện lọc
   let filteredResult = nhanVienList.filter(nv => {
@@ -54,11 +56,13 @@ export const applyFilters = (
     const positionFilter =
       (!filters.quanLy &&
         !filters.thuNgan &&
-        !filters.phucVu) ||
+        !filters.phucVu &&
+        !filters.dauBep) ||
       (filters.quanLy && nv.vaiTro === 'Quản lý') ||
       (filters.thuNgan && nv.vaiTro === 'Nhân viên thu ngân') ||
-      (filters.phucVu && nv.vaiTro === 'Nhân viên phục vụ')
-    
+      (filters.phucVu && nv.vaiTro === 'Nhân viên phục vụ') ||
+      (filters.dauBep && nv.vaiTro === 'Đầu bếp');
+
     return statusFilter && positionFilter;
   });
 

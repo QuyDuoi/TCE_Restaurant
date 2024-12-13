@@ -1,8 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import CardComponent from '../components/CardComponent';
@@ -22,10 +18,11 @@ import {
   fetchHoaDonTheoCaLam,
   HoaDon,
 } from '../../../../store/Slices/HoaDonSlice';
-import {fetchKhuVucs, KhuVuc} from '../../../../store/Slices/KhuVucSlice';
-import {Ban, fetchBans} from '../../../../store/Slices/BanSlice';
+import {KhuVuc} from '../../../../store/Slices/KhuVucSlice';
+import {Ban} from '../../../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
-import { fetchKhuVucVaBan } from '../../../../store/Thunks/khuVucThunks';
+import {fetchKhuVucVaBan} from '../../../../store/Thunks/khuVucThunks';
+import ModalTaoPhieuTC from './ModalTaoPhieuTC';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
 
@@ -33,6 +30,8 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [bansByKhuVuc, setBansByKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
+  const [visibleModalTaoPhieuTC, setVisibleModalTaoPhieuTC] = useState(false);
+  const [isLoadingFetch, setIsLoadingFetch] = useState(false);
 
   const navigation = useNavigation<any>();
 
@@ -40,15 +39,15 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const ketThuc = caLam.ketThuc ? new Date(caLam.ketThuc) : undefined;
 
   const dispatch = useDispatch();
+
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
+  const hoaDonStatus = useSelector((state: RootState) => state.hoaDons.status);
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
 
   //fetch hoa don va khu vuc tu api ve redux store
   useEffect(() => {
-    console.log('fetch hoa don');
-
     dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
 
     if (bans.length === 0) {
@@ -61,18 +60,28 @@ const ChiTietCaLam = ({route}: {route: any}) => {
       setBansByKhuVuc(bans as any);
     }
   }, [bans]);
+
+  useEffect(() => {
+    if (hoaDonStatus === 'loading') {
+      setIsLoadingFetch(true);
+    }
+    if (hoaDonStatus === 'succeeded') {
+      setIsLoadingFetch(false);
+    }
+  }, [hoaDonStatus]);
+
   console.log('render chi tiet ca lam');
 
   const getKhuVucBan = (idBan?: string) => {
-    if (!idBan) return { tenKhuVuc: '', tenBan: '' };
-  
+    if (!idBan) return {tenKhuVuc: '', tenBan: ''};
+
     // Tìm bàn từ danh sách `bansByKhuVuc`
     const ban = bansByKhuVuc.find(item => item._id === idBan);
-    if (!ban) return { tenKhuVuc: 'Không xác định', tenBan: 'Không xác định' };
-  
+    if (!ban) return {tenKhuVuc: 'Không xác định', tenBan: 'Không xác định'};
+
     // Tìm khu vực từ thuộc tính `id_khuVuc` của bàn
     const khuVuc = khuVucs.find(kv => kv._id === ban.id_khuVuc);
-  
+
     return {
       tenKhuVuc: khuVuc?.tenKhuVuc || 'Không xác định',
       tenBan: ban.tenBan || 'Không xác định',
@@ -199,7 +208,17 @@ const ChiTietCaLam = ({route}: {route: any}) => {
             <View style={{flex: 1, margin: 10}}>
               <TitleComponent text="Danh sách hóa đơn" />
               <SpaceComponent height={10} />
-              {hoaDons.length > 0 ? (
+              {isLoadingFetch ? (
+                <ActivityIndicator
+                  size="large"
+                  color={colors.orange}
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flex: 1,
+                  }}
+                />
+              ) : hoaDons.length > 0 ? (
                 <FlatList
                   data={hoaDons}
                   renderItem={renderItem}
@@ -222,6 +241,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
         </View>
       </View>
 
+      {/*MODAL CHI TIET DOANH THU */}
       <ModalComponent
         visible={isVisibleDialog}
         title="Chi tiết doanh thu"
@@ -252,7 +272,24 @@ const ChiTietCaLam = ({route}: {route: any}) => {
           <ButtonComponent
             title="Chi tiết"
             onPress={() => {
+              setIsVisibleDialog(false);
               navigation.navigate('ThuChiScreen', {caLam: caLam});
+            }}
+            bgrColor={colors.blue2}
+            titleColor={colors.white}
+            titleSize={12}
+            styles={{
+              paddingHorizontal: 10,
+              marginLeft: 10,
+              height: 20,
+            }}
+            boderRadius={5}
+          />
+          <SpaceComponent width={6} />
+          <ButtonComponent
+            title="Tạo phiếu"
+            onPress={() => {
+              setVisibleModalTaoPhieuTC(true);
             }}
             bgrColor={colors.blue2}
             titleColor={colors.white}
@@ -274,6 +311,13 @@ const ChiTietCaLam = ({route}: {route: any}) => {
           styles={styles.textStyle}
         />
       </ModalComponent>
+
+      {/*MODAL TAO PHIEU THU, CHI */}
+      <ModalTaoPhieuTC
+        visible={visibleModalTaoPhieuTC}
+        onClose={() => setVisibleModalTaoPhieuTC(false)}
+        caLam={caLam}
+      />
     </>
   );
 };

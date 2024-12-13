@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -24,6 +25,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import ModalSelectDate from './ModalSelectDate';
 
 interface Props {
   setFilterHandler: any;
@@ -36,8 +38,12 @@ const QuanLyCaLam = (props: Props) => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
 
-  const [isVisibleDialog, setIsVisibleDialog] = useState(false);
+  const [visibleModalSelectDate, setVisibleModalSelectDate] = useState(false);
+  const [isLoadingFetch, setIsLoadingFetch] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+
   const [isInputVisible, setIsInputVisible] = useState(false);
   const opacity = useSharedValue(0); // Giá trị dùng để điều chỉnh độ trong suốt
   const translateX = useSharedValue(300); // Giá trị dùng để điều chỉnh vị trí X (bắt đầu từ ngoài màn hình)
@@ -49,18 +55,21 @@ const QuanLyCaLam = (props: Props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [trangThaiCa, setTrangThaiCa] = useState(true);
   const [soDuBanDau, setSoDuBanDau] = useState('');
+
   const id_nhaHang = '66fab50fa28ec489c7137537';
   const id_nhanVien = '67060ef797bc70ba1d9222ab';
 
   const caLams = useSelector((state: RootState) => state.calam.caLams);
+  const caLamStatus = useSelector((state: RootState) => state.calam.status);
   const checkCaLam = caLams.filter(caLam => !caLam.ketThuc);
 
   //thuc thi nut loc ben drawer
   useEffect(() => {
-    setFilterHandler(() => setIsVisibleDialog.bind(null, true));
+    setFilterHandler(() => setVisibleModalSelectDate.bind(null, true));
   }, [setFilterHandler]);
 
   useEffect(() => {
+    setIsLoadingFetch(true);
     dispatch(fetchCaLam(id_nhaHang) as any);
     if (checkCaLam) {
       setTrangThaiCa(true);
@@ -69,9 +78,18 @@ const QuanLyCaLam = (props: Props) => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (caLamStatus === 'succeeded') {
+      setIsLoadingFetch(false);
+    }
+  }, [caLamStatus]);
+
   const sortedCaLam = (caLams: CaLam[]) => {
     return [...caLams].sort((a, b) => {
-      return new Date(b.batDau).getTime() - new Date(a.batDau).getTime();
+      return (
+        new Date(b.batDau as any).getTime() -
+        new Date(a.batDau as any).getTime()
+      );
     });
   };
 
@@ -107,27 +125,51 @@ const QuanLyCaLam = (props: Props) => {
     }
   };
 
+  const convertDate = (date: string) => {
+    if (date[1] === '/') {
+      date = '0' + date;
+    }
+    if (date[4] === '/') {
+      date = date.slice(0, 3) + '0' + date.slice(3);
+    }
+    return date.split('/').reverse().join('/');
+  };
+
   useEffect(() => {
     const filtered = caLams.filter(caLam => {
-      const caLamDate = new Date(caLam.batDau).toLocaleDateString('vi-VN');
+      const caLamDate = new Date(caLam.batDau as any).toLocaleDateString(
+        'vi-VN',
+      );
 
-      return caLamDate === date?.toLocaleDateString('vi-VN');
+      if (!fromDate || !toDate) {
+        return true;
+      }
+      const from = fromDate?.toLocaleDateString('vi-VN');
+      const to = toDate?.toLocaleDateString('vi-VN');
+
+      const convertFrom = convertDate(from);
+      const convertTo = convertDate(to);
+      const convertCaLam = convertDate(caLamDate);
+
+      return convertCaLam >= convertFrom && convertCaLam <= convertTo;
     });
 
     const sortedCaLam = filtered.sort((a, b) => {
       return (
-        new Date(b.batDau).getTime() - new Date(a.ketThuc as any).getTime()
+        new Date(b.batDau as any).getTime() -
+        new Date(a.ketThuc as any).getTime()
       );
     });
+
     setCaLamFilter(sortedCaLam as any);
-  }, [date]);
+  }, [fromDate, toDate]);
 
   const renderItem = ({item}: {item: CaLam & {nv: NhanVienSlice}}) => {
     return (
       <ItemCaLam
         batDau={item.batDau?.toLocaleString('vi-VN')}
         ketThuc={item.ketThuc?.toLocaleString('vi-VN')}
-        nhanVienMoCa={item.id_nhanVien?.hoTen}
+        nhanVienMoCa={item.id_nhanVien.hoTen}
         onPress={() => {
           navigation.navigate('ChiTietCaLam', {caLam: item});
         }}
@@ -137,7 +179,8 @@ const QuanLyCaLam = (props: Props) => {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    setDate(null);
+    setFromDate(null);
+    setToDate(null);
     try {
       dispatch(fetchCaLam(id_nhaHang) as any);
     } catch (error) {
@@ -148,102 +191,105 @@ const QuanLyCaLam = (props: Props) => {
   };
 
   const closeFilterDialog = () => {
-    setIsVisibleDialog(false);
+    setVisibleModalSelectDate(false);
   };
 
   return (
     <>
-      <View style={{backgroundColor: colors.gray}}>
-        <View style={[hoaStyles.container]}>
-          {!trangThaiCa && (
-            <View style={hoaStyles.viewMoCa}>
-              <TouchableOpacity
-                style={hoaStyles.buttonMoCa}
-                onPress={handleMoCa}>
-                <Text style={hoaStyles.textMoCa}>Mở ca mới</Text>
-              </TouchableOpacity>
+      {isLoadingFetch ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color={colors.orange} />
+        </View>
+      ) : (
+        <View style={{backgroundColor: colors.gray}}>
+          <View style={[hoaStyles.container]}>
+            {!trangThaiCa && (
+              <View style={hoaStyles.viewMoCa}>
+                <TouchableOpacity
+                  style={hoaStyles.buttonMoCa}
+                  onPress={handleMoCa}>
+                  <Text style={hoaStyles.textMoCa}>Mở ca mới</Text>
+                </TouchableOpacity>
 
-              {isInputVisible && (
-                <Animated.View style={[hoaStyles.viewInput, animatedStyle]}>
-                  <TextInput
-                    onChangeText={setSoDuBanDau}
-                    keyboardType="numeric"
-                    placeholderTextColor="black"
-                    placeholder="Nhập số dư ban đầu"
-                    style={hoaStyles.inputMoCa}
-                  />
-                  <TouchableOpacity
-                    style={hoaStyles.buttonXacNhan}
-                    onPress={handleXacNhan}>
-                    <Text style={hoaStyles.textXacNhan}>Xác nhận</Text>
-                  </TouchableOpacity>
-                </Animated.View>
+                {isInputVisible && (
+                  <Animated.View style={[hoaStyles.viewInput, animatedStyle]}>
+                    <TextInput
+                      onChangeText={setSoDuBanDau}
+                      keyboardType="numeric"
+                      placeholderTextColor="black"
+                      placeholder="Nhập số dư ban đầu"
+                      style={hoaStyles.inputMoCa}
+                    />
+                    <TouchableOpacity
+                      style={hoaStyles.buttonXacNhan}
+                      onPress={handleXacNhan}>
+                      <Text style={hoaStyles.textXacNhan}>Xác nhận</Text>
+                    </TouchableOpacity>
+                  </Animated.View>
+                )}
+              </View>
+            )}
+            <View style={{flex: 1, paddingHorizontal: 10, marginTop: 10}}>
+              {fromDate && toDate && caLamFilter.length > 0 ? (
+                <FlatList
+                  data={sortedCaLam(caLamFilter) as any}
+                  renderItem={renderItem}
+                  keyExtractor={item => item._id as string}
+                  showsVerticalScrollIndicator={false}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={handleRefresh}
+                    />
+                  }
+                />
+              ) : caLams.length > 0 && !fromDate && !toDate ? (
+                <FlatList
+                  data={sortedCaLam(caLams) as any}
+                  renderItem={renderItem}
+                  keyExtractor={item => item._id as string}
+                  showsVerticalScrollIndicator={false}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={handleRefresh}
+                    />
+                  }
+                />
+              ) : (
+                <ScrollView
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={handleRefresh}
+                    />
+                  }
+                  contentContainerStyle={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View>
+                    <TitleComponent
+                      text="Không có ca làm nào trong ngày này"
+                      color={colors.desc}
+                      styles={{
+                        textAlign: 'center',
+                      }}
+                    />
+                  </View>
+                </ScrollView>
               )}
             </View>
-          )}
-          <View style={{flex: 1, paddingHorizontal: 10, marginTop: 10}}>
-            {date && caLamFilter.length > 0 ? (
-              <FlatList
-                data={sortedCaLam(caLamFilter) as any}
-                renderItem={renderItem}
-                keyExtractor={item => item._id as string}
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              />
-            ) : caLams.length > 0 && !date ? (
-              <FlatList
-                data={sortedCaLam(caLams) as any}
-                renderItem={renderItem}
-                keyExtractor={item => item._id as string}
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              />
-            ) : (
-              <ScrollView
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-                contentContainerStyle={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <View>
-                  <TitleComponent
-                    text="Không có ca làm nào trong ngày này"
-                    color={colors.desc}
-                    styles={{
-                      textAlign: 'center',
-                    }}
-                  />
-                </View>
-              </ScrollView>
-            )}
           </View>
         </View>
-      </View>
-      <ModalDate
-        visible={isVisibleDialog}
+      )}
+      <ModalSelectDate
+        visible={visibleModalSelectDate}
         onClose={closeFilterDialog}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        onConfirm={() => {
-          setDate(selectedDate);
-          closeFilterDialog();
-        }}
+        //setDate={setDate}
+        setFromDateParent={(val: Date) => setFromDate(val)}
+        setToDateParent={(val: Date) => setToDate(val)}
       />
     </>
   );

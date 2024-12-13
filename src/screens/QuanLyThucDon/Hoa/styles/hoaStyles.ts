@@ -134,13 +134,13 @@ export const hoaStyles = StyleSheet.create({
     width: 55,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'red',
+    backgroundColor: colors.red,
   },
   buttonEdit: {
     height: '100%',
     width: 55,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'green',
+    backgroundColor: colors.orange,
   },
 });

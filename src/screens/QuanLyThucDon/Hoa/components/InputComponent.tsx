@@ -128,13 +128,13 @@ const InputComponent = (props: Props) => {
       <RowComponent
         styles={[
           hoaStyles.inputContainer,
-          styles,
           {
             borderWidth: borderWidth ? borderWidth : undefined,
             borderColor: colors.desc2,
             backgroundColor: bgrColor ? bgrColor : colors.white,
             elevation: elevation ? elevation : 0,
           },
+          styles,
         ]}>
         {leftIcon ?? leftIcon}
         <View

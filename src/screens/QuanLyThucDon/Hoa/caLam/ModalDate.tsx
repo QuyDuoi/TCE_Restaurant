@@ -8,16 +8,17 @@ import {colors} from '../contants/hoaColors';
 
 interface Props {
   visible: boolean;
-  onClose: () => void;
+  onCloseChild: () => void;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
 }
 
 const ModalDate = (props: Props) => {
-  const {visible, onClose, selectedDate, setSelectedDate, onConfirm} = props;
+  const {visible, onCloseChild, selectedDate, setSelectedDate, onConfirm} =
+    props;
   return (
-    <ModalComponent visible={visible} title="Chọn ngày" onClose={onClose}>
+    <ModalComponent visible={visible} title="Chọn ngày" onClose={onCloseChild}>
       <View
         style={{
           alignItems: 'center',
@@ -36,7 +37,9 @@ const ModalDate = (props: Props) => {
         }}>
         <ButtonComponent
           title="Hủy"
-          onPress={onClose}
+          onPress={() => {
+            onCloseChild();
+          }}
           bgrColor={colors.blue2}
           styles={[styles.button]}
           titleColor={colors.white}
@@ -45,8 +48,8 @@ const ModalDate = (props: Props) => {
         <ButtonComponent
           title="Xác nhận"
           onPress={() => {
-            onConfirm();
-            onClose();
+            setSelectedDate(selectedDate);
+            onCloseChild();
           }}
           bgrColor={colors.blue2}
           styles={[styles.button]}

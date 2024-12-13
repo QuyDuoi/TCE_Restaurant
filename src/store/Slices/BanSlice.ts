@@ -1,14 +1,18 @@
 // slices/BanSlice.ts
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import KhuVuc from '../../services/models/KhuVucModel';
-import { themBanThunk, fetchBanTheoId, capNhatBanThunk } from '../Thunks/banThunks';
+import {
+  themBanThunk,
+  fetchBanTheoId,
+  capNhatBanThunk,
+} from '../Thunks/banThunks';
 
 // Định nghĩa interface cho Ban
 export interface Ban {
   _id?: string;
   tenBan: string;
   sucChua: number;
-  trangThai?: boolean;
+  trangThai?: string;
   ghiChu: string;
   maQRCode?: string;
   id_khuVuc: KhuVuc;

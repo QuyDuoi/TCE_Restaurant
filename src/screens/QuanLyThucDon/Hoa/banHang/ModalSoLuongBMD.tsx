@@ -84,7 +84,7 @@ const ModalSoLuongBMD = (props: Props) => {
       visible={visible}
       onClose={onClose}
       borderRadius={1}
-      title={type === 'edit' ? 'Cap nhat' : 'Cap nhat so luong'}>
+      title={type === 'edit' ? 'Cập nhật' : 'Cập nhật số lượng'}>
       <CardComponent
         styles={{
           marginVertical: 16,
@@ -183,7 +183,7 @@ const ModalSoLuongBMD = (props: Props) => {
       )}
       <RowComponent justify="space-between" styles={{paddingHorizontal: 5}}>
         <ButtonComponent
-          title="Dong"
+          title="Đóng"
           onPress={() => {
             setSoLuong(item?.soLuongMon ?? 0);
             setGiaTien(item?.giaTien ?? 0);
@@ -195,7 +195,7 @@ const ModalSoLuongBMD = (props: Props) => {
           titleFontWeight="600"
         />
         <ButtonComponent
-          title="Luu thay doi"
+          title="Lưu thay đổi"
           onPress={handleConfirm}
           styles={styles.button}
           titleSize={15}

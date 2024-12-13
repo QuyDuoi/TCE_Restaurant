@@ -176,7 +176,6 @@ const ChiTietHoaDonBMD = (props: Props) => {
   //DE TEN MON SE NGAN GON HON
   const handleDeleteMonAnTuChon = useCallback(
     (itemSelected: any) => {
-      //DE ID_MONAN HOAC TEN MON
       const updatedChiTietHoaDons = chiTietHoaDonList.filter(
         item => item.tenMon !== itemSelected.tenMon,
       );
@@ -196,7 +195,6 @@ const ChiTietHoaDonBMD = (props: Props) => {
 
   const handleDeleteItemChiTiet = useCallback(
     (itemSelected: any) => {
-      //DE ID_MONAN HOAC TEN MON
       const updatedChiTietHoaDons = chiTietHoaDonList.filter(
         item => item.id_monAn !== itemSelected.id_monAn,
       );
@@ -213,9 +211,9 @@ const ChiTietHoaDonBMD = (props: Props) => {
     },
     [chiTietHoaDonList],
   );
+  //console.log('chiTietHoaDonList', chiTietHoaDonList);
 
-  console.log('chiTietHoaDonList', chiTietHoaDonList);
-
+  //NHAN VIEN THANH TOAN
   // const nhanVienThanhToan = nhanviens.find(
   //   item => item._id === hoaDon?.id_nhanVien,
   // );
@@ -258,13 +256,13 @@ const ChiTietHoaDonBMD = (props: Props) => {
           activeOpacity={0.5}
           style={hoaStyles.buttonEdit}
           onPress={() => {
-            //TAM THOI
+            //TAM THOI CO THE CAN UPDATE
             setTypeModalSoLuongMon('edit');
             item.id_monAn
               ? handleOpenModalSoLuongMonBMD(item)
               : handleOpenModalSoLuongMonBMD(item);
           }}>
-          <Icon name="edit" size={20} color={colors.white} />
+          <Icon name="edit" size={22} color={colors.white} />
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -274,7 +272,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
               ? handleDeleteItemChiTiet(item)
               : handleDeleteMonAnTuChon(item);
           }}>
-          <Icon name="trash" size={20} color={colors.white} />
+          <Icon name="trash" size={22} color={colors.white} />
         </TouchableOpacity>
       </View>
     );
@@ -293,16 +291,21 @@ const ChiTietHoaDonBMD = (props: Props) => {
         {!isPaid && (
           <TouchableOpacity
             onPress={() => {
-              //reset chi tiet
-              setIsLoadingModal(true);
-              onUpdateChiTiets?.([]);
-              onChangeChiTiets?.(true);
-              setTimeout(() => {
-                onChangeChiTiets?.(false);
-                setIsLoadingModal(false);
-              }, 500);
-              setChiTietHoaDonList([]);
-              onUpdateChiTiets?.([]);
+              //RESET
+              if (chiTietHoaDonList.length > 0) {
+                setIsLoadingModal(true);
+                onUpdateChiTiets?.([]);
+                onChangeChiTiets?.(true);
+                setTimeout(() => {
+                  onChangeChiTiets?.(false);
+                  setIsLoadingModal(false);
+                }, 500);
+                setChiTietHoaDonList([]);
+                onUpdateChiTiets?.([]);
+                setDiscount(null);
+              } else {
+                ToastAndroid.show('Hãy thêm món ăn mới', ToastAndroid.SHORT);
+              }
             }}
             style={{
               position: 'absolute',
@@ -416,7 +419,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
                   }}
                   onPress={() => {}}>
                   <TextComponent
-                    text="In hoa don"
+                    text="In hóa đơn"
                     color={colors.blue2}
                     size={16}
                   />

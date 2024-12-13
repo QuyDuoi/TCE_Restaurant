@@ -7,8 +7,6 @@ import {colors} from '../contants/hoaColors';
 import InputComponent from '../components/InputComponent';
 import SpaceComponent from '../components/SpaceComponent';
 import ButtonComponent from '../components/ButtonComponent';
-import {random} from 'lodash';
-import {formatMoney} from '../utils/formatUtils';
 
 interface Props {
   visible: boolean;
@@ -46,7 +44,7 @@ const ModalMonTuChon = (props: Props) => {
       <RowComponent styles={{width: '100%'}}>
         <View style={styles.inputLeft}>
           <TextComponent
-            text="Ten mon"
+            text="Tên món"
             size={15}
             fontWeight="600"
             color={colors.desc}
@@ -82,6 +80,7 @@ const ModalMonTuChon = (props: Props) => {
               onChangeText={text => setGiaMonTuChon(text)}
               styles={styles.input}
               fontSize={15}
+              keyboardType="numeric"
             />
           </View>
         </RowComponent>
@@ -109,6 +108,7 @@ const ModalMonTuChon = (props: Props) => {
               onChangeText={text => setSoLuongMonTuChon(text)}
               styles={styles.input}
               fontSize={15}
+              keyboardType="numeric"
             />
           </View>
         </RowComponent>
