@@ -15,16 +15,18 @@ import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ItemNhanVien from './ItemNhanVien';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
-import {
-  useFocusEffect,
-} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchNhanViens, NhanVienSlice} from '../../store/Slices/NhanVienSlice';
 import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {applyFilters} from './hamTimKiem';
 import {IPV4} from '../../services/api';
-import { fetchDanhMucVaMonAn } from '../../store/Thunks/danhMucThunks';
+import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
+import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import { setUser } from '../../store/Slices/UserSlice';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface FiltersModelTest {
   hoatDong: boolean;
@@ -57,14 +59,16 @@ const NhanVienComponent = props => {
     (state: RootState) => state.nhanVien.nhanViens,
   );
   const status = useSelector((state: RootState) => state.nhanVien.status);
-  
+  const user: UserLogin = useSelector(state => state.user);
+
   // **Lấy dữ liệu nhân viên từ API**
-  // Sử dụng useEffect để cập nhật danh sách nhân viên khi Redux store thay đổi
+
   useEffect(() => {
-    const id_NhaHang = '66fab50fa28ec489c7137537';
+    const id_nhaHang = user.id_nhaHang._id;
     if (status === 'idle') {
       dispatch(fetchNhanViens());
-      dispatch(fetchDanhMucVaMonAn(id_NhaHang));
+      dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
       setIsLoading(true);
     } else if (status === 'succeeded') {
       setFilterNhanVienList(dsNhanVien || []); // Cập nhật danh sách nhân viên từ store
@@ -105,11 +109,6 @@ const NhanVienComponent = props => {
   };
 
   const renderItem = ({item}: {item: NhanVienSlice}) => {
-    // Kiểm tra và thay thế localhost bằng địa chỉ IP hợp lệ
-    const employeeImage = item.hinhAnh
-      ? item.hinhAnh.replace('localhost:3000', IPV4) // Đổi 192.168.x.x thành IP của server của bạn
-      : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
-
     return (
       <ItemNhanVien
         onPress={() =>
@@ -119,7 +118,7 @@ const NhanVienComponent = props => {
         position={item.vaiTro}
         status={item.trangThai}
         colorStatus={item.trangThai ? '#E7F4FF' : '#FFD2CD'}
-        avatar={employeeImage} // Truyền đúng trường đại diện cho avatar
+        avatar={item.hinhAnh} // Truyền đúng trường đại diện cho avatar
       />
     );
   };

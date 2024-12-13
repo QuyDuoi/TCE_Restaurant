@@ -1,12 +1,8 @@
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
-import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
-import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
 
 interface Props {
   tenBan?: string;

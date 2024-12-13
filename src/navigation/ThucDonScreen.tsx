@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from '../screens/QuanLyThucDon/TabView';
@@ -8,6 +8,8 @@ import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
 import CapNhatDanhMuc from '../screens/QuanLyThucDon/CapNhatDanhMuc';
 import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
+import {useSelector} from 'react-redux';
+import { UserLogin } from './CustomDrawer';
 
 const ThucDonStack = createNativeStackNavigator();
 
@@ -18,6 +20,7 @@ function ThucDonStackScreen({
   navigation: any;
   route: any;
 }) {
+  const user : UserLogin = useSelector(state => state.user);
   const [dialogSettingHandler, setDialogSettingHandler] = useState<
     null | (() => void)
   >(null);
@@ -25,33 +28,42 @@ function ThucDonStackScreen({
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'TabsThucDon';
     if (routeName === 'TabsThucDon') {
-      navigation.setOptions({
-        headerShown: true,
-        headerRight: () => (
-          <ButtonComponent
-            title="Tùy chọn"
-            titleSize={14}
-            titleColor={colors.price}
-            onPress={() => {
-              if (dialogSettingHandler) {
-                dialogSettingHandler();
-              }
-            }}
-            styles={{
-              paddingHorizontal: 8,
-              marginRight: 10,
-              borderWidth: 1,
-              paddingVertical: 6,
-              borderRadius: 6,
-              borderColor: 'orange',
-            }}
-          />
-        ),
-      });
+      // Chỉ hiển thị nút Tùy chọn nếu vai trò là 'Quản lý'
+      if (user?.vaiTro === 'Quản lý') {
+        navigation.setOptions({
+          headerShown: true,
+          headerRight: () => (
+            <ButtonComponent
+              title="Tùy chọn"
+              titleSize={14}
+              titleColor={colors.price}
+              onPress={() => {
+                if (dialogSettingHandler) {
+                  dialogSettingHandler();
+                }
+              }}
+              styles={{
+                paddingHorizontal: 8,
+                marginRight: 10,
+                borderWidth: 1,
+                paddingVertical: 6,
+                borderRadius: 6,
+                borderColor: 'orange',
+              }}
+            />
+          ),
+        });
+      } else {
+        // Nếu vai trò không phải là 'Quản lý', ẩn headerRight
+        navigation.setOptions({
+          headerShown: true,
+          headerRight: () => null, // Không hiển thị nút Tùy chọn
+        });
+      }
     } else {
-      navigation.setOptions({headerShown: false});
+      navigation.setOptions({ headerShown: false });
     }
-  }, [navigation, route, dialogSettingHandler]);
+  }, [navigation, route, dialogSettingHandler, user]);
 
   return (
     <ThucDonStack.Navigator>

@@ -1,50 +1,49 @@
-import React, {useState} from 'react';
-import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-interface Props {
+interface ModalDongCaProps {
+  noiDung: string;
   visible: boolean;
-  title: string;
-  content: string;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-  image?: any;
+  onCancel: () => void;
+  onThanhToan: () => void;
+  onDongCa: () => void;
 }
 
-const UnsavedChangesModal = (props: Props) => {
-  const {title, content, onConfirm, onCancel, visible, image} = props;
-
+function ModalDongCa(props: ModalDongCaProps): React.JSX.Element {
+  const {noiDung, onThanhToan, onDongCa, visible, onCancel} = props;
   return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onCancel}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.header}>
-              <View style={styles.iconCircle}>{image}</View>
-            </View>
-            <Text style={styles.modalTitle}>{title}</Text>
-            <Text style={styles.modalText}>{content}</Text>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonCancel]}
-                onPress={onCancel}>
-                <Text style={styles.cancelTextStyle}>Hủy</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonConfirm]}
-                onPress={onConfirm}>
-                <Text style={styles.confirmTextStyle}>Xác nhận</Text>
-              </TouchableOpacity>
-            </View>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onCancel}>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+                <Icon name='close' size={20} color={'gray'}/>
+            </TouchableOpacity>
+          <Text style={styles.confirm}>Thông báo</Text>
+          <Text style={styles.modalTitle}>{noiDung}</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonCancel]}
+              onPress={onThanhToan}>
+              <Text style={styles.cancelTextStyle}>Đến thanh toán</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonConfirm]}
+              onPress={onDongCa}>
+              <Text style={styles.confirmTextStyle}>Đóng ca</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   );
-};
+}
+
+export default ModalDongCa;
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -59,7 +58,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15, // Độ bo góc
     padding: 20,
-    alignItems: 'flex-start', // Chuyển toàn bộ căn lề trái
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -86,8 +84,8 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
+    fontWeight: '300',
+    marginVertical: 10,
     textAlign: 'left',
     color: '#101828',
   },
@@ -127,6 +125,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
   },
+  confirm: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+  },
+  cancelButton: {
+    position: 'absolute',
+    top: 10,
+    right: 20
+  }
 });
-
-export default UnsavedChangesModal;

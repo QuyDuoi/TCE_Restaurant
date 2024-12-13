@@ -10,6 +10,7 @@ import khuVucReducer from './Slices/KhuVucSlice';
 import banReducer from './Slices/BanSlice';
 import caLamReducer from './Slices/CaLamSlice';
 import chiTietMonReducer from './Slices/ChiTietMonSlice';
+import userReducer from './Slices/UserSlice';
 export const store = configureStore({
   reducer: {
     hoaDons: hoaDonReducer,
@@ -23,6 +24,7 @@ export const store = configureStore({
     ban: banReducer,
     calam: caLamReducer,
     chiTietMon: chiTietMonReducer,
+    user: userReducer,
   },
 });
 

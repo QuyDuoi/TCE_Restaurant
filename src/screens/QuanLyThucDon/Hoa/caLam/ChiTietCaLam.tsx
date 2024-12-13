@@ -1,4 +1,4 @@
-import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../styles/hoaStyles';
 import CardComponent from '../components/CardComponent';
@@ -23,17 +23,24 @@ import {Ban} from '../../../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
 import {fetchKhuVucVaBan} from '../../../../store/Thunks/khuVucThunks';
 import ModalTaoPhieuTC from './ModalTaoPhieuTC';
+import ModalXacNhan from '../../../../customcomponent/ModalXacNhan';
+import {checkDongCaLam, dongCaLam} from './CallApiCaLam';
+import ModalDongCa from '../../../../customcomponent/ModalDongCa';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
 
   const idNhaHang = '66fab50fa28ec489c7137537';
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
+  const [isVisibleCheckDongCa, setIsVisibleCheckDongCa] = useState(false);
+  const [isVisibleDongCa, setIsVisibleDongCa] = useState(false);
+  const [error, setError] = useState('');
   const [bansByKhuVuc, setBansByKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
   const [visibleModalTaoPhieuTC, setVisibleModalTaoPhieuTC] = useState(false);
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
 
   const navigation = useNavigation<any>();
+  const id_nhanVien = '67060f3497bc70ba1d9222ac';
 
   const batDau = caLam.batDau ? new Date(caLam.batDau) : new Date();
   const ketThuc = caLam.ketThuc ? new Date(caLam.ketThuc) : undefined;
@@ -86,6 +93,40 @@ const ChiTietCaLam = ({route}: {route: any}) => {
       tenKhuVuc: khuVuc?.tenKhuVuc || 'Không xác định',
       tenBan: ban.tenBan || 'Không xác định',
     };
+  };
+
+  const dongCaLamCheck = async () => {
+    try {
+      // Gọi API đóng ca làm việc
+      const response = await checkDongCaLam(caLam._id); // Gửi ID của ca làm việc qua API
+
+      // Kiểm tra và xử lý phản hồi từ server
+      if (response) {
+        console.log('Ca làm việc đã được đóng:', response);
+        setIsVisibleCheckDongCa(false);
+        // Cập nhật giao diện, ví dụ như cập nhật thời gian kết thúc của ca làm việc
+        navigation.goBack(); // Quay lại trang trước sau khi đóng ca thành công
+      }
+    } catch (error: any) {
+      setIsVisibleCheckDongCa(false);
+      setError(error.message);
+      setIsVisibleDongCa(true);
+    }
+  };
+
+  const dongCaLamBatChap = async () => {
+    try {
+      const response = await dongCaLam(caLam._id, id_nhanVien);
+      if (response) {
+        console.log('Ca làm việc đã được đóng:', response);
+        setIsVisibleCheckDongCa(false);
+        navigation.goBack();
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      
+      setError(error.message);
+    }
   };
 
   const renderItem = ({item}: {item: HoaDon}) => {
@@ -170,14 +211,12 @@ const ChiTietCaLam = ({route}: {route: any}) => {
                   justify="space-between"
                   styles={{
                     marginHorizontal: 12,
-                    marginVertical: 20,
+                    marginVertical: 10,
                   }}>
                   <ButtonComponent
                     disabled={caLam.ketThuc ? true : false}
                     title={caLam.ketThuc ? 'Đã đóng' : 'Đóng ca'}
-                    onPress={() => {
-                      console.log('Dong ca ne');
-                    }}
+                    onPress={() => setIsVisibleCheckDongCa(true)}
                     titleSize={15}
                     bgrColor={caLam.ketThuc ? colors.desc : colors.blue2}
                     titleColor={colors.white}
@@ -240,6 +279,42 @@ const ChiTietCaLam = ({route}: {route: any}) => {
           </View>
         </View>
       </View>
+
+      <ModalXacNhan
+        visible={isVisibleCheckDongCa}
+        noiDung="Bạn muốn đóng ca làm hiện tại?"
+        onCancel={() => setIsVisibleCheckDongCa(false)}
+        onConfirm={dongCaLamCheck}
+      />
+
+      <ModalDongCa
+        visible={isVisibleDongCa}
+        noiDung={error}
+        onCancel={() => setIsVisibleDongCa(false)}
+        onThanhToan={() => {
+          setIsVisibleDongCa(false);
+          navigation.navigate('HoaDon');
+        }}
+        onDongCa={dongCaLamBatChap}
+      />
+
+      <ModalXacNhan
+        visible={isVisibleCheckDongCa}
+        noiDung="Bạn muốn đóng ca làm hiện tại?"
+        onCancel={() => setIsVisibleCheckDongCa(false)}
+        onConfirm={dongCaLamCheck}
+      />
+
+      <ModalDongCa
+        visible={isVisibleDongCa}
+        noiDung={error}
+        onCancel={() => setIsVisibleDongCa(false)}
+        onThanhToan={() => {
+          setIsVisibleDongCa(false);
+          navigation.navigate('HoaDon');
+        }}
+        onDongCa={dongCaLamBatChap}
+      />
 
       {/*MODAL CHI TIET DOANH THU */}
       <ModalComponent

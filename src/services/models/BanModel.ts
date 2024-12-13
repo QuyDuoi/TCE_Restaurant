@@ -2,14 +2,14 @@
 export default class Ban {
   _id?: string;
   tenBan: string;
-  sucChua: number;
+  sucChua: string;
   trangThai?: string;
   ghiChu?: string;
   id_khuVuc: string;
 
   constructor(
     tenBan: string,
-    sucChua: number,
+    sucChua: string,
     trangThai: string,
     ghiChu: string,
     id_khuVuc: string,

@@ -64,17 +64,6 @@ const KhuVucTabView = ({
     setIsThemBanVisible(true);
   };
 
-  const dispatch = useDispatch();
-  const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
-
-  useEffect(() => {
-    if (khuVucStatus === 'idle') {
-      setIsLoading(true);
-      dispatch(fetchKhuVucVaBan(idNhaHang) as any);
-    } 
-    setIsLoading(false);
-  }, [dispatch, khuVucStatus]);
-
   const layout = useWindowDimensions();
 
   const [tabState, setTabState] = useState<State>({

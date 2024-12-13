@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "290015602869",
-    "project_id": "tce-firebase-main-74c1b",
-    "storage_bucket": "tce-firebase-main-74c1b.firebasestorage.app"
+    "project_number": "705613056877",
+    "project_id": "tce-restaurant-main",
+    "storage_bucket": "tce-restaurant-main.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:290015602869:android:2a02d99d84a73ad8f7f6fc",
+        "mobilesdk_app_id": "1:705613056877:android:a7db7e35376f295008e864",
         "android_client_info": {
           "package_name": "com.tce_restaurant"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBjev1aJF2rQ6dn76nAa1bYv2dTYI5A5hE"
+          "current_key": "AIzaSyA517Z1cPgsHnanJkpQ5T-e9STQ2KYT89c"
         }
       ],
       "services": {

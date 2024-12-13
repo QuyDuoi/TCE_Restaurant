@@ -14,18 +14,29 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Ban} from '../../../store/Slices/BanSlice';
 import ModalShowQrCode from '../ComponentModal/ModalShowQrCode';
 import ModalThemSuaBan from '../ComponentModal/ModalThemSuaBan';
+import DeletePostModal from '../../../customcomponent/modalDelete';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch} from '../../../store/store';
+import {xoaBan} from '../../../store/Thunks/banThunks';
+import {UserLogin} from '../../../navigation/CustomDrawer';
 
 interface Props {
   ban: Ban;
   onPress?: () => void;
+  onDeleteBan?: (banId: string) => void; // Callback khi xóa bàn
 }
 
 const ItemBan = (props: Props) => {
-  const {ban, onPress} = props;
+  const {ban, onPress, onDeleteBan} = props;
   const [isExpanded, setIsExpanded] = useState(false); // Trạng thái mở/đóng
   const slideAnim = useRef(new Animated.Value(0)).current; // Animation trượt
   const [isModalQRCode, setIsModalQRCode] = useState(false);
   const [isModalSuaBan, setIsModalSuaBan] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const user: UserLogin = useSelector(state => state.user);
+  const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
+  const id_nhanVien = user._id;
+  const id_nhaHang = user.id_nhaHang._id;
 
   // Hàm xử lý hiệu ứng trượt
   const toggleExpand = () => {
@@ -33,7 +44,7 @@ const ItemBan = (props: Props) => {
       // Thu lại
       Animated.timing(slideAnim, {
         toValue: 0, // Quay về vị trí ban đầu
-        duration: 300,
+        duration: 350,
         useNativeDriver: true,
       }).start(() => setIsExpanded(false));
     } else {
@@ -43,6 +54,28 @@ const ItemBan = (props: Props) => {
         duration: 350,
         useNativeDriver: true,
       }).start(() => setIsExpanded(true));
+    }
+  };
+
+  const hanldXoaBan = async () => {
+    try {
+      await dispatch(
+        xoaBan({id_Ban: ban._id, id_nhanVien, id_nhaHang}),
+      ).unwrap(); // unwrap() để truy cập trực tiếp dữ liệu phản hồi hoặc lỗi
+      ToastAndroid.show(
+        `Xóa bàn "${ban.tenBan}" thành công!`,
+        ToastAndroid.SHORT,
+      );
+      setIsModalDeleteVisible(false); // Đóng modal
+      if (onDeleteBan) {
+        onDeleteBan(ban._id);
+      }
+    } catch (error: any) {
+      console.error('Error deleting ban:', error);
+      ToastAndroid.show(
+        error?.msg || 'Có lỗi xảy ra khi xóa bàn. Vui lòng thử lại!',
+        ToastAndroid.SHORT,
+      );
     }
   };
 
@@ -103,17 +136,29 @@ const ItemBan = (props: Props) => {
               onPress={() => setIsModalQRCode(true)}>
               <Icon name="qrcode" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, {backgroundColor: 'green'}]}
-              onPress={() => {
-                setIsModalSuaBan(true);
-                console.log(ban);
-              }}>
-              <Icon name="pencil" size={24} color="white" />
-            </TouchableOpacity>
+            {user.vaiTro === 'Quản lý' && (
+              <>
+                <TouchableOpacity
+                  style={[styles.actionButton, {backgroundColor: 'green'}]}
+                  onPress={() => {
+                    setIsModalSuaBan(true);
+                  }}>
+                  <Icon name="pencil" size={24} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.actionButton, {backgroundColor: 'red'}]}
+                  onPress={() => {
+                    setIsModalDeleteVisible(true);
+                  }}>
+                  <Icon name="trash-o" size={24} color="white" />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         )}
       </View>
+
+      {/* Modals */}
       <ModalShowQrCode
         visible={isModalQRCode}
         onClose={() => {
@@ -128,13 +173,16 @@ const ItemBan = (props: Props) => {
         }}
         banData={ban}
         onActionComplete={(success, message) => {
-          if (success) {
-            ToastAndroid.show(message, ToastAndroid.SHORT); // Hiển thị thông báo thành công
-          } else {
-            ToastAndroid.show(message, ToastAndroid.SHORT);
-          }
+          ToastAndroid.show(message, ToastAndroid.SHORT);
           setIsModalSuaBan(false);
         }}
+      />
+      <DeletePostModal
+        title="Xóa Bàn"
+        content={`Bạn có chắc chắn muốn xóa bàn "${ban.tenBan}"?`}
+        onDelete={hanldXoaBan}
+        onCancel={() => setIsModalDeleteVisible(false)}
+        visible={isModalDeleteVisible}
       />
     </TouchableOpacity>
   );

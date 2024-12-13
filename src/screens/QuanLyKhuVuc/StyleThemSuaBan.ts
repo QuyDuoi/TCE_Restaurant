@@ -77,4 +77,13 @@ export const styles = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 18,
     },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 16, // Khoảng cách dưới giữa các hàng
+    },
+    column: {
+      flex: 1, // Chia đều không gian giữa các cột
+      marginHorizontal: 8, // Khoảng cách ngang giữa các cột
+    },
   });

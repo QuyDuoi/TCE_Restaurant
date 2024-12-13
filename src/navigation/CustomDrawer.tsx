@@ -1,5 +1,12 @@
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -7,55 +14,87 @@ import {
 } from '@react-navigation/drawer';
 import TextComponent from '../screens/QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
-import SpaceComponent from '../screens/QuanLyThucDon/Hoa/components/SpaceComponent';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import auth from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import SpaceComponent from '../screens/QuanLyThucDon/Hoa/components/SpaceComponent';
+
+export interface UserLogin {
+  _id: string;
+  hoTen: string;
+  hinhAnh: string;
+  soDienThoai: string;
+  cccd: string;
+  vaiTro: string;
+  trangThai: boolean;
+  id_nhaHang: {
+    _id: string;
+    tenNhaHang: string;
+    hinhAnh: string;
+    soDienThoai: string;
+    diaChi: string;
+    soTaiKhoan: string;
+    chuTaiKhoan: string;
+    nganHang: string;
+  };
+}
 
 const CustomDrawer = (props: any) => {
+  const {userInfo} = props;
+  const navigation = useNavigation();
+
+  const logOut = async () => {
+    try {
+      await EncryptedStorage.removeItem('userSession');
+      await EncryptedStorage.removeItem('nhanVien');
+      await EncryptedStorage.clear();
+      await auth().signOut();
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
+      console.log('Đăng xuất thành công');
+    } catch (error) {
+      console.error('Đăng xuất thất bại:', error);
+    }
+  };
+
   return (
     <View style={[styles.container]}>
       <View style={[styles.headerContainer]}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-          }}>
+        <View style={{width: '100%'}}>
+          <TextComponent
+            text={`Nhà hàng ${userInfo?.id_nhaHang.tenNhaHang || ''}`}
+            styles={styles.textNhaHang}
+            numberOfLines={1}
+          />
+          <TextComponent
+            text={`Địa chỉ: ${userInfo?.id_nhaHang.diaChi || ''}`}
+            styles={styles.textNhaHang}
+            numberOfLines={1}
+          />
+        </View>
+        <View style={{justifyContent: 'center', marginLeft: 10}}>
           <Image
             source={{
-              uri: 'https://i.pinimg.com/736x/fa/28/b9/fa28b924175195e3175a886f5e2beb77.jpg',
+              uri: userInfo?.hinhAnh,
             }}
             style={styles.image}
           />
           <View>
             <TextComponent
-              text="Nguyễn Văn A"
+              text={userInfo?.hoTen || ''}
               styles={styles.text2}
               numberOfLines={1}
             />
             <SpaceComponent height={2} />
             <TextComponent
-              text="Vị trí nhân viên"
+              text={`Vai trò ${userInfo?.vaiTro || ''}`}
               styles={styles.text1}
               numberOfLines={1}
             />
           </View>
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '60%',
-          }}>
-          <TextComponent
-            text="Tên nhà hàng"
-            styles={styles.text3}
-            numberOfLines={1}
-          />
-          <TextComponent
-            text="Địa chỉ nhà hàng"
-            styles={styles.text3}
-            numberOfLines={1}
-          />
         </View>
       </View>
       <DrawerContentScrollView
@@ -69,28 +108,37 @@ const CustomDrawer = (props: any) => {
       <DrawerItem
         icon={() => <Icon name="logout" size={23} color={colors.black} />}
         label="Logout"
-        onPress={() => {
-          console.log('Logout');
-        }}
+        onPress={logOut}
       />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   headerContainer: {
     backgroundColor: '#4da6ff',
-    height: '20%',
-    paddingBottom: 8,
+    justifyContent: 'center',
+    paddingVertical: 5,
   },
   image: {
     height: 80,
     width: 80,
     borderRadius: 40,
-    marginLeft: 6,
   },
   listItem: {
     marginTop: 10,
@@ -100,22 +148,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: colors.black,
-    textAlign: 'left',
-    marginLeft: 6,
   },
   text2: {
     fontSize: 15,
     fontWeight: '700',
     color: colors.white,
-    textAlign: 'left',
-    marginLeft: 6,
   },
-  text3: {
+  textNhaHang: {
     textAlign: 'right',
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.black,
-    marginRight: 6,
+    color: 'black',
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
 

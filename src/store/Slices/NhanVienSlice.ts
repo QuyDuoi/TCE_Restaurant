@@ -83,37 +83,6 @@ export const deleteNhanVienThunk = createAsyncThunk(
         }
     }
 );
-// Tạo async thunk cho việc đăng nhập
-export const loginNhanVienThunk = createAsyncThunk(
-    'nhanViens/login',
-    async (idToken: string, thunkAPI) => {
-        try {
-            const data = await loginNhanVien(idToken); // Gọi hàm loginNhanVien từ api.ts
-            console.log('logined');
-            console.log('---------------------------------');
-            console.log(data);
-            console.log('---------------------------------');
-
-            return data; // Trả về dữ liệu
-        } catch (error) {
-            return thunkAPI.rejectWithValue(error.message || 'Đăng nhập thất bại');
-        }
-    }
-);
-
-
-export const checkLoginThunk = createAsyncThunk(
-    'nhanViens/checkLogin',
-    async (phoneNumber: string, thunkAPI) => {
-        try {
-            const data = await checkLogin(phoneNumber);
-            return data; // Trả về dữ liệu
-        } catch (error) {
-            // Giả định error là một đối tượng với một thuộc tính message
-            return thunkAPI.rejectWithValue(error.message || 'Check login failed');
-        }
-    }
-);
 
 // Tạo NhanVienSlice
 const nhanVienSlice = createSlice({
@@ -164,37 +133,6 @@ const nhanVienSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload as string || 'Error deleting NhanVien';
             })
-            .addCase(loginNhanVienThunk.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(loginNhanVienThunk.fulfilled, (state, action: PayloadAction<{ token: string; refreshToken: string; nhanVien: NhanVienSlice }>) => {
-                state.status = 'succeeded';
-                state.token = action.payload.token; // Lưu token vào state
-                state.refreshToken = action.payload.refreshToken;
-                const existingNhanVien = state.nhanViens.find(nv => nv._id === action.payload.nhanVien._id);
-                if (!existingNhanVien) {
-                    state.nhanViens.push(action.payload.nhanVien);
-                }
-            })
-            .addCase(loginNhanVienThunk.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload as string || 'Đăng nhập thất bại';
-            })
-            .addCase(checkLoginThunk.pending, (state) => {
-                state.status = 'loading';
-                state.message = null;
-                state.error = null; // Đặt lại lỗi khi bắt đầu quá trình
-            })
-            .addCase(checkLoginThunk.fulfilled, (state, action: PayloadAction<{ status: string; message: string; statusError: string }>) => {
-                state.status = 'succeeded';
-                // Lưu message từ phản hồi
-                state.message = action.payload.message;
-                state.statusError = action.payload.statusError;
-            })
-            .addCase(checkLoginThunk.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload as string || 'Check login failed';
-            });
     },
 });
 

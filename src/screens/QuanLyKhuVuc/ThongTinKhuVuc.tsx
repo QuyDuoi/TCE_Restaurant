@@ -18,6 +18,7 @@ import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 import {RootState} from '../../store/store';
 import {Ban} from '../../store/Slices/BanSlice';
 import ModalThemSuaKhuVuc from './ComponentModal/ModalThemSuaKhuVuc';
+import {UserLogin} from '../../navigation/CustomDrawer';
 
 interface Props {
   searchQueryKhuVuc: string;
@@ -37,6 +38,7 @@ const ThongTinKhuVuc = (props: Props) => {
   const [bansKhuVuc, setBansKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
+  const user: UserLogin = useSelector(state => state.user);
   const [expandKhuVuc, setExpandKhuVuc] = useState<string[]>([]);
 
   useEffect(() => {
@@ -73,7 +75,18 @@ const ThongTinKhuVuc = (props: Props) => {
   });
 
   const renderItemBan = ({item}: {item: Ban}) => {
-    return <ItemBan ban={item} onPress={() => console.log(item._id)} />;
+    return (
+      <ItemBan
+        ban={item}
+        onPress={() => console.log(item._id)}
+        onDeleteBan={(banId: string) => {
+          // Cập nhật lại danh sách bansKhuVuc khi bàn bị xóa
+          setBansKhuVuc(prevState =>
+            prevState.filter(ban => ban._id !== banId),
+          );
+        }}
+      />
+    );
   };
 
   const renderItem = ({item}: {item: KhuVuc}) => {
@@ -93,8 +106,10 @@ const ThongTinKhuVuc = (props: Props) => {
           }}
           onLongPress={() => {
             // Mở modal cập nhật khu vực khi nhấn giữ lâu
-            setSelectedKhuVuc(item);
-            setIsCapNhatKhuVuc(true);
+            if (user.vaiTro === 'Quản lý') {
+              setSelectedKhuVuc(item);
+              setIsCapNhatKhuVuc(true);
+            }
           }}
           styles={{
             borderBottomColor: 'gray',

@@ -35,15 +35,18 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
   }));
 
   const [thongTinBan, setThongTinBan] = useState<Ban>(
-    new Ban('', 0, 'Trống', '', ''),
+    new Ban('', '', 'Trống', '', ''),
   );
   const [errors, setErrors] = useState<Partial<Record<keyof Ban, string>>>({});
 
   useEffect(() => {
     if (banData) {
-      setThongTinBan(banData); // Nạp dữ liệu bàn để cập nhật
+      setThongTinBan({
+        ...banData,
+        sucChua: banData.sucChua ? String(banData.sucChua) : '', // Chuyển thành string
+      });
     } else {
-      setThongTinBan(new Ban('', 0, 'Trống', '', ''));
+      setThongTinBan(new Ban('', '', 'Trống', '', ''));
     }
   }, [banData]);
 
@@ -69,9 +72,11 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
           await dispatch(
             capNhatBanThunk({id: thongTinBan._id, thongTinBan}),
           ).unwrap();
+          setThongTinBan(new Ban('', '', 'Trống', '', ''));
           onActionComplete(true, 'Cập nhật bàn thành công!');
         } else {
           await dispatch(themBanThunk(thongTinBan)).unwrap();
+          setThongTinBan(new Ban('', '', 'Trống', '', ''));
           onActionComplete(true, 'Thêm bàn mới thành công!');
         }
         onClose();
@@ -113,38 +118,52 @@ const ModalThemSuaBan: React.FC<ModalThemSuaBanProps> = ({
             <Text style={styles.errorText}>{errors.id_khuVuc}</Text>
           )}
 
-          {/* Tên bàn */}
-          <Text style={styles.label}>
-            Tên bàn <Text style={styles.required}>*</Text>
-          </Text>
-          <TextInput
-            style={[styles.input, errors.tenBan && styles.errorBorder]}
-            placeholder="Nhập tên bàn"
-            value={thongTinBan.tenBan}
-            onChangeText={text => capNhatDuLieu('tenBan', text)}
-          />
-          {errors.tenBan && (
-            <Text style={styles.errorText}>{errors.tenBan}</Text>
-          )}
+          {/* Tên bàn và Sức chứa trong cùng một View */}
+          <View style={styles.row}>
+            {/* Tên bàn */}
+            <View style={styles.column}>
+              <Text style={styles.label}>
+                Tên bàn <Text style={styles.required}>*</Text>
+              </Text>
+              <TextInput
+                style={[styles.input, errors.tenBan && styles.errorBorder]}
+                placeholder="Nhập tên bàn"
+                value={thongTinBan.tenBan}
+                onChangeText={text => capNhatDuLieu('tenBan', text)}
+              />
+              {errors.tenBan && (
+                <Text style={styles.errorText}>{errors.tenBan}</Text>
+              )}
+            </View>
 
-          {/* Sức chứa */}
-          <Text style={styles.label}>
-            Sức chứa <Text style={styles.required}>*</Text>
-          </Text>
-          <TextInput
-            style={[styles.input, errors.sucChua && styles.errorBorder]}
-            placeholder="Nhập sức chứa"
-            value={String(thongTinBan.sucChua)}
-            keyboardType="numeric"
-            onChangeText={text => capNhatDuLieu('sucChua', Number(text))}
-          />
-          {errors.sucChua && (
-            <Text style={styles.errorText}>{errors.sucChua}</Text>
-          )}
+            {/* Sức chứa */}
+            <View style={styles.column}>
+              <Text style={styles.label}>
+                Sức chứa <Text style={styles.required}>*</Text>
+              </Text>
+              <TextInput
+                style={[styles.input, errors.sucChua && styles.errorBorder]}
+                placeholder="Nhập sức chứa"
+                value={thongTinBan.sucChua}
+                keyboardType="numeric"
+                onChangeText={text => capNhatDuLieu('sucChua', Number(text))}
+              />
+              {errors.sucChua && (
+                <Text style={styles.errorText}>{errors.sucChua}</Text>
+              )}
+            </View>
+          </View>
 
-          {/* Buttons */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => {
+                if (!banData) {
+                  setThongTinBan(new Ban('', '', 'Trống', '', ''));
+                } // Đặt lại thông tin bàn
+                setErrors({}); // Đặt lại lỗi
+                onClose(); // Đóng modal
+              }}>
               <Text style={styles.cancelButtonText}>Hủy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.confirmButton} onPress={handleSave}>

@@ -58,17 +58,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   anhQr: {
-    width: 250,
-    height: 250,
+    width: 270,
+    height: 270,
     backgroundColor: 'blue',
   },
   button: {
     marginTop: 10,
   },
   text: {
-    color: 'black',
+    color: 'white',
     fontSize: 18,
     textDecorationLine: 'underline',
-    fontWeight: 'bold',
   },
 });

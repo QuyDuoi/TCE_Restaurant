@@ -1,50 +1,44 @@
-import React, {useState} from 'react';
-import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 
-interface Props {
+interface ModalXacNhanProps {
+  noiDung: string;
   visible: boolean;
-  title: string;
-  content: string;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-  image?: any;
+  onCancel: () => void;
+  onConfirm: () => void;
 }
 
-const UnsavedChangesModal = (props: Props) => {
-  const {title, content, onConfirm, onCancel, visible, image} = props;
-
+function ModalXacNhan(props: ModalXacNhanProps): React.JSX.Element {
+  const {noiDung, onCancel, onConfirm, visible} = props;
   return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onCancel}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.header}>
-              <View style={styles.iconCircle}>{image}</View>
-            </View>
-            <Text style={styles.modalTitle}>{title}</Text>
-            <Text style={styles.modalText}>{content}</Text>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonCancel]}
-                onPress={onCancel}>
-                <Text style={styles.cancelTextStyle}>Hủy</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonConfirm]}
-                onPress={onConfirm}>
-                <Text style={styles.confirmTextStyle}>Xác nhận</Text>
-              </TouchableOpacity>
-            </View>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onCancel}>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.confirm}>Xác nhận</Text>
+          <Text style={styles.modalTitle}>{noiDung}</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonCancel]}
+              onPress={onCancel}>
+              <Text style={styles.cancelTextStyle}>Không</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonConfirm]}
+              onPress={onConfirm}>
+              <Text style={styles.confirmTextStyle}>Đồng ý</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   );
-};
+}
+
+export default ModalXacNhan;
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -86,8 +80,8 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
+    fontWeight: '300',
+    marginVertical: 10,
     textAlign: 'left',
     color: '#101828',
   },
@@ -127,6 +121,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
   },
+  confirm: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
 });
-
-export default UnsavedChangesModal;

@@ -1,9 +1,7 @@
-export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-//export const ipAddress = `http://192.168.43.21:3000/api/`; // Địa chỉ cơ sở API
+//export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.1.6:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
-
-// export const ipAddress = `http://${IPV4}:3000/api/`; // Địa chỉ cơ sở API
 
 import NhomTopping from './models/NhomToppingModel';
 import Topping from './models/ToppingModel';
@@ -415,6 +413,7 @@ export const layDsKhuVuc = async (id_nhaHang: string) => {
       throw new Error('Lỗi khi lấy danh sách Khu Vực');
     }
     const data = await response.json();
+    
     return data;
   } catch (error) {
     console.log('Lỗi khi lấy danh sách khu vực: ', error);

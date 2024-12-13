@@ -6,9 +6,10 @@ import {hoaStyles} from '../styles/hoaStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {updateStatusMonAnThunk} from '../../../../store/Thunks/monAnThunks';
 import {ipAddress, IPV4} from '../../../../services/api';
+import {UserLogin} from '../../../../navigation/CustomDrawer';
 
 interface Props {
   id?: string;
@@ -23,6 +24,7 @@ interface Props {
 
 const ItemMonAn = (props: Props) => {
   const {styles, nameFood, price, status, image, onPress, id} = props;
+  const user: UserLogin = useSelector(state => state.user);
 
   const anhMonAn = image
     ? image.replace('localhost', `${IPV4}`)
@@ -52,10 +54,13 @@ const ItemMonAn = (props: Props) => {
           paddingVertical: 8,
           backgroundColor: 'white',
           marginHorizontal: 5,
-          marginVertical: 2
+          marginVertical: 2,
         },
       ]}>
-      <RowComponent styles={{alignItems: 'center'}} justify="space-between"  onPress={onPress}>
+      <RowComponent
+        styles={{alignItems: 'center'}}
+        justify="space-between"
+        onPress={onPress}>
         <Image
           source={{
             uri: anhMonAn,
@@ -69,24 +74,25 @@ const ItemMonAn = (props: Props) => {
             paddingHorizontal: 10,
           }}>
           <View style={{alignItems: 'flex-start'}}>
-            <RowComponent styles={{alignItems: 'center', width: "90%"}} onPress={onPress}>
+            <RowComponent
+              styles={{alignItems: 'center', width: '90%'}}
+              onPress={onPress}>
               <TextComponent
                 text={nameFood}
                 fontWeight="bold"
                 color={colors.text2}
                 size={15}
-                ellipsizeMode='tail'
+                ellipsizeMode="tail"
                 numberOfLines={1}
               />
               <SpaceComponent width={10} />
-              <Icon
-                name="chevron-right"
-                size={14}
-                color={colors.text2}
-              />
+              <Icon name="chevron-right" size={14} color={colors.text2} />
             </RowComponent>
 
-            <TextComponent text={`${price.toLocaleString()} đ`} minHeight={28} />
+            <TextComponent
+              text={`${price.toLocaleString()} đ`}
+              minHeight={28}
+            />
           </View>
         </View>
 
@@ -100,6 +106,7 @@ const ItemMonAn = (props: Props) => {
             value={localStatus}
             onValueChange={handleStatusChange}
             trackColor={{false: colors.status2, true: colors.status}}
+            disabled={user.vaiTro !== 'Quản lý'}
           />
         </View>
       </RowComponent>

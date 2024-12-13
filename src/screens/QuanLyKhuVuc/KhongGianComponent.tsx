@@ -21,13 +21,13 @@ import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {searchBan} from '../../services/api';
 import debounce from 'lodash';
 import ItemBanSearch from './Component/ItemBanSearch';
+import {UserLogin} from '../../navigation/CustomDrawer';
 
 interface Props {
   searchQueryBan: string;
 }
 
 const KhongGianComponent = (props: Props) => {
-
   console.log('render khong gian component');
 
   const {searchQueryBan} = props;
@@ -41,6 +41,7 @@ const KhongGianComponent = (props: Props) => {
 
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
+  const user: UserLogin = useSelector(state => state.user);
 
   const debouncedSearchQueryBan = useRef(
     debounce.debounce(async (text: string) => {
@@ -91,6 +92,9 @@ const KhongGianComponent = (props: Props) => {
 
   const handleSelectBan = useCallback(
     (ban: Ban) => {
+      if (user.vaiTro === 'Đầu bếp') {
+        return;
+      }
       const idKhuVuc =
         typeof ban.id_khuVuc === 'string' ? ban.id_khuVuc : ban.id_khuVuc._id;
       const kv = khuvucs.find(kv => kv._id === idKhuVuc);
@@ -112,7 +116,6 @@ const KhongGianComponent = (props: Props) => {
         image={getImageBan(item.trangThai)}
         onLongPress={() => {
           handleSelectBan(item);
-          //handleSelectBanSearch(item);
         }}
       />
     );
@@ -124,7 +127,7 @@ const KhongGianComponent = (props: Props) => {
     return (
       <ItemTrangThaiBan
         nameBan={item.tenBan}
-        nameKhuVuc={banKhuVuc?.tenKhuVuc || ""}
+        nameKhuVuc={banKhuVuc?.tenKhuVuc || ''}
         image={getImageBan(item.trangThai)}
         onPress={() => {
           handleSelectBan(item);

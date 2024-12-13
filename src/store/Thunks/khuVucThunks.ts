@@ -11,11 +11,10 @@ export const fetchKhuVucVaBan = createAsyncThunk(
         const data = await layDsKhuVuc(id_nhaHang); // Gọi API để lấy danh sách khu vực
   
         const bansData = data.flatMap(item => item.bans);
-        console.log("Dữ liệu món ăn:", bansData);
         if (bansData.length > 0) {
           thunkAPI.dispatch(setBans(bansData));
         } else {
-          console.log("Không có món ăn nào để dispatch.");
+          console.log("Không có món ăn nào!");
         }
 
         return data; // Trả về dữ liệu

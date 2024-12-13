@@ -15,7 +15,6 @@ export const fetchDanhMucVaMonAn = createAsyncThunk(
         const data = await response.json();
         
         const monAnsData = data.flatMap(item => item.monAns);
-        console.log("Dữ liệu món ăn:", monAnsData);
         if (monAnsData.length > 0) {
           thunkAPI.dispatch(setMonAns(monAnsData));
         } else {

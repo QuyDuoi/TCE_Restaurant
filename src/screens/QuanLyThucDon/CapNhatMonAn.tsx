@@ -22,6 +22,7 @@ import {updateMonAnThunk} from '../../store/Thunks/monAnThunks';
 import {styles} from './ThemSuaStyle';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {IPV4} from '../../services/api';
+import {UserLogin} from '../../navigation/CustomDrawer';
 
 interface Props {
   route: RouteProp<{params: {monAn: MonAn}}, 'params'>;
@@ -30,6 +31,7 @@ interface Props {
 function ManCapNhatMonAn(): React.JSX.Element {
   const navigation = useNavigation();
   const route = useRoute<Props['route']>(); // Lấy route từ useRoute
+  const user: UserLogin = useSelector(state => state.user);
   const {monAn} = route.params; // Lấy monAn từ route.params
   const [monAnCapNhat, setMonAnCapNhat] = useState<MonAn>(monAn);
   const [errors, setErrors] = useState<Partial<Record<keyof MonAn, string>>>(
@@ -149,16 +151,19 @@ function ManCapNhatMonAn(): React.JSX.Element {
           </View>
           <TouchableOpacity
             style={styles.uploadButton}
-            onPress={handleEditImage}>
+            onPress={handleEditImage}
+            disabled={user.vaiTro !== 'Quản lý'}>
             {monAnCapNhat.anhMonAn ? (
               <View>
                 <Image
                   source={{uri: hinhAnhMon}}
                   style={styles.uploadedImage}
                 />
-                <View style={styles.overlay}>
-                  <Text style={styles.overlayText}>Sửa</Text>
-                </View>
+                {user.vaiTro === 'Quản lý' && ( // Chỉ hiện nút "Sửa" nếu là "Quản lý"
+                  <View style={styles.overlay}>
+                    <Text style={styles.overlayText}>Sửa</Text>
+                  </View>
+                )}
               </View>
             ) : (
               <Text style={styles.uploadButtonText}>Tải ảnh mô tả</Text>
@@ -186,6 +191,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
                 : monAnCapNhat.id_danhMuc
             }
             onChange={item => capNhatDuLieu('id_danhMuc', item.value)}
+            disable={user.vaiTro !== 'Quản lý'}
           />
         </View>
         {errors.id_danhMuc && (
@@ -202,6 +208,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
             placeholder="VD: Khoai tây chiên"
             value={monAnCapNhat.tenMon}
             onChangeText={text => capNhatDuLieu('tenMon', text)}
+            editable={user.vaiTro === 'Quản lý'}
           />
         </View>
         {errors.tenMon && <Text style={styles.errorText}>{errors.tenMon}</Text>}
@@ -221,6 +228,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
             keyboardType="numeric"
             value={monAnCapNhat.giaMonAn.toString()}
             onChangeText={text => capNhatDuLieu('giaMonAn', Number(text))}
+            editable={user.vaiTro === 'Quản lý'}
           />
         </View>
         {errors.giaMonAn && (
@@ -238,6 +246,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
             multiline={true}
             numberOfLines={4}
             textAlignVertical="top"
+            editable={user.vaiTro === 'Quản lý'}
           />
         </View>
       </ScrollView>
