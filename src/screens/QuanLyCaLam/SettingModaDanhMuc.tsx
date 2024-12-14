@@ -1,10 +1,10 @@
-import { View, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
-import ModalComponent from '../components/ModalComponent';
-import { colors } from '../contants/hoaColors';
-import SpaceComponent from '../components/SpaceComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import ModalThemSuaDanhMuc from '../../ModalThemSuaDanhMuc';
+import {View, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import ModalThemSuaDanhMuc from '../QuanLyThucDon/ModalThemSuaDanhMuc';
 
 interface Props {
   visible: boolean;
@@ -12,19 +12,15 @@ interface Props {
   navigation: any;
 }
 
-const SettingModaDanhMuc = ({ visible, onClose, navigation }: Props) => {
+const SettingModaDanhMuc = ({visible, onClose, navigation}: Props) => {
   const [isModalThemDanhMuc, setModalThemDanhMuc] = useState(false);
   return (
-    <ModalComponent
-      visible={visible}
-      onClose={onClose}
-    >
+    <ModalComponent visible={visible} onClose={onClose}>
       <View
         style={{
           alignItems: 'center',
           paddingVertical: 10,
-        }}
-      >
+        }}>
         <ButtonComponent
           title="Thêm món ăn"
           onPress={() => {

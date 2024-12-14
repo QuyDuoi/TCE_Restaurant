@@ -1,32 +1,31 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React from 'react';
-import ModalComponent from '../components/ModalComponent';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
 import DatePicker from 'react-native-date-picker';
-import RowComponent from '../components/RowComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import {colors} from '../contants/hoaColors';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 
 interface Props {
   visible: boolean;
-  onCloseChild: () => void;
-  selectedDate: Date;
-  setSelectedDate: (date: Date) => void;
-  onConfirm?: () => void;
+  onClose: () => void;
+  selectedTime: Date;
+  setSelectedTime: (time: Date) => void;
+  onConfirm: () => void;
 }
 
-const ModalDate = (props: Props) => {
-  const {visible, onCloseChild, selectedDate, setSelectedDate, onConfirm} =
-    props;
+const ModalTime = (props: Props) => {
+  const {visible, onClose, selectedTime, setSelectedTime, onConfirm} = props;
   return (
-    <ModalComponent visible={visible} title="Chọn ngày" onClose={onCloseChild}>
+    <ModalComponent visible={visible} title="Chọn giờ" onClose={onClose}>
       <View
         style={{
           alignItems: 'center',
         }}>
         <DatePicker
-          mode="date"
-          date={selectedDate}
-          onDateChange={val => setSelectedDate(val)}
+          mode="time"
+          date={selectedTime}
+          onDateChange={val => setSelectedTime(val)}
           locale="vi"
         />
       </View>
@@ -38,7 +37,7 @@ const ModalDate = (props: Props) => {
         <ButtonComponent
           title="Hủy"
           onPress={() => {
-            onCloseChild();
+            onClose();
           }}
           bgrColor={colors.blue2}
           styles={[styles.button]}
@@ -48,8 +47,8 @@ const ModalDate = (props: Props) => {
         <ButtonComponent
           title="Xác nhận"
           onPress={() => {
-            setSelectedDate(selectedDate);
-            onCloseChild();
+            onConfirm();
+            onClose();
           }}
           bgrColor={colors.blue2}
           styles={[styles.button]}
@@ -69,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalDate;
+export default ModalTime;

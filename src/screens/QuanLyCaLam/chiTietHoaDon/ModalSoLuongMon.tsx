@@ -7,24 +7,24 @@ import {
   ToastAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import ModalComponent from '../../components/ModalComponent';
-import TextComponent from '../../components/TextComponent';
-import RowComponent from '../../components/RowComponent';
-import ButtonComponent from '../../components/ButtonComponent';
-import {colors} from '../../contants/hoaColors';
-import CardComponent from '../../components/CardComponent';
-import {hoaStyles} from '../../styles/hoaStyles';
-import SpaceComponent from '../../components/SpaceComponent';
+import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
+import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
   updateChiTietHoaDonThunk,
-} from '../../../../../store/Slices/ChiTietHoaDonSlice';
-import {ipAddress} from '../../../../../services/api';
-import {formatMoney} from '../../utils/formatUtils';
+} from '../../../store/Slices/ChiTietHoaDonSlice';
+import {ipAddress} from '../../../services/api';
+import {formatMoney} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import {useDispatch} from 'react-redux';
-import {HoaDon} from '../../../../../store/Slices/HoaDonSlice';
+import {HoaDon} from '../../../store/Slices/HoaDonSlice';
 import LoadingModal from 'react-native-loading-modal';
 
 interface Props {

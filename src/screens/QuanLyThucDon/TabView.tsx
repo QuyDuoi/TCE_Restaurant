@@ -18,7 +18,7 @@ import DanhMucComponent from './Hoa/components/DanhMucComponent';
 import NhomToppingComponent from './Hoa/components/NhomToppingComponent';
 import {hoaStyles} from './Hoa/styles/hoaStyles';
 import {colors} from './Hoa/contants/hoaColors';
-import SettingModaDanhMuc from './Hoa/caLam/SettingModaDanhMuc';
+import SettingModaDanhMuc from '../QuanLyCaLam/SettingModaDanhMuc';
 import InputComponent from './Hoa/components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from './Hoa/components/SpaceComponent';
@@ -123,7 +123,7 @@ export default function MyTabs(props: Props) {
             borderWidth: isFocused ? 1 : 0, // Thay đổi border khi focus
             borderColor: isFocused ? '#9E81C3' : '#ccc', // Màu sắc border khi focus
             elevation: 10,
-            marginVertical: 4
+            marginVertical: 4,
           }}>
           <Icon
             name="search"

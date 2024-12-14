@@ -1,10 +1,10 @@
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import InHoaDon from "../screens/inHoaDon/InHoaDon";
-import ChiTietHoaDonScreen from "../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen";
-import ThemMonScreen from "../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen";
-import BillScreen from "../screens/QuyetToanHoaDon/BillScreen";
-import { useLayoutEffect } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import InHoaDon from '../screens/inHoaDon/InHoaDon';
+import ChiTietHoaDonScreen from '../screens/QuanLyCaLam/chiTietHoaDon/ChiTietHoaDonScreen';
+import ThemMonScreen from '../screens/QuanLyCaLam/chiTietHoaDon/ThemMonScreen';
+import BillScreen from '../screens/QuyetToanHoaDon/BillScreen';
+import {useLayoutEffect} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const BillStack = createNativeStackNavigator();
 

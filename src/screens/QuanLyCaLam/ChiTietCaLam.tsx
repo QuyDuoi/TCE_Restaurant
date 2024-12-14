@@ -1,35 +1,44 @@
-import {View, StyleSheet, FlatList, ActivityIndicator, Alert} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {hoaStyles} from '../styles/hoaStyles';
-import CardComponent from '../components/CardComponent';
-import TextComponent from '../components/TextComponent';
-import TitleComponent from '../components/TitleComponent';
-import RowComponent from '../components/RowComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import {colors} from '../contants/hoaColors';
-import SpaceComponent from '../components/SpaceComponent';
-import ItemHoaDon from './ItemHoaDon';
-import {formatDate, formatMoney, formatTime} from '../utils/formatUtils';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import ModalComponent from '../components/ModalComponent';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
 import {
-  fetchHoaDonTheoCaLam,
-  HoaDon,
-} from '../../../../store/Slices/HoaDonSlice';
-import {KhuVuc} from '../../../../store/Slices/KhuVucSlice';
-import {Ban} from '../../../../store/Slices/BanSlice';
+  View,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import ItemHoaDon from './ItemHoaDon';
+import {
+  formatDate,
+  formatMoney,
+  formatTime,
+} from '../QuanLyThucDon/Hoa/utils/formatUtils';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
+import {fetchHoaDonTheoCaLam, HoaDon} from '../../store/Slices/HoaDonSlice';
+import {KhuVuc} from '../../store/Slices/KhuVucSlice';
+import {Ban} from '../../store/Slices/BanSlice';
 import {useNavigation} from '@react-navigation/native';
-import {fetchKhuVucVaBan} from '../../../../store/Thunks/khuVucThunks';
+import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import ModalTaoPhieuTC from './ModalTaoPhieuTC';
-import ModalXacNhan from '../../../../customcomponent/ModalXacNhan';
+import ModalXacNhan from '../../customcomponent/ModalXacNhan';
+
+import ModalDongCa from '../../customcomponent/ModalDongCa';
 import {checkDongCaLam, dongCaLam} from './CallApiCaLam';
-import ModalDongCa from '../../../../customcomponent/ModalDongCa';
+import { UserLogin } from '../../navigation/CustomDrawer';
+import { useToast } from '../../customcomponent/CustomToast';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
-
-  const idNhaHang = '66fab50fa28ec489c7137537';
+  const {showToast} = useToast();
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
   const [isVisibleCheckDongCa, setIsVisibleCheckDongCa] = useState(false);
@@ -40,25 +49,27 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
 
   const navigation = useNavigation<any>();
-  const id_nhanVien = '67060f3497bc70ba1d9222ac';
 
   const batDau = caLam.batDau ? new Date(caLam.batDau) : new Date();
   const ketThuc = caLam.ketThuc ? new Date(caLam.ketThuc) : undefined;
 
   const dispatch = useDispatch();
 
+  const user: UserLogin = useSelector(state => state.user);
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
   const hoaDonStatus = useSelector((state: RootState) => state.hoaDons.status);
   const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
+  const id_nhanVien = user._id;
+  const id_nhaHang = user.id_nhaHang._id;
 
   //fetch hoa don va khu vuc tu api ve redux store
   useEffect(() => {
     dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
 
     if (bans.length === 0) {
-      dispatch(fetchKhuVucVaBan(idNhaHang) as any);
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     }
   }, [caLam, dispatch]);
 
@@ -102,7 +113,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
       // Kiểm tra và xử lý phản hồi từ server
       if (response) {
-        console.log('Ca làm việc đã được đóng:', response);
+        showToast('check', 'Đã đóng ca làm việc hiện tại', 'green', 1500);
         setIsVisibleCheckDongCa(false);
         // Cập nhật giao diện, ví dụ như cập nhật thời gian kết thúc của ca làm việc
         navigation.goBack(); // Quay lại trang trước sau khi đóng ca thành công
@@ -118,13 +129,12 @@ const ChiTietCaLam = ({route}: {route: any}) => {
     try {
       const response = await dongCaLam(caLam._id, id_nhanVien);
       if (response) {
-        console.log('Ca làm việc đã được đóng:', response);
+        showToast('check', 'Đã đóng ca làm việc hiện tại', 'green', 1500);
         setIsVisibleCheckDongCa(false);
         navigation.goBack();
       }
     } catch (error: any) {
-      console.log(error.message);
-      
+      showToast('remove', error.message, 'red', 2000);
       setError(error.message);
     }
   };

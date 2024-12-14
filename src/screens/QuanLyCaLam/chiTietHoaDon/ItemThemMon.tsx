@@ -1,14 +1,14 @@
 import {View, Image, TouchableOpacity} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import RowComponent from '../../components/RowComponent';
-import {hoaStyles} from '../../styles/hoaStyles';
-import {colors} from '../../contants/hoaColors';
-import TextComponent from '../../components/TextComponent';
-import SpaceComponent from '../../components/SpaceComponent';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CardComponent from '../../components/CardComponent';
-import {MonAn} from '../../../../../store/Slices/MonAnSlice';
-import {formatMoney} from '../../utils/formatUtils';
+import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
+import {MonAn} from '../../../store/Slices/MonAnSlice';
+import {formatMoney} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 
 interface Props {
   monAn: MonAn;

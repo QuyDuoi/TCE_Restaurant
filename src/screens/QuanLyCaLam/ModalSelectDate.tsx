@@ -1,12 +1,12 @@
-import {View, Text, StyleSheet} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import TextComponent from '../components/TextComponent';
-import ModalComponent from '../components/ModalComponent';
-import RowComponent from '../components/RowComponent';
-import InputComponent from '../components/InputComponent';
-import {colors} from '../contants/hoaColors';
-import SpaceComponent from '../components/SpaceComponent';
-import ButtonComponent from '../components/ButtonComponent';
+import {View, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalDate from './ModalDate';
 

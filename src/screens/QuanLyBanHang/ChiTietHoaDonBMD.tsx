@@ -7,8 +7,6 @@ import {
   ToastAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
 import {useNavigation} from '@react-navigation/native';
 import {ChiTietHoaDon} from '../../store/Slices/ChiTietHoaDonSlice';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -20,7 +18,7 @@ import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
 import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 import {formatMoney} from '../QuanLyThucDon/Hoa/utils/formatUtils';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
-import ModalGiamGia from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalGiamGia';
+import ModalGiamGia from '../QuanLyCaLam/chiTietHoaDon/ModalGiamGia';
 import ItemChiTietHoaDonBMD from './ItemChiTietHoaDonBMD';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SwipeListView} from 'react-native-swipe-list-view';

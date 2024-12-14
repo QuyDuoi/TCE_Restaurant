@@ -1,10 +1,10 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import RowComponent from '../../components/RowComponent';
-import {colors} from '../../contants/hoaColors';
-import TextComponent from '../../components/TextComponent';
-import CardComponent from '../../components/CardComponent';
-import {formatMoney} from '../../utils/formatUtils';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
+import {formatMoney} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 
 interface Props {
   chiTiet: any;

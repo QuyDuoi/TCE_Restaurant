@@ -31,8 +31,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
-import ModalCart from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalCart';
-import ItemThemMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemThemMon';
+import ModalCart from '../../QuanLyCaLam/chiTietHoaDon/ModalCart';
+import ItemThemMon from '../../QuanLyCaLam/chiTietHoaDon/ItemThemMon';
 import LoadingModal from 'react-native-loading-modal';
 import ModalMonTuChonNVPV from './ModalMonTuChonNVPV';
 

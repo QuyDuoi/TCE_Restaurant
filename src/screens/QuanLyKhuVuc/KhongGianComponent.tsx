@@ -88,6 +88,10 @@ const KhongGianComponent = (props: Props) => {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
 
+    socket.on('capNhatBan', () => {
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    });
+
     // Cleanup khi component unmount
     return () => {
       socket.disconnect();

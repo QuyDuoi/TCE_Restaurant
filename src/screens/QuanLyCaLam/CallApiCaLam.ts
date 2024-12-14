@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ipAddress } from '../../../../services/api';
+import { ipAddress } from '../../services/api';
 
 export const checkDongCaLam = async (id_caLamViec: string) => {
   try {

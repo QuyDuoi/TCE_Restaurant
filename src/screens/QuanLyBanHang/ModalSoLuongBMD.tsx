@@ -36,8 +36,6 @@ const ModalSoLuongBMD = (props: Props) => {
   //VUA UPDATE
   const [ghiChuUpdate, setGhiChuUpdate] = useState('');
 
-  //console.log('type', type);
-
   const giaMotMon = item ? item.giaTien / item.soLuongMon : 0;
 
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
@@ -110,7 +108,7 @@ const ModalSoLuongBMD = (props: Props) => {
                 hoaStyles.image,
                 {alignItems: 'center', justifyContent: 'center'},
               ]}>
-              <TextComponent text="TÙY CHỌN" color={colors.text2} />
+              <TextComponent text="Tùy chọn" color={colors.text2} />
             </View>
           )}
 

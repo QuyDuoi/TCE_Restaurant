@@ -7,34 +7,31 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {hoaStyles} from '../../styles/hoaStyles';
-import RowComponent from '../../components/RowComponent';
-import TitleComponent from '../../components/TitleComponent';
-import SectionComponent from '../../components/SectionComponent';
-import TextComponent from '../../components/TextComponent';
-import SpaceComponent from '../../components/SpaceComponent';
-import {colors} from '../../contants/hoaColors';
+import React, {useCallback, useEffect, useState} from 'react';
+import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
+import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import ItemChiTietHoaDon from './ItemChiTietHoaDon';
 import ModalGiamGia from './ModalGiamGia';
-import DatBanModal from '../../../../QuanLyKhuVuc/ComponentModal/DatBanModal';
 import ModalPTTT from './ModalPTTT';
-import ButtonComponent from '../../components/ButtonComponent';
+import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../../store/store';
-import {formatDate, formatMoney, formatTime} from '../../utils/formatUtils';
+import {RootState} from '../../../store/store';
+import {
+  formatDate,
+  formatMoney,
+  formatTime,
+} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import ModalSoLuongMon from './ModalSoLuongMon';
 import {
   ChiTietHoaDon,
   fetchChiTietHoaDon,
-} from '../../../../../store/Slices/ChiTietHoaDonSlice';
-import {
-  fetchHoaDonTheoCaLam,
-  fetchHoaDonTheoNhaHang,
-} from '../../../../../store/Slices/HoaDonSlice';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+} from '../../../store/Slices/ChiTietHoaDonSlice';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const {height: ScreenHeight} = Dimensions.get('window');
@@ -44,11 +41,6 @@ interface Props {
 }
 const ChiTietHoaDonScreen = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam, type} = props.route.params;
-  const idNhaHang = '66fab50fa28ec489c7137537';
-
-  console.log('render chi tiet hoa don');
-
-  //console.log(type);
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -269,8 +261,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 </SectionComponent>
                 <View style={styles.indicator} />
               </View>
-
-              {/* end view ban an */}
             </View>
           ) : (
             <View>

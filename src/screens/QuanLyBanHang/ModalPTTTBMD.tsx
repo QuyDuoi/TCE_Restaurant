@@ -1,7 +1,5 @@
 import {
   View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
   Image,
   ActivityIndicator,
@@ -9,7 +7,6 @@ import {
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
 import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
@@ -17,11 +14,10 @@ import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
 import {formatMoney} from '../QuanLyThucDon/Hoa/utils/formatUtils';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
-import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import {thanhToanBanHang} from '../../services/api';
 import LoadingModal from 'react-native-loading-modal';
+import { UserLogin } from '../../navigation/CustomDrawer';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -34,10 +30,7 @@ interface Props {
 const ModalPTTTBMD = (props: Props) => {
   const {visible, onClose, totalFinalBill, discount, chiTiets, onPaid} = props;
   const [isLoading, setIsLoading] = useState(false);
-  const id_nhanVien = '67060f3497bc70ba1d9222ac';
-  const idNhaHang = '66fab50fa28ec489c7137537';
-
-  //console.log(discount);
+  const user: UserLogin = useSelector(state => state.user);
 
   const [chuyenKhoan, setChuyenKhoan] = useState(true);
   const [isPercent, setIsPercent] = useState(true);
@@ -48,18 +41,19 @@ const ModalPTTTBMD = (props: Props) => {
 
   const dispatch = useDispatch();
 
-  const idBank = '970422';
-  const stk = '0393911183';
-  const templateQR = '1Lh5PBl';
+  const id_nhanVien = user._id;
+  const id_nhaHang = user.id_nhaHang._id;
+  const nganHang = user.id_nhaHang.nganHang;
+  const soTaiKhoan = user.id_nhaHang.soTaiKhoan;
+  const chuTaiKhoan = user.id_nhaHang.chuTaiKhoan;
 
   useEffect(() => {
-    //LOAD QR
 
     const getQrCode = async () => {
       try {
         setIsLoadingQr(true);
         const result = await fetch(
-          `https://api.vietqr.io/image/${idBank}-${stk}-${templateQR}.jpg?amount=${totalFinalBill}`,
+          `https://api.vietqr.io/image/${nganHang}-${soTaiKhoan}-${chuTaiKhoan}.jpg?amount=${totalFinalBill}`,
         );
         setApiQr(result.url);
       } catch (error) {
@@ -87,7 +81,7 @@ const ModalPTTTBMD = (props: Props) => {
         trangThai: 'Đã Thanh Toán',
         thoiGianRa: new Date().toISOString(),
       },
-      id_nhaHang: idNhaHang,
+      id_nhaHang: id_nhaHang,
       //_id la id cua nhan vien
       _id: id_nhanVien,
     };

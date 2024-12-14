@@ -3,10 +3,10 @@ import {useLayoutEffect, useState} from 'react';
 import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonComponent';
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChiTietCaLam from '../screens/QuanLyThucDon/Hoa/caLam/ChiTietCaLam';
-import QuanLyCaLam from '../screens/QuanLyThucDon/Hoa/caLam/QuanLyCaLam';
-import ChiTietHoaDonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ChiTietHoaDonScreen';
-import ThemMonScreen from '../screens/QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ThemMonScreen';
+import ChiTietCaLam from '../screens/QuanLyCaLam/ChiTietCaLam';
+import QuanLyCaLam from '../screens/QuanLyCaLam/QuanLyCaLam';
+import ChiTietHoaDonScreen from '../screens/QuanLyCaLam/chiTietHoaDon/ChiTietHoaDonScreen';
+import ThemMonScreen from '../screens/QuanLyCaLam/chiTietHoaDon/ThemMonScreen';
 
 import ThuChiScreen from '../screens/QuanLyThuChi/ThuChiScreen';
 import InHoaDon from '../screens/inHoaDon/InHoaDon';

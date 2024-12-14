@@ -10,15 +10,15 @@ import {
 } from 'react-native';
 import React, {useEffect, useLayoutEffect, useState, useCallback} from 'react';
 import {Dimensions} from 'react-native';
-import SectionComponent from '../../components/SectionComponent';
-import TitleComponent from '../../components/TitleComponent';
-import RowComponent from '../../components/RowComponent';
-import InputComponent from '../../components/InputComponent';
+import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
+import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import {height} from '@fortawesome/free-solid-svg-icons/faFloppyDisk';
-import ButtonComponent from '../../components/ButtonComponent';
-import SpaceComponent from '../../components/SpaceComponent';
-import {colors} from '../../contants/hoaColors';
-import TextComponent from '../../components/TextComponent';
+import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 
 const {height: MaxHeight, width: MaxWidth} = Dimensions.get('window');
 
@@ -34,7 +34,6 @@ const ModalGiamGia = (props: Props) => {
   const {visible, onClose, onValueChange, onIsPercentChange, discountValue} =
     props;
   const [translateY] = useState(new Animated.Value(MaxHeight));
-  //console.log(translateY);
 
   const [discount, setDiscount] = useState(discountValue ? discountValue : '');
   const [isPercent, setIsPercent] = useState(
@@ -77,12 +76,6 @@ const ModalGiamGia = (props: Props) => {
   const handleChangeMode = (value: boolean) => {
     setIsPercent(value);
   };
-
-  // useEffect(() => {
-  //   if (isPercent || !isPercent) {
-  //     setDiscount('');
-  //   }
-  // }, [isPercent]);
 
   useEffect(() => {
     if (isPercent) {
@@ -138,7 +131,7 @@ const ModalGiamGia = (props: Props) => {
             height: '98%',
           }}>
           <RowComponent justify="center">
-            <TitleComponent text="Giam gia" size={22} />
+            <TitleComponent text="Giảm giá" size={22} />
           </RowComponent>
           <SpaceComponent height={12} />
           {/* / lay out cua input / */}
@@ -155,7 +148,7 @@ const ModalGiamGia = (props: Props) => {
                 borderColor: colors.desc,
               }}>
               <TextComponent
-                text="Giam"
+                text="Giảm"
                 size={15}
                 fontWeight="600"
                 color={colors.desc}
@@ -175,12 +168,13 @@ const ModalGiamGia = (props: Props) => {
               }}>
               <InputComponent
                 type={'normal'}
-                placeholder={`${isPercent ? '10%' : '100.000đ'}`}
+                placeholder={`${isPercent ? 'Nhập phần trăm giảm' : 'Nhập số tiền'}`}
                 value={discount}
                 onChangeText={val => handlePress(val)}
                 styles={{
                   paddingVertical: 0,
                   height: 37,
+                  paddingLeft: 10
                 }}
                 fontSize={16}
                 readonly
@@ -195,7 +189,7 @@ const ModalGiamGia = (props: Props) => {
             }}>
             <ButtonComponent
               //disabled={discount > 100}
-              title="Giam theo %"
+              title="Giảm theo %"
               onPress={() => {
                 handleChangeMode(true);
                 setDiscount('');
@@ -211,7 +205,7 @@ const ModalGiamGia = (props: Props) => {
               }}
             />
             <ButtonComponent
-              title="Giam theo $"
+              title="Giảm tiền"
               onPress={() => {
                 handleChangeMode(false);
                 setDiscount('');

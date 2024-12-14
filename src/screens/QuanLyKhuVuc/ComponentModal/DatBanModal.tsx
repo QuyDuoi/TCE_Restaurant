@@ -10,8 +10,8 @@ import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
-import ModalDate from '../../QuanLyThucDon/Hoa/caLam/ModalDate';
-import ModalTime from '../../QuanLyThucDon/Hoa/caLam/ModalTime';
+import ModalDate from '../../QuanLyCaLam/ModalDate';
+import ModalTime from '../../QuanLyCaLam/ModalTime';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 
 interface Props {

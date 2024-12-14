@@ -1,13 +1,13 @@
 import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
 import React from 'react';
-import ModalComponent from '../../components/ModalComponent';
-import RowComponent from '../../components/RowComponent';
-import TitleComponent from '../../components/TitleComponent';
-import TextComponent from '../../components/TextComponent';
-import {colors} from '../../contants/hoaColors';
-import SpaceComponent from '../../components/SpaceComponent';
+import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
+import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
+import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ItemCart from './ItemCart';
-import ButtonComponent from '../../components/ButtonComponent';
+import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 
 interface Props {
   visible: boolean;

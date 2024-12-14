@@ -17,7 +17,7 @@ import {
   fetchChiTietHoaDon,
   updateChiTietHoaDonThunk,
 } from '../../../store/Slices/ChiTietHoaDonSlice';
-import ItemChiTietHoaDon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemChiTietHoaDon';
+import ItemChiTietHoaDon from '../../QuanLyCaLam/chiTietHoaDon/ItemChiTietHoaDon';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
@@ -31,9 +31,9 @@ import {
   formatTime,
 } from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
-import ModalGiamGia from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalGiamGia';
-import ModalPTTT from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
-import ModalSoLuongMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalSoLuongMon';
+import ModalGiamGia from '../../QuanLyCaLam/chiTietHoaDon/ModalGiamGia';
+import ModalPTTT from '../../QuanLyCaLam/chiTietHoaDon/ModalPTTT';
+import ModalSoLuongMon from '../../QuanLyCaLam/chiTietHoaDon/ModalSoLuongMon';
 import ItemCTHDnvpv from './ItemCTHDnvpv';
 import {random} from 'lodash';
 import UnsavedChangesModal from '../../../customcomponent/modalSave';

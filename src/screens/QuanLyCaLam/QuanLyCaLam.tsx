@@ -9,23 +9,22 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {hoaStyles} from '../styles/hoaStyles';
-import TitleComponent from '../components/TitleComponent';
-import {colors} from '../contants/hoaColors';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import ItemCaLam from './ItemCaLam';
-import SpaceComponent from '../components/SpaceComponent';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
-import {CaLam, fetchCaLam, moCaLam} from '../../../../store/Slices/CaLamSlice';
-import {NhanVienSlice} from '../../../../store/Slices/NhanVienSlice';
-import ModalDate from './ModalDate';
+import {AppDispatch, RootState} from '../../store/store';
+import {CaLam, fetchCaLam, moCaLam} from '../../store/Slices/CaLamSlice';
+import {NhanVienSlice} from '../../store/Slices/NhanVienSlice';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
 import ModalSelectDate from './ModalSelectDate';
+import { UserLogin } from '../../navigation/CustomDrawer';
 
 interface Props {
   setFilterHandler: any;
@@ -54,12 +53,12 @@ const QuanLyCaLam = (props: Props) => {
   const [trangThaiCa, setTrangThaiCa] = useState(true);
   const [soDuBanDau, setSoDuBanDau] = useState('');
 
-  const id_nhaHang = '66fab50fa28ec489c7137537';
-  const id_nhanVien = '67060ef797bc70ba1d9222ab';
-
+  const user: UserLogin = useSelector(state => state.user);
   const caLams = useSelector((state: RootState) => state.calam.caLams);
   const caLamStatus = useSelector((state: RootState) => state.calam.status);
   const checkCaLam = caLams.filter(caLam => !caLam.ketThuc);
+  const id_nhanVien = user._id;
+  const id_nhaHang = user.id_nhaHang._id;
 
   //thuc thi nut loc ben drawer
   useEffect(() => {

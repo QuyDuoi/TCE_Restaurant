@@ -5,7 +5,7 @@ import {
   FlatList,
   TextInput,
 } from 'react-native';
-import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {MonAn} from '../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -22,10 +22,10 @@ import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
 import {searchMonAn} from '../../services/api';
 import {useRef} from 'react';
 import ItemThemMonBanHang from './ItemThemMonBanHang';
-import ModalMonTuChon from './ModalMonTuChon';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import {io} from 'socket.io-client';
 import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
+import ModalMonTuChon from './ModalMonTuChon';
 
 const QuanLyBanHang = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -38,6 +38,7 @@ const QuanLyBanHang = () => {
 
   const [isFocused, setIsFocused] = useState(false);
   const [dsTimKiem, setDsTimKiem] = useState([]);
+  const [checkTimKiem, setCheckTimKiem] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [onChangeChiTiets, setOnChangeChiTiets] = useState(false);
   const [MaxToRender, setMaxToRender] = useState(12);
@@ -57,7 +58,7 @@ const QuanLyBanHang = () => {
       if (Array.isArray(monAns) && monAns.length === 0) {
         setIsLoading(true); // Bắt đầu trạng thái loading
         dispatch(fetchDanhMucVaMonAn(id_nhaHang)).finally(() => {
-          setIsLoading(false); // Kết thúc trạng thái loading
+          setIsLoading(false);
         });
       }
     }
@@ -235,6 +236,7 @@ const QuanLyBanHang = () => {
   const timKiemMonAn = async (text: string) => {
     if (text.trim().length > 0) {
       setIsLoading(true);
+      setCheckTimKiem(true);
       try {
         const data = await searchMonAn(text, id_nhaHang);
         if (data.length === 0) {
@@ -248,7 +250,7 @@ const QuanLyBanHang = () => {
         setIsLoading(false);
       }
     } else {
-      setDsTimKiem(filteredMonAns);
+      setCheckTimKiem(false);
     }
   };
 
@@ -292,7 +294,7 @@ const QuanLyBanHang = () => {
             />
             <TextInput
               onChangeText={text => onChangeText(text)}
-              placeholder="Tìm Kiếm món ăn"
+              placeholder="Tìm kiếm món ăn"
               style={{width: '85%', fontSize: 15}}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
@@ -374,71 +376,77 @@ const QuanLyBanHang = () => {
         </View>
         <View
           style={{
-            paddingVertical: 8,
             flex: 1,
             paddingHorizontal: 8,
+            paddingVertical: 5
           }}>
           {isLoading ? (
             <View
               style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
               <ActivityIndicator size="large" color={colors.orange} />
             </View>
-          ) : dsTimKiem.length > 0 ? (
-            <FlatList
-              data={dsTimKiem}
-              renderItem={renderItem}
-              keyExtractor={item => item._id as string}
-              showsVerticalScrollIndicator={false}
-              ItemSeparatorComponent={() => <SpaceComponent height={6} />}
-              nestedScrollEnabled={true}
-            />
-          ) : dsTimKiem.length === 0 ? (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-              }}>
-              <TextComponent text="Không tìm thấy món ăn phù hợp!" />
-            </View>
-          ) : filteredMonAns.length > 0 ? (
-            <FlatList
-              data={filteredMonAns.slice(0, MaxToRender)}
-              renderItem={renderItem}
-              keyExtractor={item => item._id as string}
-              showsVerticalScrollIndicator={false}
-              ItemSeparatorComponent={() => <SpaceComponent height={6} />}
-              nestedScrollEnabled={true}
-              onStartReachedThreshold={0.1}
-              onStartReached={() => {
-                setIsEndReached(false);
-              }}
-              onEndReached={() => {
-                setIsEndReached(true);
-                loadMoreListMonAns();
-              }}
-              ListFooterComponent={() =>
-                isEndReached &&
-                MaxToRender < filteredMonAns.length && (
+          ) : (
+            <View style={{flex: 1}}>
+              {checkTimKiem ? (
+                dsTimKiem.length > 0 ? (
+                  <FlatList
+                    data={dsTimKiem}
+                    renderItem={renderItem}
+                    keyExtractor={item => item._id as string}
+                    showsVerticalScrollIndicator={false}
+                    ItemSeparatorComponent={() => <SpaceComponent height={6} />}
+                    nestedScrollEnabled={true}
+                  />
+                ) : (
                   <View
                     style={{
                       justifyContent: 'center',
                       alignItems: 'center',
-                      height: 100,
+                      flex: 1,
                     }}>
-                    <ActivityIndicator size="large" color={colors.orange} />
+                    <TextComponent text="Không tìm thấy món ăn phù hợp" />
                   </View>
                 )
-              }
-            />
-          ) : (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-              }}>
-              <TextComponent text="Không có món ăn nào" />
+              ) : filteredMonAns.length > 0 ? (
+                <FlatList
+                  data={filteredMonAns.slice(0, MaxToRender)}
+                  renderItem={renderItem}
+                  keyExtractor={item => item._id as string}
+                  showsVerticalScrollIndicator={false}
+                  ItemSeparatorComponent={() => <SpaceComponent height={6} />}
+                  nestedScrollEnabled={true}
+                  onStartReachedThreshold={0.1}
+                  onStartReached={() => {
+                    setIsEndReached(false);
+                  }}
+                  onEndReached={() => {
+                    setIsEndReached(true);
+                    loadMoreListMonAns();
+                  }}
+                  ListFooterComponent={() =>
+                    isEndReached &&
+                    MaxToRender < filteredMonAns.length && (
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          height: 100,
+                        }}>
+                        <ActivityIndicator size="large" color={colors.orange} />
+                      </View>
+                    )
+                  }
+                />
+              ) : (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flex: 1,
+                  }}>
+                  <TextComponent text="Không có món ăn nào" />
+                </View>
+              )}
             </View>
           )}
         </View>

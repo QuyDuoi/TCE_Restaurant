@@ -20,10 +20,10 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {taoFormDataMonAn} from './ThucDonRespository';
 import {themMonAnMoi} from '../../store/Thunks/monAnThunks';
 import {styles} from './ThemSuaStyle';
-// import { useNavigation } from '@react-navigation/native';
+import {useToast} from '../../customcomponent/CustomToast';
 
 function ManThemMonAn(): React.JSX.Element {
-  // const navigation = useNavigation();
+  const {showToast} = useToast();
   const [monAnMoi, setMonAnMoi] = useState<MonAn>(
     new MonAn('', '', '', 0, true, ''),
   );
@@ -70,18 +70,15 @@ function ManThemMonAn(): React.JSX.Element {
       dispatch(themMonAnMoi(formData))
         .unwrap()
         .then(() => {
-          Alert.alert('Thành công', 'Món ăn mới đã được thêm');
-          // navigation.goBack();
+          showToast('check', 'Thêm món ăn mới thành công', 'green', 1500);
         })
         .catch(error => {
-          console.error('Lỗi thêm mới món ăn: ', error);
-          Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
+          showToast('remove', error.message, 'white', 2000);
         });
-      console.log('Lưu món ăn mới:', monAnMoi);
       Alert.alert('Thành công', 'Món ăn đã được thêm');
       // Logic thêm món ăn vào database hoặc xử lý thêm món ăn
     } else {
-      Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
+      showToast('remove', 'Vui lòng kiểm tra lại thông tin', 'white', 2000);
     }
   };
 

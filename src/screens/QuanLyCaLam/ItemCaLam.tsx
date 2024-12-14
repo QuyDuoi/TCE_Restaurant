@@ -1,14 +1,12 @@
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
-import CardComponent from '../components/CardComponent';
-import TextComponent from '../components/TextComponent';
-import RowComponent from '../components/RowComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import {colors} from '../contants/hoaColors';
-import TitleComponent from '../components/TitleComponent';
-import {CaLamModel, NhanVienModel} from '../modelTests/modelTest';
-import {formatDate, formatTime} from '../utils/formatUtils';
-import {CaLam} from '../../../../store/Slices/CaLamSlice';
+import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import TitleComponent from '../QuanLyThucDon/Hoa/components/TitleComponent';
+import {formatDate, formatTime} from '../QuanLyThucDon/Hoa/utils/formatUtils';
 
 interface Props {
   batDau?: string;
@@ -79,7 +77,13 @@ const ItemCaLam = (props: Props) => {
           }}>
           <ButtonComponent
             title="Xem chi tiết"
-            onPress={onPress ? onPress : () => { type: 'QuanLyCaLam'}}
+            onPress={
+              onPress
+                ? onPress
+                : () => {
+                    type: 'QuanLyCaLam';
+                  }
+            }
             bgrColor={colors.orange}
             boderRadius={20}
             styles={{

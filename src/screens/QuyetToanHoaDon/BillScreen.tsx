@@ -13,7 +13,7 @@ import {HoaDon} from '../../store/Slices/HoaDonSlice';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import {useNavigation} from '@react-navigation/native';
 import {getListHoaDonTheoNhaHang} from '../../services/api';
-import ModalPTTT from '../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalPTTT';
+import ModalPTTT from '../QuanLyCaLam/chiTietHoaDon/ModalPTTT';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import {io} from 'socket.io-client';
@@ -147,7 +147,11 @@ const BillScreen: React.FC = () => {
           />
         </View>
         {isLoading ? ( // Hiển thị trạng thái đang tải
-          <ActivityIndicator size="large" color="#9E81C3" style={{marginTop: 20}} />
+          <ActivityIndicator
+            size="large"
+            color="#9E81C3"
+            style={{marginTop: 20}}
+          />
         ) : billData?.length > 0 ? (
           <FlatList
             data={billData}

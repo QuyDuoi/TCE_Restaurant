@@ -1,15 +1,11 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import TextComponent from '../components/TextComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import SectionComponent from '../components/SectionComponent';
-import {colors} from '../contants/hoaColors';
-import {hoaStyles} from '../styles/hoaStyles';
-import {HoaDonModel} from '../modelTests/modelTest';
-import {formatTime} from '../utils/formatUtils';
-import {HoaDon} from '../../../../store/Slices/HoaDonSlice';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
+import {formatTime} from '../QuanLyThucDon/Hoa/utils/formatUtils';
+import {HoaDon} from '../../store/Slices/HoaDonSlice';
 
 interface Props {
   hoaDon: HoaDon;
@@ -21,8 +17,6 @@ interface Props {
 
 const ItemHoaDon = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, onPress, tongGiaTri} = props;
-
-  //console.log('chiTietHoaDon', chiTietHoaDon);
 
   console.log(typeof hoaDon.thoiGianVao);
 

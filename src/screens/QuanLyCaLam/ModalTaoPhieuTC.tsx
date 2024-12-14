@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, ToastAndroid} from 'react-native';
+import {View, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useState} from 'react';
 import ModalComponent from '../components/ModalComponent';
 import TextComponent from '../components/TextComponent';
