@@ -22,11 +22,6 @@ const ItemChiTietHoaDonBMD = (props: Props) => {
       <View style={styles.container}>
         <RowComponent justify="space-between" styles={{paddingHorizontal: 8}}>
           <RowComponent styles={{width: '50%', alignItems: 'flex-start'}}>
-            {!id_monAn ? (
-              <View style={{marginRight: 5}}>
-                <Icon name={'bars'} size={20} color={colors.blue} />
-              </View>
-            ) : null}
             <TextComponent
               text={nameMonAn ?? 'com ga'}
               styles={styles.text}

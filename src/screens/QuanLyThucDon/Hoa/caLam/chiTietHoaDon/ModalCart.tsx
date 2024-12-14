@@ -13,10 +13,11 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   chiTiets: {
-    id_monAn: string;
+    id_monAn?: string;
     soLuongMon: number;
     tenMon: string;
     giaMon: number;
+    giaMonAn?: number;
   }[];
   tenBan?: string;
   tenKhuVuc?: string;
@@ -104,10 +105,11 @@ const ModalCart = (props: Props) => {
     );
   };
   const renderItem = (item: {
-    id_monAn: string;
+    id_monAn?: string;
     soLuongMon: number;
     tenMon: string;
     giaMon: number;
+    giaMonAn?: number;
   }) => {
     return (
       <View>

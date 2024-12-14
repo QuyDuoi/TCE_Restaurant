@@ -7,16 +7,13 @@ import CardComponent from '../../components/CardComponent';
 import {formatMoney} from '../../utils/formatUtils';
 
 interface Props {
-  chiTiet: {
-    id_monAn: string;
-    soLuongMon: number;
-    tenMon: string;
-    giaMon: number;
-  };
+  chiTiet: any;
 }
 
 const ItemCart = (props: Props) => {
   const {chiTiet} = props;
+  //console.log(chiTiet);
+
   return (
     <View style={styles.container}>
       <RowComponent
@@ -68,7 +65,11 @@ const ItemCart = (props: Props) => {
               borderRadius: 12,
             }}>
             <TextComponent
-              text={`${formatMoney(chiTiet.giaMon)}`}
+              text={
+                chiTiet.id_monAn
+                  ? `${formatMoney(chiTiet.giaMon)}`
+                  : `${formatMoney(chiTiet.giaMonAn ?? 0)}`
+              }
               color={colors.black}
             />
           </CardComponent>

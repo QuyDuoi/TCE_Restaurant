@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
+  ToastAndroid,
 } from 'react-native';
 import {MonAn} from '../../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
@@ -33,6 +34,7 @@ import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import ModalCart from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ModalCart';
 import ItemThemMon from '../../QuanLyThucDon/Hoa/caLam/chiTietHoaDon/ItemThemMon';
 import LoadingModal from 'react-native-loading-modal';
+import ModalMonTuChonNVPV from './ModalMonTuChonNVPV';
 
 interface Props {
   route?: any;
@@ -44,15 +46,10 @@ const ThemMonNVPV = (props: Props) => {
   const {route} = props;
   const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc} = route.params;
 
-  // console.log(
-  //   'chi tiet hoa don',
-  //   chiTietHoaDon.map((item: any) => item.monAn),
-  // );
-
   const idNhaHang = '66fab50fa28ec489c7137537';
 
   const [visibleModalCart, setVisibleModalCart] = useState(false);
-
+  const [visibleModalMonTuChon, setVisibleModalMonTuChon] = useState(false);
   const [monAnsList, setMonAnsList] = useState<MonAn[]>([]);
 
   const [cartCount, setCartCount] = useState(0);
@@ -105,20 +102,22 @@ const ThemMonNVPV = (props: Props) => {
 
   const chiTietsRef = useRef<
     {
-      id_monAn: string;
+      id_monAn?: string;
       soLuongMon: number;
       tenMon: string;
       giaMon: number;
+      giaMonAn?: number;
     }[]
   >([]);
 
-  //CAN FIX
+  //COMPLETE
   useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
-      id_monAn: ct.id_monAn ? ct.id_monAn : '',
+      id_monAn: ct.id_monAn ? ct.id_monAn : undefined,
       soLuongMon: ct.soLuongMon ? ct.soLuongMon : 0,
       tenMon: ct.monAn ? ct.monAn.tenMon : '',
-      giaMon: ct.monAn ? ct.monAn.giaMonAn : 0,
+      giaMon: ct.monAn && ct.id_monAn ? ct.monAn.giaMonAn : undefined,
+      giaMonAn: !ct.id_monAn ? ct.monAn.giaMonAn : undefined,
     }));
     chiTietsRef.current = initialChiTiets;
   }, [chiTietHoaDon]);
@@ -167,6 +166,25 @@ const ThemMonNVPV = (props: Props) => {
     },
     [],
   );
+
+  const handleSendData = useCallback((data: any) => {
+    chiTietsRef.current.push({
+      ...data,
+    });
+
+    const map = new Map(
+      chiTietsRef.current
+        .filter((item: any) => item.soLuongMon > 0)
+        .map((item: any) => [item.tenMon, item]),
+    );
+    chiTietsRef.current = Array.from(map.values());
+  }, []);
+
+  useEffect(() => {
+    setCartCount(
+      chiTietsRef.current.filter((item: any) => item.soLuongMon > 0).length,
+    );
+  }, [chiTietsRef.current]);
 
   console.log('render them mon');
   //GIAI PHAP TEN MON
@@ -242,7 +260,9 @@ const ThemMonNVPV = (props: Props) => {
             <RowComponent justify="space-between" styles={{marginVertical: 6}}>
               <ButtonComponent
                 title="Thêm món tự chọn"
-                onPress={() => {}}
+                onPress={() => {
+                  setVisibleModalMonTuChon(true);
+                }}
                 styles={{height: 35, paddingHorizontal: 5}}
                 titleSize={15}
                 bgrColor={'#FEF3EF'}
@@ -345,17 +365,32 @@ const ThemMonNVPV = (props: Props) => {
                       addNewChiTietHoaDon({
                         id_hoaDon: hoaDon._id,
                         monAn: chiTietsRef.current.map((item: any) => ({
-                          id_monAn: item.id_monAn,
+                          id_monAn: item.id_monAn ? item.id_monAn : null,
+                          tenMon: !item.id_monAn ? item.tenMon : null,
                           soLuong: item.soLuongMon,
-                          giaTien: item.giaMon * item.soLuongMon,
+                          giaTien: item.id_monAn
+                            ? item.giaMon * item.soLuongMon
+                            : item.giaMonAn * item.soLuongMon,
+                          giaMonAn: !item.id_monAn ? item.giaMonAn : null,
                         })),
                       }),
                     ).then(action => {
                       if (addNewChiTietHoaDon.fulfilled.match(action)) {
-                        console.log('Thêm mới Chi Tiết Hóa Đơn thành công');
+                        ToastAndroid.show(
+                          'Thêm món thành công',
+                          ToastAndroid.SHORT,
+                        );
                         dispatch(fetchChiTietHoaDon(hoaDon._id));
                         setTimeout(() => {
                           navigation.goBack();
+                          setIsLoadingModal(false);
+                        }, 500);
+                      } else {
+                        ToastAndroid.show(
+                          'Thêm món thất bại',
+                          ToastAndroid.SHORT,
+                        );
+                        setTimeout(() => {
                           setIsLoadingModal(false);
                         }, 500);
                       }
@@ -389,6 +424,16 @@ const ThemMonNVPV = (props: Props) => {
         modalVisible={isLoadingModal}
         darkMode={false}
         color={colors.orange}
+      />
+      <ModalMonTuChonNVPV
+        visible={visibleModalMonTuChon}
+        onClose={() => {
+          setVisibleModalMonTuChon(false);
+        }}
+        onSendData={handleSendData}
+        onChange={val => {
+          setOnChange(val);
+        }}
       />
     </>
   );

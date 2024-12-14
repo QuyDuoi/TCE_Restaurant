@@ -8,6 +8,8 @@ import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import RadioButtonComponent from '../components/RadioButtonComponent';
 import ButtonComponent from '../components/ButtonComponent';
+import {addPhieuThuChi} from '../../../../services/api';
+import LoadingModal from 'react-native-loading-modal';
 
 interface Props {
   visible: boolean;
@@ -21,110 +23,130 @@ const ModalTaoPhieuTC = (props: Props) => {
   const options = ['Phiếu thu', 'Phiếu chi'];
   const [soTien, setSoTien] = useState('');
   const [ghiChu, setGhiChu] = useState('');
+  const [loadingModal, setLoadingModal] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    setLoadingModal(true);
     const dataPhieu = {
-      loaiPhieu: selectedOption,
+      phanLoai: selectedOption === 'Phiếu thu' ? true : false,
       soTien: parseInt(soTien),
-      ghiChu: ghiChu,
-      id_caLam: caLam._id,
+      moTa: ghiChu,
+      id_caLamViec: caLam._id,
     };
     //CALL API
-    console.log(dataPhieu);
+    const res = await addPhieuThuChi(dataPhieu as any);
+
+    if (res.ok) {
+      ToastAndroid.show('Thêm phiếu thu chi thành công', ToastAndroid.SHORT);
+      setLoadingModal(false);
+      onClose();
+      setSelectedOption('Phiếu thu');
+      setSoTien('');
+      setGhiChu('');
+    } else {
+      ToastAndroid.show('Thêm phiếu thu chi thất bại', ToastAndroid.SHORT);
+      setTimeout(() => {
+        setLoadingModal(false);
+      }, 1000);
+    }
+
+    //console.log(dataPhieu);
   };
 
   return (
-    <ModalComponent
-      visible={visible}
-      onClose={onClose}
-      title="Tạo phiếu thu chi"
-      borderRadius={3}
-      stylesTitle={{}}>
-      <SpaceComponent height={10} />
-      <RowComponent styles={{width: '100%'}}>
-        <View style={styles.inputLeft}>
+    <>
+      <ModalComponent
+        visible={visible}
+        onClose={onClose}
+        title="Tạo phiếu thu chi"
+        borderRadius={3}
+        stylesTitle={{}}>
+        <SpaceComponent height={10} />
+        <RowComponent styles={{width: '100%'}}>
+          <View style={styles.inputLeft}>
+            <TextComponent
+              text="Số tiền"
+              size={15}
+              fontWeight="600"
+              color={colors.desc}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <InputComponent
+              type={'normal'}
+              placeholder={`VD: 100000`}
+              value={soTien}
+              onChangeText={text => setSoTien(text)}
+              styles={styles.input}
+              fontSize={15}
+              keyboardType="numeric"
+            />
+          </View>
+        </RowComponent>
+        <SpaceComponent height={10} />
+        <RowComponent styles={{marginLeft: 5}}>
           <TextComponent
-            text="Số tiền"
-            size={15}
-            fontWeight="600"
-            color={colors.desc}
+            text="Loại: "
+            size={17}
+            fontWeight="700"
+            color={colors.black}
           />
-        </View>
-        <View style={styles.inputContainer}>
-          <InputComponent
-            type={'normal'}
-            placeholder={`VD: 100000`}
-            value={soTien}
-            onChangeText={text => setSoTien(text)}
-            styles={styles.input}
-            fontSize={15}
-            keyboardType="numeric"
+          <SpaceComponent width={10} />
+          <RadioButtonComponent
+            options={options}
+            selectedOption={selectedOption}
+            onSelect={option => setSelectedOption(option)}
+            flexDirection="row"
+            color={colors.blue2}
           />
-        </View>
-      </RowComponent>
-      <SpaceComponent height={10} />
-      <RowComponent styles={{marginLeft: 5}}>
-        <TextComponent
-          text="Loại: "
-          size={17}
-          fontWeight="700"
-          color={colors.black}
+        </RowComponent>
+        <SpaceComponent height={10} />
+        <InputComponent
+          value={ghiChu}
+          onChangeText={text => setGhiChu(text)}
+          placeholder="Ghi chú"
+          styles={[styles.input2]}
+          numberOfLines={5}
+          type="normal"
+          multiline={true}
         />
-        <SpaceComponent width={10} />
-        <RadioButtonComponent
-          options={options}
-          selectedOption={selectedOption}
-          onSelect={option => setSelectedOption(option)}
-          flexDirection="row"
-          color={colors.blue2}
-        />
-      </RowComponent>
-      <SpaceComponent height={10} />
-      <InputComponent
-        value={ghiChu}
-        onChangeText={text => setGhiChu(text)}
-        placeholder="Ghi chú"
-        styles={[styles.input2]}
-        numberOfLines={5}
-        type="normal"
-        multiline={true}
-      />
-      <SpaceComponent height={10} />
-      <RowComponent justify="space-between" styles={{paddingHorizontal: 5}}>
-        <ButtonComponent
-          title="Đóng"
-          onPress={onClose}
-          styles={styles.button}
-          titleSize={15}
-          bgrColor={colors.desc2}
-          titleFontWeight="600"
-        />
-        <ButtonComponent
-          title="Xác nhận"
-          onPress={() => {
-            if (soTien !== '') {
-              handleConfirm();
-              onClose();
-              setSoTien('');
-              setGhiChu('');
-            } else {
-              ToastAndroid.show('Tiền', ToastAndroid.SHORT);
+        <SpaceComponent height={10} />
+        <RowComponent justify="space-between" styles={{paddingHorizontal: 5}}>
+          <ButtonComponent
+            title="Đóng"
+            onPress={onClose}
+            styles={styles.button}
+            titleSize={15}
+            bgrColor={colors.desc2}
+            titleFontWeight="600"
+          />
+          <ButtonComponent
+            title="Xác nhận"
+            onPress={() => {
+              if (soTien !== '') {
+                handleConfirm();
+              } else {
+                ToastAndroid.show('Tiền', ToastAndroid.SHORT);
+              }
+            }}
+            styles={styles.button}
+            titleSize={15}
+            bgrColor={
+              selectedOption === 'Phiếu thu'
+                ? 'rgba(222, 247, 232, 1)'
+                : '#f8d7da'
             }
-          }}
-          styles={styles.button}
-          titleSize={15}
-          bgrColor={
-            selectedOption === 'Phiếu thu'
-              ? 'rgba(222, 247, 232, 1)'
-              : '#f8d7da'
-          }
-          titleColor={
-            selectedOption === 'Phiếu thu' ? 'rgba(60, 138, 86, 1)' : colors.red
-          }
-          titleFontWeight="600"
-        />
-      </RowComponent>
-    </ModalComponent>
+            titleColor={
+              selectedOption === 'Phiếu thu'
+                ? 'rgba(60, 138, 86, 1)'
+                : colors.red
+            }
+            titleFontWeight="600"
+          />
+        </RowComponent>
+      </ModalComponent>
+      <LoadingModal modalVisible={loadingModal} color={colors.orange} />
+    </>
   );
 };
 

@@ -413,7 +413,7 @@ export const layDsKhuVuc = async (id_nhaHang: string) => {
       throw new Error('Lỗi khi lấy danh sách Khu Vực');
     }
     const data = await response.json();
-    
+
     return data;
   } catch (error) {
     console.log('Lỗi khi lấy danh sách khu vực: ', error);
@@ -521,8 +521,8 @@ export const updateNhanVien = async (id: string, formData: FormData) => {
     });
     if (!response.ok) {
       const errorData = await response.json(); // Nhận thông báo lỗi từ backend
-      
-      throw { error: errorData.error, msg: errorData.msg };
+
+      throw {error: errorData.error, msg: errorData.msg};
     } else {
       const data = await response.json();
       return data;
@@ -729,5 +729,28 @@ export const thanhToanBanHang = async (
     }
   } catch (error) {
     console.error('Lỗi khi gọi API:', error);
+  }
+};
+
+//THU CHI
+export const addPhieuThuChi = async (phieuThuChi: {
+  phanLoai: string;
+  soTien: number;
+  moTa?: string;
+  id_caLamViec: string;
+}) => {
+  try {
+    const response = await fetch(`${ipAddress}themThuChi`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(phieuThuChi),
+    });
+    if (!response.ok) {
+      throw new Error('Lỗi khi thêm mới Phiếu Thu Chi');
+    }
+    return response;
+  } catch (error) {
+    console.log('Lỗi thêm mới Phiếu Thu Chi: ', error);
+    throw error;
   }
 };

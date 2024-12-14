@@ -274,6 +274,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
             </View>
           ) : (
             <View>
+              {/* View ban mang di */}
               <View style={styles.sectionContainer}>
                 <SectionComponent styles={styles.section}>
                   <RowComponent justify="space-between">
@@ -303,9 +304,9 @@ const ChiTietHoaDonScreen = (props: Props) => {
                       />
                       <TextComponent
                         text={`${
-                          formatTime(new Date(hoaDon.thoiGianRa)) +
+                          formatTime(new Date(hoaDon.thoiGianVao)) +
                           ' | ' +
-                          formatDate(new Date(hoaDon.thoiGianRa))
+                          formatDate(new Date(hoaDon.thoiGianVao))
                         }`}
                         color={colors.desc}
                       />
@@ -487,7 +488,13 @@ const ChiTietHoaDonScreen = (props: Props) => {
                     />
                   ) : (
                     <View style={{flex: 1, alignItems: 'center'}}>
-                      <SpaceComponent height={36} />
+                      <View style={{paddingVertical: 16}}>
+                        <TextComponent
+                          text="Danh sách trống!"
+                          size={14}
+                          color={colors.desc}
+                        />
+                      </View>
                       <View
                         style={{
                           width: '100%',

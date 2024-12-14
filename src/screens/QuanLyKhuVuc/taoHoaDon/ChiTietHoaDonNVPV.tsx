@@ -54,8 +54,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
 
-  console.log(chiTietHoaDons);
-  
+  //console.log(chiTietHoaDons);
 
   const navigation = useNavigation<any>();
 
@@ -442,7 +441,13 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                     />
                   ) : (
                     <View style={{flex: 1, alignItems: 'center'}}>
-                      <SpaceComponent height={36} />
+                      <View style={{paddingVertical: 16}}>
+                        <TextComponent
+                          text="Danh sách trống!"
+                          size={14}
+                          color={colors.desc}
+                        />
+                      </View>
                       <View
                         style={{
                           width: '100%',

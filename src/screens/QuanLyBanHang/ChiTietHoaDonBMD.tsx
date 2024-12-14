@@ -25,6 +25,8 @@ import ItemChiTietHoaDonBMD from './ItemChiTietHoaDonBMD';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import LoadingModal from 'react-native-loading-modal';
+import ModalPTTTBMD from './ModalPTTTBMD';
+import ModalSoLuongBMD from './ModalSoLuongBMD';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -52,6 +54,7 @@ const ChiTietHoaDonBMD = (props: Props) => {
   const [chiTietSelected, setChiTietSelected] = useState<ChiTietHoaDon | null>(
     null,
   );
+
   //TAM THOI
   const [typeModalSoLuongMon, setTypeModalSoLuongMon] = useState<
     'edit' | 'onlySL' | null
@@ -448,7 +451,11 @@ const ChiTietHoaDonBMD = (props: Props) => {
                   />
                 </View>
               ) : (
-                <View style={{flex: 1, alignItems: 'center'}}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                  }}>
                   <SpaceComponent height={8} />
                   <View
                     style={{
@@ -485,12 +492,24 @@ const ChiTietHoaDonBMD = (props: Props) => {
                       previewOpenDelay={2000}
                     />
                   ) : (
-                    <View style={{flex: 1, alignItems: 'center'}}>
-                      <SpaceComponent height={36} />
+                    //VIEW MON AN EMPTY
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: 'center',
+                      }}>
+                      <View style={{paddingVertical: 16}}>
+                        <TextComponent
+                          text="Danh sách trống!"
+                          size={14}
+                          color={colors.desc}
+                        />
+                      </View>
                       <View
                         style={{
                           width: '100%',
                           height: 1 * 1.5,
+
                           backgroundColor: colors.desc,
                         }}
                       />
