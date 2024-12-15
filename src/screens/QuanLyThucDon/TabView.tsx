@@ -14,7 +14,7 @@ import {
   TabBarItem,
 } from 'react-native-tab-view';
 
-import DanhMucComponent from './Hoa/components/DanhMucComponent';
+import DanhMucComponent from './DanhMucComponent';
 import NhomToppingComponent from './Hoa/components/NhomToppingComponent';
 import {hoaStyles} from './Hoa/styles/hoaStyles';
 import {colors} from './Hoa/contants/hoaColors';

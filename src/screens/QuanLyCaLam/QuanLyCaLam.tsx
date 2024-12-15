@@ -50,13 +50,12 @@ const QuanLyCaLam = (props: Props) => {
     (CaLam & {nv: NhanVienSlice})[]
   >([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [trangThaiCa, setTrangThaiCa] = useState(true);
+  const [trangThaiCa, setTrangThaiCa] = useState(false);
   const [soDuBanDau, setSoDuBanDau] = useState('');
 
   const user: UserLogin = useSelector(state => state.user);
   const caLams = useSelector((state: RootState) => state.calam.caLams);
   const caLamStatus = useSelector((state: RootState) => state.calam.status);
-  const checkCaLam = caLams.filter(caLam => !caLam.ketThuc);
   const id_nhanVien = user._id;
   const id_nhaHang = user.id_nhaHang._id;
 
@@ -68,12 +67,17 @@ const QuanLyCaLam = (props: Props) => {
   useEffect(() => {
     setIsLoadingFetch(true);
     dispatch(fetchCaLam(id_nhaHang) as any);
-    if (checkCaLam) {
-      setTrangThaiCa(true);
-    } else {
-      setTrangThaiCa(false);
-    }
   }, [dispatch]);
+
+  useEffect(() => {
+    // Kiểm tra lại các ca làm có trường ketThuc là null
+    const checkCaLam = caLams.filter(caLam => caLam.ketThuc == null);
+    if (checkCaLam.length > 0) {
+      setTrangThaiCa(false);  // Có ca làm chưa kết thúc, nên hiển thị nút "Mở ca mới"
+    } else {
+      setTrangThaiCa(true); // Không có ca làm chưa kết thúc, ẩn nút "Mở ca mới"
+    }
+  }, [caLams]);  // Lắng nghe sự thay đổi của caLams
 
   useEffect(() => {
     if (caLamStatus === 'succeeded') {
@@ -117,6 +121,7 @@ const QuanLyCaLam = (props: Props) => {
 
     try {
       dispatch(moCaLam(newCaLam)).unwrap(); // Gửi action moCaLam
+      setTrangThaiCa(false);
     } catch (error) {
       console.error('Lỗi khi mở ca làm:', error);
     }
@@ -200,7 +205,7 @@ const QuanLyCaLam = (props: Props) => {
       ) : (
         <View style={{backgroundColor: colors.gray}}>
           <View style={[hoaStyles.container]}>
-            {!trangThaiCa && (
+            {trangThaiCa && (
               <View style={hoaStyles.viewMoCa}>
                 <TouchableOpacity
                   style={hoaStyles.buttonMoCa}

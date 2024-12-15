@@ -36,6 +36,7 @@ import ModalDongCa from '../../customcomponent/ModalDongCa';
 import {checkDongCaLam, dongCaLam} from './CallApiCaLam';
 import { UserLogin } from '../../navigation/CustomDrawer';
 import { useToast } from '../../customcomponent/CustomToast';
+import { fetchCaLam } from '../../store/Slices/CaLamSlice';
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
   const {showToast} = useToast();
@@ -113,6 +114,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
       // Kiểm tra và xử lý phản hồi từ server
       if (response) {
+        dispatch(fetchCaLam(id_nhaHang) as any)
         showToast('check', 'Đã đóng ca làm việc hiện tại', 'green', 1500);
         setIsVisibleCheckDongCa(false);
         // Cập nhật giao diện, ví dụ như cập nhật thời gian kết thúc của ca làm việc
@@ -129,6 +131,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
     try {
       const response = await dongCaLam(caLam._id, id_nhanVien);
       if (response) {
+        dispatch(fetchCaLam(id_nhaHang) as any)
         showToast('check', 'Đã đóng ca làm việc hiện tại', 'green', 1500);
         setIsVisibleCheckDongCa(false);
         navigation.goBack();

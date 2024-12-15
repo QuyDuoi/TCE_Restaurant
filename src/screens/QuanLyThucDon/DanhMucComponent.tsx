@@ -8,22 +8,21 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {hoaStyles} from '../styles/hoaStyles';
-import ItemDanhMuc from '../lists/ItemDanhMuc';
-import ItemMonAn from '../lists/ItemMonAn';
-import TextComponent from './TextComponent';
-import {colors} from '../contants/hoaColors';
-import {MonAn} from '../../../../store/Slices/MonAnSlice';
+import {hoaStyles} from './Hoa/styles/hoaStyles';
+import ItemDanhMuc from './Hoa/lists/ItemDanhMuc';
+import ItemMonAn from './Hoa/lists/ItemMonAn';
+import TextComponent from './Hoa/components/TextComponent';
+import {colors} from './Hoa/contants/hoaColors';
+import {MonAn} from '../../store/Slices/MonAnSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
+import {AppDispatch, RootState} from '../../store/store';
 import {useNavigation} from '@react-navigation/native';
-import {DanhMuc} from '../../../../store/Slices/DanhMucSlice';
-import {searchMonAn} from '../../../../services/api';
+import {DanhMuc} from '../../store/Slices/DanhMucSlice';
+import {searchMonAn} from '../../services/api';
 import debounce from 'lodash';
-import {SwipeListView} from 'react-native-swipe-list-view';
-import {UserLogin} from '../../../../navigation/CustomDrawer';
-import {fetchDanhMucVaMonAn} from '../../../../store/Thunks/danhMucThunks';
-import {fetchKhuVucVaBan} from '../../../../store/Thunks/khuVucThunks';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
+import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 
 if (
   Platform.OS === 'android' &&
@@ -55,7 +54,7 @@ const DanhMucComponent = (props: Props) => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
   const id_nhaHang = user.id_nhaHang._id;
-  
+
   useEffect(() => {
     if (user) {
       if (Array.isArray(dsMonAn) && dsMonAn.length === 0) {
@@ -213,10 +212,6 @@ const DanhMucComponent = (props: Props) => {
     );
   };
 
-  const renderHiddenItem = () => {
-    return <View style={{backgroundColor: 'red', flex: 1}}></View>;
-  };
-
   return (
     <View
       style={[
@@ -238,7 +233,7 @@ const DanhMucComponent = (props: Props) => {
         <View style={{flex: 1, alignItems: 'center', marginTop: 50}}>
           <Image
             style={{width: 100, height: 100, marginVertical: 10}}
-            source={require('../../../../image/khongTimThay.png')}
+            source={require('../../image/khongTimThay.png')}
           />
           <TextComponent text="Không tìm thấy món ăn nào" />
         </View>

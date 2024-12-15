@@ -1,15 +1,15 @@
 import {View, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useState} from 'react';
-import ModalComponent from '../components/ModalComponent';
-import TextComponent from '../components/TextComponent';
-import RowComponent from '../components/RowComponent';
-import InputComponent from '../components/InputComponent';
-import {colors} from '../contants/hoaColors';
-import SpaceComponent from '../components/SpaceComponent';
-import RadioButtonComponent from '../components/RadioButtonComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import {addPhieuThuChi} from '../../../../services/api';
 import LoadingModal from 'react-native-loading-modal';
+import { addPhieuThuChi } from '../../services/api';
+import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
+import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
+import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
+import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
+import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
+import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import RadioButtonComponent from '../QuanLyThucDon/Hoa/components/RadioButtonComponent';
+import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 
 interface Props {
   visible: boolean;

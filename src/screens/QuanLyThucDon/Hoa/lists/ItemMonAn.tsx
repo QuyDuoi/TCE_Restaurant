@@ -1,5 +1,5 @@
-import {View, Text, StyleProp, ViewStyle, Image, Switch} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, StyleProp, ViewStyle, Image, Switch} from 'react-native';
+import React, { useState} from 'react';
 import RowComponent from '../components/RowComponent';
 import TextComponent from '../components/TextComponent';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -8,7 +8,7 @@ import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateStatusMonAnThunk} from '../../../../store/Thunks/monAnThunks';
-import {ipAddress, IPV4} from '../../../../services/api';
+import { IPV4} from '../../../../services/api';
 import {UserLogin} from '../../../../navigation/CustomDrawer';
 
 interface Props {

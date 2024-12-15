@@ -7,9 +7,9 @@ import ButtonComponent from '../screens/QuanLyThucDon/Hoa/components/ButtonCompo
 import {colors} from '../screens/QuanLyThucDon/Hoa/contants/hoaColors';
 import ManCapNhatMonAn from '../screens/QuanLyThucDon/CapNhatMonAn';
 import CapNhatDanhMuc from '../screens/QuanLyThucDon/CapNhatDanhMuc';
-import ManThemMonAn from '../screens/QuanLyThucDon/ThemMonAn';
+import ManThemMonAn from '../screens/QuanLyThucDon/ThemMon';
 import {useSelector} from 'react-redux';
-import { UserLogin } from './CustomDrawer';
+import {UserLogin} from './CustomDrawer';
 
 const ThucDonStack = createNativeStackNavigator();
 
@@ -20,7 +20,7 @@ function ThucDonStackScreen({
   navigation: any;
   route: any;
 }) {
-  const user : UserLogin = useSelector(state => state.user);
+  const user: UserLogin = useSelector(state => state.user);
   const [dialogSettingHandler, setDialogSettingHandler] = useState<
     null | (() => void)
   >(null);
@@ -61,7 +61,7 @@ function ThucDonStackScreen({
         });
       }
     } else {
-      navigation.setOptions({ headerShown: false });
+      navigation.setOptions({headerShown: false});
     }
   }, [navigation, route, dialogSettingHandler, user]);
 
