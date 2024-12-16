@@ -472,17 +472,27 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                 paddingHorizontal: 5,
               },
             ]}>
-            {nhanVienThanhToan && isPaid ? (
+            {isPaid ? (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
                   <TextComponent text="NV thanh toán: " styles={styles.text} />
                   <TextComponent
-                    text={nhanVienThanhToan?.hoTen ?? 'Nhân viên'}
+                    text={hoaDon.nhanVienThanhToan ?? 'Nhân viên'}
                     styles={styles.text2}
                   />
                 </RowComponent>
               </SectionComponent>
-            ) : null}
+            ) : (
+              <SectionComponent styles={styles.section}>
+                <RowComponent justify="space-between">
+                  <TextComponent text="NV tạo: " styles={styles.text} />
+                  <TextComponent
+                    text={hoaDon.nhanVienTao ?? 'Nhân viên'}
+                    styles={styles.text2}
+                  />
+                </RowComponent>
+              </SectionComponent>
+            )}
           </View>
           <SpaceComponent height={12} />
           <View

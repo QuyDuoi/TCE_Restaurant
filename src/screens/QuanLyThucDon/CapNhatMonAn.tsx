@@ -23,6 +23,8 @@ import {styles} from './ThemSuaStyle';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {IPV4} from '../../services/api';
 import {UserLogin} from '../../navigation/CustomDrawer';
+import LoadingModal from 'react-native-loading-modal';
+import {colors} from './Hoa/contants/hoaColors';
 
 interface Props {
   route: RouteProp<{params: {monAn: MonAn}}, 'params'>;
@@ -40,6 +42,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
   const [modalVisible, setModalVisible] = useState(false);
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const danhMucOptions = dsDanhMuc.map(
     (danhMuc: {_id: string; tenDanhMuc: string}) => ({
@@ -93,19 +96,27 @@ function ManCapNhatMonAn(): React.JSX.Element {
 
   // Hàm xử lý khi nhấn "Cập nhật"
   const handleUpdate = () => {
+    setIsLoadingModal(true);
     if (handleValidation()) {
       const formData = taoFormDataMonAn(monAnCapNhat);
       dispatch(updateMonAnThunk({id: monAnCapNhat._id!, formData}))
         .unwrap()
         .then(() => {
+          setIsLoadingModal(false);
           Alert.alert('Thành công', 'Món ăn đã được cập nhật');
           navigation.goBack();
         })
         .catch(error => {
+          setTimeout(() => {
+            setIsLoadingModal(false);
+          }, 2000);
           console.error('Lỗi cập nhật món ăn: ', error);
           Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
         });
     } else {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 2000);
       Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
     }
   };
@@ -137,137 +148,142 @@ function ManCapNhatMonAn(): React.JSX.Element {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.imageSection}>
-          <View style={styles.imageTittle}>
-            <Text style={styles.sectionTitle}>
-              Hình Ảnh <Text style={styles.required}>*</Text>
-            </Text>
-            <Text style={styles.imageDescription}>
-              Ảnh món ăn cần được chụp rõ nét và thực tế để khách hàng xem và
-              lựa chọn
-            </Text>
+    <>
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.imageSection}>
+            <View style={styles.imageTittle}>
+              <Text style={styles.sectionTitle}>
+                Hình Ảnh <Text style={styles.required}>*</Text>
+              </Text>
+              <Text style={styles.imageDescription}>
+                Ảnh món ăn cần được chụp rõ nét và thực tế để khách hàng xem và
+                lựa chọn
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.uploadButton}
+              onPress={handleEditImage}
+              disabled={user.vaiTro !== 'Quản lý'}>
+              {monAnCapNhat.anhMonAn ? (
+                <View>
+                  <Image
+                    source={{uri: hinhAnhMon}}
+                    style={styles.uploadedImage}
+                  />
+                  {user.vaiTro === 'Quản lý' && ( // Chỉ hiện nút "Sửa" nếu là "Quản lý"
+                    <View style={styles.overlay}>
+                      <Text style={styles.overlayText}>Sửa</Text>
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <Text style={styles.uploadButtonText}>Tải ảnh mô tả</Text>
+              )}
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.uploadButton}
-            onPress={handleEditImage}
-            disabled={user.vaiTro !== 'Quản lý'}>
-            {monAnCapNhat.anhMonAn ? (
-              <View>
-                <Image
-                  source={{uri: hinhAnhMon}}
-                  style={styles.uploadedImage}
-                />
-                {user.vaiTro === 'Quản lý' && ( // Chỉ hiện nút "Sửa" nếu là "Quản lý"
-                  <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>Sửa</Text>
-                  </View>
-                )}
-              </View>
-            ) : (
-              <Text style={styles.uploadButtonText}>Tải ảnh mô tả</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-        {errors.anhMonAn && (
-          <Text style={styles.errorText}>{errors.anhMonAn}</Text>
-        )}
+          {errors.anhMonAn && (
+            <Text style={styles.errorText}>{errors.anhMonAn}</Text>
+          )}
 
-        {/* Danh mục */}
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Danh mục <Text style={styles.required}>*</Text>
-          </Text>
-          <Dropdown
-            style={[styles.dropdown, errors.id_danhMuc && styles.errorBorder]}
-            data={danhMucOptions}
-            labelField="label"
-            valueField="value"
-            placeholder="Chọn danh mục"
-            value={
-              typeof monAnCapNhat.id_danhMuc === 'object'
-                ? monAnCapNhat.id_danhMuc._id
-                : monAnCapNhat.id_danhMuc
-            }
-            onChange={item => capNhatDuLieu('id_danhMuc', item.value)}
-            disable={user.vaiTro !== 'Quản lý'}
-          />
-        </View>
-        {errors.id_danhMuc && (
-          <Text style={styles.errorText}>{errors.id_danhMuc}</Text>
-        )}
+          {/* Danh mục */}
+          <View style={styles.row}>
+            <Text style={styles.label}>
+              Danh mục <Text style={styles.required}>*</Text>
+            </Text>
+            <Dropdown
+              style={[styles.dropdown, errors.id_danhMuc && styles.errorBorder]}
+              data={danhMucOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Chọn danh mục"
+              value={
+                typeof monAnCapNhat.id_danhMuc === 'object'
+                  ? monAnCapNhat.id_danhMuc._id
+                  : monAnCapNhat.id_danhMuc
+              }
+              onChange={item => capNhatDuLieu('id_danhMuc', item.value)}
+              disable={user.vaiTro !== 'Quản lý'}
+            />
+          </View>
+          {errors.id_danhMuc && (
+            <Text style={styles.errorText}>{errors.id_danhMuc}</Text>
+          )}
 
-        {/* Tên Món */}
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Tên món <Text style={styles.required}>*</Text>
-          </Text>
-          <TextInput
-            style={[styles.input, errors.tenMon && styles.errorBorder]}
-            placeholder="VD: Khoai tây chiên"
-            value={monAnCapNhat.tenMon}
-            onChangeText={text => capNhatDuLieu('tenMon', text)}
-            editable={user.vaiTro === 'Quản lý'}
-          />
-        </View>
-        {errors.tenMon && <Text style={styles.errorText}>{errors.tenMon}</Text>}
+          {/* Tên Món */}
+          <View style={styles.row}>
+            <Text style={styles.label}>
+              Tên món <Text style={styles.required}>*</Text>
+            </Text>
+            <TextInput
+              style={[styles.input, errors.tenMon && styles.errorBorder]}
+              placeholder="VD: Khoai tây chiên"
+              value={monAnCapNhat.tenMon}
+              onChangeText={text => capNhatDuLieu('tenMon', text)}
+              editable={user.vaiTro === 'Quản lý'}
+            />
+          </View>
+          {errors.tenMon && (
+            <Text style={styles.errorText}>{errors.tenMon}</Text>
+          )}
 
-        {/* Giá */}
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Giá món <Text style={styles.required}>*</Text>
-          </Text>
-          <TextInput
-            style={[
-              styles.input,
-              {textAlign: 'right'},
-              errors.giaMonAn && styles.errorBorder,
-            ]}
-            placeholder="đ"
-            keyboardType="numeric"
-            value={monAnCapNhat.giaMonAn.toString()}
-            onChangeText={text => capNhatDuLieu('giaMonAn', Number(text))}
-            editable={user.vaiTro === 'Quản lý'}
-          />
-        </View>
-        {errors.giaMonAn && (
-          <Text style={styles.errorText}>{errors.giaMonAn}</Text>
-        )}
+          {/* Giá */}
+          <View style={styles.row}>
+            <Text style={styles.label}>
+              Giá món <Text style={styles.required}>*</Text>
+            </Text>
+            <TextInput
+              style={[
+                styles.input,
+                {textAlign: 'right'},
+                errors.giaMonAn && styles.errorBorder,
+              ]}
+              placeholder="đ"
+              keyboardType="numeric"
+              value={monAnCapNhat.giaMonAn.toString()}
+              onChangeText={text => capNhatDuLieu('giaMonAn', Number(text))}
+              editable={user.vaiTro === 'Quản lý'}
+            />
+          </View>
+          {errors.giaMonAn && (
+            <Text style={styles.errorText}>{errors.giaMonAn}</Text>
+          )}
 
-        {/* Mô tả */}
-        <View style={styles.rowMoTa}>
-          <Text style={styles.labelMoTa}>Mô tả</Text>
-          <TextInput
-            style={styles.inputMoTa}
-            placeholder="VD: Cà chua + Khoai tây chiên + Tương ớt"
-            value={monAnCapNhat.moTa}
-            onChangeText={text => capNhatDuLieu('moTa', text)}
-            multiline={true}
-            numberOfLines={4}
-            textAlignVertical="top"
-            editable={user.vaiTro === 'Quản lý'}
-          />
-        </View>
-      </ScrollView>
+          {/* Mô tả */}
+          <View style={styles.rowMoTa}>
+            <Text style={styles.labelMoTa}>Mô tả</Text>
+            <TextInput
+              style={styles.inputMoTa}
+              placeholder="VD: Cà chua + Khoai tây chiên + Tương ớt"
+              value={monAnCapNhat.moTa}
+              onChangeText={text => capNhatDuLieu('moTa', text)}
+              multiline={true}
+              numberOfLines={4}
+              textAlignVertical="top"
+              editable={user.vaiTro === 'Quản lý'}
+            />
+          </View>
+        </ScrollView>
 
-      <TouchableOpacity
-        style={[
-          styles.saveButton,
-          {backgroundColor: kiemTraThayDoi() ? '#ff4500' : '#ccc'},
-        ]}
-        onPress={handleUpdate}
-        disabled={!kiemTraThayDoi()}>
-        <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.saveButton,
+            {backgroundColor: kiemTraThayDoi() ? '#ff4500' : '#ccc'},
+          ]}
+          onPress={handleUpdate}
+          disabled={!kiemTraThayDoi()}>
+          <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
+        </TouchableOpacity>
 
-      <CustomModalChoiseCamera
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onOpenCamera={handleOpenCamera}
-        onOpenLibrary={handleOpenImageLibrary}
-      />
-    </View>
+        <CustomModalChoiseCamera
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onOpenCamera={handleOpenCamera}
+          onOpenLibrary={handleOpenImageLibrary}
+        />
+      </View>
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+    </>
   );
 }
 

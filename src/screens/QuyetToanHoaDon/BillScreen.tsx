@@ -88,7 +88,7 @@ const BillScreen: React.FC = () => {
     const ban = bans.find(item => item._id === idBan);
     if (!ban) return {tenKhuVuc: 'Trống', tenBan: 'Không tồn tại'};
 
-    const khuVuc = khuVucs.find(item => item._id === ban.id_khuVuc);
+    const khuVuc = khuVucs.find(item => item._id === (ban.id_khuVuc as any));
     return {
       tenKhuVuc: khuVuc?.tenKhuVuc || 'Không tồn tại',
       tenBan: ban.tenBan || 'Không xác định',

@@ -25,13 +25,10 @@ interface Props {
 const TableBookingDetail = (props: Props) => {
   const {visible, onClose, onEdit, styles, slectedBan} = props;
   if (!slectedBan) {
-    //console.log('booking null');
-
     return null; // Kiểm tra nếu dữ liệu không tồn tại
   }
 
   const thongTinBanDat = slectedBan?.ghiChu?.split(' - ');
-  //console.log(thongTinBanDat);
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
@@ -90,12 +87,16 @@ const TableBookingDetail = (props: Props) => {
                 text={
                   thongTinBanDat && thongTinBanDat[0]
                     ? thongTinBanDat[0]
+                    : thongTinBanDat[0] === ''
+                    ? 'Không có'
                     : slectedBan?.ghiChu
                 }
                 styles={{
                   width: '80%',
+                  justifyContent: 'center',
                 }}
                 color={colors.black}
+                size={15}
               />
             </View>
           </RowComponent>
@@ -154,7 +155,7 @@ const stylesContainer = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    width: '40%'
+    width: '40%',
   },
   confirmButton: {
     flex: 1,

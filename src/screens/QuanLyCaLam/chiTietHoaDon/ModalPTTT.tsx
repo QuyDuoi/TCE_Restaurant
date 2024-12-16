@@ -34,7 +34,8 @@ import ModalGiamGia from './ModalGiamGia';
 import {getListHoaDonTheoNhaHang, thanhToanHoaDon} from '../../../services/api';
 import {RootState} from '../../../store/store';
 import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
-
+import LoadingModal from 'react-native-loading-modal';
+import {UserLogin} from '../../../navigation/CustomDrawer';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -55,10 +56,12 @@ const ModalPTTT = React.memo((props: Props) => {
   const [isPercent, setIsPercent] = useState(true);
   const [apiQR, setApiQR] = useState('');
   const [isLoadingQR, setIsLoadingQR] = useState(false);
-
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const dispatch = useDispatch();
 
   const bans = useSelector((state: RootState) => state.ban.bans);
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+
   const banSelected = hoaDon?.id_ban
     ? bans.find(item => item._id === hoaDon?.id_ban)
     : undefined;
@@ -76,16 +79,28 @@ const ModalPTTT = React.memo((props: Props) => {
     onClose(); // Đóng modal sau khi điều hướng
   };
 
+  useEffect(() => {
+    if (isLoadingModal) {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 5000);
+    }
+  }, [isLoadingModal]);
+
   //IMAGE QR
-  const idBank = '970422';
-  const stk = '0393911183';
-  const templateQR = '1Lh5PBl';
+  const id_nhanVien = user._id;
+  const id_nhaHang = user.id_nhaHang._id;
+  const nganHang = user.id_nhaHang.nganHang;
+  const soTaiKhoan = user.id_nhaHang.soTaiKhoan;
+  const chuTaiKhoan = user.id_nhaHang.chuTaiKhoan;
+  const messageQr = 'manghettienday';
+
   useEffect(() => {
     const getQR = async () => {
       try {
         setIsLoadingQR(true);
         const response = await fetch(
-          `https://api.vietqr.io/image/${idBank}-${stk}-${templateQR}.jpg?amount=${totalFinalBill}`,
+          `https://img.vietqr.io/image/${nganHang}-${soTaiKhoan}-1Lh5PBl.png?amount=${totalFinalBill}&addInfo=${messageQr}&accountName=${chuTaiKhoan}`,
         );
         setApiQR(response.url);
       } catch (error) {
@@ -101,7 +116,9 @@ const ModalPTTT = React.memo((props: Props) => {
 
   //xu ly thanh toan
   const handleThanhToan = async () => {
+    setIsLoadingModal(true);
     const formData = {
+      id_nhanVien: user._id,
       hinhThucThanhToan: chuyenKhoan ? true : false,
       tienGiamGia: discount ? discount : hoaDon.tienGiamGia,
       thoiGianRa: new Date().toISOString(),
@@ -111,13 +128,16 @@ const ModalPTTT = React.memo((props: Props) => {
       formData.tienGiamGia as number,
       formData.hinhThucThanhToan,
       new Date(formData.thoiGianRa),
+      formData.id_nhanVien,
     );
-    if (result) {
+    if (result.ok) {
+      setIsLoadingModal(false);
       ToastAndroid.show('Thanh toán thành công', ToastAndroid.SHORT);
       onChange && onChange(true);
       //xu ly trang thai ban
       if (banSelected) {
-        dispatch(
+        setIsLoadingModal(true);
+        const updateBan = await dispatch(
           capNhatBanThunk({
             id: banSelected._id as string,
             ban: {
@@ -127,6 +147,9 @@ const ModalPTTT = React.memo((props: Props) => {
             },
           }) as any,
         );
+        if (updateBan.type.endsWith('fulfilled')) {
+          setIsLoadingModal(false);
+        }
       }
       onClose();
     } else {
@@ -241,6 +264,7 @@ const ModalPTTT = React.memo((props: Props) => {
           />
         </RowComponent>
       </ModalComponent>
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 });
@@ -255,8 +279,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 180,
+    height: 185,
   },
   content: {
     flexDirection: 'row',

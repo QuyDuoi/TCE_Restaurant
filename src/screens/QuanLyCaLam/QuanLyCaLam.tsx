@@ -24,7 +24,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import ModalSelectDate from './ModalSelectDate';
-import { UserLogin } from '../../navigation/CustomDrawer';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import LoadingModal from 'react-native-loading-modal';
 
 interface Props {
   setFilterHandler: any;
@@ -41,6 +42,7 @@ const QuanLyCaLam = (props: Props) => {
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const [isInputVisible, setIsInputVisible] = useState(false);
   const opacity = useSharedValue(0); // Giá trị dùng để điều chỉnh độ trong suốt
@@ -73,11 +75,11 @@ const QuanLyCaLam = (props: Props) => {
     // Kiểm tra lại các ca làm có trường ketThuc là null
     const checkCaLam = caLams.filter(caLam => caLam.ketThuc == null);
     if (checkCaLam.length > 0) {
-      setTrangThaiCa(false);  // Có ca làm chưa kết thúc, nên hiển thị nút "Mở ca mới"
+      setTrangThaiCa(false); // Có ca làm chưa kết thúc, nên hiển thị nút "Mở ca mới"
     } else {
       setTrangThaiCa(true); // Không có ca làm chưa kết thúc, ẩn nút "Mở ca mới"
     }
-  }, [caLams]);  // Lắng nghe sự thay đổi của caLams
+  }, [caLams]); // Lắng nghe sự thay đổi của caLams
 
   useEffect(() => {
     if (caLamStatus === 'succeeded') {
@@ -118,11 +120,19 @@ const QuanLyCaLam = (props: Props) => {
       id_nhanVien: id_nhanVien,
       id_nhaHang: id_nhaHang,
     };
-
+    setIsLoadingModal(true);
     try {
-      dispatch(moCaLam(newCaLam)).unwrap(); // Gửi action moCaLam
+      dispatch(moCaLam(newCaLam))
+        .unwrap()
+        .finally(() => {
+          setIsLoadingModal(false);
+        }); // Gửi action moCaLam
+
       setTrangThaiCa(false);
     } catch (error) {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 1500);
       console.error('Lỗi khi mở ca làm:', error);
     }
   };
@@ -293,6 +303,7 @@ const QuanLyCaLam = (props: Props) => {
         setFromDateParent={(val: Date) => setFromDate(val)}
         setToDateParent={(val: Date) => setToDate(val)}
       />
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 };

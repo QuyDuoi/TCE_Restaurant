@@ -25,7 +25,7 @@ import {IPV4} from '../../services/api';
 import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import {UserLogin} from '../../navigation/CustomDrawer';
-import { setUser } from '../../store/Slices/UserSlice';
+import {setUser} from '../../store/Slices/UserSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface FiltersModelTest {
@@ -62,11 +62,10 @@ const NhanVienComponent = props => {
   const user: UserLogin = useSelector(state => state.user);
 
   // **Lấy dữ liệu nhân viên từ API**
-
+  const id_nhaHang = user.id_nhaHang._id;
   useEffect(() => {
-    const id_nhaHang = user.id_nhaHang._id;
     if (status === 'idle') {
-      dispatch(fetchNhanViens());
+      dispatch(fetchNhanViens(id_nhaHang));
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
       setIsLoading(true);
     } else if (status === 'succeeded') {
@@ -81,7 +80,7 @@ const NhanVienComponent = props => {
   useFocusEffect(
     React.useCallback(() => {
       if (status !== 'loading') {
-        dispatch(fetchNhanViens()); // Fetch lại danh sách nhân viên khi màn hình được focus lại
+        dispatch(fetchNhanViens(id_nhaHang)); // Fetch lại danh sách nhân viên khi màn hình được focus lại
       }
     }, [dispatch]),
   );

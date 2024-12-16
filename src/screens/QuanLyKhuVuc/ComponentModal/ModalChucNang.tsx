@@ -22,6 +22,8 @@ import {HoaDon} from '../../../store/Slices/HoaDonSlice';
 import {getListHoaDonTheoNhaHang} from '../../../services/api';
 import UnsavedChangesModal from '../../../customcomponent/modalSave';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import LoadingModal from 'react-native-loading-modal';
+import {UserLogin} from '../../../navigation/CustomDrawer';
 
 interface Props {
   isVisible: boolean;
@@ -31,7 +33,6 @@ interface Props {
 }
 
 const ModalChucNang = (props: Props) => {
-  const idNhaHang = '66fab50fa28ec489c7137537';
   const {isVisible, onClose, onCloseParent, selectedBan} = props;
   const [isVisibleDatBan, setIsVisibleDatBan] = useState(false);
   const [isVisibleChiTietBan, setIsVisibleChiTietBan] = useState(false);
@@ -40,14 +41,17 @@ const ModalChucNang = (props: Props) => {
     HoaDon[] | null
   >([]);
   const [isVisibleModalHuyBan, setIsVisibleModalHuyBan] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
   const navigation = useNavigation<any>();
 
   const bans = useSelector((state: RootState) => state.ban.bans);
+  const user: any = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const fetchHoaDon = async () => {
       try {
-        const hoaDons = await getListHoaDonTheoNhaHang(idNhaHang);
+        const hoaDons = await getListHoaDonTheoNhaHang(user?.id_nhaHang._id);
         setHoaDonsChuaThanhToan(Array.isArray(hoaDons) ? hoaDons : []);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách hóa đơn:', error);
@@ -65,6 +69,7 @@ const ModalChucNang = (props: Props) => {
   const dispatch = useDispatch();
 
   const handleConfirmHuyBan = async () => {
+    setIsLoadingModal(true);
     const data = {
       ...selectedBan,
       trangThai: 'Trống',
@@ -76,9 +81,13 @@ const ModalChucNang = (props: Props) => {
 
     if (result.type.endsWith('fulfilled')) {
       ToastAndroid.show('Hủy bàn thành công', ToastAndroid.LONG);
+      setIsLoadingModal(false);
       setIsVisibleModalHuyBan(false);
       onCloseParent();
     } else {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 2000);
       ToastAndroid.show('Hủy bàn thất bại', ToastAndroid.LONG);
     }
 
@@ -234,6 +243,7 @@ const ModalChucNang = (props: Props) => {
         }}
         image={<Icon name="close" size={22} color="red" />}
       />
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 };

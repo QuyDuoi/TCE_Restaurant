@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
@@ -21,6 +21,8 @@ import {RootState} from '../../../store/store';
 import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
 import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
 import {getListHoaDonTheoNhaHang} from '../../../services/api';
+import LoadingModal from 'react-native-loading-modal';
+import {UserLogin} from '../../../navigation/CustomDrawer';
 
 interface Props {
   visible: boolean;
@@ -31,12 +33,15 @@ interface Props {
 
 const ModalTaoHoaDon = (props: Props) => {
   const {visible, onClose, selectedBan, onCloseParent} = props;
-  const idNhaHang = '66fab50fa28ec489c7137537';
+
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
   const caLams = useSelector((state: RootState) => state.calam.caLams);
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+  const idNhaHang = user?.id_nhaHang?._id;
 
   useEffect(() => {
     if (caLams.length === 0) {
@@ -44,40 +49,33 @@ const ModalTaoHoaDon = (props: Props) => {
     }
   }, [caLams]);
 
-  const caLamHienTai = caLams.find(
-    calam => calam.ketThuc === null || calam.ketThuc === undefined,
-  );
-  //console.log(selectedBan);
-
   const handleTaoHoaDon = async () => {
+    setIsLoadingModal(true);
     const data = {
       id_ban: selectedBan?._id,
-      id_nhanVien: '671a4d2d9d3c2ab4130e3c6e',
+      id_nhanVien: user._id,
       thoiGianVao: new Date(),
-      id_nhaHang: '66fab50fa28ec489c7137537',
+      id_nhaHang: idNhaHang,
     };
 
     const result = await dispatch(addNewHoaDon(data as any) as any);
     //console.log(result.payload._id);
 
     if (result.type.endsWith('fulfilled')) {
+      setIsLoadingModal(false);
       ToastAndroid.show('Tạo hóa đơn thành công', ToastAndroid.LONG);
       navigation.navigate('ChiTietHoaDonNVPV', {
         hoaDon: result.payload,
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
         tenBan: selectedBan?.tenBan,
       });
-      // const dataBan = {
-      //   ...selectedBan,
-      //   trangThai: 'Đang sử dụng',
-      // };
-      // dispatch(capNhatBanThunk({id: selectedBan?._id, ban: dataBan}) as any);
-      // const resultHoaDon = await getListHoaDonTheoNhaHang(idNhaHang);
-      // if (resultHoaDon) {
+
       onCloseParent();
       onClose();
-      //}
     } else {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 1000);
       ToastAndroid.show('Lỗi tạo hóa đơn', ToastAndroid.LONG);
     }
   };
@@ -92,59 +90,63 @@ const ModalTaoHoaDon = (props: Props) => {
 
   const khuVucBan = (tenKhuVuc?: string, tenBan?: string) => {
     if (tenBan?.length === 1) {
-      return `Ban: ${tenBan} | ${tenKhuVuc}`;
+      return `Bàn: ${tenBan} | ${tenKhuVuc}`;
     } else {
       return `${tenBan} | ${tenKhuVuc}`;
     }
   };
 
   return (
-    <ModalComponent
-      visible={visible}
-      onClose={onClose}
-      title="Tao Hoa Don"
-      borderRadius={1}
-      stylesContainer={{paddingHorizontal: 8}}>
-      <SpaceComponent height={15} />
-      <View style={[]}>
-        <RowComponent styles={{marginHorizontal: 5}}>
-          <TextComponent text="Thong tin ban: " styles={styles.text2} />
-          <TextComponent
-            text={
-              khuVucBan(selectedBan?.kv?.tenKhuVuc, selectedBan?.tenBan) ?? null
-            }
-            styles={styles.text}
+    <>
+      <ModalComponent
+        visible={visible}
+        onClose={onClose}
+        title="Tạo Hóa Đơn"
+        borderRadius={1}
+        stylesContainer={{paddingHorizontal: 8}}>
+        <SpaceComponent height={15} />
+        <View style={[]}>
+          <RowComponent styles={{marginHorizontal: 5}}>
+            <TextComponent text="Thông tin bàn: " styles={styles.text2} />
+            <TextComponent
+              text={
+                khuVucBan(selectedBan?.kv?.tenKhuVuc, selectedBan?.tenBan) ??
+                null
+              }
+              styles={styles.text}
+            />
+          </RowComponent>
+          <View style={styles.line} />
+        </View>
+        <SpaceComponent height={15} />
+        <View style={[]}>
+          <RowComponent styles={{marginHorizontal: 5}}>
+            <TextComponent text="Thời gian: " styles={styles.text2} />
+            <TextComponent text={Moment()} styles={styles.text} />
+          </RowComponent>
+          <View style={styles.line} />
+        </View>
+        <SpaceComponent height={24} />
+        <RowComponent justify="space-between">
+          <ButtonComponent
+            title="Hủy"
+            onPress={onClose}
+            styles={styles.closeButton}
+            titleColor={colors.black}
+            titleSize={15}
+          />
+          <SpaceComponent width={10} />
+          <ButtonComponent
+            title="Xác nhận"
+            onPress={handleTaoHoaDon}
+            styles={styles.confirmButton}
+            titleColor={colors.orange}
+            titleSize={15}
           />
         </RowComponent>
-        <View style={styles.line} />
-      </View>
-      <SpaceComponent height={15} />
-      <View style={[]}>
-        <RowComponent styles={{marginHorizontal: 5}}>
-          <TextComponent text="Thoi gian: " styles={styles.text2} />
-          <TextComponent text={Moment()} styles={styles.text} />
-        </RowComponent>
-        <View style={styles.line} />
-      </View>
-      <SpaceComponent height={24} />
-      <RowComponent justify="space-between">
-        <ButtonComponent
-          title="Huy"
-          onPress={onClose}
-          styles={styles.closeButton}
-          titleColor={colors.black}
-          titleSize={15}
-        />
-        <SpaceComponent width={10} />
-        <ButtonComponent
-          title="Xac nhan"
-          onPress={handleTaoHoaDon}
-          styles={styles.confirmButton}
-          titleColor={colors.orange}
-          titleSize={15}
-        />
-      </RowComponent>
-    </ModalComponent>
+      </ModalComponent>
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+    </>
   );
 };
 

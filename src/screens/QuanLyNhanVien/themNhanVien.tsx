@@ -24,6 +24,8 @@ import {
   openCamera,
   openImageLibrary,
 } from '../../respositorys/CameraRespository';
+import LoadingModal from 'react-native-loading-modal';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 
 const AddEmployeeScreen = () => {
   const navigation = useNavigation(); // Lấy đối tượng navigation để điều hướng
@@ -38,6 +40,8 @@ const AddEmployeeScreen = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showImage, setShowImage] = useState(false);
+
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const roles = [
     {label: 'Quản lý', value: 'Quản lý'},
@@ -71,6 +75,7 @@ const AddEmployeeScreen = () => {
 
   // Hàm xử lý khi nhấn "Lưu thông tin"
   const handleSave = () => {
+    setIsLoadingModal(true);
     if (handleValidation()) {
       const formData = taoFormDataNhanVien(nhanVien);
       console.log('FormData:', formData);
@@ -80,13 +85,18 @@ const AddEmployeeScreen = () => {
         .unwrap()
         .then(() => {
           Alert.alert('Thành công', 'Nhân viên đã được thêm');
+          setIsLoadingModal(false);
           navigation.goBack(); // Điều hướng về màn hình danh sách nhân viên
         })
         .catch(error => {
+          setTimeout(() => {
+            setIsLoadingModal(false);
+          }, 2000);
           console.error('Lỗi thêm mới nhân viên: ', error);
           Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
         });
     } else {
+      setIsLoadingModal(false);
       Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
     }
   };
@@ -146,124 +156,131 @@ const AddEmployeeScreen = () => {
   }, [navigation]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View style={{bottom: -26}}>
-          {/* Khu vực bấm vào ảnh để chọn */}
-          <Text style={styles.label}>Ảnh đại diện</Text>
-          <TouchableOpacity
-            onPress={handleImagePress}
-            style={styles.imageContainer}>
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View style={{bottom: -26}}>
+            {/* Khu vực bấm vào ảnh để chọn */}
+            <Text style={styles.label}>Ảnh đại diện</Text>
             <TouchableOpacity
               onPress={handleImagePress}
-              style={styles.imageContainer1}>
-              <Text style={styles.uploadStatus}>
-                <Image source={require('../../image/camera.png')} />
-                {nhanVien.hinhAnh ? '' : ''}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleImagePress}
-              style={{bottom: 32, left: 90}}>
-              <Text style={styles.uploadStatus}>
-                {nhanVien.hinhAnh ? 'Đã có ảnh tải lên' : 'Tải ảnh lên'}
-              </Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.label}>Tên nhân viên</Text>
-        <TextInput
-          style={[styles.input, errors.hoTen && styles.errorBorder]}
-          placeholder="Nhập họ tên"
-          value={nhanVien.hoTen}
-          onChangeText={text => handleInputChange('hoTen', text)}
-        />
-        {errors.hoTen && <Text style={styles.errorText}>{errors.hoTen}</Text>}
-
-        <Text style={styles.label}>Số điện thoại</Text>
-        <TextInput
-          style={[styles.input, errors.soDienThoai && styles.errorBorder]}
-          placeholder="Nhập số điện thoại"
-          value={nhanVien.soDienThoai}
-          onChangeText={text => handleInputChange('soDienThoai', text)}
-          keyboardType="numeric"
-        />
-        {errors.soDienThoai && (
-          <Text style={styles.errorText}>{errors.soDienThoai}</Text>
-        )}
-
-        <Text style={styles.label}>Số Căn cước công dân</Text>
-        <TextInput
-          style={[styles.input, errors.hoTen && styles.errorBorder]}
-          placeholder="Nhập số CCCD"
-          value={nhanVien.cccd}
-          onChangeText={text => handleInputChange('cccd', text)}
-          keyboardType="numeric"
-        />
-        {errors.cccd && <Text style={styles.errorText}>{errors.cccd}</Text>}
-
-        <Text style={styles.label}>Chỉ định vị trí</Text>
-        <Dropdown
-          style={[styles.dropdown, errors.vaiTro && styles.errorBorder]}
-          data={roles}
-          labelField="label"
-          valueField="value"
-          placeholder="Chọn vai trò"
-          value={nhanVien.vaiTro}
-          onChange={item => handleInputChange('vaiTro', item.value)}
-        />
-        {errors.vaiTro && <Text style={styles.errorText}>{errors.vaiTro}</Text>}
-
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Lưu thông tin</Text>
-        </TouchableOpacity>
-
-        {/* Modal lựa chọn ảnh */}
-        <Modal
-          transparent={true}
-          visible={modalVisible}
-          animationType="slide"
-          onRequestClose={() => setModalVisible(false)}>
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            onPress={() => setModalVisible(false)}
-          />
-          <View style={styles.modalBackground}>
-            <View style={styles.modalContainer}>
+              style={styles.imageContainer}>
               <TouchableOpacity
-                onPress={handleOpenCamera}
-                style={styles.modalButton}>
-                <Text style={styles.textButImage}>Chụp ảnh</Text>
+                onPress={handleImagePress}
+                style={styles.imageContainer1}>
+                <Text style={styles.uploadStatus}>
+                  <Image source={require('../../image/camera.png')} />
+                  {nhanVien.hinhAnh ? '' : ''}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={handleOpenImageLibrary}
-                style={styles.modalButton}>
-                <Text style={styles.textButImage}>Chọn từ thư viện</Text>
+                onPress={handleImagePress}
+                style={{bottom: 32, left: 90}}>
+                <Text style={styles.uploadStatus}>
+                  {nhanVien.hinhAnh ? 'Đã có ảnh tải lên' : 'Tải ảnh lên'}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={viewImage} style={styles.modalButton}>
-                <Text style={styles.textButImage}>Xem ảnh</Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
-        </Modal>
 
-        {/* Modal xem ảnh */}
-        <Modal
-          transparent={true}
-          visible={showImage}
-          animationType="slide"
-          onRequestClose={() => setShowImage(false)}>
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            onPress={() => setShowImage(false)}>
-            {nhanVien.hinhAnh && (
-              <Image source={{uri: nhanVien.hinhAnh}} style={styles.image} />
-            )}
+          <Text style={styles.label}>Tên nhân viên</Text>
+          <TextInput
+            style={[styles.input, errors.hoTen && styles.errorBorder]}
+            placeholder="Nhập họ tên"
+            value={nhanVien.hoTen}
+            onChangeText={text => handleInputChange('hoTen', text)}
+          />
+          {errors.hoTen && <Text style={styles.errorText}>{errors.hoTen}</Text>}
+
+          <Text style={styles.label}>Số điện thoại</Text>
+          <TextInput
+            style={[styles.input, errors.soDienThoai && styles.errorBorder]}
+            placeholder="Nhập số điện thoại"
+            value={nhanVien.soDienThoai}
+            onChangeText={text => handleInputChange('soDienThoai', text)}
+            keyboardType="numeric"
+          />
+          {errors.soDienThoai && (
+            <Text style={styles.errorText}>{errors.soDienThoai}</Text>
+          )}
+
+          <Text style={styles.label}>Số Căn cước công dân</Text>
+          <TextInput
+            style={[styles.input, errors.hoTen && styles.errorBorder]}
+            placeholder="Nhập số CCCD"
+            value={nhanVien.cccd}
+            onChangeText={text => handleInputChange('cccd', text)}
+            keyboardType="numeric"
+          />
+          {errors.cccd && <Text style={styles.errorText}>{errors.cccd}</Text>}
+
+          <Text style={styles.label}>Chỉ định vị trí</Text>
+          <Dropdown
+            style={[styles.dropdown, errors.vaiTro && styles.errorBorder]}
+            data={roles}
+            labelField="label"
+            valueField="value"
+            placeholder="Chọn vai trò"
+            value={nhanVien.vaiTro}
+            onChange={item => handleInputChange('vaiTro', item.value)}
+          />
+          {errors.vaiTro && (
+            <Text style={styles.errorText}>{errors.vaiTro}</Text>
+          )}
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Lưu thông tin</Text>
           </TouchableOpacity>
-        </Modal>
-      </View>
-    </TouchableWithoutFeedback>
+
+          {/* Modal lựa chọn ảnh */}
+          <Modal
+            transparent={true}
+            visible={modalVisible}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}>
+            <TouchableOpacity
+              style={styles.modalOverlay}
+              onPress={() => setModalVisible(false)}
+            />
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContainer}>
+                <TouchableOpacity
+                  onPress={handleOpenCamera}
+                  style={styles.modalButton}>
+                  <Text style={styles.textButImage}>Chụp ảnh</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleOpenImageLibrary}
+                  style={styles.modalButton}>
+                  <Text style={styles.textButImage}>Chọn từ thư viện</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={viewImage}
+                  style={styles.modalButton}>
+                  <Text style={styles.textButImage}>Xem ảnh</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
+          {/* Modal xem ảnh */}
+          <Modal
+            transparent={true}
+            visible={showImage}
+            animationType="slide"
+            onRequestClose={() => setShowImage(false)}>
+            <TouchableOpacity
+              style={styles.modalOverlay}
+              onPress={() => setShowImage(false)}>
+              {nhanVien.hinhAnh && (
+                <Image source={{uri: nhanVien.hinhAnh}} style={styles.image} />
+              )}
+            </TouchableOpacity>
+          </Modal>
+        </View>
+      </TouchableWithoutFeedback>
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+    </>
   );
 };
 

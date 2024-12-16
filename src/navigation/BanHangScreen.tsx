@@ -4,6 +4,7 @@ import {useLayoutEffect} from 'react';
 import QuanLyBanHang from '../screens/QuanLyBanHang/QuanLyBanHang';
 import ChiTietHoaDonBMD from '../screens/QuanLyBanHang/ChiTietHoaDonBMD';
 import BookingFlow from '../customcomponent/BookingFlow';
+import InHoaDon from '../screens/inHoaDon/InHoaDon';
 
 const BanHangStack = createNativeStackNavigator();
 
@@ -39,6 +40,11 @@ export const BanHangStackScreen = ({
       <BanHangStack.Screen
         name="ChiTietHoaDonBMD"
         component={ChiTietHoaDonBMD}
+        options={{headerShown: false}}
+      />
+      <BanHangStack.Screen
+        name="InHoaDon"
+        component={InHoaDon}
         options={{headerShown: false}}
       />
       <BanHangStack.Screen

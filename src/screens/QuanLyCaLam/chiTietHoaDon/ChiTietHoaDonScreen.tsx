@@ -33,6 +33,7 @@ import {
   fetchChiTietHoaDon,
 } from '../../../store/Slices/ChiTietHoaDonSlice';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {UserLogin} from '../../../navigation/CustomDrawer';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -50,6 +51,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
 
   const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const calams = useSelector((state: RootState) => state.calam.caLams);
+  const user: UserLogin = useSelector((state: RootState) => state.user);
 
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);
@@ -147,10 +149,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
     setVisibleModalSoLuongMon(true);
   }, []);
 
-  const nhanVienThanhToan = nhanviens.find(
-    item => item._id === hoaDon.id_nhanVien,
-  );
-
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
     return (
       <View>
@@ -158,7 +156,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
           <ItemChiTietHoaDon
             onLongPress={() => {
               handleOpenModalSoLuongMon(item);
-              //console.log('long press', item._id);
             }}
             nameMonAn={item.monAn.tenMon}
             soLuong={item.soLuongMon}
@@ -342,6 +339,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
               <RowComponent justify="space-between">
                 <TextComponent text="Giảm giá: " styles={styles.text} />
                 <TouchableOpacity
+                  disabled={isPaid && user.vaiTro !== 'Quản lý'}
                   style={{
                     width: '40%',
                     alignItems: 'center',
@@ -399,6 +397,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
                   fontWeight="bold"
                 />
                 <TouchableOpacity
+                  disabled={isPaid && user.vaiTro !== 'Quản lý'}
                   style={{
                     alignItems: 'center',
                   }}
@@ -510,17 +509,27 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 paddingHorizontal: 5,
               },
             ]}>
-            {nhanVienThanhToan && isPaid ? (
+            {isPaid ? (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
                   <TextComponent text="NV thanh toán: " styles={styles.text} />
                   <TextComponent
-                    text={nhanVienThanhToan?.hoTen ?? 'Nhân viên'}
+                    text={hoaDon.nhanVienThanhToan ?? 'Nhân viên'}
                     styles={styles.text2}
                   />
                 </RowComponent>
               </SectionComponent>
-            ) : null}
+            ) : (
+              <SectionComponent styles={styles.section}>
+                <RowComponent justify="space-between">
+                  <TextComponent text="NV tạo: " styles={styles.text} />
+                  <TextComponent
+                    text={hoaDon.nhanVienTao ?? 'Nhân viên'}
+                    styles={styles.text2}
+                  />
+                </RowComponent>
+              </SectionComponent>
+            )}
           </View>
           <View
             style={[

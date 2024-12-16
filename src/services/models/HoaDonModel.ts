@@ -10,6 +10,8 @@ export default class HoaDon {
   thoiGianVao?: Date;
   thoiGianRa?: Date;
   id_caLamViec?: string;
+  nhanVienTao?: string;
+  nhanVienThanhToan?: string;
 
   constructor(
     tongGiaTri: number,
@@ -23,6 +25,8 @@ export default class HoaDon {
     thoiGianRa?: Date,
     id_caLamViec?: string,
     _id?: string,
+    nhanVienTao?: string,
+    nhanVienThanhToan?: string,
   ) {
     (this.tongGiaTri = tongGiaTri),
       (this.trangThai = trangThai),
@@ -35,5 +39,7 @@ export default class HoaDon {
     this.thoiGianRa = thoiGianRa;
     this.id_caLamViec = id_caLamViec;
     this._id = _id;
+    this.nhanVienTao = nhanVienTao;
+    this.nhanVienThanhToan = nhanVienThanhToan;
   }
 }

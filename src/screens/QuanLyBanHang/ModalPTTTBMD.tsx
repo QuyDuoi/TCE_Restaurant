@@ -17,7 +17,7 @@ import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
 import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
 import {thanhToanBanHang} from '../../services/api';
 import LoadingModal from 'react-native-loading-modal';
-import { UserLogin } from '../../navigation/CustomDrawer';
+import {UserLogin} from '../../navigation/CustomDrawer';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -46,14 +46,15 @@ const ModalPTTTBMD = (props: Props) => {
   const nganHang = user.id_nhaHang.nganHang;
   const soTaiKhoan = user.id_nhaHang.soTaiKhoan;
   const chuTaiKhoan = user.id_nhaHang.chuTaiKhoan;
+  const messageQr = 'manghettienday';
+  //https://img.vietqr.io/image/mbbank-0393911183-1Lh5PBl.png?amount=100&addInfo=manghettienday&accountName=sieuhoadz
 
   useEffect(() => {
-
     const getQrCode = async () => {
       try {
         setIsLoadingQr(true);
         const result = await fetch(
-          `https://api.vietqr.io/image/${nganHang}-${soTaiKhoan}-${chuTaiKhoan}.jpg?amount=${totalFinalBill}`,
+          `https://img.vietqr.io/image/${nganHang}-${soTaiKhoan}-1Lh5PBl.png?amount=${totalFinalBill}&addInfo=${messageQr}&accountName=${chuTaiKhoan}`,
         );
         setApiQr(result.url);
       } catch (error) {
@@ -79,11 +80,10 @@ const ModalPTTTBMD = (props: Props) => {
         tienGiamGia: discount,
         hinhThucThanhToan: chuyenKhoan ? true : false,
         trangThai: 'Đã Thanh Toán',
-        thoiGianRa: new Date().toISOString(),
+        thoiGianVao: new Date().toISOString(),
       },
       id_nhaHang: id_nhaHang,
-      //_id la id cua nhan vien
-      _id: id_nhanVien,
+      id_nhanVien: id_nhanVien,
     };
 
     const result = await thanhToanBanHang(dispatch, data as any);

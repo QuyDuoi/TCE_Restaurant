@@ -16,6 +16,8 @@ import {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
 import {IPV4} from '../../services/api';
 import {Linking} from 'react-native';
+import LoadingModal from 'react-native-loading-modal';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 
 const EmployeeDetails = () => {
   const route = useRoute();
@@ -23,6 +25,8 @@ const EmployeeDetails = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
   const {nhanVien} = route.params;
   const goiDien = () => {
     const phoneNumber = `tel:${nhanVien.soDienThoai}`;
@@ -50,89 +54,97 @@ const EmployeeDetails = () => {
   };
 
   const handleDelete = () => {
+    setIsLoadingModal(true);
     dispatch(deleteNhanVienThunk(nhanVien._id)) // Gọi action xóa nhân viên
       .unwrap()
       .then(() => {
         Alert.alert('Thành công', 'Đã xóa nhân viên'); // Thông báo thành công
         navigation.goBack(); // Quay lại màn hình trước đó
+        setIsLoadingModal(false);
       })
       .catch(error => {
+        setTimeout(() => {
+          setIsLoadingModal(false);
+        }, 2000);
         Alert.alert('Lỗi', `Xóa nhân viên không thành công: ${error}`);
       });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerTitle}>TCE_RESTAURANT</Text>
+    <>
+      <View style={styles.container}>
+        <Text style={styles.headerTitle}>TCE_RESTAURANT</Text>
 
-      <Image style={styles.avatar} source={{uri: employeeImage}} />
+        <Image style={styles.avatar} source={{uri: employeeImage}} />
 
-      <Text style={styles.employeeName}>{nhanVien.hoTen}</Text>
-      <View style={styles.box}>
-        <Text
-          style={[
-            styles.statusText,
-            nhanVien.trangThai ? styles.activeStatus : styles.inactiveStatus,
-          ]}>
-          {nhanVien.trangThai ? 'Hoạt động' : 'Ngừng hoạt động'}
-        </Text>
-      </View>
-
-      <View style={styles.infoRow}>
-        <TouchableOpacity onPress={goiDien}>
-          <Icon name="phone" size={24} color="#777" />
-        </TouchableOpacity>
-        <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>Số điện thoại</Text>
-          <Text style={styles.infoSubtitle}>{nhanVien.soDienThoai}</Text>
+        <Text style={styles.employeeName}>{nhanVien.hoTen}</Text>
+        <View style={styles.box}>
+          <Text
+            style={[
+              styles.statusText,
+              nhanVien.trangThai ? styles.activeStatus : styles.inactiveStatus,
+            ]}>
+            {nhanVien.trangThai ? 'Hoạt động' : 'Ngừng hoạt động'}
+          </Text>
         </View>
 
-        <TouchableOpacity onPress={copyToClipboard}>
-          <Icon name="content-copy" size={24} color="#777" />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.infoRow}>
+          <TouchableOpacity onPress={goiDien}>
+            <Icon name="phone" size={24} color="#777" />
+          </TouchableOpacity>
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTitle}>Số điện thoại</Text>
+            <Text style={styles.infoSubtitle}>{nhanVien.soDienThoai}</Text>
+          </View>
 
-      <View style={styles.infoRow}>
-        <Icon name="credit-card" size={24} color="#777" />
-        <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>Số CCCD</Text>
-          <Text style={styles.infoSubtitle}>{nhanVien.cccd}</Text>
+          <TouchableOpacity onPress={copyToClipboard}>
+            <Icon name="content-copy" size={24} color="#777" />
+          </TouchableOpacity>
         </View>
-      </View>
 
-      <View style={styles.infoRow}>
-        <Icon name="work" size={24} color="#777" />
-        <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>Vai trò</Text>
-          <Text style={styles.infoSubtitle}>{nhanVien.vaiTro}</Text>
+        <View style={styles.infoRow}>
+          <Icon name="credit-card" size={24} color="#777" />
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTitle}>Số CCCD</Text>
+            <Text style={styles.infoSubtitle}>{nhanVien.cccd}</Text>
+          </View>
         </View>
+
+        <View style={styles.infoRow}>
+          <Icon name="work" size={24} color="#777" />
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTitle}>Vai trò</Text>
+            <Text style={styles.infoSubtitle}>{nhanVien.vaiTro}</Text>
+          </View>
+        </View>
+
+        {/* Other employee details (ID card, manager info, etc.) */}
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.updateButton}
+            onPress={() => navigation.navigate('EditEmployeeInfo', {nhanVien})}>
+            <Text style={styles.buttonText}>Cập nhật thông tin nhân viên</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setModalVisible(true)}>
+            <Text style={styles.buttonText}>Xóa tài khoản</Text>
+          </TouchableOpacity>
+        </View>
+
+        {isModalVisible && (
+          <DeletePostModal
+            title="Xóa thông tin nhân viên"
+            content="Bạn có muốn xóa thông tin nhân viên không?"
+            onDelete={handleDelete}
+            onCancel={() => setModalVisible(false)}
+          />
+        )}
       </View>
-
-      {/* Other employee details (ID card, manager info, etc.) */}
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.updateButton}
-          onPress={() => navigation.navigate('EditEmployeeInfo', {nhanVien})}>
-          <Text style={styles.buttonText}>Cập nhật thông tin nhân viên</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => setModalVisible(true)}>
-          <Text style={styles.buttonText}>Xóa tài khoản</Text>
-        </TouchableOpacity>
-      </View>
-
-      {isModalVisible && (
-        <DeletePostModal
-          title="Xóa thông tin nhân viên"
-          content="Bạn có muốn xóa thông tin nhân viên không?"
-          onDelete={handleDelete}
-          onCancel={() => setModalVisible(false)}
-        />
-      )}
-    </View>
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+    </>
   );
 };
 

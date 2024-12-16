@@ -24,6 +24,8 @@ import ItemBanSearch from './Component/ItemBanSearch';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import io from 'socket.io-client';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
+import AlertDialog from '../../customcomponent/alertDialog';
+import ModalDanhSachOrderBan from './ComponentModal/ModalDanhSachOrderBan';
 
 interface Props {
   searchQueryBan: string;
@@ -38,6 +40,8 @@ const KhongGianComponent = (props: Props) => {
   const [selectedBan, setSelectedBan] = useState<(Ban & {kv: KhuVuc}) | null>(
     null,
   );
+  const [isVisibleDanhSachOrderModal, setIsVisibleDanhSachOrderModal] =
+    useState(false);
   const [bansSearch, setBansSearch] = useState<Ban[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -91,6 +95,9 @@ const KhongGianComponent = (props: Props) => {
     socket.on('capNhatBan', () => {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
+    socket.on('khachOrder', () => {
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    });
 
     // Cleanup khi component unmount
     return () => {
@@ -101,6 +108,7 @@ const KhongGianComponent = (props: Props) => {
   const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
   const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');
   const banDangSuDung = bans.filter(ban => ban.trangThai === 'Đang sử dụng');
+  const banDangChoXacNhan = bans.filter(ban => ban.trangThaiOrder === true);
 
   const getImageBan = (status: string) => {
     switch (status) {
@@ -123,13 +131,29 @@ const KhongGianComponent = (props: Props) => {
       const kv = khuvucs.find(kv => kv._id === idKhuVuc);
       //console.log(kv);
       setSelectedBan({...ban, kv: kv as KhuVuc});
+
       setIsVisibleDialog(true);
+    },
+    [selectedBan],
+  );
+  const handleSelectBanDangOrder = useCallback(
+    (ban: Ban) => {
+      if (user.vaiTro === 'Đầu bếp') {
+        return;
+      }
+      const idKhuVuc =
+        typeof ban.id_khuVuc === 'string' ? ban.id_khuVuc : ban.id_khuVuc._id;
+      const kv = khuvucs.find(kv => kv._id === idKhuVuc);
+      //console.log(kv);
+      setSelectedBan({...ban, kv: kv as KhuVuc});
+
+      setIsVisibleDanhSachOrderModal(true);
     },
     [selectedBan],
   );
 
   const renderItemSearch = ({item}: {item: Ban}) => {
-    const banKhuVuc = khuvucs.find(kv => kv._id === (item.id_khuVuc as any));
+    const banKhuVuc = khuvucs?.find(kv => kv._id === (item.id_khuVuc as any));
 
     return (
       <ItemBanSearch
@@ -145,7 +169,7 @@ const KhongGianComponent = (props: Props) => {
   };
 
   const renderItem = ({item}: {item: Ban & {kv: KhuVuc}}) => {
-    const banKhuVuc = khuvucs.find(kv => kv._id === (item.id_khuVuc as any));
+    const banKhuVuc = khuvucs?.find(kv => kv._id === (item.id_khuVuc as any));
 
     return (
       <ItemTrangThaiBan
@@ -154,6 +178,21 @@ const KhongGianComponent = (props: Props) => {
         image={getImageBan(item.trangThai)}
         onPress={() => {
           handleSelectBan(item);
+        }}
+      />
+    );
+  };
+
+  const renderItemBanDangOrder = ({item}: {item: Ban & {kv: KhuVuc}}) => {
+    const banKhuVuc = khuvucs?.find(kv => kv._id === (item.id_khuVuc as any));
+
+    return (
+      <ItemTrangThaiBan
+        nameBan={item.tenBan}
+        nameKhuVuc={banKhuVuc?.tenKhuVuc || ''}
+        image={getImageBan(item.trangThai)}
+        onPress={() => {
+          handleSelectBanDangOrder(item);
         }}
       />
     );
@@ -238,7 +277,7 @@ const KhongGianComponent = (props: Props) => {
             </SectionComponent>
             <SectionComponent
               styles={{
-                height: banDaDat.length > 0 ? undefined : '20%',
+                height: banDaDat.length > 0 ? undefined : '15%',
               }}>
               <TitleComponent text="Bàn đã đặt" size={18} />
               <SpaceComponent height={10} />
@@ -260,7 +299,33 @@ const KhongGianComponent = (props: Props) => {
                 )}
               </View>
             </SectionComponent>
+            {/* VIEW TRANG THAI CHO XAC NHAN */}
+            <SectionComponent
+              styles={{
+                height: 1 > 0 ? undefined : '15%',
+              }}>
+              <TitleComponent text="Bàn đang chờ xác nhận" size={18} />
+              <SpaceComponent height={10} />
+              <View style={{justifyContent: 'center', flex: 1}}>
+                {1 > 0 ? (
+                  <FlatList
+                    data={banDangChoXacNhan as any}
+                    keyExtractor={item => item._id as string}
+                    renderItem={renderItemBanDangOrder}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                  />
+                ) : (
+                  <TextComponent
+                    text="Không có bàn nào đang chờ xác nhận"
+                    color={colors.desc}
+                    styles={[styles.textMessage]}
+                  />
+                )}
+              </View>
+            </SectionComponent>
           </View>
+          <SpaceComponent height={30} />
         </ScrollView>
       ) : searchQueryBan.trim().length > 0 && bansSearch.length > 0 ? (
         <View style={[hoaStyles.containerTopping]}>
@@ -286,7 +351,7 @@ const KhongGianComponent = (props: Props) => {
             <TitleComponent
               text="Chưa có bàn được tạo"
               color={colors.desc}
-              styles={[styles.textMessage]}
+              styles={[styles.textMessage, {}]}
             />
           </View>
         )
@@ -296,6 +361,15 @@ const KhongGianComponent = (props: Props) => {
         onClose={handleCloseModal}
         onCloseParent={handleCloseModal}
         selectedBan={selectedBan}
+      />
+      <ModalDanhSachOrderBan
+        visible={isVisibleDanhSachOrderModal}
+        onClose={() => {
+          setIsVisibleDanhSachOrderModal(false);
+          setSelectedBan(null);
+        }}
+        selectedBan={selectedBan}
+        danhSachOrder={selectedBan?.danhSachOrder}
       />
     </>
   );

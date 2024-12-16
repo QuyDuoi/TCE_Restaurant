@@ -20,10 +20,10 @@ interface Props {
 const ModalMonTuChonNVPV = (props: Props) => {
   const {visible, onClose, onSendData, onChange} = props;
 
-  const [tenMonTuChon, setTenMonTuChon] = useState('com ga');
-  const [giaMonTuChon, setGiaMonTuChon] = useState('100000');
-  const [soLuongMonTuChon, setSoLuongMonTuChon] = useState('2');
-  const [ghiChuMonTuChon, setGhiChuMonTuChon] = useState('khong cay');
+  const [tenMonTuChon, setTenMonTuChon] = useState('');
+  const [giaMonTuChon, setGiaMonTuChon] = useState('');
+  const [soLuongMonTuChon, setSoLuongMonTuChon] = useState('');
+  const [ghiChuMonTuChon, setGhiChuMonTuChon] = useState('');
 
   const dispatch = useDispatch();
 
@@ -67,7 +67,7 @@ const ModalMonTuChonNVPV = (props: Props) => {
         <View style={styles.inputContainer}>
           <InputComponent
             type={'normal'}
-            placeholder={`VD: Món ăn 001`}
+            placeholder={`VD: Nửa con gà`}
             value={tenMonTuChon}
             onChangeText={text => setTenMonTuChon(text)}
             styles={styles.input}

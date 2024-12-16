@@ -1,7 +1,12 @@
 // slices/BanSlice.ts
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import KhuVuc from '../../services/models/KhuVucModel';
-import { themBanThunk, fetchBanTheoId, capNhatBanThunk, xoaBan } from '../Thunks/banThunks';
+import {
+  themBanThunk,
+  fetchBanTheoId,
+  capNhatBanThunk,
+  xoaBan,
+} from '../Thunks/banThunks';
 
 // Định nghĩa interface cho Ban
 export interface Ban {
@@ -12,6 +17,9 @@ export interface Ban {
   ghiChu: string;
   maQRCode?: string;
   id_khuVuc: KhuVuc;
+  trangThaiOrder?: boolean;
+  danhSachOrder?: any[];
+  matKhau?: number;
 }
 
 // Định nghĩa state cho Ban
@@ -80,12 +88,12 @@ const banSlice = createSlice({
           state.ban = action.payload; // action.payload là đối tượng món ăn
         },
       )
-      .addCase(xoaBan.pending, (state) => {
+      .addCase(xoaBan.pending, state => {
         state.status = 'loading';
       })
       .addCase(xoaBan.fulfilled, (state, action: PayloadAction<string>) => {
         const thongTinBan = action.payload;
-        state.bans = state.bans.filter((ban) => ban._id !== thongTinBan._id); // Loại bỏ bàn theo _id
+        state.bans = state.bans.filter(ban => ban._id !== thongTinBan._id); // Loại bỏ bàn theo _id
         state.status = 'succeeded';
       })
       .addCase(xoaBan.rejected, (state, action) => {

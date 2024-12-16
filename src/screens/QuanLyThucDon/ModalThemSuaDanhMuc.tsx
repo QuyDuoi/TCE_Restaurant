@@ -7,13 +7,16 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import type {AppDispatch} from '../../store/store';
-import {useDispatch} from 'react-redux';
+import type {AppDispatch, RootState} from '../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   capNhatDanhMucThunk,
   themDanhMucThunk,
 } from '../../store/Thunks/danhMucThunks';
 import DanhMuc from '../../services/models/DanhMucModel';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import LoadingModal from 'react-native-loading-modal';
+import {colors} from './Hoa/contants/hoaColors';
 
 interface DanhMucModalProps {
   visible: boolean;
@@ -27,7 +30,10 @@ function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
   const {visible, onClose, idDanhMucUd, tenDanhMucUd, onActionComplete} = props;
   const [tenDanhMuc, setTenDanhMuc] = useState(idDanhMucUd ? tenDanhMucUd : '');
   const [error, setError] = useState<string | null>(null);
-  const id_NhaHang = '66fab50fa28ec489c7137537';
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+  const id_NhaHang = user.id_nhaHang._id;
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -44,6 +50,7 @@ function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
       return;
     } else {
       const danhMuc = new DanhMuc(tenDanhMuc, id_NhaHang);
+      setIsLoadingModal(true);
       try {
         if (idDanhMucUd) {
           await dispatch(capNhatDanhMucThunk({id: idDanhMucUd, danhMuc}));
@@ -51,10 +58,15 @@ function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
           await dispatch(themDanhMucThunk(danhMuc)).unwrap();
         }
         onActionComplete(true, 'Cập nhật danh mục thành công!');
+
         // onClose();
       } catch (e: any) {
+        setTimeout(() => {
+          setIsLoadingModal(false);
+        }, 2000);
         setError(e.msg || 'Đã xảy ra lỗi');
       } finally {
+        setIsLoadingModal(false);
         setError(null);
         onClose();
       }
@@ -62,40 +74,43 @@ function ModalThemSuaDanhMuc(props: DanhMucModalProps): React.JSX.Element {
   };
 
   return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="slide"
-      onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <Text style={styles.title}>
-            {idDanhMucUd ? 'Cập nhật danh mục' : 'Thêm danh mục'}
-          </Text>
-          <Text style={styles.tieuDe}>Danh mục</Text>
-          <TextInput
-            style={styles.input}
-            value={tenDanhMuc}
-            onChangeText={text => {
-              setTenDanhMuc(text);
-            }}
-            placeholder="Nhập tên danh mục"
-            placeholderTextColor="gray"
-          />
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Huỷ</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.confirmButton}
-              onPress={luuThongTin}>
-              <Text style={styles.confirmButtonText}>Xác nhận</Text>
-            </TouchableOpacity>
+    <>
+      <Modal
+        transparent
+        visible={visible}
+        animationType="slide"
+        onRequestClose={onClose}>
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <Text style={styles.title}>
+              {idDanhMucUd ? 'Cập nhật danh mục' : 'Thêm danh mục'}
+            </Text>
+            <Text style={styles.tieuDe}>Danh mục</Text>
+            <TextInput
+              style={styles.input}
+              value={tenDanhMuc}
+              onChangeText={text => {
+                setTenDanhMuc(text);
+              }}
+              placeholder="Nhập tên danh mục"
+              placeholderTextColor="gray"
+            />
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>Huỷ</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={luuThongTin}>
+                <Text style={styles.confirmButtonText}>Xác nhận</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+    </>
   );
 }
 

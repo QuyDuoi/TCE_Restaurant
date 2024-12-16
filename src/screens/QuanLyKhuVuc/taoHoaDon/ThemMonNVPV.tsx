@@ -35,6 +35,9 @@ import ModalCart from '../../QuanLyCaLam/chiTietHoaDon/ModalCart';
 import ItemThemMon from '../../QuanLyCaLam/chiTietHoaDon/ItemThemMon';
 import LoadingModal from 'react-native-loading-modal';
 import ModalMonTuChonNVPV from './ModalMonTuChonNVPV';
+import React from 'react';
+import {UserLogin} from '../../../navigation/CustomDrawer';
+import {fetchDanhMucVaMonAn} from '../../../store/Thunks/danhMucThunks';
 
 interface Props {
   route?: any;
@@ -45,8 +48,6 @@ const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
 const ThemMonNVPV = (props: Props) => {
   const {route} = props;
   const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc} = route.params;
-
-  const idNhaHang = '66fab50fa28ec489c7137537';
 
   const [visibleModalCart, setVisibleModalCart] = useState(false);
   const [visibleModalMonTuChon, setVisibleModalMonTuChon] = useState(false);
@@ -65,8 +66,12 @@ const ThemMonNVPV = (props: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
+  const user: UserLogin = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
+    if (monAns.length === 0) {
+      dispatch(fetchDanhMucVaMonAn(user?.id_nhaHang?._id));
+    }
     setMonAnsList(monAns);
   }, [monAns]);
 
@@ -74,7 +79,7 @@ const ThemMonNVPV = (props: Props) => {
     if (text.trim().length !== 0) {
       setIsLoading(true);
       try {
-        const data = await searchMonAn(text, idNhaHang);
+        const data = await searchMonAn(text, user?.id_nhaHang?._id);
         if (data.length === 0) {
           setShowNoResult(true);
         } else {

@@ -8,6 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -31,6 +32,9 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import ModalCart from './ModalCart';
 import {searchMonAn} from '../../../services/api';
+import {UserLogin} from '../../../navigation/CustomDrawer';
+import {fetchDanhMucVaMonAn} from '../../../store/Thunks/danhMucThunks';
+import LoadingModal from 'react-native-loading-modal';
 
 interface Props {
   route?: any;
@@ -41,7 +45,6 @@ const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
 const ThemMonScreen = (props: Props) => {
   const {route} = props;
   const {chiTietHoaDon, hoaDon, tenBan, tenKhuVuc, type} = route.params;
-  const idNhaHang = '66fab50fa28ec489c7137537';
 
   const [visibleModalCart, setVisibleModalCart] = useState(false);
 
@@ -52,16 +55,31 @@ const ThemMonScreen = (props: Props) => {
   const [onChange, setOnChange] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showNoResult, setShowNoResult] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    if (monAns.length === 0) {
+      dispatch(fetchDanhMucVaMonAn(user?.id_nhaHang?._id));
+    }
+    setMonAnList(monAns);
+  }, [monAns]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingModal(false);
+    }, 5000);
+  }, [isLoadingModal]);
 
   const handleSubmitEditing = async (text: string) => {
     if (text.trim().length !== 0) {
       setIsLoading(true);
       try {
-        const data = await searchMonAn(text, idNhaHang);
+        const data = await searchMonAn(text, user?.id_nhaHang?._id);
         if (data.length === 0) {
           setShowNoResult(true);
         } else {
@@ -89,35 +107,37 @@ const ThemMonScreen = (props: Props) => {
 
   const chiTietsRef = useRef<
     {
-      id_monAn: string;
+      id_monAn?: string;
       soLuongMon: number;
       tenMon: string;
       giaMon: number;
+      giaMonAn?: number;
     }[]
   >([]);
 
   useEffect(() => {
     const initialChiTiets = chiTietHoaDon.map((ct: ChiTietHoaDon) => ({
-      id_monAn: ct.id_monAn ? ct.id_monAn : '',
+      id_monAn: ct.id_monAn ? ct.id_monAn : undefined,
       soLuongMon: ct.soLuongMon ? ct.soLuongMon : 0,
       tenMon: ct.monAn ? ct.monAn.tenMon : '',
-      giaMon: ct.monAn ? ct.monAn.giaMonAn : '',
+      giaMon: ct.monAn && ct.id_monAn ? ct.monAn.giaMonAn : undefined,
+      giaMonAn: !ct.id_monAn ? ct.monAn.giaMonAn : undefined,
     }));
     chiTietsRef.current = initialChiTiets;
   }, [chiTietHoaDon]);
 
-  useEffect(() => {
-    setMonAnList(monAns);
-  }, [monAns]);
-
   const sortedMonAnsList = useMemo(() => {
-    return [...monAnList].sort((a, b) => {
-      const aSoLuong =
-        chiTietsRef.current.find(ct => ct.id_monAn === a._id)?.soLuongMon || 0;
-      const bSoLuong =
-        chiTietsRef.current.find(ct => ct.id_monAn === b._id)?.soLuongMon || 0;
-      return bSoLuong - aSoLuong;
-    });
+    return monAnList && chiTietsRef.current
+      ? [...monAnList].sort((a, b) => {
+          const aSoLuong =
+            chiTietsRef.current.find(ct => ct.id_monAn === a._id)?.soLuongMon ||
+            0;
+          const bSoLuong =
+            chiTietsRef.current.find(ct => ct.id_monAn === b._id)?.soLuongMon ||
+            0;
+          return bSoLuong - aSoLuong;
+        })
+      : [];
   }, [monAnList]);
 
   //so luong mon an
@@ -147,6 +167,11 @@ const ThemMonScreen = (props: Props) => {
     },
     [],
   );
+  useEffect(() => {
+    setCartCount(
+      chiTietsRef.current.filter((item: any) => item.soLuongMon > 0).length,
+    );
+  }, [chiTietsRef.current]);
 
   const renderItem = ({item}: {item: MonAn}) => {
     const soLuong =
@@ -318,30 +343,39 @@ const ThemMonScreen = (props: Props) => {
                 title="Thêm món"
                 onPress={() => {
                   if (onChange) {
+                    setIsLoadingModal(true);
                     dispatch(
                       addNewChiTietHoaDon({
                         id_hoaDon: hoaDon._id,
                         monAn: chiTietsRef.current.map((item: any) => ({
-                          id_monAn: item.id_monAn,
+                          id_monAn: item.id_monAn ? item.id_monAn : null,
+                          tenMon: !item.id_monAn ? item.tenMon : null,
                           soLuong: item.soLuongMon,
-                          giaTien: item.giaMon * item.soLuongMon,
+                          giaTien: item.id_monAn
+                            ? item.giaMon * item.soLuongMon
+                            : item.giaMonAn * item.soLuongMon,
+                          giaMonAn: !item.id_monAn ? item.giaMonAn : null,
                         })),
                       }),
                     ).then(action => {
                       if (addNewChiTietHoaDon.fulfilled.match(action)) {
-                        console.log('Thêm mới Chi Tiết Hóa Đơn thành công');
-                        if (type === 'chiTietCaLam') {
-                          dispatch(fetchChiTietHoaDon(hoaDon._id));
-                          setTimeout(() => {
-                            navigation.goBack();
-                          }, 1000);
-                        } else if (type == 'quyetToan') {
-                          dispatch(fetchChiTietHoaDon(hoaDon._id));
-                          setTimeout(() => {
-                            navigation.goBack();
-                          }, 1000);
-                        }
-                        //navigation.goBack();
+                        ToastAndroid.show(
+                          'Thêm món thành công',
+                          ToastAndroid.SHORT,
+                        );
+                        dispatch(fetchChiTietHoaDon(hoaDon._id));
+                        setTimeout(() => {
+                          navigation.goBack();
+                          setIsLoadingModal(false);
+                        }, 500);
+                      } else {
+                        ToastAndroid.show(
+                          'Thêm món thất bại',
+                          ToastAndroid.SHORT,
+                        );
+                        setTimeout(() => {
+                          setIsLoadingModal(false);
+                        }, 500);
                       }
                     });
                   } else {
@@ -369,6 +403,7 @@ const ThemMonScreen = (props: Props) => {
           setVisibleModalCart(false);
         }}
       />
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 };

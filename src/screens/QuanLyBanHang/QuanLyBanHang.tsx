@@ -319,7 +319,6 @@ const QuanLyBanHang = () => {
                   chiTietHoaDons: chiTietsRef.current,
                   onUpdateChiTiets: (updatedItems: any) => {
                     chiTietsRef.current = updatedItems;
-                    //setChiTiets(updatedItems);
                   },
                   onChangeChiTiets: (value: boolean) => {
                     setOnChangeChiTiets(value);
@@ -378,7 +377,7 @@ const QuanLyBanHang = () => {
           style={{
             flex: 1,
             paddingHorizontal: 8,
-            paddingVertical: 5
+            paddingVertical: 5,
           }}>
           {isLoading ? (
             <View
@@ -416,9 +415,6 @@ const QuanLyBanHang = () => {
                   ItemSeparatorComponent={() => <SpaceComponent height={6} />}
                   nestedScrollEnabled={true}
                   onStartReachedThreshold={0.1}
-                  onStartReached={() => {
-                    setIsEndReached(false);
-                  }}
                   onEndReached={() => {
                     setIsEndReached(true);
                     loadMoreListMonAns();

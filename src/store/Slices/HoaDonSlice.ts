@@ -7,7 +7,7 @@ import {
   thanhToanHoaDon,
 } from '../../services/api';
 import {ChiTietHoaDon} from './ChiTietHoaDonSlice';
-import { fetchKhuVucVaBan } from '../Thunks/khuVucThunks';
+import {fetchKhuVucVaBan} from '../Thunks/khuVucThunks';
 
 // Interface định nghĩa cho HoaDon
 export interface HoaDon {
@@ -24,6 +24,8 @@ export interface HoaDon {
   tongTien?: number;
   id_caLamViec?: string;
   id_nhaHang?: string;
+  nhanVienTao?: string;
+  nhanVienThanhToan?: string;
 }
 
 export interface HoaDonState {
@@ -105,11 +107,13 @@ export const thanhToanHoaDonThunk = createAsyncThunk(
       tienGiamGia,
       hinhThucThanhToan,
       thoiGianRa,
+      id_nhanVien,
     }: {
       id_hoaDon: string;
       tienGiamGia: number;
       hinhThucThanhToan: boolean;
       thoiGianRa: Date;
+      id_nhanVien: string;
     },
     thunkAPI,
   ) => {
@@ -119,6 +123,7 @@ export const thanhToanHoaDonThunk = createAsyncThunk(
         tienGiamGia,
         hinhThucThanhToan,
         thoiGianRa,
+        id_nhanVien,
       );
       return data;
     } catch (error: any) {

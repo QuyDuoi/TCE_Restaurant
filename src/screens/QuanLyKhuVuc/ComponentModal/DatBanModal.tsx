@@ -13,11 +13,12 @@ import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalDate from '../../QuanLyCaLam/ModalDate';
 import ModalTime from '../../QuanLyCaLam/ModalTime';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
+import LoadingModal from 'react-native-loading-modal';
 
 interface Props {
   isVisible: boolean;
   onClose: () => void;
-  onCloseParent?: () => void;
+  onCloseParent: () => void;
   selectedBan?: any;
 }
 
@@ -32,10 +33,12 @@ const DatBanModal = (props: Props) => {
   const [isVisibleModalTime, setIsVisibleModalTime] = useState(false);
   const [time, setTime] = useState(new Date());
   const [hoTen, setHoTen] = useState('');
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const dispatch = useDispatch();
 
   const handleConfirmDatBan = async () => {
+    setIsLoadingModal(true);
     const datBanData = {
       id_khuVuc: selectedBan?.kv?._id,
       ghiChu: `${ghiChu} - ${date.toLocaleDateString('vi-VN')} - ${time
@@ -50,13 +53,15 @@ const DatBanModal = (props: Props) => {
       }) as any,
     );
 
-    console.log(result);
-
     if (result.type.endsWith('fulfilled')) {
+      setIsLoadingModal(false);
       onClose();
       onCloseParent();
       ToastAndroid.show('Đặt bàn thành công', ToastAndroid.LONG);
     } else {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 2000);
       ToastAndroid.show('Đặt bàn thất bại', ToastAndroid.LONG);
     }
   };
@@ -182,7 +187,7 @@ const DatBanModal = (props: Props) => {
                   borderColor: colors.desc2,
                 }}>
                 <TextComponent
-                  text="Ho ten"
+                  text="Họ tên"
                   size={15}
                   fontWeight="600"
                   color={colors.black}
@@ -227,7 +232,13 @@ const DatBanModal = (props: Props) => {
             <RowComponent justify="space-between">
               <ButtonComponent
                 title="Xác nhận"
-                onPress={handleConfirmDatBan}
+                onPress={() => {
+                  if (hoTen !== '') {
+                    handleConfirmDatBan();
+                  } else {
+                    ToastAndroid.show('Tên', ToastAndroid.SHORT);
+                  }
+                }}
                 bgrColor={colors.orange}
                 titleColor={colors.white}
                 styles={styles.button}
@@ -251,7 +262,7 @@ const DatBanModal = (props: Props) => {
       </Modal>
       <ModalDate
         visible={isVisibleModalDate}
-        onClose={() => setIsVisibleModalDate(false)}
+        onCloseChild={() => setIsVisibleModalDate(false)}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         onConfirm={() => {
@@ -267,6 +278,7 @@ const DatBanModal = (props: Props) => {
           setTime(selectedTime);
         }}
       />
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 };

@@ -25,6 +25,10 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import LoadingModal from 'react-native-loading-modal';
 import ModalPTTTBMD from './ModalPTTTBMD';
 import ModalSoLuongBMD from './ModalSoLuongBMD';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
+import AlertDialog from '../../customcomponent/alertDialog';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -52,6 +56,8 @@ const ChiTietHoaDonBMD = (props: Props) => {
   const [chiTietSelected, setChiTietSelected] = useState<ChiTietHoaDon | null>(
     null,
   );
+
+  const user: UserLogin = useSelector((state: RootState) => state.user);
 
   //TAM THOI
   const [typeModalSoLuongMon, setTypeModalSoLuongMon] = useState<
@@ -204,10 +210,8 @@ const ChiTietHoaDonBMD = (props: Props) => {
   );
   //console.log('chiTietHoaDonList', chiTietHoaDonList);
 
-  //NHAN VIEN THANH TOAN
-  // const nhanVienThanhToan = nhanviens.find(
-  //   item => item._id === hoaDon?.id_nhanVien,
-  // );
+  //NHAN VIEN THANH TOAN TAM
+  const nhanVienThanhToan = user.hoTen;
 
   const renderItem = ({item}: {item: any}) => {
     return (
@@ -408,7 +412,9 @@ const ChiTietHoaDonBMD = (props: Props) => {
                   style={{
                     alignItems: 'center',
                   }}
-                  onPress={() => {}}>
+                  onPress={() => {
+                    ToastAndroid.show('DANG CAP NHAT', ToastAndroid.SHORT);
+                  }}>
                   <TextComponent
                     text="In hóa đơn"
                     color={colors.blue2}
@@ -532,7 +538,10 @@ const ChiTietHoaDonBMD = (props: Props) => {
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
                   <TextComponent text="NV thanh toán: " styles={styles.text} />
-                  <TextComponent text="Nhân viên" styles={styles.text2} />
+                  <TextComponent
+                    text={nhanVienThanhToan}
+                    styles={styles.text2}
+                  />
                 </RowComponent>
               </SectionComponent>
             ) : null}

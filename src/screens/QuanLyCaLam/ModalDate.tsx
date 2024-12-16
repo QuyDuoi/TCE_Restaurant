@@ -17,6 +17,7 @@ interface Props {
 const ModalDate = (props: Props) => {
   const {visible, onCloseChild, selectedDate, setSelectedDate, onConfirm} =
     props;
+
   return (
     <ModalComponent visible={visible} title="Chọn ngày" onClose={onCloseChild}>
       <View
@@ -50,6 +51,7 @@ const ModalDate = (props: Props) => {
           onPress={() => {
             setSelectedDate(selectedDate);
             onCloseChild();
+            onConfirm && onConfirm();
           }}
           bgrColor={colors.blue2}
           styles={[styles.button]}

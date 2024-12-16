@@ -1,15 +1,20 @@
 import {View, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useState} from 'react';
 import LoadingModal from 'react-native-loading-modal';
-import { addPhieuThuChi } from '../../services/api';
+import {addPhieuThuChi} from '../../services/api';
 import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import InputComponent from '../QuanLyThucDon/Hoa/components/InputComponent';
-import { colors } from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import RadioButtonComponent from '../QuanLyThucDon/Hoa/components/RadioButtonComponent';
 import ButtonComponent from '../QuanLyThucDon/Hoa/components/ButtonComponent';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
+import {fetchHoaDonTheoCaLam} from '../../store/Slices/HoaDonSlice';
+import {fetchCaLam} from '../../store/Slices/CaLamSlice';
 
 interface Props {
   visible: boolean;
@@ -24,6 +29,10 @@ const ModalTaoPhieuTC = (props: Props) => {
   const [soTien, setSoTien] = useState('');
   const [ghiChu, setGhiChu] = useState('');
   const [loadingModal, setLoadingModal] = useState(false);
+
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+
+  const dispatch = useDispatch();
 
   const handleConfirm = async () => {
     setLoadingModal(true);
@@ -66,9 +75,9 @@ const ModalTaoPhieuTC = (props: Props) => {
           <View style={styles.inputLeft}>
             <TextComponent
               text="Số tiền"
-              size={15}
+              size={16}
               fontWeight="600"
-              color={colors.desc}
+              color={colors.black}
             />
           </View>
           <View style={styles.inputContainer}>

@@ -34,9 +34,13 @@ import ModalXacNhan from '../../customcomponent/ModalXacNhan';
 
 import ModalDongCa from '../../customcomponent/ModalDongCa';
 import {checkDongCaLam, dongCaLam} from './CallApiCaLam';
-import { UserLogin } from '../../navigation/CustomDrawer';
-import { useToast } from '../../customcomponent/CustomToast';
-import { fetchCaLam } from '../../store/Slices/CaLamSlice';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {useToast} from '../../customcomponent/CustomToast';
+import {fetchCaLam} from '../../store/Slices/CaLamSlice';
+import {getListNhanVien} from '../../services/api';
+import {NhanVienSlice} from '../../store/Slices/NhanVienSlice';
+import LoadingModal from 'react-native-loading-modal';
+
 const ChiTietCaLam = ({route}: {route: any}) => {
   const {caLam} = route.params;
   const {showToast} = useToast();
@@ -48,6 +52,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   const [bansByKhuVuc, setBansByKhuVuc] = useState<(Ban & {kv: KhuVuc})[]>([]);
   const [visibleModalTaoPhieuTC, setVisibleModalTaoPhieuTC] = useState(false);
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const navigation = useNavigation<any>();
 
@@ -56,12 +61,11 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   const dispatch = useDispatch();
 
-  const user: UserLogin = useSelector(state => state.user);
+  const user: UserLogin = useSelector((state: RootState) => state.user);
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const bans = useSelector((state: RootState) => state.ban.bans);
   const hoaDons = useSelector((state: RootState) => state.hoaDons.hoaDons);
   const hoaDonStatus = useSelector((state: RootState) => state.hoaDons.status);
-  const nhanViens = useSelector((state: RootState) => state.nhanVien.nhanViens);
   const id_nhanVien = user._id;
   const id_nhaHang = user.id_nhaHang._id;
 
@@ -109,18 +113,23 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   const dongCaLamCheck = async () => {
     try {
+      setIsLoadingModal(true);
       // Gọi API đóng ca làm việc
       const response = await checkDongCaLam(caLam._id); // Gửi ID của ca làm việc qua API
 
       // Kiểm tra và xử lý phản hồi từ server
       if (response) {
-        dispatch(fetchCaLam(id_nhaHang) as any)
+        dispatch(fetchCaLam(id_nhaHang) as any);
         showToast('check', 'Đã đóng ca làm việc hiện tại', 'green', 1500);
         setIsVisibleCheckDongCa(false);
+        setIsLoadingModal(false);
         // Cập nhật giao diện, ví dụ như cập nhật thời gian kết thúc của ca làm việc
         navigation.goBack(); // Quay lại trang trước sau khi đóng ca thành công
       }
     } catch (error: any) {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 2000);
       setIsVisibleCheckDongCa(false);
       setError(error.message);
       setIsVisibleDongCa(true);
@@ -129,14 +138,19 @@ const ChiTietCaLam = ({route}: {route: any}) => {
 
   const dongCaLamBatChap = async () => {
     try {
+      setIsLoadingModal(true);
       const response = await dongCaLam(caLam._id, id_nhanVien);
       if (response) {
-        dispatch(fetchCaLam(id_nhaHang) as any)
+        dispatch(fetchCaLam(id_nhaHang) as any);
         showToast('check', 'Đã đóng ca làm việc hiện tại', 'green', 1500);
         setIsVisibleCheckDongCa(false);
+        setIsLoadingModal(false);
         navigation.goBack();
       }
     } catch (error: any) {
+      setTimeout(() => {
+        setIsLoadingModal(false);
+      }, 2000);
       showToast('remove', error.message, 'red', 2000);
       setError(error.message);
     }
@@ -199,11 +213,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
                   />
                 </RowComponent>
                 <TextComponent
-                  text={`Nhân viên mở ca: ${
-                    nhanViens.find(
-                      nhanvien => nhanvien._id === caLam.id_nhanVien._id,
-                    )?.hoTen
-                  }`}
+                  text={`Nhân viên mở ca: ${caLam.id_nhanVien.hoTen}`}
                   color={colors.black}
                 />
                 <TextComponent
@@ -406,6 +416,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
         onClose={() => setVisibleModalTaoPhieuTC(false)}
         caLam={caLam}
       />
+      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
     </>
   );
 };

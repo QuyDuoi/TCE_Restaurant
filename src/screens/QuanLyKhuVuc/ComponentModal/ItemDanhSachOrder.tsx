@@ -1,18 +1,16 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
+import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
-import {formatMoney} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 
 interface Props {
-  chiTiet: any;
+  item: any;
 }
 
-const ItemCart = (props: Props) => {
-  const {chiTiet} = props;
-  //console.log(chiTiet);
+const ItemDanhSachOrder = (props: Props) => {
+  const {item} = props;
 
   return (
     <View style={styles.container}>
@@ -33,7 +31,7 @@ const ItemCart = (props: Props) => {
             borderColor: colors.desc2,
           }}>
           <TextComponent
-            text={chiTiet.tenMon}
+            text={item?.tenMon ?? 'com ga'}
             styles={[styles.text1, {paddingLeft: 8}]}
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -44,10 +42,7 @@ const ItemCart = (props: Props) => {
             alignItems: 'center',
             paddingVertical: 10,
           }}>
-          <TextComponent
-            text={chiTiet.soLuongMon.toString()}
-            styles={styles.text1}
-          />
+          <TextComponent text={item?.soLuongMon ?? '1'} styles={styles.text1} />
         </View>
         <View
           style={{
@@ -65,11 +60,7 @@ const ItemCart = (props: Props) => {
               borderRadius: 12,
             }}>
             <TextComponent
-              text={
-                chiTiet.id_monAn
-                  ? `${formatMoney(chiTiet.giaMon)}`
-                  : `${formatMoney(chiTiet.giaMonAn ?? 0)}`
-              }
+              text={item?.giaMonAn ?? '100000'}
               color={colors.black}
             />
           </CardComponent>
@@ -95,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemCart;
+export default ItemDanhSachOrder;

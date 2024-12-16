@@ -14,6 +14,8 @@ import {AppDispatch} from '../store/store';
 import {hoaDonSlice} from '../store/Slices/HoaDonSlice';
 import {chiTietHoaDonSlice} from '../store/Slices/ChiTietHoaDonSlice';
 import {CaLam} from '../store/Slices/CaLamSlice';
+import {ToastAndroid} from 'react-native';
+import {PayloadAction} from '@reduxjs/toolkit';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -218,6 +220,7 @@ export const thanhToanHoaDon = async (
   tienGiamGia: number,
   hinhThucThanhToan: boolean,
   thoiGianRa: Date,
+  id_nhanVien: string,
 ): Promise<any> => {
   try {
     const response = await fetch(`${ipAddress}thanhToanHoaDon`, {
@@ -228,13 +231,16 @@ export const thanhToanHoaDon = async (
         tienGiamGia,
         hinhThucThanhToan,
         thoiGianRa,
+        id_nhanVien,
       }),
     });
     if (!response.ok) {
+      const err = await response.json();
+      console.log(err.msg);
+
       throw new Error('Lỗi khi thanh toán Hóa Đơn');
     }
-    const data = await response.json();
-    return data;
+    return response;
   } catch (error) {
     console.log('Lỗi thanh toán Hóa Đơn: ', error);
     throw error;
@@ -461,9 +467,13 @@ export const capNhatKhuVuc = async (id: string, khuVuc: KhuVuc) => {
 /**
  *  API cho Nhân Viên
  */
-export const getListNhanVien = async (): Promise<NhanVienSlice[]> => {
+export const getListNhanVien = async (
+  id_nhaHang: string,
+): Promise<NhanVienSlice[]> => {
   try {
-    const response = await fetch(`${ipAddress}layDsNhanVien`);
+    const response = await fetch(
+      `${ipAddress}layDsNhanVien?id_nhaHang=${id_nhaHang}`,
+    );
     if (!response.ok) {
       throw new Error('Lỗi khi lấy danh sách Nhan Vien');
     }
@@ -705,7 +715,7 @@ export const thanhToanBanHang = async (
     }>;
     hoaDon: HoaDon;
     id_nhaHang: string;
-    _id: string;
+    id_nhanVien: string;
   },
 ) => {
   try {
@@ -725,7 +735,11 @@ export const thanhToanBanHang = async (
       ); // Thêm danh sách chi tiết hóa đơn
       return data;
     } else {
-      console.error('Lỗi từ server:', data.msg);
+      if (data.msg === 'Hiện chưa có ca làm nào được mở!') {
+        ToastAndroid.show('Chưa mở ca làm', ToastAndroid.SHORT);
+      } else {
+        console.error('Lỗi từ server:', data.msg);
+      }
     }
   } catch (error) {
     console.error('Lỗi khi gọi API:', error);
@@ -751,6 +765,55 @@ export const addPhieuThuChi = async (phieuThuChi: {
     return response;
   } catch (error) {
     console.log('Lỗi thêm mới Phiếu Thu Chi: ', error);
+    throw error;
+  }
+};
+
+//XAC NHAN OR TU CHOI ORDER
+export const xacNhanBanOrder = async (
+  id_ban: string,
+  id_nhanVien: string,
+): Promise<any> => {
+  try {
+    const response = await fetch(`${ipAddress}xacNhanDatMon`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        id_ban,
+        id_nhanVien,
+      }),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      console.log(err.msg);
+      throw new Error('Lỗi khi xác nhận món');
+    }
+
+    return response;
+  } catch (error) {
+    console.log('Lỗi khi xác nhận đặt món', error);
+    throw error;
+  }
+};
+export const tuChoiBanOrder = async (id_ban: string, id_nhanVien: string) => {
+  try {
+    const response = await fetch(`${ipAddress}tuChoiDatMon`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        id_ban: id_ban,
+        id_nhanVien: id_nhanVien,
+      }),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      console.log(err.msg);
+      throw new Error('Lỗi khi từ chối đặt món');
+    }
+
+    return response;
+  } catch (error) {
+    console.log('Lỗi khi từ chối đặt món', error);
     throw error;
   }
 };

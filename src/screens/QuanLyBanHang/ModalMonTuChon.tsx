@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useId, useRef, useState} from 'react';
 import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
@@ -46,7 +46,7 @@ const ModalMonTuChon = (props: Props) => {
             text="Tên món"
             size={15}
             fontWeight="600"
-            color={colors.desc}
+            color={colors.black}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -68,7 +68,7 @@ const ModalMonTuChon = (props: Props) => {
               text="Giá"
               size={15}
               fontWeight="600"
-              color={colors.desc}
+              color={colors.black}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -133,7 +133,20 @@ const ModalMonTuChon = (props: Props) => {
         />
         <ButtonComponent
           title="Thêm món"
-          onPress={handleSendData}
+          onPress={() => {
+            if (
+              tenMonTuChon === '' ||
+              soLuongMonTuChon === '' ||
+              giaMonTuChon === ''
+            ) {
+              ToastAndroid.show(
+                'Hãy nhập đầy đủ thông tin món',
+                ToastAndroid.SHORT,
+              );
+            } else {
+              handleSendData();
+            }
+          }}
           styles={styles.button}
           titleSize={15}
           bgrColor={'#FEF3EF'}

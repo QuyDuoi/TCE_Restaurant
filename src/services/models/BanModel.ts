@@ -1,4 +1,3 @@
-
 export default class Ban {
   _id?: string;
   tenBan: string;
@@ -6,6 +5,9 @@ export default class Ban {
   trangThai?: string;
   ghiChu?: string;
   id_khuVuc: string;
+  matKhau?: number;
+  trangThaiOrder?: boolean;
+  danhSachOrder?: any[];
 
   constructor(
     tenBan: string,
@@ -13,6 +15,9 @@ export default class Ban {
     trangThai: string,
     ghiChu: string,
     id_khuVuc: string,
+    matKhau?: number,
+    trangThaiOrder?: boolean,
+    danhSachOrder?: any[],
     _id?: string,
   ) {
     this.tenBan = tenBan;
@@ -20,6 +25,9 @@ export default class Ban {
     this.trangThai = trangThai;
     this.ghiChu = ghiChu;
     this.id_khuVuc = id_khuVuc;
+    (this.trangThaiOrder = trangThaiOrder),
+      (this.danhSachOrder = danhSachOrder),
+      (this.matKhau = matKhau);
     this._id = _id;
   }
 }

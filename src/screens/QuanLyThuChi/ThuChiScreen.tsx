@@ -12,15 +12,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ItemThuChi from './ItemThuChi';
 import FilterOptionItem from './FilterOptionItem'; // Import Component mới
 import {useNavigation} from '@react-navigation/native';
-import { ipAddress } from '../../services/api';
+import {ipAddress} from '../../services/api';
 
-const ThuChiScreen = ({route}) => {
+const ThuChiScreen = ({route}: {route: any}) => {
   const navigation = useNavigation();
 
   const {caLam} = route.params;
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any>([]);
   const [dataAll, setDataAll] = useState([]);
   const [dataThu, setDataThu] = useState([]);
   const [dataChi, setDataChi] = useState([]);
@@ -29,7 +29,7 @@ const ThuChiScreen = ({route}) => {
 
   const id_caLamViec = caLam._id;
 
-  const removeVietnameseTones = str => {
+  const removeVietnameseTones = (str: any) => {
     return str
       .normalize('NFD') // Chuẩn hóa ký tự Unicode
       .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu
@@ -47,8 +47,8 @@ const ThuChiScreen = ({route}) => {
       );
       const result = await response.json();
 
-      const modifiedData = result.tatCa.map(item => {
-        if (item.soTienThu) {
+      const modifiedData = result.tatCa.map((item: any) => {
+        if (item.phanLoai) {
           return {
             id: item._id,
             time: new Date(item.createdAt).toLocaleTimeString('vi-VN', {
@@ -56,11 +56,11 @@ const ThuChiScreen = ({route}) => {
               minute: '2-digit',
             }),
             description: item.moTa,
-            amount: item.soTienThu.toLocaleString('vi-VN'),
+            amount: item.soTien.toLocaleString('vi-VN'),
             status: 'Thu',
           };
         }
-        if (item.soTienChi) {
+        if (!item.phanLoai) {
           return {
             id: item._id,
             time: new Date(item.createdAt).toLocaleTimeString('vi-VN', {
@@ -68,7 +68,7 @@ const ThuChiScreen = ({route}) => {
               minute: '2-digit',
             }),
             description: item.moTa,
-            amount: item.soTienChi.toLocaleString('vi-VN'),
+            amount: item.soTien.toLocaleString('vi-VN'),
             status: 'Chi',
           };
         }
@@ -77,27 +77,27 @@ const ThuChiScreen = ({route}) => {
       setDataAll(modifiedData);
 
       setDataThu(
-        result.thu.map(item => ({
+        result.thu.map((item: any) => ({
           id: item._id,
           time: new Date(item.createdAt).toLocaleTimeString('vi-VN', {
             hour: '2-digit',
             minute: '2-digit',
           }),
           description: item.moTa,
-          amount: item.soTienThu.toLocaleString('vi-VN'),
+          amount: item.soTien.toLocaleString('vi-VN'),
           status: 'Thu',
         })),
       );
 
       setDataChi(
-        result.chi.map(item => ({
+        result.chi.map((item: any) => ({
           id: item._id,
           time: new Date(item.createdAt).toLocaleTimeString('vi-VN', {
             hour: '2-digit',
             minute: '2-digit',
           }),
           description: item.moTa,
-          amount: item.soTienChi.toLocaleString('vi-VN'),
+          amount: item.soTien.toLocaleString('vi-VN'),
           status: 'Chi',
         })),
       );
@@ -122,13 +122,13 @@ const ThuChiScreen = ({route}) => {
     setData(API_URLS[filter] || []);
   }, [filter, dataAll, dataChi, dataThu]);
 
-  const filteredData = data.filter(item => {
+  const filteredData = data.filter((item: any) => {
     const normalizedDescription = removeVietnameseTones(item.description);
     const normalizedSearch = removeVietnameseTones(search);
     return normalizedDescription.includes(normalizedSearch);
   });
 
-  const renderItemThuChi = ({item}) => {
+  const renderItemThuChi = ({item}: {item: any}) => {
     return (
       <ItemThuChi
         id={item.id}
