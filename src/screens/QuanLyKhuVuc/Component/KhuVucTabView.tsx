@@ -6,7 +6,7 @@ import {
   TextInput,
   ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {TabBar, TabBarItem, TabBarProps, TabView} from 'react-native-tab-view';
 import KhongGianComponent from '../KhongGianComponent';
@@ -17,6 +17,12 @@ import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalChucNangKhuVuc from '../ComponentModal/ModalChucNangKhuVuc';
 import ModalThemSuaKhuVuc from '../ComponentModal/ModalThemSuaKhuVuc';
 import ModalThemSuaBan from '../ComponentModal/ModalThemSuaBan';
+import { useFocusEffect } from '@react-navigation/native';
+import { UserLogin } from '../../../navigation/CustomDrawer';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchKhuVucVaBan } from '../../../store/Thunks/khuVucThunks';
+import { fetchCaLam } from '../../../store/Slices/CaLamSlice';
+import { RootState } from '../../../store/store';
 
 interface Route {
   key: string;
@@ -47,11 +53,12 @@ const KhuVucTabView = ({
   modalLuaChon: boolean;
   setModalLuaChon: (val: boolean) => void;
 }) => {
-  const idNhaHang = '66fab50fa28ec489c7137537';
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isThemKhuVucVisible, setIsThemKhuVucVisible] = useState(false);
   const [isThemBanVisible, setIsThemBanVisible] = useState(false);
+  const user: UserLogin = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   const handleThemKhuVuc = () => {
     setIsThemKhuVucVisible(true);
@@ -72,6 +79,14 @@ const KhuVucTabView = ({
     searchQueryBan: '',
     searchQueryKhuVuc: '',
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      const id_nhaHang = user.id_nhaHang._id;
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+      dispatch(fetchCaLam(id_nhaHang) as any);
+    }, [dispatch, user.id_nhaHang._id])
+  );
 
   const renderSceneArea = ({route}: {route: Route}) => {
     switch (route.key) {

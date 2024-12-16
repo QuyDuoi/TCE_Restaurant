@@ -13,6 +13,7 @@ import {tuChoiBanOrder, xacNhanBanOrder} from '../../../services/api';
 import {UserLogin} from '../../../navigation/CustomDrawer';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
+import {useToast} from '../../../customcomponent/CustomToast';
 
 interface Props {
   visible: boolean;
@@ -25,6 +26,7 @@ const ModalDanhSachOrderBan = (props: Props) => {
   const {visible, onClose, danhSachOrder, selectedBan} = props;
   const tenBan = selectedBan?.tenBan;
   const tenKhuVuc = selectedBan?.kv.tenKhuVuc;
+  const {showToast} = useToast();
 
   const [isLoadingModal, setIsLoadingModal] = useState(false);
 
@@ -40,30 +42,24 @@ const ModalDanhSachOrderBan = (props: Props) => {
 
   const handleConfirm = async () => {
     setIsLoadingModal(true);
-    const result = await xacNhanBanOrder(selectedBan._id, user._id);
-    if (result.ok) {
+    try {
+      await xacNhanBanOrder(selectedBan._id, user._id);
       setIsLoadingModal(false);
-      ToastAndroid.show('Xác nhận thành công', ToastAndroid.SHORT);
-    } else {
-      setTimeout(() => {
-        setIsLoadingModal(false);
-      }, 2000);
-      ToastAndroid.show('Không thành công', ToastAndroid.SHORT);
+      showToast('check', 'Xác nhận order thành công', 'white', 1500);
+    } catch (error) {
+      console.log(error);
     }
     onClose();
   };
 
   const handleCancel = async () => {
     setIsLoadingModal(true);
-    const result = await tuChoiBanOrder(selectedBan._id, user._id);
-    if (result.ok) {
+    try {
+      await tuChoiBanOrder(selectedBan._id, user._id);
       setIsLoadingModal(false);
-      ToastAndroid.show('Từ chối thành công', ToastAndroid.SHORT);
-    } else {
-      setTimeout(() => {
-        setIsLoadingModal(false);
-      }, 2000);
-      ToastAndroid.show('Không thành công', ToastAndroid.SHORT);
+      showToast('check', 'Hủy order thành công!', 'white', 1500);
+    } catch (error) {
+      console.log(error);
     }
     onClose();
   };

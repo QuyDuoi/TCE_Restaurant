@@ -1,5 +1,5 @@
-// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-export const ipAddress = `http://192.168.43.99:3000/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `http://192.168.1.6:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -143,7 +143,9 @@ export const getListHoaDonTheoCaLam = async (
       `${ipAddress}layHdTheoCaLam?id_caLamViec=${id_caLamViec}  `,
     );
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     //console.log('tong tien', data[0].tongTien);
@@ -162,6 +164,11 @@ export const getListHoaDonTheoNhaHang = async (
     const response = await fetch(
       `${ipAddress}layDsHoaDonTheoNhaHang?id_nhaHang=${id_nhaHang}`,
     );
+    if (!response.ok) {
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
+    }
     const data = await response.json();
     return data;
   } catch (error) {
@@ -179,7 +186,9 @@ export const addHoaDon = async (hoaDon: HoaDon): Promise<HoaDon> => {
       body: JSON.stringify(hoaDon),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -201,9 +210,10 @@ export const updateHoaDon = async (
       body: JSON.stringify(formData),
       redirect: 'follow',
     });
-    // /console.log(response);
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -234,10 +244,9 @@ export const thanhToanHoaDon = async (
       }),
     });
     if (!response.ok) {
-      const err = await response.json();
-      console.log(err.msg);
-
-      throw new Error('Lỗi khi thanh toán Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     return response;
   } catch (error) {
@@ -258,7 +267,9 @@ export const getListChiTietHoaDon = async (
       redirect: 'follow',
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Chi Tiết Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -279,7 +290,9 @@ export const addChiTietHoaDon = async (
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Chi Tiết Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -301,7 +314,9 @@ export const updateChiTietHoaDon = async (
       body: JSON.stringify(formData),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật Chi Tiết Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -323,7 +338,9 @@ export const updateStatusChiTietHoaDon = async (
     });
 
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật trạng thái Chi Tiết Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
 
     const data: ChiTietHoaDon = await response.json();
@@ -338,7 +355,9 @@ export const getListBan = async (idKhuVuc: string): Promise<Ban[]> => {
   try {
     const response = await fetch(`${ipAddress}layDsBan?id_khuVuc=${idKhuVuc}`);
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Bàn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -357,8 +376,9 @@ export const themBan = async (ban: Ban) => {
       body: JSON.stringify(ban),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.msg || 'Lỗi không xác định');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -377,8 +397,9 @@ export const capNhatBan = async (id: string, ban: Ban) => {
       body: JSON.stringify(ban),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.msg || 'Lỗi không xác định');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -393,9 +414,10 @@ export const getBanTheoId = async (id_Ban: String) => {
   try {
     response = await fetch(`${ipAddress}ban/${id_Ban}`);
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy Bàn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
-    console.log('Lấy Bàn thành công');
     const data = await response.json();
     // console.log(data);
     return data;
@@ -415,7 +437,9 @@ export const layDsKhuVuc = async (id_nhaHang: string) => {
       `${ipAddress}layDsKhuVuc?id_nhaHang=${id_nhaHang}`,
     );
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Khu Vực');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
 
@@ -434,8 +458,9 @@ export const themKhuVuc = async (khuVuc: KhuVuc) => {
       body: JSON.stringify(khuVuc),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.msg || 'Lỗi không xác định');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -453,7 +478,9 @@ export const capNhatKhuVuc = async (id: string, khuVuc: KhuVuc) => {
       body: JSON.stringify(khuVuc),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi cập nhật khu vực');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -474,7 +501,9 @@ export const getListNhanVien = async (
       `${ipAddress}layDsNhanVien?id_nhaHang=${id_nhaHang}`,
     );
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Nhan Vien');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     
@@ -494,7 +523,7 @@ export const moCaLamViec = async (caLam: CaLam): Promise<CaLam> => {
     });
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.msg || 'Lỗi khi tạo ca làm!');
+      throw new Error(errorData.msg);
     }
     const data = await response.json();
     return data;
@@ -512,7 +541,7 @@ export const themNhanVien = async (formData: FormData) => {
     });
     if (!response.ok) {
       const errorData = await response.json(); // Nhận thông báo lỗi từ backend
-      throw new Error(errorData.msg || 'Lỗi không xác định');
+      throw new Error(errorData.msg);
     } else {
       const data = await response.json();
       return data;
@@ -549,7 +578,9 @@ export const deleteNhanVien = async (id: string): Promise<void> => {
     });
 
     if (!response.ok) {
-      throw new Error('Lỗi khi xóa nhân viên');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg || 'Lỗi khi xóa nhân viên!');
     }
 
     console.log('Xóa nhân viên thành công');
@@ -570,7 +601,9 @@ export const checkLogin = async (phoneNumber: string) => {
     });
 
     if (!response.ok) {
-      throw new Error('Lỗi khi check login');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg || 'Lỗi khi đăng nhập!');
     }
 
     const data = await response.json();
@@ -610,7 +643,9 @@ export const getListCaLam = async (id_nhaHang: string): Promise<CaLam[]> => {
       `${ipAddress}layDsCaLamViec?id_nhaHang=${id_nhaHang}`,
     );
     if (!response.ok) {
-      throw new Error('Lỗi khi lấy danh sách Ca Lam');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -655,7 +690,9 @@ export const addListChiTietHoaDon = async (
       body: JSON.stringify({id_hoaDon: id_hoaDon, monAn: monAn}),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Chi Tiết Hóa Đơn');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg);
     }
     const data = await response.json();
     return data;
@@ -760,7 +797,9 @@ export const addPhieuThuChi = async (phieuThuChi: {
       body: JSON.stringify(phieuThuChi),
     });
     if (!response.ok) {
-      throw new Error('Lỗi khi thêm mới Phiếu Thu Chi');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg || 'Lỗi khi thêm mới phiếu!');
     }
     return response;
   } catch (error) {
@@ -784,12 +823,12 @@ export const xacNhanBanOrder = async (
       }),
     });
     if (!response.ok) {
-      const err = await response.json();
-      console.log(err.msg);
-      throw new Error('Lỗi khi xác nhận món');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg || 'Lỗi khi xác nhận món!');
     }
 
-    return response;
+    return response.json();
   } catch (error) {
     console.log('Lỗi khi xác nhận đặt món', error);
     throw error;
@@ -806,12 +845,12 @@ export const tuChoiBanOrder = async (id_ban: string, id_nhanVien: string) => {
       }),
     });
     if (!response.ok) {
-      const err = await response.json();
-      console.log(err.msg);
-      throw new Error('Lỗi khi từ chối đặt món');
+      const error = await response.json();
+      console.log(error.msg);
+      throw new Error(error.msg || 'Lỗi khi từ chối!');
     }
 
-    return response;
+    return response.json();
   } catch (error) {
     console.log('Lỗi khi từ chối đặt món', error);
     throw error;

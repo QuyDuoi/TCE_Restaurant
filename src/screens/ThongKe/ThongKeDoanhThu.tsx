@@ -12,7 +12,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {PieChart} from 'react-native-charts-wrapper';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
 import {ActivityIndicator} from 'react-native';
 import {styles} from './ThongKeStyle';
@@ -104,6 +104,13 @@ const ThongKeDoanhThu = () => {
       setIsLoading(false); // Kết thúc tải dữ liệu
     }
   };
+
+  // Reload dữ liệu mỗi khi màn hình được focus lại
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRevenueData('today');
+    }, []),
+  );
 
   const handleSelectOption = option => {
     setSelectedTimeRange(option);
@@ -200,9 +207,7 @@ const ThongKeDoanhThu = () => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Chọn Mốc Thời Gian
-            </Text>
+            <Text style={styles.modalTitle}>Chọn Mốc Thời Gian</Text>
             <FlatList
               data={options}
               keyExtractor={item => item}

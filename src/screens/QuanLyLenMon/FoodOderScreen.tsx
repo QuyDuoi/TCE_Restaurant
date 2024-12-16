@@ -9,7 +9,10 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
-import {getListChiTietHoaDonTheoCaLam} from '../../services/api';
+import {
+  getListChiTietHoaDonTheoCaLam,
+  updateStatusChiTietHoaDon,
+} from '../../services/api';
 import ItemChiTietHoaDon from './ItemChiTietHoaDon';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
@@ -19,6 +22,7 @@ import {UserLogin} from '../../navigation/CustomDrawer';
 import {useSelector} from 'react-redux';
 import {io} from 'socket.io-client';
 import {useFocusEffect} from '@react-navigation/native';
+import {useToast} from '../../customcomponent/CustomToast';
 
 const FoodOrderScreen: React.FC = () => {
   const [dsChiTiet, setDsChiTiet] = useState<ChiTietHoaDon[]>([]);
@@ -27,6 +31,7 @@ const FoodOrderScreen: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false); // Trạng thái refreshing
   const [tenMons, setTenMons] = useState<string[]>([]); // Danh sách tên món
   const [error, setError] = useState(''); // Trạng thái lỗi
+  const {showToast} = useToast();
   const user: UserLogin = useSelector(state => state.user);
   const id_nhaHang = user.id_nhaHang._id;
 
@@ -44,6 +49,17 @@ const FoodOrderScreen: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsRefreshing(false); // Kết thúc hiệu ứng refreshing
+    }
+  };
+
+  const capNhatTtMon = async (item: ChiTietHoaDon) => {
+    try {
+      await updateStatusChiTietHoaDon(item._id!, item.trangThai);
+
+      fetchChiTietHoaDon();
+      showToast('check', 'Hoàn thành món ăn.', 'white', 1500);
+    } catch (err: any) {
+      showToast('check', err.message, 'white', 1500);
     }
   };
 
@@ -86,7 +102,9 @@ const FoodOrderScreen: React.FC = () => {
       trangThai={item.trangThai}
       soLuong={item.soLuongMon}
       ghiChu={item.ghiChu}
-      onClick={() => {}}
+      onClick={() => {
+        capNhatTtMon(item);
+      }}
       anhMonAn={item.id_monAn?.anhMonAn}
       ban={item.ban?.tenBan}
       khuVuc={item.khuVuc?.tenKhuVuc}
@@ -170,7 +188,7 @@ const FoodOrderScreen: React.FC = () => {
                   setIsRefreshing(true);
                   fetchChiTietHoaDon(true); // Làm mới danh sách
                 }}
-                colors={[colors.primary, colors.orange]} // Màu sắc hiệu ứng
+                colors={[colors.blue, colors.orange]} // Màu sắc hiệu ứng
               />
             }
           />

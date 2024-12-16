@@ -26,15 +26,14 @@ import io from 'socket.io-client';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import AlertDialog from '../../customcomponent/alertDialog';
 import ModalDanhSachOrderBan from './ComponentModal/ModalDanhSachOrderBan';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
+import {useToast} from '../../customcomponent/CustomToast';
 
 interface Props {
   searchQueryBan: string;
 }
 
 const KhongGianComponent = (props: Props) => {
-  console.log('render khong gian component');
-
   const {searchQueryBan} = props;
 
   const [isVisibleDialog, setIsVisibleDialog] = useState(false);
@@ -49,6 +48,7 @@ const KhongGianComponent = (props: Props) => {
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const user: UserLogin = useSelector(state => state.user);
+  const {showToast} = useToast();
 
   const dispatch = useDispatch();
 
@@ -84,13 +84,6 @@ const KhongGianComponent = (props: Props) => {
     };
   }, [searchQueryBan]);
 
-  useFocusEffect(
-    useCallback(() => {
-      const id_nhaHang = user.id_nhaHang._id;
-      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
-    }, [dispatch, user.id_nhaHang._id])
-  );
-
   // Kết nối socket.io
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
@@ -108,7 +101,8 @@ const KhongGianComponent = (props: Props) => {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
 
-    socket.on('khachOrder', () => {
+    socket.on('khachOrder', data => {
+      showToast('check', data.msg, 'white', 2000);
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
 

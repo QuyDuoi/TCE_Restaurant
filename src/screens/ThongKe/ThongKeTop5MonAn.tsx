@@ -12,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 // import {PieChart} from 'react-native-chart-kit';
 import {PieChart} from 'react-native-charts-wrapper';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
 import {styles} from './ThongKeStyle';
 import {ActivityIndicator} from 'react-native';
@@ -109,6 +109,13 @@ const ThongKeTop5MonAn = () => {
       setIsLoading(false);
     }
   };
+
+  // Reload dữ liệu mỗi khi màn hình được focus lại
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchTop5DishesData('today');
+    }, []),
+  );
 
   const handleSelectOption = option => {
     setSelectedTimeRange(option);

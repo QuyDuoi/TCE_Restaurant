@@ -1,9 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  ToastAndroid,
-} from 'react-native';
+import {View, StyleSheet, ToastAndroid} from 'react-native';
 import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
@@ -21,6 +17,9 @@ import {getListHoaDonTheoNhaHang} from '../../../services/api';
 import UnsavedChangesModal from '../../../customcomponent/modalSave';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoadingModal from 'react-native-loading-modal';
+import {useToast} from '../../../customcomponent/CustomToast';
+import {io} from 'socket.io-client';
+import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
 
 interface Props {
   isVisible: boolean;
@@ -39,25 +38,57 @@ const ModalChucNang = (props: Props) => {
   >([]);
   const [isVisibleModalHuyBan, setIsVisibleModalHuyBan] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const [trangThaiCa, setTrangThaiCa] = useState(false);
+  const caLams = useSelector((state: RootState) => state.calam.caLams);
 
   const navigation = useNavigation<any>();
 
   const bans = useSelector((state: RootState) => state.ban.bans);
   const user: any = useSelector((state: RootState) => state.user);
+  const {showToast} = useToast();
+  const id_nhaHang = user.id_nhaHang._id;
+
+  const fetchHoaDon = async () => {
+    try {
+      const hoaDons = await getListHoaDonTheoNhaHang(user?.id_nhaHang._id);
+      setHoaDonsChuaThanhToan(Array.isArray(hoaDons) ? hoaDons : []);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách hóa đơn:', error);
+      setHoaDonsChuaThanhToan([]); // Đảm bảo state không bị thay đổi vô hạn
+    }
+  };
 
   useEffect(() => {
-    const fetchHoaDon = async () => {
-      try {
-        const hoaDons = await getListHoaDonTheoNhaHang(user?.id_nhaHang._id);
-        setHoaDonsChuaThanhToan(Array.isArray(hoaDons) ? hoaDons : []);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách hóa đơn:', error);
-        setHoaDonsChuaThanhToan([]); // Đảm bảo state không bị thay đổi vô hạn
-      }
-    };
-
     fetchHoaDon();
   }, [bans]);
+
+  useEffect(() => {
+    // Kiểm tra lại các ca làm có trường ketThuc là null
+    const checkCaLam = caLams.filter(caLam => caLam.ketThuc == null);
+
+    if (checkCaLam.length > 0) {
+      setTrangThaiCa(true); // Trạng thái chưa có ca mở
+    } else {
+      setTrangThaiCa(false); // Trạng thái đang có ca mở
+    }
+  }, []);
+
+  useEffect(() => {
+    const socket = io('https://tce-restaurant-api.onrender.com');
+
+    socket.on('capNhatBan', () => {
+      fetchHoaDon();
+    });
+
+    socket.on('huyDatMon', () => {
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    });
+
+    // Cleanup khi component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const hoaDonSelected = Array.isArray(hoaDonsChuaThanhToan)
     ? hoaDonsChuaThanhToan.find(hoaDon => hoaDon.id_ban === selectedBan?._id)
@@ -102,17 +133,35 @@ const ModalChucNang = (props: Props) => {
             <ButtonComponent
               title="Đặt bàn"
               onPress={() => {
-                if (selectedBan && selectedBan.trangThai === 'Trống') {
-                  setIsVisibleDatBan(true);
-                } else if (selectedBan && selectedBan.trangThai === 'Đã đặt') {
-                  ToastAndroid.show('Bàn đã được đặt', ToastAndroid.LONG);
+                if (trangThaiCa) {
+                  if (selectedBan && selectedBan.trangThai === 'Trống') {
+                    setIsVisibleDatBan(true);
+                  } else if (
+                    selectedBan &&
+                    selectedBan.trangThai === 'Đã đặt'
+                  ) {
+                    onClose();
+                    showToast('remove', 'Bàn đã được đặt!', 'white', 2000);
+                  } else if (
+                    selectedBan &&
+                    selectedBan.trangThai === 'Đang sử dụng'
+                  ) {
+                    onClose();
+                    showToast(
+                      'remove',
+                      'Bàn đang được sử dụng!',
+                      'white',
+                      2000,
+                    );
+                  }
+                } else {
                   onClose();
-                } else if (
-                  selectedBan &&
-                  selectedBan.trangThai === 'Đang sử dụng'
-                ) {
-                  ToastAndroid.show('Bàn đang được sử dụng', ToastAndroid.LONG);
-                  onClose();
+                  showToast(
+                    'remove',
+                    'Mở ca làm trước khi đặt bàn!',
+                    'white',
+                    2000,
+                  );
                 }
               }}
               bgrColor={colors.orange}
@@ -126,8 +175,8 @@ const ModalChucNang = (props: Props) => {
               title="Tạo hóa đơn"
               onPress={() => {
                 if (selectedBan.trangThai === 'Đang sử dụng') {
-                  ToastAndroid.show('Bàn đang sử dụng', ToastAndroid.LONG);
                   onClose();
+                  showToast('remove', 'Bàn đang được sử dụng!', 'white', 2000);
                 } else {
                   setIsVisibleModalTaoHoaDon(true);
                 }
@@ -153,8 +202,8 @@ const ModalChucNang = (props: Props) => {
                   });
                   onClose();
                 } else {
-                  ToastAndroid.show('Bàn chưa có hóa đơn', ToastAndroid.LONG);
                   onClose();
+                  showToast('remove', 'Bàn chưa có hóa đơn!', 'white', 2000);
                 }
               }}
               bgrColor={colors.orange}
@@ -180,11 +229,11 @@ const ModalChucNang = (props: Props) => {
               title="Hủy bàn đặt"
               onPress={() => {
                 if (selectedBan.trangThai === 'Đang sử dụng') {
-                  ToastAndroid.show('Bàn đang sử dụng', ToastAndroid.LONG);
                   onClose();
+                  showToast('remove', 'Bàn đang được sử dụng!', 'white', 2000);
                 } else if (selectedBan.trangThai === 'Trống') {
-                  ToastAndroid.show('Bàn đang trống', ToastAndroid.LONG);
                   onClose();
+                  showToast('remove', 'Bàn đang trống!', 'white', 2000);
                 } else {
                   setIsVisibleModalHuyBan(true);
                 }

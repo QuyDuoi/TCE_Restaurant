@@ -1,5 +1,5 @@
 import {View, StyleProp, ViewStyle, Image, Switch} from 'react-native';
-import React, { useState} from 'react';
+import React, {useState} from 'react';
 import RowComponent from '../components/RowComponent';
 import TextComponent from '../components/TextComponent';
 import {hoaStyles} from '../styles/hoaStyles';
@@ -8,7 +8,7 @@ import {colors} from '../contants/hoaColors';
 import SpaceComponent from '../components/SpaceComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateStatusMonAnThunk} from '../../../../store/Thunks/monAnThunks';
-import { IPV4} from '../../../../services/api';
+import {IPV4} from '../../../../services/api';
 import {UserLogin} from '../../../../navigation/CustomDrawer';
 
 interface Props {
@@ -99,15 +99,16 @@ const ItemMonAn = (props: Props) => {
         <View>
           <TextComponent
             text={localStatus ? 'Sẵn sàng' : 'Ngưng phục vụ'}
-            color={colors.status}
+            color={localStatus ? colors.status : colors.red}
             minHeight={24}
           />
-          <Switch
-            value={localStatus}
-            onValueChange={handleStatusChange}
-            trackColor={{false: colors.status2, true: colors.status}}
-            disabled={user.vaiTro !== 'Quản lý'}
-          />
+          {(user.vaiTro === 'Quản lý' || user.vaiTro === 'Đầu bếp') && (
+            <Switch
+              value={localStatus}
+              onValueChange={handleStatusChange}
+              trackColor={{false: colors.status2, true: colors.status}}
+            />
+          )}
         </View>
       </RowComponent>
     </View>

@@ -40,6 +40,7 @@ import UnsavedChangesModal from '../../../customcomponent/modalSave';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoadingModal from 'react-native-loading-modal';
+import {io} from 'socket.io-client';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -53,8 +54,6 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
   );
 
-  //console.log(chiTietHoaDons);
-
   const navigation = useNavigation<any>();
 
   const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);
@@ -63,6 +62,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);
   const [visibleModalSoLuongMon, setVisibleModalSoLuongMon] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const dispatch = useDispatch();
   const [discount, setDiscount] = useState(
     hoaDon.tienGiamGia ? hoaDon.tienGiamGia : null,
   );
@@ -114,8 +114,6 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     setTotalFinalBill(totalFinalBillCal());
   }, [totalFinalBillCal, isPercent, discount]);
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     if (hoaDon) {
       dispatch(fetchChiTietHoaDon(hoaDon._id) as any);
@@ -124,6 +122,19 @@ const ChiTietHoaDonNVPV = (props: Props) => {
       setIsPaid(hoaDon.trangThai === 'Đã Thanh Toán');
     }
   }, [hoaDon]);
+
+  useEffect(() => {
+    const socket = io('https://tce-restaurant-api.onrender.com');
+
+    socket.on('hoanThanhMon', () => {
+      dispatch(fetchChiTietHoaDon(hoaDon._id) as any);
+    });
+
+    // Cleanup khi component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (hoaDon.trangThai === 'Đã Thanh Toán') {

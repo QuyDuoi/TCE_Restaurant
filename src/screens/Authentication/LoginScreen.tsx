@@ -16,14 +16,17 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../../store/Slices/UserSlice';
+import { useToast } from '../../customcomponent/CustomToast';
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [confirm, setConfirm] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const {showToast} = useToast();
 
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
   const dispath = useDispatch();
 
   const navigation = useNavigation();
@@ -67,7 +70,7 @@ const LoginScreen = () => {
 
   const confirmCode = async () => {
     try {
-      setIsLoadingModal(true);
+      setIsLoadingLogin(true);
       if (confirm) {
         const userCredential = await confirm.confirm(code);
         const idToken = await userCredential.user.getIdToken(true);
@@ -76,10 +79,13 @@ const LoginScreen = () => {
 
         const {nhanVien, token, refreshToken} = result;
         if (result) {
-          setIsLoadingModal(false);
+          setIsLoadingLogin(false);
+          setTimeout(() => {
+            showToast("check", "Đăng nhập thành công", "white", 1500);
+          }, 1000);
         } else {
           setTimeout(() => {
-            setIsLoadingModal(false);
+            setIsLoadingLogin(false);
           }, 2000);
         }
 
@@ -147,7 +153,7 @@ const LoginScreen = () => {
             <>
               <TextInput
                 style={styles.inputOTP}
-                placeholder="Nhập OTP"
+                placeholder="Nhập mã OTP"
                 value={code}
                 onChangeText={setCode}
                 autoCapitalize="none"
@@ -167,7 +173,13 @@ const LoginScreen = () => {
       <Modal visible={isLoadingModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
+          <Text style={styles.loadingText}>Đang gửi mã OTP...</Text>
+        </View>
+      </Modal>
+      <Modal visible={isLoadingLogin} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <ActivityIndicator size="large" color="#ffffff" />
+          <Text style={styles.loadingText}>Đang đăng nhập...</Text>
         </View>
       </Modal>
     </>
@@ -227,6 +239,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     fontSize: 16,
     marginBottom: 10,
+    paddingLeft: 15
   },
   loginButton: {
     width: '100%',

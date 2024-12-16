@@ -1,8 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  ToastAndroid,
-} from 'react-native';
+import {View, StyleSheet, ToastAndroid} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
@@ -17,6 +13,7 @@ import {RootState} from '../../../store/store';
 import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
 import LoadingModal from 'react-native-loading-modal';
 import {UserLogin} from '../../../navigation/CustomDrawer';
+import {useToast} from '../../../customcomponent/CustomToast';
 
 interface Props {
   visible: boolean;
@@ -29,6 +26,7 @@ const ModalTaoHoaDon = (props: Props) => {
   const {visible, onClose, selectedBan, onCloseParent} = props;
 
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const {showToast} = useToast();
 
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
@@ -52,25 +50,24 @@ const ModalTaoHoaDon = (props: Props) => {
       id_nhaHang: idNhaHang,
     };
 
-    const result = await dispatch(addNewHoaDon(data as any) as any);
-    //console.log(result.payload._id);
-
-    if (result.type.endsWith('fulfilled')) {
+    try {
+      const result = await dispatch(addNewHoaDon(data as any) as any).unwrap();
+      // Nếu unwrap thành công
       setIsLoadingModal(false);
       ToastAndroid.show('Tạo hóa đơn thành công', ToastAndroid.LONG);
       navigation.navigate('ChiTietHoaDonNVPV', {
-        hoaDon: result.payload,
+        hoaDon: result, // unwrap trả về payload trực tiếp
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
         tenBan: selectedBan?.tenBan,
       });
 
       onCloseParent();
       onClose();
-    } else {
-      setTimeout(() => {
-        setIsLoadingModal(false);
-      }, 1000);
-      ToastAndroid.show('Lỗi tạo hóa đơn', ToastAndroid.LONG);
+    } catch (error) {
+      setIsLoadingModal(false);
+      onCloseParent();
+      onClose();
+      showToast('remove', error, 'white', 2000);
     }
   };
 

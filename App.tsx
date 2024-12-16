@@ -9,7 +9,6 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import moment from 'moment';
 import {ActivityIndicator, Text, View} from 'react-native';
 import {styles} from './src/navigation/CustomDrawer';
-import DeletePostModal from './src/customcomponent/modalDelete';
 import {ToastProvider} from './src/customcomponent/CustomToast';
 
 const Stack = createStackNavigator();

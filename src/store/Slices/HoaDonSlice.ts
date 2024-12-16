@@ -74,7 +74,6 @@ export const addNewHoaDon = createAsyncThunk(
   async (hoaDon: HoaDon, thunkAPI) => {
     try {
       const data = await addHoaDon(hoaDon);
-      //console.log(data);
       thunkAPI.dispatch(fetchKhuVucVaBan(hoaDon.id_nhaHang as any));
       return data;
     } catch (error: any) {

@@ -13,7 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 // import { PieChart } from 'react-native-chart-kit';
 import {PieChart} from 'react-native-charts-wrapper';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
 import {ActivityIndicator} from 'react-native';
 import {styles} from './ThongKeStyle';
@@ -111,6 +111,12 @@ const ThongKeHinhThucThanhToan = () => {
       setIsLoading(false);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRevenueData('today');
+    }, []),
+  );
 
   const handleSelectOption = option => {
     setSelectedTimeRange(option);
