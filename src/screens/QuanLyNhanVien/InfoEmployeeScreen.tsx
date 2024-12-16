@@ -29,7 +29,6 @@ const EmployeeDetailsScreen = () => {
   const [modalVisible, setModalVisible] = useState(false); // Điều khiển modal
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const status = useSelector((state: RootState) => state.nhanVien.status);
   const updatedNhanVien = useSelector((state: RootState) =>
     state.nhanVien.nhanViens.find(nv => nv._id === nhanVien._id),
   );

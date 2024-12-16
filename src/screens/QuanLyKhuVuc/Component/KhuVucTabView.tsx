@@ -6,16 +6,13 @@ import {
   TextInput,
   ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {hoaStyles} from '../../QuanLyThucDon/Hoa/styles/hoaStyles';
 import {TabBar, TabBarItem, TabBarProps, TabView} from 'react-native-tab-view';
 import KhongGianComponent from '../KhongGianComponent';
 import ThongTinKhuVuc from '../ThongTinKhuVuc';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
-import {RootState} from '../../../store/store';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalChucNangKhuVuc from '../ComponentModal/ModalChucNangKhuVuc';
 import ModalThemSuaKhuVuc from '../ComponentModal/ModalThemSuaKhuVuc';

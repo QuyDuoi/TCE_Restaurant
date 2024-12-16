@@ -14,15 +14,13 @@ import ItemMonAn from './Hoa/lists/ItemMonAn';
 import TextComponent from './Hoa/components/TextComponent';
 import {colors} from './Hoa/contants/hoaColors';
 import {MonAn} from '../../store/Slices/MonAnSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../store/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
 import {useNavigation} from '@react-navigation/native';
 import {DanhMuc} from '../../store/Slices/DanhMucSlice';
 import {searchMonAn} from '../../services/api';
 import debounce from 'lodash';
 import {UserLogin} from '../../navigation/CustomDrawer';
-import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
-import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 
 if (
   Platform.OS === 'android' &&
@@ -52,17 +50,7 @@ const DanhMucComponent = (props: Props) => {
   const dsMonAn = useSelector((state: RootState) => state.monAn.monAns);
   const user: UserLogin = useSelector(state => state.user);
   const navigation = useNavigation<any>();
-  const dispatch = useDispatch<AppDispatch>();
   const id_nhaHang = user.id_nhaHang._id;
-
-  useEffect(() => {
-    if (user) {
-      if (Array.isArray(dsMonAn) && dsMonAn.length === 0) {
-        dispatch(fetchDanhMucVaMonAn(id_nhaHang));
-        dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     // Mở rộng tất cả danh mục

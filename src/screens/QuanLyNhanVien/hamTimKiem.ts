@@ -1,4 +1,4 @@
-import {NhanVien} from '../../store/Slices/NhanVienSlice';
+import { NhanVienSlice } from '../../store/Slices/NhanVienSlice';
 import {FiltersModelTest} from './NhanVienComponent';
 
 // Hàm loại bỏ dấu tiếng Việt
@@ -12,7 +12,7 @@ export const removeVietnameseTones = (str: string): string => {
 
 // Hàm applyFilters để lọc danh sách nhân viên
 export const applyFilters = (
-  nhanVienList: NhanVien[], // Danh sách nhân viên gốc
+  nhanVienList: NhanVienSlice[], // Danh sách nhân viên gốc
   searchQuery: string, // Từ khóa tìm kiếm
   filters: FiltersModelTest, // Các điều kiện lọc
 ) => {

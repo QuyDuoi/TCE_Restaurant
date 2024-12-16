@@ -1,5 +1,5 @@
-export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
-// export const ipAddress = `http://192.168.1.6:3000/api/`; // Địa chỉ cơ sở API
+// export const ipAddress = `https://tce-restaurant-api.onrender.com/api/`; // Địa chỉ cơ sở API
+export const ipAddress = `http://192.168.43.99:3000/api/`; // Địa chỉ cơ sở API
 
 export const IPV4 = 'tce-restaurant-api.onrender.com'; // Địa chỉ IP giả định của server
 
@@ -15,7 +15,6 @@ import {hoaDonSlice} from '../store/Slices/HoaDonSlice';
 import {chiTietHoaDonSlice} from '../store/Slices/ChiTietHoaDonSlice';
 import {CaLam} from '../store/Slices/CaLamSlice';
 import {ToastAndroid} from 'react-native';
-import {PayloadAction} from '@reduxjs/toolkit';
 
 // Lấy danh sách NhomTopping
 export const getListNhomTopping = async (): Promise<NhomTopping[]> => {
@@ -478,6 +477,7 @@ export const getListNhanVien = async (
       throw new Error('Lỗi khi lấy danh sách Nhan Vien');
     }
     const data = await response.json();
+    
     return data;
   } catch (error) {
     console.log('Lỗi khi lấy danh sách Nhân Viên: ', error);

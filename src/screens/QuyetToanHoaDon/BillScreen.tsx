@@ -34,12 +34,12 @@ const BillScreen: React.FC = () => {
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuVucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const khuVucStatus = useSelector((state: RootState) => state.khuVuc.status);
-  const idNhaHang = user.id_nhaHang._id;
+  const id_nhaHang = user.id_nhaHang._id;
 
   const fetchHoaDonNhaHang = async () => {
     try {
       setIsLoading(true); // Bắt đầu tải dữ liệu
-      const response = await getListHoaDonTheoNhaHang(idNhaHang);
+      const response = await getListHoaDonTheoNhaHang(id_nhaHang);
       setBillData(response);
     } catch (error) {
       console.error('Error fetching bills:', error);
@@ -50,7 +50,7 @@ const BillScreen: React.FC = () => {
 
   useEffect(() => {
     if (khuVucStatus === 'idle') {
-      dispatch(fetchKhuVucVaBan(idNhaHang) as any);
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     }
     fetchHoaDonNhaHang();
   }, [dispatch, bans, khuVucs]);

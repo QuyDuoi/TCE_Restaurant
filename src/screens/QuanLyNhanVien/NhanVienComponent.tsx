@@ -21,12 +21,8 @@ import {fetchNhanViens, NhanVienSlice} from '../../store/Slices/NhanVienSlice';
 import {RootState} from '../../store/store';
 import type {AppDispatch} from '../../store/store';
 import {applyFilters} from './hamTimKiem';
-import {IPV4} from '../../services/api';
-import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import {UserLogin} from '../../navigation/CustomDrawer';
-import {setUser} from '../../store/Slices/UserSlice';
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface FiltersModelTest {
   hoatDong: boolean;
@@ -79,9 +75,7 @@ const NhanVienComponent = props => {
   // Reload dữ liệu mỗi khi màn hình được focus lại
   useFocusEffect(
     React.useCallback(() => {
-      if (status !== 'loading') {
-        dispatch(fetchNhanViens(id_nhaHang)); // Fetch lại danh sách nhân viên khi màn hình được focus lại
-      }
+      dispatch(fetchNhanViens(id_nhaHang));
     }, [dispatch]),
   );
 

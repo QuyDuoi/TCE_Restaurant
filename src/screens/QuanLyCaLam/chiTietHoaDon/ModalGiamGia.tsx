@@ -5,22 +5,18 @@ import {
   Animated,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  FlatList,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useState, useCallback} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Dimensions} from 'react-native';
-import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
-import {height} from '@fortawesome/free-solid-svg-icons/faFloppyDisk';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 
-const {height: MaxHeight, width: MaxWidth} = Dimensions.get('window');
+const {height: MaxHeight} = Dimensions.get('window');
 
 interface Props {
   visible: boolean;

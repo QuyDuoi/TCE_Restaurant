@@ -48,7 +48,6 @@ interface Props {
 }
 const ChiTietHoaDonNVPV = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
-  const idNhaHang = '66fab50fa28ec489c7137537';
 
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
@@ -59,7 +58,6 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const navigation = useNavigation<any>();
 
   const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);
-  const calams = useSelector((state: RootState) => state.calam.caLams);
 
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);

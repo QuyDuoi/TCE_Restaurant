@@ -8,10 +8,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {FoodOderScreen} from './FoodOderScreen'; // Điều chỉnh theo đúng đường dẫn của bạn
 import {useDispatch} from 'react-redux';
-import {fetchMonAnTheoId} from '../../store/Slices/MonAnSlice';
-import {fetchBanTheoId} from '../../store/Slices/BanSlice';
 
 interface OrderDetailModalProps {
   visible: boolean;

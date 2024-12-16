@@ -122,8 +122,8 @@ const ThuChiScreen = ({route}: {route: any}) => {
     setData(API_URLS[filter] || []);
   }, [filter, dataAll, dataChi, dataThu]);
 
-  const filteredData = data.filter((item: any) => {
-    const normalizedDescription = removeVietnameseTones(item.description);
+  const filteredData = data.filter(item => {
+    const normalizedDescription = removeVietnameseTones(item.moTa);
     const normalizedSearch = removeVietnameseTones(search);
     return normalizedDescription.includes(normalizedSearch);
   });

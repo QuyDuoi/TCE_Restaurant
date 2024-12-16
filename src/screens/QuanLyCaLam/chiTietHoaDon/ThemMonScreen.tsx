@@ -1,7 +1,5 @@
 import {
   View,
-  Text,
-  useWindowDimensions,
   StyleSheet,
   ScrollView,
   Dimensions,
@@ -40,7 +38,7 @@ interface Props {
   route?: any;
 }
 
-const {width: MaxWidth, height: MaxHeight} = Dimensions.get('window');
+const { height: MaxHeight} = Dimensions.get('window');
 
 const ThemMonScreen = (props: Props) => {
   const {route} = props;

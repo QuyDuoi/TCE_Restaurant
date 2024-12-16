@@ -1,4 +1,4 @@
-import {View, Text, StyleProp, ViewStyle, TouchableOpacity} from 'react-native';
+import {View, StyleProp, ViewStyle} from 'react-native';
 import React from 'react';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';

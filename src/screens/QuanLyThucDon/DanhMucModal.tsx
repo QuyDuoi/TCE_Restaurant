@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   TextInput,
   Alert,
-  StyleSheet,
 } from 'react-native';
 
 import styles from './DanhMucStyles';

@@ -6,7 +6,6 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
   Alert,
   Button,
 } from 'react-native';

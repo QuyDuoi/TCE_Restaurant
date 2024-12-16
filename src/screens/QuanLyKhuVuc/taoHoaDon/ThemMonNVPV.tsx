@@ -1,15 +1,12 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
-  Text,
-  useWindowDimensions,
   StyleSheet,
   ScrollView,
   Dimensions,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  TextInput,
   ToastAndroid,
 } from 'react-native';
 import {MonAn} from '../../../store/Slices/MonAnSlice';

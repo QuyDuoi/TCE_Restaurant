@@ -1,10 +1,8 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React from 'react';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
-import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
-import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 
 interface Props {
   onLongPress: () => void;

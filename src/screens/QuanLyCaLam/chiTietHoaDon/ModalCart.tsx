@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
+import {View, FlatList} from 'react-native';
 import React from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';

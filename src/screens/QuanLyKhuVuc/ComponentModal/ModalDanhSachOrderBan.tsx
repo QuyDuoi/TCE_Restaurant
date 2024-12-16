@@ -1,4 +1,4 @@
-import {View, Text, FlatList, ToastAndroid} from 'react-native';
+import {View, FlatList, ToastAndroid} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
@@ -6,7 +6,6 @@ import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
-import ItemCart from '../../QuanLyCaLam/chiTietHoaDon/ItemCart';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import ItemDanhSachOrder from './ItemDanhSachOrder';
 import LoadingModal from 'react-native-loading-modal';

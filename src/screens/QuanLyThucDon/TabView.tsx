@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {
   View,
-  StyleSheet,
   useWindowDimensions,
   Text,
   TextInput,
 } from 'react-native';
 import {
   TabView,
-  SceneMap,
   TabBar,
   TabBarProps,
   TabBarItem,
@@ -17,11 +15,14 @@ import {
 import DanhMucComponent from './DanhMucComponent';
 import NhomToppingComponent from './Hoa/components/NhomToppingComponent';
 import {hoaStyles} from './Hoa/styles/hoaStyles';
-import {colors} from './Hoa/contants/hoaColors';
 import SettingModaDanhMuc from '../QuanLyCaLam/SettingModaDanhMuc';
-import InputComponent from './Hoa/components/InputComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from './Hoa/components/SpaceComponent';
+import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDanhMucVaMonAn } from '../../store/Thunks/danhMucThunks';
+import { AppDispatch } from '../../store/store';
+import { UserLogin } from '../../navigation/CustomDrawer';
 // Định nghĩa kiểu cho các route của TabView
 interface Route {
   key: string;
@@ -56,9 +57,12 @@ const NhomToppingRoute = React.memo(
 export default function MyTabs(props: Props) {
   const {setDialogSettingHandler} = props;
   const layout = useWindowDimensions();
+  const user: UserLogin = useSelector(state => state.user);
 
   const [visible, setVisible] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const id_nhaHang = user.id_nhaHang._id;
 
   const [state, setState] = React.useState<State>({
     index: 0,
@@ -69,6 +73,13 @@ export default function MyTabs(props: Props) {
     searchQueryMonAn: '',
     searchQueryNhomTopping: '',
   });
+
+  useFocusEffect(
+      React.useCallback(() => {
+        dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+        console.log('Goi du lieu');
+      }, []),
+    );
 
   const renderScene = ({route}: {route: Route}) => {
     switch (route.key) {

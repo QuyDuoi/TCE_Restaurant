@@ -26,6 +26,7 @@ import io from 'socket.io-client';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import AlertDialog from '../../customcomponent/alertDialog';
 import ModalDanhSachOrderBan from './ComponentModal/ModalDanhSachOrderBan';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Props {
   searchQueryBan: string;
@@ -83,6 +84,13 @@ const KhongGianComponent = (props: Props) => {
     };
   }, [searchQueryBan]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const id_nhaHang = user.id_nhaHang._id;
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    }, [dispatch, user.id_nhaHang._id])
+  );
+
   // Kết nối socket.io
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
@@ -95,6 +103,11 @@ const KhongGianComponent = (props: Props) => {
     socket.on('capNhatBan', () => {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
+
+    socket.on('dongCaLam', () => {
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+    });
+
     socket.on('khachOrder', () => {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });

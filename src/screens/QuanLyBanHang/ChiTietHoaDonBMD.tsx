@@ -28,7 +28,6 @@ import ModalSoLuongBMD from './ModalSoLuongBMD';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import AlertDialog from '../../customcomponent/alertDialog';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 

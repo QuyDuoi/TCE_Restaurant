@@ -16,22 +16,16 @@ import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import SectionComponent from '../../QuanLyThucDon/Hoa/components/SectionComponent';
-import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import {formatMoney} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import {useNavigation} from '@react-navigation/native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import {
   HoaDon,
-  thanhToanHoaDonThunk,
-  updateHoaDonThunk,
 } from '../../../store/Slices/HoaDonSlice';
 
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useDispatch, useSelector} from 'react-redux';
-import ModalGiamGia from './ModalGiamGia';
-import {getListHoaDonTheoNhaHang, thanhToanHoaDon} from '../../../services/api';
+import {thanhToanHoaDon} from '../../../services/api';
 import {RootState} from '../../../store/store';
 import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
 import LoadingModal from 'react-native-loading-modal';

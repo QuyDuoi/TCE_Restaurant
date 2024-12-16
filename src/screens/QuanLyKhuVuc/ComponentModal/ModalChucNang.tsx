@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Modal,
-  TouchableWithoutFeedback,
   StyleSheet,
   ToastAndroid,
 } from 'react-native';
@@ -23,7 +21,6 @@ import {getListHoaDonTheoNhaHang} from '../../../services/api';
 import UnsavedChangesModal from '../../../customcomponent/modalSave';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoadingModal from 'react-native-loading-modal';
-import {UserLogin} from '../../../navigation/CustomDrawer';
 
 interface Props {
   isVisible: boolean;

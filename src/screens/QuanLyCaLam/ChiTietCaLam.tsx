@@ -3,7 +3,6 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -37,8 +36,6 @@ import {checkDongCaLam, dongCaLam} from './CallApiCaLam';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import {useToast} from '../../customcomponent/CustomToast';
 import {fetchCaLam} from '../../store/Slices/CaLamSlice';
-import {getListNhanVien} from '../../services/api';
-import {NhanVienSlice} from '../../store/Slices/NhanVienSlice';
 import LoadingModal from 'react-native-loading-modal';
 
 const ChiTietCaLam = ({route}: {route: any}) => {

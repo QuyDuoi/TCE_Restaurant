@@ -1,9 +1,8 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React from 'react';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface Props {
   onLongPress: () => void;

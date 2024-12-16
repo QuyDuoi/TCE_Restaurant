@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -18,6 +18,7 @@ import {ChiTietHoaDon} from '../../store/Slices/ChiTietHoaDonSlice';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import {useSelector} from 'react-redux';
 import {io} from 'socket.io-client';
+import {useFocusEffect} from '@react-navigation/native';
 
 const FoodOrderScreen: React.FC = () => {
   const [dsChiTiet, setDsChiTiet] = useState<ChiTietHoaDon[]>([]);
@@ -46,9 +47,11 @@ const FoodOrderScreen: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchChiTietHoaDon();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchChiTietHoaDon();
+    }, []),
+  );
 
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');

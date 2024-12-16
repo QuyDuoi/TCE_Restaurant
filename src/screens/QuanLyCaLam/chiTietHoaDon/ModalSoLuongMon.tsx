@@ -1,10 +1,8 @@
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
-  ToastAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';

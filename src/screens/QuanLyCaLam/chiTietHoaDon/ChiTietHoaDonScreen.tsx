@@ -26,7 +26,7 @@ import {
   formatMoney,
   formatTime,
 } from '../../QuanLyThucDon/Hoa/utils/formatUtils';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import ModalSoLuongMon from './ModalSoLuongMon';
 import {
   ChiTietHoaDon,

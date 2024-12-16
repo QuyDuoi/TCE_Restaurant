@@ -125,6 +125,11 @@ const ItemBan = (props: Props) => {
               size={15}
               color="black"
             />
+            <TextComponent
+              text={`Mật khẩu: ${ban.matKhau || 100}`}
+              size={15}
+              color="black"
+            />
           </View>
         </Animated.View>
 

@@ -1,15 +1,11 @@
 import {
   View,
-  Text,
   StyleSheet,
-  Button,
-  TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
-import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
@@ -19,8 +15,6 @@ import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
 import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
-import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
-import {getListHoaDonTheoNhaHang} from '../../../services/api';
 import LoadingModal from 'react-native-loading-modal';
 import {UserLogin} from '../../../navigation/CustomDrawer';
 

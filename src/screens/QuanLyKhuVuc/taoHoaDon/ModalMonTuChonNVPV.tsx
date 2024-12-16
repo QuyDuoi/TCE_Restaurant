@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, ToastAndroid} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import RowComponent from '../../QuanLyThucDon/Hoa/components/RowComponent';
@@ -8,7 +8,6 @@ import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent'
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {useDispatch} from 'react-redux';
-import {addNewChiTietHoaDon} from '../../../store/Slices/ChiTietHoaDonSlice';
 
 interface Props {
   visible: boolean;

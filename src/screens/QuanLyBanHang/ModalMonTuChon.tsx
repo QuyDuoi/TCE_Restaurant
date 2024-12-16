@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet, ToastAndroid} from 'react-native';
-import React, {useId, useRef, useState} from 'react';
+import {View, StyleSheet, ToastAndroid} from 'react-native';
+import React, { useState} from 'react';
 import ModalComponent from '../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';

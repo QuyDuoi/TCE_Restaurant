@@ -11,7 +11,7 @@ interface Item {
 }
 const ItemThuChi = (props: Item) => {
     const {id, time, status, money, description } = props;
-    const onlyTime = time.split(' ')[0];
+    const onlyTime = time ? time.split(' ')[0] : "N/A";
     return (
         <View style={styles.card} key={id}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

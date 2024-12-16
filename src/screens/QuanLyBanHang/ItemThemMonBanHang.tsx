@@ -1,5 +1,5 @@
-import {View, Text, Switch, Image, TouchableOpacity} from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {View, Image, TouchableOpacity} from 'react-native';
+import React, {useCallback, useEffect,  useState} from 'react';
 import {MonAn} from '../../store/Slices/MonAnSlice';
 import {IPV4} from '../../services/api';
 import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
@@ -10,8 +10,6 @@ import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import SpaceComponent from '../QuanLyThucDon/Hoa/components/SpaceComponent';
 import {formatMoney} from '../QuanLyThucDon/Hoa/utils/formatUtils';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
 
 interface Props {
   monAn: MonAn;

@@ -16,7 +16,6 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../../store/Slices/UserSlice';
-import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');

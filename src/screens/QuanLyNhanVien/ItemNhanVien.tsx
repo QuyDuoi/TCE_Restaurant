@@ -18,11 +18,6 @@ interface Props {
 const ItemNhanVien = (props: Props) => {
   const { status, colorStatus, nameNhanVien, position, onPress, avatar } = props;
 
-  // Handle avatar URL replacement if it's coming from localhost
-  const employeeImage = avatar
-    ? avatar.replace('localhost:3000', IPV4)
-    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
-
   return (
     <CardComponent
       bgrColor={colorStatus ? colorStatus : '#C4E4FF'}
@@ -45,7 +40,7 @@ const ItemNhanVien = (props: Props) => {
             paddingVertical: 16,
           }}>
           <Image
-            source={{ uri: employeeImage }}
+            source={{ uri: avatar }}
             style={{
               width: 50,
               height: 50,

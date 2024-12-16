@@ -82,6 +82,13 @@ const QuanLyBanHang = () => {
     }
   }, [danhMucs]);
 
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+      console.log('Goi du lieu');
+    }, []),
+  );
+
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
     const id_nhaHang = user.id_nhaHang._id;

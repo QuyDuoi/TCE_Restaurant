@@ -3,17 +3,14 @@ import {
   Image,
   Dimensions,
   StyleSheet,
-  TouchableOpacity,
   Text,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
 import RowComponent from '../QuanLyThucDon/Hoa/components/RowComponent';
 import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
-import {IPV4} from '../../services/api';
 import CheckBox from 'react-native-check-box';
-import {useDispatch} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
