@@ -42,6 +42,7 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoadingModal from 'react-native-loading-modal';
 import {io} from 'socket.io-client';
+import {useToast} from '../../../customcomponent/CustomToast';
 
 const {height: ScreenHeight} = Dimensions.get('window');
 
@@ -86,6 +87,9 @@ const ChiTietHoaDonNVPV = (props: Props) => {
         }, 0)
       : 0,
   );
+
+  const {showToast} = useToast();
+
   const [totalFinalBill, setTotalFinalBill] = useState(
     hoaDon.tongGiaTri ? hoaDon.tongGiaTri : 0,
   );
@@ -257,7 +261,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           activeOpacity={0.5}
           style={hoaStyles.buttonEdit}
           onPress={() => {
-            ToastAndroid.show('Dang cap nhat', ToastAndroid.SHORT);
+            showToast('remove', 'Tính năng đang được phát triển!', 'white', 1500);
           }}>
           <Icon name="edit" size={20} color={colors.white} />
         </TouchableOpacity>
@@ -265,7 +269,12 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           activeOpacity={0.5}
           style={hoaStyles.buttonDelete}
           onPress={() => {
-            handleDeleteChiTietHoaDon(item);
+            if (item.trangThai === false) {
+              handleDeleteChiTietHoaDon(item);
+              showToast('check', 'Xóa món thành công.', 'white', 1500);
+            } else {
+              showToast('remove', 'Món ăn đã hoàn thành, không thể xóa.', 'white', 2000);
+            }
           }}>
           <Icon name="trash" size={20} color={colors.white} />
         </TouchableOpacity>
