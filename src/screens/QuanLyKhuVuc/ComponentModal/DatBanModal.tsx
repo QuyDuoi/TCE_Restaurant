@@ -87,7 +87,7 @@ const DatBanModal = (props: Props) => {
                       selectedBan.tenBan.length === 1
                         ? 'Bàn ' + selectedBan.tenBan
                         : selectedBan.tenBan
-                    } - ${selectedBan.kv.tenKhuVuc}`}
+                    } - ${selectedBan.kv ? selectedBan.kv.tenKhuVuc : '2'}`}
                     numberOfLines={1}
                     readonly
                     flex={1}

@@ -38,7 +38,9 @@ const TableBookingDetail = (props: Props) => {
             <Text style={stylesContainer.title}>Chi tiết đặt bàn</Text>
             <Text style={stylesContainer.subTitle}>{`${
               slectedBan.tenBan.length === 1 ? 'Bàn ' : ''
-            }${slectedBan.tenBan} | ${slectedBan.kv.tenKhuVuc || 'N/A'}`}</Text>
+            }${slectedBan.tenBan} | ${
+              slectedBan.kv ? slectedBan.kv.tenKhuVuc : '2'
+            }`}</Text>
           </View>
           <SpaceComponent height={14} />
           <RowComponent>

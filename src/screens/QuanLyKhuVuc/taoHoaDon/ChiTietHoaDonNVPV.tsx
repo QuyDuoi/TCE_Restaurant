@@ -7,6 +7,7 @@ import {
   FlatList,
   Dimensions,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -50,8 +51,14 @@ interface Props {
 const ChiTietHoaDonNVPV = (props: Props) => {
   const {hoaDon, tenKhuVuc, tenBan, caLam} = props.route.params;
 
+  const tenBanNe = tenBan ? tenBan?.toLowerCase() : '';
+
   const chiTietHoaDons = useSelector(
     (state: RootState) => state.chiTietHoaDons.chiTietHoaDons,
+  );
+
+  const chiTietStatus = useSelector(
+    (state: RootState) => state.chiTietHoaDons.status,
   );
 
   const navigation = useNavigation<any>();
@@ -62,6 +69,8 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const [visibleModalPTTT, setVisibleModalPTTT] = useState(false);
   const [visibleModalSoLuongMon, setVisibleModalSoLuongMon] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const [isLoadingChiTiet, setIsLoadingChiTiet] = useState(false);
+
   const dispatch = useDispatch();
   const [discount, setDiscount] = useState(
     hoaDon.tienGiamGia ? hoaDon.tienGiamGia : null,
@@ -83,6 +92,31 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   const [chiTietSelected, setChiTietSelected] = useState<ChiTietHoaDon | null>(
     null,
   );
+  // VUA FIX
+  const [tenKhuVucState, setTenKhuVucState] = useState('');
+
+  useEffect(() => {
+    setTenKhuVucState(tenKhuVuc);
+  }, []);
+
+  useEffect(() => {
+    if (!tenKhuVucState) {
+      setTenKhuVucState(tenKhuVuc);
+      setIsLoadingModal(true);
+    } else {
+      setIsLoadingModal(false);
+    }
+  }, [tenKhuVucState]);
+
+  useEffect(() => {
+    if (chiTietStatus !== 'succeeded') {
+      setIsLoadingChiTiet(true);
+    } else {
+      setIsLoadingChiTiet(false);
+    }
+  }, [chiTietStatus]);
+
+  //END VUA FIX
 
   let totalBillCal = chiTietHoaDons.reduce((total: number, item: any) => {
     return (total += item.giaTien);
@@ -273,8 +307,10 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                     />
                     <TextComponent
                       text={`${
-                        tenBan.length == 1 ? 'Ban: ' : ''
-                      }${tenBan} | ${tenKhuVuc}`}
+                        !tenBanNe.includes('bàn') && !tenBanNe.includes('ban')
+                          ? 'Bàn: '
+                          : ''
+                      }${tenBan} | ${tenKhuVucState}`}
                       styles={styles.text2}
                     />
                   </RowComponent>
@@ -419,54 +455,67 @@ const ChiTietHoaDonNVPV = (props: Props) => {
               )}
               {
                 //scroll view
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor:
-                      chiTietHoaDons.length > 0 ? colors.white : 'transparent',
-                  }}>
-                  {chiTietHoaDons.length > 0 ? (
-                    <SwipeListView
-                      data={chiTietHoaDons}
-                      renderItem={renderItem}
-                      nestedScrollEnabled={true}
-                      keyExtractor={(item, index) => index.toString()}
-                      renderHiddenItem={
+                isLoadingChiTiet ? (
+                  <View
+                    style={{
+                      height: ScreenHeight * 0.1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <ActivityIndicator size={'small'} color={colors.orange} />
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor:
                         chiTietHoaDons.length > 0
-                          ? renderHiddenItemChiTietHoaDon
-                          : undefined
-                      }
-                      ListEmptyComponent={() => (
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                          <SpaceComponent height={36} />
+                          ? colors.white
+                          : 'transparent',
+                    }}>
+                    {chiTietHoaDons.length > 0 && !isLoadingChiTiet ? (
+                      <SwipeListView
+                        data={chiTietHoaDons}
+                        renderItem={renderItem}
+                        nestedScrollEnabled={true}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderHiddenItem={
+                          chiTietHoaDons.length > 0
+                            ? renderHiddenItemChiTietHoaDon
+                            : undefined
+                        }
+                        ListEmptyComponent={() => (
+                          <View style={{flex: 1, alignItems: 'center'}}>
+                            <SpaceComponent height={36} />
+                          </View>
+                        )}
+                        disableRightSwipe={true}
+                        rightOpenValue={-110}
+                        stopRightSwipe={-120}
+                        previewRowKey={chiTietHoaDons.length > 0 ? '0' : ''}
+                        previewOpenValue={chiTietHoaDons.length > 0 ? -40 : 0}
+                        previewOpenDelay={chiTietHoaDons.length > 0 ? 2000 : 0}
+                      />
+                    ) : (
+                      <View style={{flex: 1, alignItems: 'center'}}>
+                        <View style={{paddingVertical: 16}}>
+                          <TextComponent
+                            text="Danh sách trống!"
+                            size={14}
+                            color={colors.desc}
+                          />
                         </View>
-                      )}
-                      disableRightSwipe={true}
-                      rightOpenValue={-110}
-                      stopRightSwipe={-120}
-                      previewRowKey={chiTietHoaDons.length > 0 ? '0' : ''}
-                      previewOpenValue={chiTietHoaDons.length > 0 ? -40 : 0}
-                      previewOpenDelay={chiTietHoaDons.length > 0 ? 2000 : 0}
-                    />
-                  ) : (
-                    <View style={{flex: 1, alignItems: 'center'}}>
-                      <View style={{paddingVertical: 16}}>
-                        <TextComponent
-                          text="Danh sách trống!"
-                          size={14}
-                          color={colors.desc}
+                        <View
+                          style={{
+                            width: '100%',
+                            height: 1 * 1.5,
+                            backgroundColor: colors.desc,
+                          }}
                         />
                       </View>
-                      <View
-                        style={{
-                          width: '100%',
-                          height: 1 * 1.5,
-                          backgroundColor: colors.desc,
-                        }}
-                      />
-                    </View>
-                  )}
-                </View>
+                    )}
+                  </View>
+                )
                 // end scroll view
               }
             </SectionComponent>
@@ -583,7 +632,6 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           </RowComponent>
         </ScrollView>
       </View>
-
       <ModalGiamGia
         visible={visibleModalGiamGia}
         onClose={handleOpenModalGiamGia}

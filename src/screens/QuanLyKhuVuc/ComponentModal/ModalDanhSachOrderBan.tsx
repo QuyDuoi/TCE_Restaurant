@@ -25,7 +25,7 @@ interface Props {
 const ModalDanhSachOrderBan = (props: Props) => {
   const {visible, onClose, danhSachOrder, selectedBan} = props;
   const tenBan = selectedBan?.tenBan;
-  const tenKhuVuc = selectedBan?.kv.tenKhuVuc;
+  const tenKhuVuc = selectedBan?.kv ? selectedBan?.kv.tenKhuVuc : '2';
   const {showToast} = useToast();
 
   const [isLoadingModal, setIsLoadingModal] = useState(false);

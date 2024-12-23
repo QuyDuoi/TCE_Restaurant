@@ -16,7 +16,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../../store/Slices/UserSlice';
-import { useToast } from '../../customcomponent/CustomToast';
+import {useToast} from '../../customcomponent/CustomToast';
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -81,7 +81,7 @@ const LoginScreen = () => {
         if (result) {
           setIsLoadingLogin(false);
           setTimeout(() => {
-            showToast("check", "Đăng nhập thành công", "white", 1500);
+            showToast('check', 'Đăng nhập thành công', 'white', 1500);
           }, 1000);
         } else {
           setTimeout(() => {
@@ -112,7 +112,14 @@ const LoginScreen = () => {
           }),
         );
 
-        navigation.navigate('Drawer', {nhanVien});
+        if (
+          nhanVien.vaiTro != 'Nhân viên phục vụ' &&
+          nhanVien.vaiTro !== 'Đầu bếp'
+        ) {
+          navigation.navigate('Drawer', {nhanVien});
+        } else {
+          navigation.navigate('BottomTabs', {nhanVien});
+        }
       }
     } catch (error) {
       console.log('Error code: ', error);
@@ -239,7 +246,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     fontSize: 16,
     marginBottom: 10,
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   loginButton: {
     width: '100%',

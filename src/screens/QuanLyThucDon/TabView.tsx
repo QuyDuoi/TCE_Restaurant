@@ -1,16 +1,6 @@
 import * as React from 'react';
-import {
-  View,
-  useWindowDimensions,
-  Text,
-  TextInput,
-} from 'react-native';
-import {
-  TabView,
-  TabBar,
-  TabBarProps,
-  TabBarItem,
-} from 'react-native-tab-view';
+import {View, useWindowDimensions, Text, TextInput} from 'react-native';
+import {TabView, TabBar, TabBarProps, TabBarItem} from 'react-native-tab-view';
 
 import DanhMucComponent from './DanhMucComponent';
 import NhomToppingComponent from './Hoa/components/NhomToppingComponent';
@@ -18,11 +8,11 @@ import {hoaStyles} from './Hoa/styles/hoaStyles';
 import SettingModaDanhMuc from '../QuanLyCaLam/SettingModaDanhMuc';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SpaceComponent from './Hoa/components/SpaceComponent';
-import { useFocusEffect } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchDanhMucVaMonAn } from '../../store/Thunks/danhMucThunks';
-import { AppDispatch } from '../../store/store';
-import { UserLogin } from '../../navigation/CustomDrawer';
+import {useFocusEffect} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
+import {AppDispatch, RootState} from '../../store/store';
+import {UserLogin} from '../../navigation/CustomDrawer';
 // Định nghĩa kiểu cho các route của TabView
 interface Route {
   key: string;
@@ -64,6 +54,8 @@ export default function MyTabs(props: Props) {
   const dispatch = useDispatch<AppDispatch>();
   const id_nhaHang = user.id_nhaHang._id;
 
+  const monAns = useSelector((state: RootState) => state.monAn.monAns);
+
   const [state, setState] = React.useState<State>({
     index: 0,
     routes: [
@@ -74,12 +66,21 @@ export default function MyTabs(props: Props) {
     searchQueryNhomTopping: '',
   });
 
-  useFocusEffect(
-      React.useCallback(() => {
-        dispatch(fetchDanhMucVaMonAn(id_nhaHang));
-        console.log('Goi du lieu');
-      }, []),
-    );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     if (monAns.length === 0) {
+  //       dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+  //       console.log('Goi du lieu');
+  //     }
+  //   }, []),
+  // );
+
+  React.useEffect(() => {
+    if (monAns.length === 0) {
+      dispatch(fetchDanhMucVaMonAn(id_nhaHang));
+      console.log('Goi du lieu');
+    }
+  }, []);
 
   const renderScene = ({route}: {route: Route}) => {
     switch (route.key) {

@@ -51,7 +51,9 @@ function DrawerNavigator({userInfo}): React.JSX.Element {
   return (
     <Drawer.Navigator
       initialRouteName="NhanVien"
-      drawerContent={props => <CustomDrawer {...props} userInfo={thongTinUser} />}
+      drawerContent={props => (
+        <CustomDrawer {...props} userInfo={thongTinUser} />
+      )}
       screenOptions={{
         drawerActiveTintColor: 'white',
         drawerInactiveTintColor: 'gray',
@@ -130,7 +132,8 @@ function DrawerNavigator({userInfo}): React.JSX.Element {
           ),
         }}
       />
-      {(thongTinUser?.vaiTro === 'Quản lý' || thongTinUser?.vaiTro === 'Đầu bếp') && (
+      {(thongTinUser?.vaiTro === 'Quản lý' ||
+        thongTinUser?.vaiTro === 'Đầu bếp') && (
         <Drawer.Screen
           name="LenMon"
           component={FoodOrderScreen}

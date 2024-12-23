@@ -10,6 +10,7 @@ import moment from 'moment';
 import {ActivityIndicator, Text, View} from 'react-native';
 import {styles} from './src/navigation/CustomDrawer';
 import {ToastProvider} from './src/customcomponent/CustomToast';
+import BottomNavigator from './src/navigation/BottomNavigator';
 
 const Stack = createStackNavigator();
 
@@ -25,8 +26,8 @@ const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
   const [initializing, setInitializing] = useState(true);
-  const [userInfo, setUserInfo] = useState();
-  const [thongTin, setThongTin] = useState(null);
+  const [userInfo, setUserInfo] = useState<any>();
+  const [thongTin, setThongTin] = useState<any>(null);
 
   const fetchUserInfo = async () => {
     try {
@@ -81,7 +82,15 @@ function App(): React.JSX.Element {
     <Provider store={store}>
       <ToastProvider>
         <NavigationContainer independent={true}>
-          <Stack.Navigator initialRouteName={userInfo ? 'Drawer' : 'Login'}>
+          <Stack.Navigator
+            initialRouteName={
+              userInfo
+                ? thongTin.vaiTro === 'Quản lý' ||
+                  thongTin.vaiTro === 'Nhân viên thu ngân'
+                  ? 'Drawer'
+                  : 'BottomTabs'
+                : 'Login'
+            }>
             <Stack.Screen
               name="Login"
               component={LoginScreen}
@@ -89,6 +98,9 @@ function App(): React.JSX.Element {
             />
             <Stack.Screen name="Drawer" options={{headerShown: false}}>
               {props => <DrawerNavigator {...props} userInfo={thongTin} />}
+            </Stack.Screen>
+            <Stack.Screen name="BottomTabs" options={{headerShown: false}}>
+              {props => <BottomNavigator {...props} userInfo={thongTin} />}
             </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
