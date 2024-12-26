@@ -56,8 +56,8 @@ const QuanLyCaLam = (props: Props) => {
   const [soDuBanDau, setSoDuBanDau] = useState('');
 
   const user: UserLogin = useSelector(state => state.user);
-  const caLams = useSelector((state: RootState) => state.calam.caLams);
-  const caLamStatus = useSelector((state: RootState) => state.calam.status);
+  const caLams = useSelector((state: RootState) => state.caLam.caLams);
+  const caLamStatus = useSelector((state: RootState) => state.caLam.status);
   const id_nhanVien = user._id;
   const id_nhaHang = user.id_nhaHang._id;
 
@@ -181,7 +181,7 @@ const QuanLyCaLam = (props: Props) => {
       <ItemCaLam
         batDau={item.batDau?.toLocaleString('vi-VN')}
         ketThuc={item.ketThuc?.toLocaleString('vi-VN')}
-        nhanVienMoCa={item.id_nhanVien.hoTen}
+        nhanVienMoCa={item.id_nhanVien?.hoTen}
         onPress={() => {
           navigation.navigate('ChiTietCaLam', {caLam: item});
         }}

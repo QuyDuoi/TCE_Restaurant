@@ -17,12 +17,11 @@ import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
 import ModalChucNangKhuVuc from '../ComponentModal/ModalChucNangKhuVuc';
 import ModalThemSuaKhuVuc from '../ComponentModal/ModalThemSuaKhuVuc';
 import ModalThemSuaBan from '../ComponentModal/ModalThemSuaBan';
-import { useFocusEffect } from '@react-navigation/native';
-import { UserLogin } from '../../../navigation/CustomDrawer';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchKhuVucVaBan } from '../../../store/Thunks/khuVucThunks';
-import { fetchCaLam } from '../../../store/Slices/CaLamSlice';
-import { RootState } from '../../../store/store';
+import {useFocusEffect} from '@react-navigation/native';
+import {UserLogin} from '../../../navigation/CustomDrawer';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchKhuVucVaBan} from '../../../store/Thunks/khuVucThunks';
+import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
 
 interface Route {
   key: string;
@@ -85,7 +84,7 @@ const KhuVucTabView = ({
       const id_nhaHang = user.id_nhaHang._id;
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
       dispatch(fetchCaLam(id_nhaHang) as any);
-    }, [dispatch, user.id_nhaHang._id])
+    }, [dispatch, user.id_nhaHang._id]),
   );
 
   const renderSceneArea = ({route}: {route: Route}) => {

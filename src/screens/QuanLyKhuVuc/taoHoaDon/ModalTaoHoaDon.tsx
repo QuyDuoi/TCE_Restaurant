@@ -1,5 +1,5 @@
-import {View, StyleSheet, ToastAndroid} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
 import ModalComponent from '../../QuanLyThucDon/Hoa/components/ModalComponent';
 import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
@@ -10,7 +10,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addNewHoaDon} from '../../../store/Slices/HoaDonSlice';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
-import {fetchCaLam} from '../../../store/Slices/CaLamSlice';
 import LoadingModal from 'react-native-loading-modal';
 import {UserLogin} from '../../../navigation/CustomDrawer';
 import {useToast} from '../../../customcomponent/CustomToast';
@@ -31,15 +30,8 @@ const ModalTaoHoaDon = (props: Props) => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
-  const caLams = useSelector((state: RootState) => state.calam.caLams);
   const user: UserLogin = useSelector((state: RootState) => state.user);
   const idNhaHang = user?.id_nhaHang?._id;
-
-  useEffect(() => {
-    if (caLams.length === 0) {
-      dispatch(fetchCaLam(idNhaHang) as any);
-    }
-  }, [caLams]);
 
   const handleTaoHoaDon = async () => {
     setIsLoadingModal(true);
@@ -54,7 +46,7 @@ const ModalTaoHoaDon = (props: Props) => {
       const result = await dispatch(addNewHoaDon(data as any) as any).unwrap();
       // Nếu unwrap thành công
       setIsLoadingModal(false);
-      ToastAndroid.show('Tạo hóa đơn thành công', ToastAndroid.LONG);
+      showToast('check', 'Tạo hóa đơn thành công.', '#D1E4B3', 2000);
       navigation.navigate('ChiTietHoaDonNVPV', {
         hoaDon: result, // unwrap trả về payload trực tiếp
         tenKhuVuc: selectedBan?.kv?.tenKhuVuc,
@@ -136,7 +128,11 @@ const ModalTaoHoaDon = (props: Props) => {
           />
         </RowComponent>
       </ModalComponent>
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang tạo hóa đơn ..."
+        color={colors.orange}
+      />
     </>
   );
 };

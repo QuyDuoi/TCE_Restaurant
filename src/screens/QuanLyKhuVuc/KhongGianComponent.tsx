@@ -14,7 +14,7 @@ import TextComponent from '../QuanLyThucDon/Hoa/components/TextComponent';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
 import ModalChucNang from './ComponentModal/ModalChucNang';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
+import {AppDispatch, RootState} from '../../store/store';
 import {KhuVuc} from '../../store/Slices/KhuVucSlice';
 import {Ban} from '../../store/Slices/BanSlice';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -24,9 +24,7 @@ import ItemBanSearch from './Component/ItemBanSearch';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import io from 'socket.io-client';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
-import AlertDialog from '../../customcomponent/alertDialog';
 import ModalDanhSachOrderBan from './ComponentModal/ModalDanhSachOrderBan';
-import {useFocusEffect} from '@react-navigation/native';
 import {useToast} from '../../customcomponent/CustomToast';
 
 interface Props {
@@ -48,9 +46,11 @@ const KhongGianComponent = (props: Props) => {
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const user: UserLogin = useSelector(state => state.user);
+  const id_nhaHang = user?.id_nhaHang?._id;
+
   const {showToast} = useToast();
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const debouncedSearchQueryBan = useRef(
     debounce.debounce(async (text: string) => {
@@ -87,7 +87,6 @@ const KhongGianComponent = (props: Props) => {
   // Kết nối socket.io
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
-    const id_nhaHang = user.id_nhaHang._id;
 
     socket.on('themHoaDon', () => {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);

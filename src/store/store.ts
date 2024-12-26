@@ -22,7 +22,7 @@ export const store = configureStore({
     nhanVien: nhanVienReducer,
     khuVuc: khuVucReducer,
     ban: banReducer,
-    calam: caLamReducer,
+    caLam: caLamReducer,
     chiTietMon: chiTietMonReducer,
     user: userReducer,
   },

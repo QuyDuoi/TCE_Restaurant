@@ -14,16 +14,6 @@ import BottomNavigator from './src/navigation/BottomNavigator';
 
 const Stack = createStackNavigator();
 
-// function App(): React.JSX.Element {
-//   return (
-//     <Provider store={store}>
-//       <View style={{flex: 1}}>
-//           <DeletePostModal/>
-//       </View>
-//     </Provider>
-//   )
-// }
-
 function App(): React.JSX.Element {
   const [initializing, setInitializing] = useState(true);
   const [userInfo, setUserInfo] = useState<any>();

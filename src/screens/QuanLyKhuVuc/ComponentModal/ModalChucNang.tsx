@@ -39,12 +39,12 @@ const ModalChucNang = (props: Props) => {
   const [isVisibleModalHuyBan, setIsVisibleModalHuyBan] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [trangThaiCa, setTrangThaiCa] = useState(false);
-  const caLams = useSelector((state: RootState) => state.calam.caLams);
 
   const navigation = useNavigation<any>();
 
   const bans = useSelector((state: RootState) => state.ban.bans);
   const user: any = useSelector((state: RootState) => state.user);
+  const caLams = useSelector((state: RootState) => state.caLam.caLams);
   const {showToast} = useToast();
   const id_nhaHang = user.id_nhaHang._id;
 
@@ -66,12 +66,14 @@ const ModalChucNang = (props: Props) => {
     // Kiểm tra lại các ca làm có trường ketThuc là null
     const checkCaLam = caLams.filter(caLam => caLam.ketThuc == null);
 
+    console.log('render lai du lieu');
+
     if (checkCaLam.length > 0) {
       setTrangThaiCa(true); // Trạng thái chưa có ca mở
     } else {
       setTrangThaiCa(false); // Trạng thái đang có ca mở
     }
-  }, []);
+  }, [caLams]);
 
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
@@ -108,17 +110,16 @@ const ModalChucNang = (props: Props) => {
     );
 
     if (result.type.endsWith('fulfilled')) {
-      ToastAndroid.show('Hủy bàn thành công', ToastAndroid.LONG);
       setIsLoadingModal(false);
       setIsVisibleModalHuyBan(false);
+      showToast('check', 'Hủy bàn đặt thành công.', '#D1E4B3', 2000);
       onCloseParent();
     } else {
       setTimeout(() => {
         setIsLoadingModal(false);
       }, 2000);
-      ToastAndroid.show('Hủy bàn thất bại', ToastAndroid.LONG);
+      showToast('remove', 'Hủy bàn đặt thất bại!', 'white', 2000);
     }
-
     onClose();
   };
 
@@ -216,7 +217,17 @@ const ModalChucNang = (props: Props) => {
             <ButtonComponent
               title="Xem thông tin bàn đặt"
               onPress={() => {
-                setIsVisibleChiTietBan(true);
+                if (selectedBan === 'Đã đặt') {
+                  setIsVisibleChiTietBan(true);
+                } else {
+                  onClose();
+                  showToast(
+                    'remove',
+                    'Chưa có thông tin đặt bàn!',
+                    'white',
+                    2000,
+                  );
+                }
               }}
               bgrColor={colors.orange}
               titleColor={colors.white}
@@ -233,7 +244,7 @@ const ModalChucNang = (props: Props) => {
                   showToast('remove', 'Bàn đang được sử dụng!', 'white', 2000);
                 } else if (selectedBan.trangThai === 'Trống') {
                   onClose();
-                  showToast('remove', 'Bàn đang trống!', 'white', 2000);
+                  showToast('remove', 'Không có thông tin bàn đặt để hủy!', 'white', 2000);
                 } else {
                   setIsVisibleModalHuyBan(true);
                 }
@@ -289,7 +300,11 @@ const ModalChucNang = (props: Props) => {
         }}
         image={<Icon name="close" size={22} color="red" />}
       />
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 };

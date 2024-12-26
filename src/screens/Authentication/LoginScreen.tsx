@@ -53,10 +53,16 @@ const LoginScreen = () => {
         const formattedPhoneNumber = phoneNumber.startsWith('0')
           ? `+84${phoneNumber.substring(1)}`
           : `+84${phoneNumber}`;
+        console.log('1');
+
         const confirmationResult = await auth().signInWithPhoneNumber(
           formattedPhoneNumber,
         );
+        console.log('2');
+
         setConfirm(confirmationResult);
+        console.log('3');
+
         setIsLoadingModal(false);
       }
     } catch (error) {
@@ -74,6 +80,8 @@ const LoginScreen = () => {
       if (confirm) {
         const userCredential = await confirm.confirm(code);
         const idToken = await userCredential.user.getIdToken(true);
+
+        console.log('Thong tin user: ', userCredential);
 
         const result = await checkLogin(idToken);
 

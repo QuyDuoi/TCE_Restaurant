@@ -52,7 +52,6 @@ const ThemMonNVPV = (props: Props) => {
 
   const [cartCount, setCartCount] = useState(0);
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [filteredMonAns, setFilteredMonAns] = useState<MonAn[]>([]);
   const [onChange, setOnChange] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -72,8 +71,8 @@ const ThemMonNVPV = (props: Props) => {
     setMonAnsList(monAns);
   }, [monAns]);
 
-  const handleSubmitEditing = async (text: string) => {
-    if (text.trim().length !== 0) {
+  const timKiemMonAn = async (text: string) => {
+    if (text.trim().length > 0) {
       setIsLoading(true);
       try {
         const data = await searchMonAn(text, user?.id_nhaHang?._id);
@@ -86,21 +85,28 @@ const ThemMonNVPV = (props: Props) => {
       } catch (error) {
         console.log(error);
       } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 700);
+        setIsLoading(false);
       }
     } else {
       setFilteredMonAns([]);
+      setShowNoResult(false);
     }
   };
 
-  useEffect(() => {
-    if (searchQuery.trim().length === 0) {
-      setFilteredMonAns([]);
-      setShowNoResult(false);
-    }
-  }, [searchQuery]);
+  const debounceTimKiemMonAn = () => {
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    return (text: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        timKiemMonAn(text);
+      }, 1000);
+    };
+  };
+
+  const onChangeText = debounceTimKiemMonAn();
 
   const chiTietsRef = useRef<
     {
@@ -159,9 +165,7 @@ const ThemMonNVPV = (props: Props) => {
           },
         ];
       }
-      // chiTietsRef.current = chiTietsRef.current.filter(
-      //   (item: any) => item.soLuongMon > 0,
-      // );
+
       setCartCount(
         chiTietsRef.current.filter((item: any) => item.soLuongMon > 0).length,
       );
@@ -214,7 +218,7 @@ const ThemMonNVPV = (props: Props) => {
         style={[hoaStyles.containerTopping, {backgroundColor: colors.white}]}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
           <View style={[{alignItems: 'center', width: '100%'}]}>
-            <TitleComponent text="Thêm món" size={20} color={colors.orange} />
+            <TitleComponent text="Gọi món" size={20} color={colors.orange} />
             {hoaDon.id_ban ? (
               <TitleComponent
                 text={`${
@@ -230,8 +234,7 @@ const ThemMonNVPV = (props: Props) => {
           <View style={{paddingHorizontal: 10, flex: 1}}>
             <View>
               <InputComponent
-                value={searchQuery}
-                onChangeText={setSearchQuery}
+                onChangeText={text => onChangeText(text)}
                 styles={[
                   {backgroundColor: colors.search, borderRadius: 5, height: 45},
                 ]}
@@ -255,7 +258,6 @@ const ThemMonNVPV = (props: Props) => {
                 paddingHorizontal={0}
                 borderWidth={1 * 1.5}
                 bgrColor={colors.white}
-                onSubmitEditing={() => handleSubmitEditing(searchQuery)}
               />
             </View>
             <SpaceComponent height={10} />
@@ -331,8 +333,11 @@ const ThemMonNVPV = (props: Props) => {
                   nestedScrollEnabled={true}
                 />
               ) : showNoResult ? (
-                <View style={{flex: 1, justifyContent: 'center'}}>
-                  <TextComponent text="Không tìm thấy món ăn" />
+                <View style={{flex: 1, alignItems: 'center', marginTop: 12}}>
+                  <TextComponent
+                    color="red"
+                    text="Không tìm thấy món ăn phù hợp!"
+                  />
                 </View>
               ) : (
                 <FlatList
@@ -425,6 +430,7 @@ const ThemMonNVPV = (props: Props) => {
       <LoadingModal
         modalVisible={isLoadingModal}
         darkMode={false}
+        title="Đang xử lý ..."
         color={colors.orange}
       />
       <ModalMonTuChonNVPV

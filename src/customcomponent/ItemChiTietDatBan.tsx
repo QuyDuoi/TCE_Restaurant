@@ -28,7 +28,12 @@ const TableBookingDetail = (props: Props) => {
     return null; // Kiểm tra nếu dữ liệu không tồn tại
   }
 
-  const thongTinBanDat = slectedBan?.ghiChu?.split(' - ');
+  const mangGhiChu = slectedBan?.ghiChu?.split(' - ');
+  const ghiChu = mangGhiChu[4];
+  const ngay = mangGhiChu[2];
+  const gio = mangGhiChu[3];
+  const hoten = mangGhiChu[0];
+  const soDienThoai = mangGhiChu[1];
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
@@ -43,41 +48,40 @@ const TableBookingDetail = (props: Props) => {
             }`}</Text>
           </View>
           <SpaceComponent height={14} />
-          <RowComponent>
+          <View>
             <TextComponent
-              text="Họ tên: "
-              styles={[{}]}
+              text="Thông tin khách: "
               fontWeight="700"
               color={colors.black}
               size={16}
             />
             <TextComponent
-              text={
-                thongTinBanDat && thongTinBanDat[3] ? thongTinBanDat[3] : 'N/A'
-              }
+              text={`${hoten} - ${soDienThoai}`}
               styles={stylesContainer.subTitle}
             />
-          </RowComponent>
+          </View>
           <SpaceComponent height={6} />
           <RowComponent>
             <TextComponent
               text="Ngày đặt: "
-              styles={[{}]}
               fontWeight="700"
               color={colors.black}
               size={16}
             />
-            <TextComponent
-              text={
-                thongTinBanDat && thongTinBanDat[1] && thongTinBanDat[2]
-                  ? thongTinBanDat[2] + ' - ' + thongTinBanDat[1]
-                  : 'N/A'
-              }
-              styles={stylesContainer.subTitle}
-            />
+            <TextComponent text={ngay} styles={stylesContainer.subTitle} />
           </RowComponent>
           <SpaceComponent height={6} />
-          <RowComponent styles={{}}>
+          <RowComponent>
+            <TextComponent
+              text="Thời gian đến dự kiến: "
+              fontWeight="700"
+              color={colors.black}
+              size={16}
+            />
+            <TextComponent text={gio} styles={stylesContainer.subTitle} />
+          </RowComponent>
+          <SpaceComponent height={6} />
+          <RowComponent>
             <TextComponent
               text="Ghi chú: "
               fontWeight="700"
@@ -86,13 +90,7 @@ const TableBookingDetail = (props: Props) => {
             />
             <View style={{width: '100%'}}>
               <TextComponent
-                text={
-                  thongTinBanDat && thongTinBanDat[0]
-                    ? thongTinBanDat[0]
-                    : thongTinBanDat[0] === ''
-                    ? 'Không có'
-                    : slectedBan?.ghiChu
-                }
+                text={ghiChu}
                 styles={{
                   width: '80%',
                   justifyContent: 'center',

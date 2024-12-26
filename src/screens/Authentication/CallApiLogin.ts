@@ -3,8 +3,10 @@ import { ipAddress } from '../../services/api';
 
 export const checkPhoneNumber = async (phoneNumber: string) => {
   try {
+    
     const response = await axios.post(`${ipAddress}auth/checkLogin`, { phoneNumber });
-
+    console.log("da vao");
+    
     if (response.status === 200) {
       console.log(response.data.message);
       // Xử lý thành công (e.g., hiển thị thông báo gửi OTP)

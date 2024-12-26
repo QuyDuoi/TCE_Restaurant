@@ -49,8 +49,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
 
   const navigation = useNavigation<any>();
 
-  const nhanviens = useSelector((state: RootState) => state.nhanVien.nhanViens);
-  const calams = useSelector((state: RootState) => state.calam.caLams);
   const user: UserLogin = useSelector((state: RootState) => state.user);
 
   const [visibleModalGiamGia, setVisibleModalGiamGia] = useState(false);

@@ -29,15 +29,12 @@ import TextComponent from '../../QuanLyThucDon/Hoa/components/TextComponent';
 import {
   formatDate,
   formatMoney,
-  formatTime,
 } from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import ModalGiamGia from '../../QuanLyCaLam/chiTietHoaDon/ModalGiamGia';
 import ModalPTTT from '../../QuanLyCaLam/chiTietHoaDon/ModalPTTT';
 import ModalSoLuongMon from '../../QuanLyCaLam/chiTietHoaDon/ModalSoLuongMon';
 import ItemCTHDnvpv from './ItemCTHDnvpv';
-import {random} from 'lodash';
-import UnsavedChangesModal from '../../../customcomponent/modalSave';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoadingModal from 'react-native-loading-modal';
@@ -220,19 +217,14 @@ const ChiTietHoaDonNVPV = (props: Props) => {
       );
       setIsLoadingModal(true);
       if (resultFetch.type.endsWith('fulfilled')) {
-        setTimeout(() => {
-          setIsLoadingModal(false);
-        }, 1000);
+        setIsLoadingModal(false);
+        showToast('check', 'Xóa món thành công.', 'white', 1500);
       }
     } else {
       setIsLoadingModal(false);
       console.log(result.payload);
     }
   };
-
-  const nhanVienThanhToan = nhanviens.find(
-    item => item._id === hoaDon.id_nhanVien,
-  );
 
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
     //UPDATE MODEL CHITIETHOADON
@@ -261,7 +253,12 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           activeOpacity={0.5}
           style={hoaStyles.buttonEdit}
           onPress={() => {
-            showToast('remove', 'Tính năng đang được phát triển!', 'white', 1500);
+            showToast(
+              'remove',
+              'Tính năng đang được phát triển!',
+              'white',
+              1500,
+            );
           }}>
           <Icon name="edit" size={20} color={colors.white} />
         </TouchableOpacity>
@@ -271,9 +268,13 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           onPress={() => {
             if (item.trangThai === false) {
               handleDeleteChiTietHoaDon(item);
-              showToast('check', 'Xóa món thành công.', 'white', 1500);
             } else {
-              showToast('remove', 'Món ăn đã hoàn thành, không thể xóa.', 'white', 2000);
+              showToast(
+                'remove',
+                'Món ăn đã hoàn thành, không thể xóa.',
+                'white',
+                2000,
+              );
             }
           }}>
           <Icon name="trash" size={20} color={colors.white} />
@@ -365,14 +366,10 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                 </SectionComponent>
                 <View style={styles.indicator} />
               </View>
-
-              {/* end view ban an */}
             </View>
           ) : null}
-          <SpaceComponent height={5} />
-          {/* view giam gia */}
 
-          <SpaceComponent height={16} />
+          <SpaceComponent height={10} />
 
           {/* view chi tiet mon an */}
           <View
@@ -386,7 +383,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             <SectionComponent styles={[styles.section, {flex: 1}]}>
               <RowComponent justify="space-between">
                 <TextComponent
-                  text="Danh sách order: "
+                  text="Danh sách gọi món: "
                   styles={styles.text}
                   fontWeight="bold"
                 />
@@ -525,11 +522,8 @@ const ChiTietHoaDonNVPV = (props: Props) => {
                     )}
                   </View>
                 )
-                // end scroll view
               }
             </SectionComponent>
-
-            {/* end view chi tiet mon an */}
           </View>
 
           <View
@@ -542,7 +536,10 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             {isPaid ? (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
-                  <TextComponent text="NV thanh toán: " styles={styles.text} />
+                  <TextComponent
+                    text="Nhân viên thanh toán: "
+                    styles={styles.text}
+                  />
                   <TextComponent
                     text={hoaDon.nhanVienThanhToan ?? 'Nhân viên'}
                     styles={styles.text2}
@@ -552,7 +549,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             ) : (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
-                  <TextComponent text="NV tạo: " styles={styles.text} />
+                  <TextComponent text="Nhân viên tạo: " styles={styles.text} />
                   <TextComponent
                     text={hoaDon.nhanVienTao ?? 'Nhân viên'}
                     styles={styles.text2}
@@ -571,7 +568,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
             ]}>
             <SectionComponent styles={styles.section}>
               <RowComponent justify="space-between">
-                <TextComponent text="Tổng bill: " styles={styles.text} />
+                <TextComponent text="Tổng tạm tính: " styles={styles.text} />
                 <TextComponent
                   text={`${formatMoney(totalBill)}`}
                   styles={styles.text}
@@ -666,6 +663,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
       <LoadingModal
         modalVisible={isLoadingModal}
         darkMode={false}
+        title="Đang xử lý ..."
         color={colors.orange}
       />
     </>
