@@ -18,6 +18,7 @@ import {IPV4} from '../../services/api';
 import {Linking} from 'react-native';
 import LoadingModal from 'react-native-loading-modal';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
+import {useToast} from '../../customcomponent/CustomToast';
 
 const EmployeeDetails = () => {
   const route = useRoute();
@@ -26,6 +27,7 @@ const EmployeeDetails = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const {showToast} = useToast();
 
   const {nhanVien} = route.params;
   const goiDien = () => {
@@ -44,10 +46,6 @@ const EmployeeDetails = () => {
     // Xử lý khi không có nhanVien
   }
 
-  const employeeImage = nhanVien.hinhAnh
-    ? nhanVien.hinhAnh.replace('localhost', IPV4) // Thay đổi IP theo cấu hình server
-    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
-
   const copyToClipboard = () => {
     Clipboard.setString(nhanVien.soDienThoai);
     Alert.alert('Copied', 'Số điện thoại đã được sao chép vào bộ nhớ tạm');
@@ -58,15 +56,13 @@ const EmployeeDetails = () => {
     dispatch(deleteNhanVienThunk(nhanVien._id)) // Gọi action xóa nhân viên
       .unwrap()
       .then(() => {
-        Alert.alert('Thành công', 'Đã xóa nhân viên'); // Thông báo thành công
+        showToast('check', 'Đã xóa thông tin nhân viên.', 'white', 1500);
         navigation.goBack(); // Quay lại màn hình trước đó
         setIsLoadingModal(false);
       })
       .catch(error => {
-        setTimeout(() => {
-          setIsLoadingModal(false);
-        }, 2000);
-        Alert.alert('Lỗi', `Xóa nhân viên không thành công: ${error}`);
+        setIsLoadingModal(false);
+        showToast('remove', `Xóa nhân viên thất bại, ${error}!`, 'white', 2000);
       });
   };
 
@@ -75,7 +71,7 @@ const EmployeeDetails = () => {
       <View style={styles.container}>
         <Text style={styles.headerTitle}>TCE_RESTAURANT</Text>
 
-        <Image style={styles.avatar} source={{uri: employeeImage}} />
+        <Image style={styles.avatar} source={{uri: nhanVien.hinhAnh}} />
 
         <Text style={styles.employeeName}>{nhanVien.hoTen}</Text>
         <View style={styles.box}>
@@ -143,7 +139,7 @@ const EmployeeDetails = () => {
           />
         )}
       </View>
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal modalVisible={isLoadingModal} title='Đang xử lý ...' color={colors.orange} />
     </>
   );
 };

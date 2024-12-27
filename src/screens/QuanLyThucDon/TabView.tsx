@@ -52,7 +52,7 @@ export default function MyTabs(props: Props) {
   const [visible, setVisible] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const id_nhaHang = user.id_nhaHang._id;
+  const id_nhaHang = user?.id_nhaHang?._id;
 
   const monAns = useSelector((state: RootState) => state.monAn.monAns);
 

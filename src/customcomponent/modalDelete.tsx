@@ -19,41 +19,35 @@ const DeletePostModal: React.FC<ModalXoaBanProps> = ({
   onCancel,
 }) => {
   return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onCancel}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.header}>
-              <View style={styles.iconCircle}>
-                <FontAwesomeIcon
-                  icon={faTrashCan}
-                  size={20}
-                  color={'#F04438'}
-                />
-              </View>
-            </View>
-            <Text style={styles.modalTitle}>{title}</Text>
-            <Text style={styles.modalText}>{content}</Text>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonCancel]}
-                onPress={onCancel}>
-                <Text style={styles.cancelTextStyle}>Hủy</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonDelete]}
-                onPress={onDelete}>
-                <Text style={styles.deleteTextStyle}>Xác nhận</Text>
-              </TouchableOpacity>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onCancel}>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <View style={styles.header}>
+            <View style={styles.iconCircle}>
+              <FontAwesomeIcon icon={faTrashCan} size={20} color={'#F04438'} />
             </View>
           </View>
+          <Text style={styles.modalTitle}>{title}</Text>
+          <Text style={styles.modalText}>{content}</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonCancel]}
+              onPress={onCancel}>
+              <Text style={styles.cancelTextStyle}>Hủy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonDelete]}
+              onPress={onDelete}>
+              <Text style={styles.deleteTextStyle}>Xác nhận</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   );
 };
 

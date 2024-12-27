@@ -1,9 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  ActivityIndicator,
-} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
 import CardComponent from '../QuanLyThucDon/Hoa/components/CardComponent';
@@ -69,6 +64,7 @@ const ChiTietCaLam = ({route}: {route: any}) => {
   //fetch hoa don va khu vuc tu api ve redux store
   useEffect(() => {
     dispatch(fetchHoaDonTheoCaLam(caLam._id as string) as any);
+    console.log(caLam);
 
     if (bans.length === 0) {
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
@@ -265,7 +261,25 @@ const ChiTietCaLam = ({route}: {route: any}) => {
           <SpaceComponent height={10} />
           <View style={[styles.bottomContainer]}>
             <View style={{flex: 1, margin: 10}}>
-              <TitleComponent text="Danh sách hóa đơn" />
+              <View style={styles.view}>
+                <TitleComponent text="Danh sách hóa đơn" />
+                {!caLam.ketThuc && (
+                  <ButtonComponent
+                    title="Tạo phiếu thu chi"
+                    onPress={() => {
+                      setVisibleModalTaoPhieuTC(true);
+                    }}
+                    bgrColor={colors.blue2}
+                    titleColor={colors.white}
+                    titleSize={12}
+                    styles={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 5
+                    }}
+                    boderRadius={5}
+                  />
+                )}
+              </View>
               <SpaceComponent height={10} />
               {isLoadingFetch ? (
                 <ActivityIndicator
@@ -381,21 +395,6 @@ const ChiTietCaLam = ({route}: {route: any}) => {
             boderRadius={5}
           />
           <SpaceComponent width={6} />
-          <ButtonComponent
-            title="Tạo phiếu"
-            onPress={() => {
-              setVisibleModalTaoPhieuTC(true);
-            }}
-            bgrColor={colors.blue2}
-            titleColor={colors.white}
-            titleSize={12}
-            styles={{
-              paddingHorizontal: 10,
-              marginLeft: 10,
-              height: 20,
-            }}
-            boderRadius={5}
-          />
         </RowComponent>
         <TextComponent
           text={`Tổng thu: ${formatMoney(caLam.tongThu)}`}
@@ -413,7 +412,11 @@ const ChiTietCaLam = ({route}: {route: any}) => {
         onClose={() => setVisibleModalTaoPhieuTC(false)}
         caLam={caLam}
       />
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 };
@@ -435,6 +438,12 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 15,
     marginBottom: 8,
+  },
+  view: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 4,
   },
 });
 

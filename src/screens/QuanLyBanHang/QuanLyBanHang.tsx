@@ -310,7 +310,7 @@ const QuanLyBanHang = () => {
           <SpaceComponent height={10} />
           <RowComponent justify="space-between" styles={{marginVertical: 6}}>
             <ButtonComponent
-              title="Thêm món tự chọn"
+              title="Gọi món tự chọn"
               onPress={() => {
                 setVisibleModalMonTuChon(true);
               }}

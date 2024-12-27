@@ -58,7 +58,7 @@ const NhanVienComponent = props => {
   const user: UserLogin = useSelector(state => state.user);
 
   // **Lấy dữ liệu nhân viên từ API**
-  const id_nhaHang = user.id_nhaHang._id;
+  const id_nhaHang = user?.id_nhaHang?._id;
   useEffect(() => {
     if (status === 'idle') {
       dispatch(fetchNhanViens(id_nhaHang));

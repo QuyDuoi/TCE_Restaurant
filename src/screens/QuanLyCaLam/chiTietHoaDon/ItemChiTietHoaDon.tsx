@@ -19,7 +19,7 @@ const ItemChiTietHoaDon = (props: Props) => {
         <RowComponent justify="space-between" styles={{paddingHorizontal: 8}}>
           <View style={{width: '50%', alignItems: 'flex-start'}}>
             <TextComponent
-              text={nameMonAn ?? 'com ga'}
+              text={nameMonAn ?? 'Lẩu Vịt Măng Cay'}
               styles={styles.text}
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -29,13 +29,13 @@ const ItemChiTietHoaDon = (props: Props) => {
             onLongPress={onLongPress}
             styles={{alignItems: 'center'}}>
             <TextComponent
-              text={soLuong?.toString() ?? '-1'}
+              text={soLuong?.toString() ?? '1'}
               styles={styles.text}
             />
           </RowComponent>
           <View style={{width: '23%', alignItems: 'center'}}>
             <TextComponent
-              text={gia?.toString() ?? '100'}
+              text={gia?.toLocaleString('vi-VN') ?? '100'}
               styles={styles.text}
             />
           </View>

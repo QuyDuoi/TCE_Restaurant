@@ -384,13 +384,13 @@ const ChiTietHoaDonScreen = (props: Props) => {
               styles.sectionContainer,
               {
                 height:
-                  chiTietHoaDons.length <= 4 ? 'auto' : ScreenHeight * 0.4,
+                  chiTietHoaDons.length <= 4 ? 'auto' : ScreenHeight * 0.34,
               },
             ]}>
             <SectionComponent styles={[styles.section, {flex: 1}]}>
               <RowComponent justify="space-between">
                 <TextComponent
-                  text="Danh sách order: "
+                  text="Danh sách gọi món: "
                   styles={styles.text}
                   fontWeight="bold"
                 />
@@ -496,8 +496,6 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 // end scroll view
               }
             </SectionComponent>
-
-            {/* end view chi tiet mon an */}
           </View>
 
           <View
@@ -507,22 +505,24 @@ const ChiTietHoaDonScreen = (props: Props) => {
                 paddingHorizontal: 5,
               },
             ]}>
-            {isPaid ? (
+            <SectionComponent styles={styles.section}>
+              <RowComponent justify="space-between">
+                <TextComponent text="Nhân viên tạo: " styles={styles.text} />
+                <TextComponent
+                  text={hoaDon.nhanVienTao ?? 'Nhân viên'}
+                  styles={styles.text2}
+                />
+              </RowComponent>
+            </SectionComponent>
+            {isPaid && (
               <SectionComponent styles={styles.section}>
                 <RowComponent justify="space-between">
-                  <TextComponent text="NV thanh toán: " styles={styles.text} />
+                  <TextComponent
+                    text="Nhân viên thanh toán: "
+                    styles={styles.text}
+                  />
                   <TextComponent
                     text={hoaDon.nhanVienThanhToan ?? 'Nhân viên'}
-                    styles={styles.text2}
-                  />
-                </RowComponent>
-              </SectionComponent>
-            ) : (
-              <SectionComponent styles={styles.section}>
-                <RowComponent justify="space-between">
-                  <TextComponent text="NV tạo: " styles={styles.text} />
-                  <TextComponent
-                    text={hoaDon.nhanVienTao ?? 'Nhân viên'}
                     styles={styles.text2}
                   />
                 </RowComponent>
@@ -538,7 +538,7 @@ const ChiTietHoaDonScreen = (props: Props) => {
             ]}>
             <SectionComponent styles={styles.section}>
               <RowComponent justify="space-between">
-                <TextComponent text="Tổng bill: " styles={styles.text} />
+                <TextComponent text="Tổng tạm tính: " styles={styles.text} />
                 <TextComponent
                   text={`${formatMoney(totalBill)}`}
                   styles={styles.text}

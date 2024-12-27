@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Alert,
 } from 'react-native';
 import MonAn from '../../services/models/MonAnModel';
 import CustomModalChoiseCamera from '../../customcomponent/customModalChoiseCamera';
@@ -23,6 +22,7 @@ import {styles} from './ThemSuaStyle';
 import {useToast} from '../../customcomponent/CustomToast';
 import LoadingModal from 'react-native-loading-modal';
 import {colors} from './Hoa/contants/hoaColors';
+import {useNavigation} from '@react-navigation/native';
 
 function ManThemMonAn(): React.JSX.Element {
   const {showToast} = useToast();
@@ -37,6 +37,8 @@ function ManThemMonAn(): React.JSX.Element {
 
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const dispatch = useDispatch<AppDispatch>();
+  const navigation = useNavigation();
+
   const danhMucOptions = dsDanhMuc.map(
     (danhMuc: {_id: string; tenDanhMuc: string}) => ({
       label: danhMuc.tenDanhMuc,
@@ -76,20 +78,18 @@ function ManThemMonAn(): React.JSX.Element {
         .unwrap()
         .then(() => {
           setIsLoadingModal(false);
-          showToast('check', 'Thêm món ăn mới thành công', 'green', 1500);
+          navigation.goBack();
         })
         .catch(error => {
-          setTimeout(() => {
-            setIsLoadingModal(false);
-          }, 2000);
+          setIsLoadingModal(false);
           showToast('remove', error.message, 'white', 2000);
+        })
+        .finally(() => {
+          showToast('check', 'Thêm món ăn mới thành công', '#D1E4B3', 1500);
         });
-      Alert.alert('Thành công', 'Món ăn đã được thêm');
       // Logic thêm món ăn vào database hoặc xử lý thêm món ăn
     } else {
-      setTimeout(() => {
-        setIsLoadingModal(false);
-      }, 2000);
+      setIsLoadingModal(false);
       showToast('remove', 'Vui lòng kiểm tra lại thông tin', 'white', 2000);
     }
   };
@@ -227,7 +227,7 @@ function ManThemMonAn(): React.JSX.Element {
         </ScrollView>
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Lưu</Text>
+          <Text style={styles.saveButtonText}>Lưu thông tin</Text>
         </TouchableOpacity>
 
         <CustomModalChoiseCamera
@@ -237,7 +237,11 @@ function ManThemMonAn(): React.JSX.Element {
           onOpenLibrary={handleOpenImageLibrary}
         />
       </View>
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 }

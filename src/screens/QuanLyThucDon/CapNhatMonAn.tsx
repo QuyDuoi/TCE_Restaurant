@@ -21,10 +21,15 @@ import {taoFormDataMonAn} from './ThucDonRespository';
 import {updateMonAnThunk} from '../../store/Thunks/monAnThunks';
 import {styles} from './ThemSuaStyle';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {IPV4} from '../../services/api';
+import {ipAddress, IPV4} from '../../services/api';
 import {UserLogin} from '../../navigation/CustomDrawer';
 import LoadingModal from 'react-native-loading-modal';
 import {colors} from './Hoa/contants/hoaColors';
+import {useToast} from '../../customcomponent/CustomToast';
+import DeletePostModal from '../../customcomponent/modalDelete';
+import axios from 'axios';
+import {fetchDanhMucVaMonAn} from '../../store/Thunks/danhMucThunks';
+import {xoaMonAn} from '../../store/Slices/MonAnSlice';
 
 interface Props {
   route: RouteProp<{params: {monAn: MonAn}}, 'params'>;
@@ -40,9 +45,11 @@ function ManCapNhatMonAn(): React.JSX.Element {
     {},
   );
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalXoaMon, setModalXoaMon] = useState(false);
   const dsDanhMuc = useSelector((state: RootState) => state.danhMuc.danhMucs);
   const dispatch = useDispatch<AppDispatch>();
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const {showToast} = useToast();
 
   const danhMucOptions = dsDanhMuc.map(
     (danhMuc: {_id: string; tenDanhMuc: string}) => ({
@@ -75,10 +82,6 @@ function ManCapNhatMonAn(): React.JSX.Element {
     }));
   };
 
-  const hinhAnhMon = monAnCapNhat.anhMonAn
-    ? monAnCapNhat.anhMonAn.replace('localhost', IPV4) // Thay đổi IP theo cấu hình server
-    : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
-
   // Hàm xác thực thông tin các trường bắt buộc
   const handleValidation = () => {
     const newErrors: Partial<Record<keyof MonAn, string>> = {};
@@ -103,21 +106,17 @@ function ManCapNhatMonAn(): React.JSX.Element {
         .unwrap()
         .then(() => {
           setIsLoadingModal(false);
-          Alert.alert('Thành công', 'Món ăn đã được cập nhật');
+          showToast('check', 'Cập nhật món ăn thành công.', 'white', 1500);
           navigation.goBack();
         })
         .catch(error => {
-          setTimeout(() => {
-            setIsLoadingModal(false);
-          }, 2000);
+          setIsLoadingModal(false);
           console.error('Lỗi cập nhật món ăn: ', error);
-          Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
+          showToast('remove', error.message, 'white', 2000);
         });
     } else {
-      setTimeout(() => {
-        setIsLoadingModal(false);
-      }, 2000);
-      Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin');
+      setIsLoadingModal(false);
+      showToast('remove', 'Vui lòng kiểm tra lại thông tin!', 'white', 2000);
     }
   };
 
@@ -141,6 +140,25 @@ function ManCapNhatMonAn(): React.JSX.Element {
       }));
     }
     setModalVisible(false);
+  };
+
+  const xoaThongTinMon = async () => {
+    setIsLoadingModal(true);
+    await axios
+      .delete(`${ipAddress}xoaMonAn/${monAn._id}`)
+      .then(() => {
+        dispatch(xoaMonAn(monAn?._id));
+        dispatch(fetchDanhMucVaMonAn(user?.id_nhaHang?._id));
+        setIsLoadingModal(false);
+        navigation.goBack();
+      })
+      .catch(error => {
+        showToast('remove', error.response?.data?.msg || error, 'white', 2000);
+        setIsLoadingModal(false);
+      })
+      .finally(() => {
+        showToast('check', 'Đã xóa thông tin món ăn.', 'white', 1500);
+      });
   };
 
   const handleEditImage = () => {
@@ -168,7 +186,7 @@ function ManCapNhatMonAn(): React.JSX.Element {
               {monAnCapNhat.anhMonAn ? (
                 <View>
                   <Image
-                    source={{uri: hinhAnhMon}}
+                    source={{uri: monAnCapNhat.anhMonAn}}
                     style={styles.uploadedImage}
                   />
                   {user.vaiTro === 'Quản lý' && ( // Chỉ hiện nút "Sửa" nếu là "Quản lý"
@@ -265,15 +283,23 @@ function ManCapNhatMonAn(): React.JSX.Element {
           </View>
         </ScrollView>
 
-        <TouchableOpacity
-          style={[
-            styles.saveButton,
-            {backgroundColor: kiemTraThayDoi() ? '#ff4500' : '#ccc'},
-          ]}
-          onPress={handleUpdate}
-          disabled={!kiemTraThayDoi()}>
-          <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setModalXoaMon(true)}>
+            <Text style={styles.buttonText}>Xóa món ăn</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.updateButton,
+              {backgroundColor: kiemTraThayDoi() ? '#ff4500' : '#ccc'},
+            ]}
+            onPress={handleUpdate}
+            disabled={!kiemTraThayDoi()}>
+            <Text style={styles.buttonText}>Lưu thay đổi</Text>
+          </TouchableOpacity>
+        </View>
 
         <CustomModalChoiseCamera
           visible={modalVisible}
@@ -282,7 +308,20 @@ function ManCapNhatMonAn(): React.JSX.Element {
           onOpenLibrary={handleOpenImageLibrary}
         />
       </View>
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+
+      <DeletePostModal
+        title="Xóa thông tin món ăn"
+        content="Bạn có muốn xóa thông tin món ăn không?"
+        onDelete={xoaThongTinMon}
+        visible={modalXoaMon}
+        onCancel={() => setModalXoaMon(false)}
+      />
+
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 }

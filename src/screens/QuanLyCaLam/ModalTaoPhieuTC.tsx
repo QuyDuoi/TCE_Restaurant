@@ -59,8 +59,7 @@ const ModalTaoPhieuTC = (props: Props) => {
         visible={visible}
         onClose={onClose}
         title="Tạo phiếu thu chi"
-        borderRadius={3}
-        stylesTitle={{}}>
+        borderRadius={3}>
         <SpaceComponent height={10} />
         <RowComponent styles={{width: '100%'}}>
           <View style={styles.inputLeft}>
@@ -104,8 +103,8 @@ const ModalTaoPhieuTC = (props: Props) => {
         <InputComponent
           value={ghiChu}
           onChangeText={text => setGhiChu(text)}
-          placeholder="Ghi chú"
-          styles={[styles.input2]}
+          placeholder="Ghi chú nội dung"
+          styles={[styles.input2, {paddingHorizontal: 10}]}
           numberOfLines={5}
           type="normal"
           multiline={true}
@@ -171,9 +170,10 @@ const styles = StyleSheet.create({
     borderBottomEndRadius: 5,
     borderColor: colors.desc,
     backgroundColor: colors.white,
+    justifyContent: 'center'
   },
   input: {
-    paddingVertical: 0,
+    paddingHorizontal: 10,
     height: 37,
   },
   input2: {
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.desc2,
     textAlignVertical: 'top',
-    marginTop: 5,
     marginBottom: 10,
     height: undefined,
     minHeight: 100,

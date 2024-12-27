@@ -37,6 +37,9 @@ const monAnSlice = createSlice({
     setMonAns: (state, action: PayloadAction<MonAn[]>) => {
       state.monAns = action.payload;
     },
+    xoaMonAn: (state, action) => {
+      state.monAns = state.monAns.filter(monAn => monAn._id !== action.payload);
+    }
   },
   extraReducers: builder => {
     builder
@@ -51,13 +54,9 @@ const monAnSlice = createSlice({
       .addCase(updateMonAnThunk.fulfilled, (state, action: PayloadAction<MonAn>) => {
         const updatedMonAn = action.payload;
 
-        console.log("Updated món ăn: ", updatedMonAn);
-
         // Tìm và cập nhật món ăn trong danh sách
         const index = state.monAns.findIndex(monAn => monAn._id === updatedMonAn._id);
-        if (index !== -1) {
-          console.log('Cập nhật rồi');
-          
+        if (index !== -1) {          
           state.monAns[index] = updatedMonAn;
         } else {
           // Nếu món ăn không có trong danh sách hiện tại (lý do chuyển danh mục)
@@ -101,5 +100,5 @@ const monAnSlice = createSlice({
 });
 
 // Export reducer để sử dụng trong store
-export const { setMonAns } = monAnSlice.actions;
+export const { setMonAns, xoaMonAn } = monAnSlice.actions;
 export default monAnSlice.reducer;

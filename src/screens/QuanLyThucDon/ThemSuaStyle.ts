@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
       padding: 16,
     },
     scrollContainer: {
-      paddingBottom: 100,
+      paddingBottom: 150,
     },
     imageSection: {
       width: '100%',
@@ -51,6 +51,19 @@ export const styles = StyleSheet.create({
       width: 100,
       height: 100,
       borderRadius: 8,
+    },
+    saveButton: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: '#ff4500',
+      padding: 16,
+      alignItems: 'center',
+    },
+    saveButtonText: {
+      color: '#fff',
+      fontSize: 16,
     },
     overlay: {
       position: 'absolute',
@@ -113,18 +126,28 @@ export const styles = StyleSheet.create({
       fontSize: 14,
       color: '#000',
     },
-    saveButton: {
+    buttonContainer: {
       position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backgroundColor: '#ff4500',
-      padding: 16,
+      bottom: 10,
+      left: 20,
+      right: 20,
+    },
+    updateButton: {
+      backgroundColor: '#007bff',
+      padding: 15,
+      borderRadius: 8,
       alignItems: 'center',
     },
-    saveButtonText: {
+    deleteButton: {
+      backgroundColor: '#ff4d4f',
+      padding: 15,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    buttonText: {
       color: '#fff',
-      fontSize: 16,
+      fontWeight: 'bold',
     },
     errorText: {
       color: 'red',
