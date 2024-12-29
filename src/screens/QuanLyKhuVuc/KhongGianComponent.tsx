@@ -26,6 +26,7 @@ import io from 'socket.io-client';
 import {fetchKhuVucVaBan} from '../../store/Thunks/khuVucThunks';
 import ModalDanhSachOrderBan from './ComponentModal/ModalDanhSachOrderBan';
 import {useToast} from '../../customcomponent/CustomToast';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 
 interface Props {
   searchQueryBan: string;
@@ -101,7 +102,8 @@ const KhongGianComponent = (props: Props) => {
     });
 
     socket.on('khachOrder', data => {
-      showToast('check', data.msg, 'white', 2000);
+      // showToast('check', data.msg, 'white', 2000);
+      onDisplayNotify(data);
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
 
@@ -110,6 +112,34 @@ const KhongGianComponent = (props: Props) => {
       socket.disconnect();
     };
   }, []);
+
+  //Notify
+  const onDisplayNotify = async (data: any) => {
+    await notifee.requestPermission();
+
+    const channelId = await notifee.createChannel({
+      id: 'Order',
+      name: 'Order Notification',
+      //SHOW HEAD
+      importance: AndroidImportance.HIGH,
+    });
+
+    await notifee.displayNotification({
+      title: `<h3">${data.msg}</h3>`,
+      body: `Hãy tới phục vụ thượng đế nào!`,
+      android: {
+        //SMALL ICON
+        // smallIcon: '',
+        channelId,
+        //SHOW HEAD
+        importance: AndroidImportance.HIGH,
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
+  };
+  //end notify
 
   const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
   const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');

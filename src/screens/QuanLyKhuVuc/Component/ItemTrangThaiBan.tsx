@@ -1,9 +1,4 @@
-import {
-  View,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import CardComponent from '../../QuanLyThucDon/Hoa/components/CardComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
