@@ -7,7 +7,6 @@ import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
 import ButtonComponent from '../../QuanLyThucDon/Hoa/components/ButtonComponent';
 import InputComponent from '../../QuanLyThucDon/Hoa/components/InputComponent';
 import SpaceComponent from '../../QuanLyThucDon/Hoa/components/SpaceComponent';
-import {useDispatch} from 'react-redux';
 
 interface Props {
   visible: boolean;
@@ -24,8 +23,6 @@ const ModalMonTuChonNVPV = (props: Props) => {
   const [soLuongMonTuChon, setSoLuongMonTuChon] = useState('');
   const [ghiChuMonTuChon, setGhiChuMonTuChon] = useState('');
 
-  const dispatch = useDispatch();
-
   const handleSendData = async () => {
     const dataMonTuChon = {
       tenMon: tenMonTuChon,
@@ -34,14 +31,6 @@ const ModalMonTuChonNVPV = (props: Props) => {
       soLuongMon: parseInt(soLuongMonTuChon),
       ghiChu: ghiChuMonTuChon,
     };
-
-    // const response = await dispatch(
-    //   addNewChiTietHoaDon({
-    //     id_hoaDon: hoaDon._id,
-    //     monAn: [dataSend] as any,
-    //   }) as any,
-    // );
-    //console.log(dataMonTuChon);
 
     onSendData(dataMonTuChon);
     onChange(true);

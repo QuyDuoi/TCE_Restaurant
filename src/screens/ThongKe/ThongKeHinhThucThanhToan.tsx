@@ -17,6 +17,9 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
 import {ActivityIndicator} from 'react-native';
 import {styles} from './ThongKeStyle';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
 
 const ThongKeHinhThucThanhToan = () => {
   const noDataImageURL =
@@ -35,6 +38,9 @@ const ThongKeHinhThucThanhToan = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+  const id_nhaHang = user?.id_nhaHang?._id;
 
   const total = revenue + promotion;
   const revenuePercentage = ((revenue / total) * 100).toFixed(1);
@@ -79,7 +85,7 @@ const ThongKeHinhThucThanhToan = () => {
   const fetchRevenueData = async (type, startDate, endDate) => {
     try {
       setIsLoading(true);
-      let url = `${ipAddress}thongKeHinhThucThanhToan?type=${type}`;
+      let url = `${ipAddress}thongKeHinhThucThanhToan?type=${type}&id_nhaHang=${id_nhaHang}`;
       if (type === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
@@ -95,16 +101,11 @@ const ThongKeHinhThucThanhToan = () => {
       const data = await response.json();
       console.log('API Response:', data);
 
-      // Kiểm tra dữ liệu và lấy giá trị từ phần tử đầu tiên nếu tồn tại
-      if (data.length > 0) {
-        setRevenue(data[0].tongChuyenKhoan || 0);
-        setPromotion(data[0].tongTienMat || 0);
-      } else {
-        setRevenue(0);
-        setPromotion(0);
-      }
-      console.log('Revenue (after fetch):', data[0]?.tongChuyenKhoan);
-      console.log('Promotion (after fetch):', data[0]?.tongTienMat);
+      const tongChuyenKhoan = data?.tongChuyenKhoan ?? 0;
+      const tongTienMat = data?.tongTienMat ?? 0;
+
+      setRevenue(tongChuyenKhoan);
+      setPromotion(tongTienMat);
     } catch (error) {
       console.error('Error fetching revenue data:', error);
     } finally {

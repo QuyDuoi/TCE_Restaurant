@@ -14,7 +14,6 @@ import DeletePostModal from '../../customcomponent/modalDelete'; // Your custom 
 import {deleteNhanVienThunk} from '../../store/Slices/NhanVienSlice';
 import {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
-import {IPV4} from '../../services/api';
 import {Linking} from 'react-native';
 import LoadingModal from 'react-native-loading-modal';
 import {colors} from '../QuanLyThucDon/Hoa/contants/hoaColors';
@@ -48,22 +47,43 @@ const EmployeeDetails = () => {
 
   const copyToClipboard = () => {
     Clipboard.setString(nhanVien.soDienThoai);
-    Alert.alert('Copied', 'Số điện thoại đã được sao chép vào bộ nhớ tạm');
+    showToast(
+      'check',
+      'Số điện thoại đã được sao chép vào bộ nhớ tạm.',
+      'white',
+      2000,
+    );
   };
 
   const handleDelete = () => {
     setIsLoadingModal(true);
-    dispatch(deleteNhanVienThunk(nhanVien._id)) // Gọi action xóa nhân viên
-      .unwrap()
-      .then(() => {
-        showToast('check', 'Đã xóa thông tin nhân viên.', 'white', 1500);
-        navigation.goBack(); // Quay lại màn hình trước đó
-        setIsLoadingModal(false);
-      })
-      .catch(error => {
-        setIsLoadingModal(false);
-        showToast('remove', `Xóa nhân viên thất bại, ${error}!`, 'white', 2000);
-      });
+    if (nhanVien.soDienThoai === '0363244466') {
+      setIsLoadingModal(false);
+      setModalVisible(false);
+      showToast(
+        'remove',
+        'Không thể xóa tài khoản đăng ký nhà hàng!',
+        '#FF602B',
+        2000,
+      );
+    } else {
+      dispatch(deleteNhanVienThunk(nhanVien._id)) // Gọi action xóa nhân viên
+        .unwrap()
+        .then(() => {
+          showToast('check', 'Đã xóa thông tin nhân viên.', 'white', 1500);
+          navigation.goBack(); // Quay lại màn hình trước đó
+          setIsLoadingModal(false);
+        })
+        .catch(error => {
+          setIsLoadingModal(false);
+          showToast(
+            'remove',
+            `Xóa nhân viên thất bại, ${error}!`,
+            'white',
+            2000,
+          );
+        });
+    }
   };
 
   return (
@@ -132,6 +152,7 @@ const EmployeeDetails = () => {
 
         {isModalVisible && (
           <DeletePostModal
+            visible={isModalVisible}
             title="Xóa thông tin nhân viên"
             content="Bạn có muốn xóa thông tin nhân viên không?"
             onDelete={handleDelete}
@@ -139,7 +160,11 @@ const EmployeeDetails = () => {
           />
         )}
       </View>
-      <LoadingModal modalVisible={isLoadingModal} title='Đang xử lý ...' color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 };

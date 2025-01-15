@@ -350,6 +350,37 @@ export const updateStatusChiTietHoaDon = async (
   }
 };
 
+export const xacNhanYeuCauHuyMon = async (
+  id_chiTietHoaDon,
+  isApproved,
+  id_nhanVien,
+) => {
+  try {
+    const response = await fetch(`${ipAddress}xacNhanYeuCauHuyMon`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Thêm token hoặc các headers cần thiết nếu có
+      },
+      body: JSON.stringify({
+        id_chiTietHoaDon,
+        isApproved,
+        id_nhanVien,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Không thể xác nhận yêu cầu hủy món.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Lấy danh sách Ban
 export const getListBan = async (idKhuVuc: string): Promise<Ban[]> => {
   try {

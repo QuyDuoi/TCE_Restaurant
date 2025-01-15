@@ -61,7 +61,7 @@ const ItemCTHDnvpv = (props: Props) => {
               alignItems: 'center',
             }}>
             <TextComponent
-              text={giaTien?.toString() ? giaTien.toString() : '0'}
+              text={giaTien ? giaTien.toLocaleString('vi-VN') : '0'}
               styles={styles.text}
             />
           </View>

@@ -17,6 +17,9 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
 import {ActivityIndicator} from 'react-native';
 import {styles} from './ThongKeStyle';
+import { UserLogin } from '../../navigation/CustomDrawer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 const ThongKeNguonDoanhThu = () => {
   const navigation = useNavigation();
@@ -32,6 +35,9 @@ const ThongKeNguonDoanhThu = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+  const id_nhaHang = user?.id_nhaHang?._id;
 
   const total = revenue + promotion;
   const revenuePercentage = ((revenue / total) * 100).toFixed(1);
@@ -82,7 +88,7 @@ const ThongKeNguonDoanhThu = () => {
   const fetchRevenueData = async (type, startDate, endDate) => {
     try {
       setIsLoading(true);
-      let url = `${ipAddress}thongKeDoanhThuTheoNguon?type=${type}`;
+      let url = `${ipAddress}thongKeDoanhThuTheoNguon?type=${type}&id_nhaHang=${id_nhaHang}`;
       if (type === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
@@ -98,12 +104,11 @@ const ThongKeNguonDoanhThu = () => {
       const data = await response.json();
       console.log('API Response:', data);
 
-      // Lấy dữ liệu từ đối tượng trả về
-      setRevenue(data.banTaiCho || 0);
-      setPromotion(data.banMangDi || 0);
+      const banTaiCho = data?.banTaiCho ?? 0;
+      const banMangDi = data?.banMangDi ?? 0;
 
-      console.log('Revenue (after fetch):', data.banTaiCho);
-      console.log('Promotion (after fetch):', data.banMangDi);
+      setRevenue(banTaiCho);
+      setPromotion(banMangDi);
     } catch (error) {
       console.error('Error fetching revenue data:', error);
     } finally {

@@ -5,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Text,
 } from 'react-native';
 import ItemTrangThaiBan from './Component/ItemTrangThaiBan';
 import SectionComponent from '../QuanLyThucDon/Hoa/components/SectionComponent';
@@ -47,6 +48,10 @@ const KhongGianComponent = (props: Props) => {
   const bans = useSelector((state: RootState) => state.ban.bans);
   const khuvucs = useSelector((state: RootState) => state.khuVuc.khuVucs);
   const user: UserLogin = useSelector(state => state.user);
+  const caLams = useSelector((state: RootState) => state.caLam.caLams);
+
+  const [trangThaiCa, setTrangThaiCa] = useState(false); // State để theo dõi trạng thái ca làm
+
   const id_nhaHang = user?.id_nhaHang?._id;
 
   const {showToast} = useToast();
@@ -85,6 +90,16 @@ const KhongGianComponent = (props: Props) => {
     };
   }, [searchQueryBan]);
 
+  useEffect(() => {
+    // Kiểm tra lại các ca làm có trường ketThuc là null
+    const checkCaLam = caLams.filter(caLam => caLam.ketThuc == null);
+    if (checkCaLam.length > 0) {
+      setTrangThaiCa(false); // Có ca làm chưa kết thúc, nên hiển thị giao diện bình thường
+    } else {
+      setTrangThaiCa(true); // Không có ca làm chưa kết thúc, nên hiển thị thông báo
+    }
+  }, [caLams]); // Lắng nghe sự thay đổi của caLams
+
   // Kết nối socket.io
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
@@ -102,7 +117,6 @@ const KhongGianComponent = (props: Props) => {
     });
 
     socket.on('khachOrder', data => {
-      // showToast('check', data.msg, 'white', 2000);
       onDisplayNotify(data);
       dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
     });
@@ -111,27 +125,23 @@ const KhongGianComponent = (props: Props) => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [dispatch, id_nhaHang]);
 
-  //Notify
+  // Notify
   const onDisplayNotify = async (data: any) => {
     await notifee.requestPermission();
 
     const channelId = await notifee.createChannel({
       id: 'Order',
       name: 'Order Notification',
-      //SHOW HEAD
       importance: AndroidImportance.HIGH,
     });
 
     await notifee.displayNotification({
-      title: `<h3">${data.msg}</h3>`,
-      body: `Hãy tới phục vụ thượng đế nào!`,
+      title: `Thông báo đặt món`,
+      body: `${data.msg}!`,
       android: {
-        //SMALL ICON
-        // smallIcon: '',
         channelId,
-        //SHOW HEAD
         importance: AndroidImportance.HIGH,
         pressAction: {
           id: 'default',
@@ -139,7 +149,7 @@ const KhongGianComponent = (props: Props) => {
       },
     });
   };
-  //end notify
+  // End notify
 
   const banTrong = bans.filter(ban => ban.trangThai === 'Trống');
   const banDaDat = bans.filter(ban => ban.trangThai === 'Đã đặt');
@@ -154,6 +164,8 @@ const KhongGianComponent = (props: Props) => {
         return require('../../image/bansudung.png');
       case 'Đã đặt':
         return require('../../image/bandat.png');
+      default:
+        return require('../../image/bantrong.png'); // Fallback image
     }
   };
 
@@ -165,13 +177,13 @@ const KhongGianComponent = (props: Props) => {
       const idKhuVuc =
         typeof ban.id_khuVuc === 'string' ? ban.id_khuVuc : ban.id_khuVuc._id;
       const kv = khuvucs.find(kv => kv._id === idKhuVuc);
-      //console.log(kv);
       setSelectedBan({...ban, kv: kv as KhuVuc});
 
       setIsVisibleDialog(true);
     },
-    [selectedBan],
+    [user.vaiTro, khuvucs],
   );
+
   const handleSelectBanDangOrder = useCallback(
     (ban: Ban) => {
       if (user.vaiTro === 'Đầu bếp') {
@@ -180,12 +192,11 @@ const KhongGianComponent = (props: Props) => {
       const idKhuVuc =
         typeof ban.id_khuVuc === 'string' ? ban.id_khuVuc : ban.id_khuVuc._id;
       const kv = khuvucs.find(kv => kv._id === idKhuVuc);
-      //console.log(kv);
       setSelectedBan({...ban, kv: kv as KhuVuc});
 
       setIsVisibleDanhSachOrderModal(true);
     },
-    [selectedBan],
+    [user.vaiTro, khuvucs],
   );
 
   const renderItemSearch = ({item}: {item: Ban}) => {
@@ -234,6 +245,31 @@ const KhongGianComponent = (props: Props) => {
     );
   };
 
+  const renderHeader = () => {
+    // Optional: Add a header if needed
+    return null;
+  };
+
+  // Synchronize selectedBan with updated Redux state
+  useEffect(() => {
+    if (selectedBan) {
+      const updatedBan = bans.find(ban => ban._id === selectedBan._id);
+      if (updatedBan) {
+        const idKhuVuc =
+          typeof updatedBan.id_khuVuc === 'string'
+            ? updatedBan.id_khuVuc
+            : updatedBan.id_khuVuc._id;
+        const updatedKhuVuc = khuvucs.find(kv => kv._id === idKhuVuc);
+        setSelectedBan({...updatedBan, kv: updatedKhuVuc as KhuVuc});
+      } else {
+        // If the selectedBan no longer exists, deselect it
+        setSelectedBan(null);
+        setIsVisibleDialog(false);
+        setIsVisibleDanhSachOrderModal(false);
+      }
+    }
+  }, [bans, khuvucs]);
+
   const handleCloseModal = () => {
     setIsVisibleDialog(false);
     setSelectedBan(null);
@@ -242,6 +278,7 @@ const KhongGianComponent = (props: Props) => {
   return (
     <>
       {isLoading ? (
+        // Hiển thị ActivityIndicator khi đang tải dữ liệu
         <View
           style={[
             hoaStyles.containerTopping,
@@ -252,7 +289,24 @@ const KhongGianComponent = (props: Props) => {
           ]}>
           <ActivityIndicator size="large" />
         </View>
+      ) : trangThaiCa ? (
+        // Nếu chưa có ca làm nào được mở, hiển thị thông báo
+        <View
+          style={[
+            hoaStyles.containerTopping,
+            {
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          ]}>
+          <TitleComponent
+            text="Chưa có ca làm nào được mở"
+            color={colors.desc}
+            styles={[styles.textMessage, {}]}
+          />
+        </View>
       ) : bans.length > 0 && searchQueryBan.trim().length === 0 ? (
+        // Nếu có ca làm đang mở và không tìm kiếm, hiển thị danh sách bàn
         <ScrollView
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
@@ -262,7 +316,8 @@ const KhongGianComponent = (props: Props) => {
               backgroundColor: '#F7FAFC',
             },
           ]}>
-          <View style={[]}>
+          <View>
+            {/* Bàn Trống */}
             <SectionComponent
               styles={{
                 height: banTrong.length > 0 ? undefined : '20%',
@@ -287,6 +342,8 @@ const KhongGianComponent = (props: Props) => {
                 )}
               </View>
             </SectionComponent>
+
+            {/* Bàn Đang Sử Dụng */}
             <SectionComponent
               styles={{
                 height: banDangSuDung.length > 0 ? undefined : '20%',
@@ -311,6 +368,8 @@ const KhongGianComponent = (props: Props) => {
                 )}
               </View>
             </SectionComponent>
+
+            {/* Bàn Đã Đặt */}
             <SectionComponent
               styles={{
                 height: banDaDat.length > 0 ? undefined : '15%',
@@ -335,15 +394,16 @@ const KhongGianComponent = (props: Props) => {
                 )}
               </View>
             </SectionComponent>
-            {/* VIEW TRANG THAI CHO XAC NHAN */}
+
+            {/* Bàn Đang Chờ Xác Nhận */}
             <SectionComponent
               styles={{
-                height: 1 > 0 ? undefined : '15%',
+                height: banDangChoXacNhan.length > 0 ? undefined : '15%',
               }}>
               <TitleComponent text="Bàn đang chờ xác nhận" size={18} />
               <SpaceComponent height={10} />
               <View style={{justifyContent: 'center', flex: 1}}>
-                {1 > 0 ? (
+                {banDangChoXacNhan.length > 0 ? (
                   <FlatList
                     data={banDangChoXacNhan as any}
                     keyExtractor={item => item._id as string}
@@ -364,6 +424,7 @@ const KhongGianComponent = (props: Props) => {
           <SpaceComponent height={30} />
         </ScrollView>
       ) : searchQueryBan.trim().length > 0 && bansSearch.length > 0 ? (
+        // Nếu đang tìm kiếm và có kết quả tìm kiếm
         <View style={[hoaStyles.containerTopping]}>
           <FlatList
             data={bansSearch as any}
@@ -374,6 +435,7 @@ const KhongGianComponent = (props: Props) => {
           />
         </View>
       ) : (
+        // Nếu đang tìm kiếm nhưng không có kết quả
         bansSearch.length === 0 &&
         searchQueryBan.trim().length > 0 && (
           <View
@@ -392,6 +454,7 @@ const KhongGianComponent = (props: Props) => {
           </View>
         )
       )}
+      {/* Các Modal */}
       <ModalChucNang
         isVisible={isVisibleDialog}
         onClose={handleCloseModal}

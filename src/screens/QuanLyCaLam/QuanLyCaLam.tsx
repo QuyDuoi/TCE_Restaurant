@@ -303,7 +303,7 @@ const QuanLyCaLam = (props: Props) => {
         setFromDateParent={(val: Date) => setFromDate(val)}
         setToDateParent={(val: Date) => setToDate(val)}
       />
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal modalVisible={isLoadingModal} title='Đang xử lý ...' color={colors.orange} />
     </>
   );
 };

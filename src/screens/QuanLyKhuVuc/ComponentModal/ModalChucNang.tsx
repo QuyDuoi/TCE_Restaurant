@@ -135,17 +135,17 @@ const ModalChucNang = (props: Props) => {
               title="Đặt bàn"
               onPress={() => {
                 if (trangThaiCa) {
-                  if (selectedBan && selectedBan.trangThai === 'Trống') {
+                  if (selectedBan && selectedBan?.trangThai === 'Trống') {
                     setIsVisibleDatBan(true);
                   } else if (
                     selectedBan &&
-                    selectedBan.trangThai === 'Đã đặt'
+                    selectedBan?.trangThai === 'Đã đặt'
                   ) {
                     onClose();
                     showToast('remove', 'Bàn đã được đặt!', 'white', 2000);
                   } else if (
                     selectedBan &&
-                    selectedBan.trangThai === 'Đang sử dụng'
+                    selectedBan?.trangThai === 'Đang sử dụng'
                   ) {
                     onClose();
                     showToast(
@@ -175,7 +175,7 @@ const ModalChucNang = (props: Props) => {
             <ButtonComponent
               title="Tạo hóa đơn"
               onPress={() => {
-                if (selectedBan.trangThai === 'Đang sử dụng') {
+                if (selectedBan?.trangThai === 'Đang sử dụng') {
                   onClose();
                   showToast('remove', 'Bàn đang được sử dụng!', 'white', 2000);
                 } else {
@@ -217,7 +217,7 @@ const ModalChucNang = (props: Props) => {
             <ButtonComponent
               title="Xem thông tin bàn đặt"
               onPress={() => {
-                if (selectedBan === 'Đã đặt') {
+                if (selectedBan?.trangThai === 'Đã đặt') {
                   setIsVisibleChiTietBan(true);
                 } else {
                   onClose();

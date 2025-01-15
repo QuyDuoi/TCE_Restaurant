@@ -1,4 +1,4 @@
-import {View, FlatList, ToastAndroid} from 'react-native';
+import {View, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import TitleComponent from '../../QuanLyThucDon/Hoa/components/TitleComponent';
 import {colors} from '../../QuanLyThucDon/Hoa/contants/hoaColors';
@@ -11,9 +11,10 @@ import ItemDanhSachOrder from './ItemDanhSachOrder';
 import LoadingModal from 'react-native-loading-modal';
 import {tuChoiBanOrder, xacNhanBanOrder} from '../../../services/api';
 import {UserLogin} from '../../../navigation/CustomDrawer';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../store/store';
 import {useToast} from '../../../customcomponent/CustomToast';
+import { fetchKhuVucVaBan } from '../../../store/Thunks/khuVucThunks';
 
 interface Props {
   visible: boolean;
@@ -26,11 +27,15 @@ const ModalDanhSachOrderBan = (props: Props) => {
   const {visible, onClose, danhSachOrder, selectedBan} = props;
   const tenBan = selectedBan?.tenBan;
   const tenKhuVuc = selectedBan?.kv ? selectedBan?.kv.tenKhuVuc : '2';
+
+  const dispatch = useDispatch<AppDispatch>();
+
   const {showToast} = useToast();
 
   const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const user: UserLogin = useSelector((state: RootState) => state.user);
+  const id_nhaHang = user?.id_nhaHang?._id;
 
   useEffect(() => {
     if (isLoadingModal) {
@@ -44,6 +49,8 @@ const ModalDanhSachOrderBan = (props: Props) => {
     setIsLoadingModal(true);
     try {
       await xacNhanBanOrder(selectedBan._id, user._id);
+      dispatch(fetchKhuVucVaBan(id_nhaHang) as any);
+
       setIsLoadingModal(false);
       showToast('check', 'Xác nhận order thành công', 'white', 1500);
     } catch (error) {
@@ -193,7 +200,11 @@ const ModalDanhSachOrderBan = (props: Props) => {
           showsVerticalScrollIndicator={false}
         />
       </ModalComponent>
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 };

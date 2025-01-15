@@ -1,6 +1,9 @@
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { UserLogin } from '../navigation/CustomDrawer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface ModalDongCaProps {
   noiDung: string;
@@ -11,7 +14,10 @@ interface ModalDongCaProps {
 }
 
 function ModalDongCa(props: ModalDongCaProps): React.JSX.Element {
-  const {noiDung, onThanhToan, onDongCa, visible, onCancel} = props;
+  const { noiDung, onThanhToan, onDongCa, visible, onCancel } = props;
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+  const isManager = user?.vaiTro === 'Quản lý';
+
   return (
     <Modal
       animationType="fade"
@@ -20,22 +26,28 @@ function ModalDongCa(props: ModalDongCaProps): React.JSX.Element {
       onRequestClose={onCancel}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-                <Icon name='close' size={20} color={'gray'}/>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+            <Icon name="close" size={20} color={'gray'} />
+          </TouchableOpacity>
           <Text style={styles.confirm}>Thông báo</Text>
           <Text style={styles.modalTitle}>{noiDung}</Text>
-          <View style={styles.buttonContainer}>
+          <View
+            style={[
+              styles.buttonContainer,
+              isManager ? styles.buttonContainerSpaceBetween : styles.buttonContainerCenter,
+            ]}>
             <TouchableOpacity
               style={[styles.button, styles.buttonCancel]}
               onPress={onThanhToan}>
               <Text style={styles.cancelTextStyle}>Đến thanh toán</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonConfirm]}
-              onPress={onDongCa}>
-              <Text style={styles.confirmTextStyle}>Đóng ca</Text>
-            </TouchableOpacity>
+            {isManager && (
+              <TouchableOpacity
+                style={[styles.button, styles.buttonConfirm]}
+                onPress={onDongCa}>
+                <Text style={styles.confirmTextStyle}>Đóng ca</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
@@ -97,8 +109,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     width: '100%',
+  },
+  buttonContainerSpaceBetween: {
+    justifyContent: 'space-between',
+  },
+  buttonContainerCenter: {
+    justifyContent: 'center',
   },
   button: {
     borderRadius: 6,
@@ -111,6 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
     borderWidth: 1,
     borderColor: '#D0D5DD',
+    marginRight: 10, // Add some spacing if needed
   },
   cancelTextStyle: {
     color: '#344054',
@@ -130,10 +148,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
+    marginBottom: 10,
   },
   cancelButton: {
     position: 'absolute',
     top: 10,
-    right: 20
-  }
+    right: 20,
+  },
 });

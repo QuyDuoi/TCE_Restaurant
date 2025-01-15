@@ -20,9 +20,7 @@ import {formatMoney} from '../../QuanLyThucDon/Hoa/utils/formatUtils';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import {
-  HoaDon,
-} from '../../../store/Slices/HoaDonSlice';
+import {HoaDon} from '../../../store/Slices/HoaDonSlice';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {thanhToanHoaDon} from '../../../services/api';
@@ -30,6 +28,7 @@ import {RootState} from '../../../store/store';
 import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
 import LoadingModal from 'react-native-loading-modal';
 import {UserLogin} from '../../../navigation/CustomDrawer';
+import { useToast } from '../../../customcomponent/CustomToast';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -52,6 +51,8 @@ const ModalPTTT = React.memo((props: Props) => {
   const [isLoadingQR, setIsLoadingQR] = useState(false);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
   const dispatch = useDispatch();
+
+  const {showToast} = useToast();
 
   const bans = useSelector((state: RootState) => state.ban.bans);
   const user: UserLogin = useSelector((state: RootState) => state.user);
@@ -126,7 +127,7 @@ const ModalPTTT = React.memo((props: Props) => {
     );
     if (result.ok) {
       setIsLoadingModal(false);
-      ToastAndroid.show('Thanh toán thành công', ToastAndroid.SHORT);
+      showToast('check', 'Thanh toán hóa đơn thành công.', '#D1E4B3', 2000);
       onChange && onChange(true);
       //xu ly trang thai ban
       if (banSelected) {
@@ -146,6 +147,7 @@ const ModalPTTT = React.memo((props: Props) => {
         }
       }
       onClose();
+      navigation.goBack();
     } else {
       ToastAndroid.show('Thanh toán thất bại', ToastAndroid.SHORT);
     }
@@ -258,7 +260,11 @@ const ModalPTTT = React.memo((props: Props) => {
           />
         </RowComponent>
       </ModalComponent>
-      <LoadingModal modalVisible={isLoadingModal} color={colors.orange} />
+      <LoadingModal
+        modalVisible={isLoadingModal}
+        title="Đang xử lý ..."
+        color={colors.orange}
+      />
     </>
   );
 });

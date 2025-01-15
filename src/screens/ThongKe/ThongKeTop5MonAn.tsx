@@ -16,6 +16,9 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ipAddress} from '../../services/api';
 import {styles} from './ThongKeStyle';
 import {ActivityIndicator} from 'react-native';
+import {UserLogin} from '../../navigation/CustomDrawer';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
 
 const ThongKeTop5MonAn = () => {
   const navigation = useNavigation();
@@ -25,6 +28,9 @@ const ThongKeTop5MonAn = () => {
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [dateRange, setDateRange] = useState('');
+
+  const user: UserLogin = useSelector((state: RootState) => state.user);
+  const id_nhaHang = user?.id_nhaHang?._id;
 
   const [endDate, setEndDate] = useState(new Date());
   const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false);
@@ -36,6 +42,14 @@ const ThongKeTop5MonAn = () => {
     (sum, item) => sum + item.soLuongMon,
     0,
   );
+
+  const chartColors = [
+    '#ff6347', // Tomato
+    '#ff8c00', // DarkOrange
+    '#ffd700', // Gold
+    '#90ee90', // LightGreen
+    '#87cefa', // LightSkyBlue
+  ];
 
   // Tính phần trăm và định dạng dữ liệu biểu đồ cho từng món ăn
   const data = {
@@ -54,14 +68,7 @@ const ThongKeTop5MonAn = () => {
         config: {
           colors: topDishes.map((item, index) => {
             // Sử dụng một tập màu cố định cho tối đa 5 món ăn
-            const colors = [
-              '#ff6347',
-              '#ff8c00',
-              '#ffd700',
-              '#90ee90',
-              '#87cefa',
-            ];
-            return processColor(colors[index]);
+            return processColor(chartColors[index]);
           }),
           valueTextSize: 0,
           valueTextColor: processColor('black'),
@@ -82,7 +89,7 @@ const ThongKeTop5MonAn = () => {
   const fetchTop5DishesData = async (type, startDate, endDate) => {
     try {
       setIsLoading(true);
-      let url = `${ipAddress}top5MatHangBanChay?type=${type}`;
+      let url = `${ipAddress}top5MatHangBanChay?type=${type}&id_nhaHang=${id_nhaHang}`;
       if (type === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
@@ -92,12 +99,17 @@ const ThongKeTop5MonAn = () => {
       const data = await response.json();
       console.log('API Response:', data);
 
-      // Chuyển đổi dữ liệu cho biểu đồ
-      if (data.length > 0) {
-        const formattedData = data.map((item, index) => ({
-          name: item.tenMon,
-          quantity: item.soLuongMon,
-          color: ['#ff6347', '#ff8c00', '#ffd700', '#90ee90', '#87cefa'][index],
+      // Giới hạn dữ liệu chỉ lấy Top 5 món ăn
+      const limitedData = data.slice(0, 5);
+
+      // Chuyển đổi dữ liệu cho biểu đồ và danh sách
+      if (limitedData.length > 0) {
+        const formattedData = limitedData.map((item, index) => ({
+          _id: item._id,
+          tenMon: item.tenMon,
+          soLuongMon: item.soLuongMon,
+          anhMonAn: item.anhMonAn,
+          color: chartColors[index],
         }));
         setTopDishes(formattedData);
       } else {
@@ -176,8 +188,8 @@ const ThongKeTop5MonAn = () => {
     setShowOptionsModal(false);
   };
   const pieChartData = topDishes.map(dish => ({
-    value: dish.quantity,
-    label: dish.name,
+    value: dish.soLuongMon,
+    label: dish.tenMon,
     color: processColor(dish.color), // Biến đổi màu sắc thành giá trị hợp lệ
   }));
 
@@ -384,7 +396,7 @@ const ThongKeTop5MonAn = () => {
               )}
               <FlatList
                 data={topDishes}
-                keyExtractor={(item, index) => `${item.name}-${index}`} // Kết hợp item.name và index để đảm bảo key duy nhất
+                keyExtractor={(item, index) => `${item.tenMon}-${index}`} // Kết hợp item.name và index để đảm bảo key duy nhất
                 renderItem={({item, index}) => (
                   <View>
                     <View
@@ -406,13 +418,13 @@ const ThongKeTop5MonAn = () => {
                         numberOfLines={1}
                         ellipsizeMode="tail"
                         style={[styles.legendText, {width: '70%'}]}>
-                        {item.name}
+                        {item.tenMon}
                       </Text>
                     </View>
                     <Text
                       style={
                         styles.legendTextMon
-                      }>{`Số lượng bán ra: ${item.quantity} `}</Text>
+                      }>{`Số lượng bán ra: ${item.soLuongMon} `}</Text>
                   </View>
                 )}
               />

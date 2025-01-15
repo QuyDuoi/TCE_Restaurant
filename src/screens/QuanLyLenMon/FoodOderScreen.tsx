@@ -8,10 +8,12 @@ import {
   TouchableOpacity,
   Image,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import {
   getListChiTietHoaDonTheoCaLam,
   updateStatusChiTietHoaDon,
+  xacNhanYeuCauHuyMon,
 } from '../../services/api';
 import ItemChiTietHoaDon from './ItemChiTietHoaDon';
 import {hoaStyles} from '../QuanLyThucDon/Hoa/styles/hoaStyles';
@@ -25,12 +27,28 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useToast} from '../../customcomponent/CustomToast';
 
 const FoodOrderScreen: React.FC = () => {
-  const [dsChiTiet, setDsChiTiet] = useState<ChiTietHoaDon[]>([]);
+  const [dsChiTiet, setDsChiTiet] = useState<{
+    hoanThanh: ChiTietHoaDon[];
+    chuaHoanThanh: ChiTietHoaDon[];
+    theoTenMon: {[key: string]: ChiTietHoaDon[]};
+  }>({
+    hoanThanh: [],
+    chuaHoanThanh: [],
+    theoTenMon: {},
+  });
   const [filter, setFilter] = useState<string>('Chưa hoàn thành'); // Bộ lọc hiện tại
   const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
   const [isRefreshing, setIsRefreshing] = useState(false); // Trạng thái refreshing
   const [tenMons, setTenMons] = useState<string[]>([]); // Danh sách tên món
   const [error, setError] = useState(''); // Trạng thái lỗi
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [currentCancellationRequest, setCurrentCancellationRequest] = useState<{
+    id_chiTietHoaDon: string;
+    tenMon: string;
+    soLuongMon: number;
+    ban: string;
+    khuVuc: string;
+  } | null>(null);
   const {showToast} = useToast();
   const user: UserLogin = useSelector(state => state.user);
   const id_nhaHang = user.id_nhaHang._id;
@@ -54,12 +72,45 @@ const FoodOrderScreen: React.FC = () => {
 
   const capNhatTtMon = async (item: ChiTietHoaDon) => {
     try {
-      await updateStatusChiTietHoaDon(item._id!, item.trangThai);
+      if (item?.trangThai === true) {
+        showToast('remove', 'Món ăn đã được hoàn thành.', '#FF602B', 1500);
+      } else {
+        await updateStatusChiTietHoaDon(item._id!, item.trangThai);
 
-      fetchChiTietHoaDon();
-      showToast('check', 'Hoàn thành món ăn.', 'white', 1500);
+        fetchChiTietHoaDon();
+        showToast('check', 'Hoàn thành món ăn.', 'white', 1500);
+      }
     } catch (err: any) {
       showToast('check', err.message, 'white', 1500);
+    }
+  };
+
+  const handleRespondCancellation = async (isApproved: boolean) => {
+    if (!currentCancellationRequest) return;
+
+    const {id_chiTietHoaDon} = currentCancellationRequest;
+    const id_nhanVien = user?._id; // Giả sử user.id là ID của đầu bếp
+
+    try {
+      // Gọi API để phản hồi yêu cầu hủy món
+      await xacNhanYeuCauHuyMon(id_chiTietHoaDon, isApproved, id_nhanVien); // Thêm các tham số cần thiết
+
+      // Hiển thị thông báo
+      showToast(
+        isApproved ? 'check' : 'remove',
+        isApproved ? 'Hủy món đã được phê duyệt.' : 'Hủy món đã bị từ chối.',
+        isApproved ? '#28a745' : '#dc3545',
+        2000,
+      );
+
+      // Cập nhật danh sách
+      fetchChiTietHoaDon();
+
+      // Đóng modal
+      setIsCancelModalVisible(false);
+      setCurrentCancellationRequest(null);
+    } catch (error: any) {
+      showToast('error', error.message || 'Đã xảy ra lỗi.', '#dc3545', 2000);
     }
   };
 
@@ -71,8 +122,25 @@ const FoodOrderScreen: React.FC = () => {
 
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
+
+    socket.emit('NhanDien', {
+      role: 'DauBep',
+    });
+
     socket.on('lenMon', () => {
       fetchChiTietHoaDon();
+      showToast('check', 'Vừa có khách đặt món.', 'white', 2000);
+    });
+
+    socket.on('yeuCauHuyMon', data => {
+      setCurrentCancellationRequest({
+        id_chiTietHoaDon: data.id_chiTietHoaDon,
+        tenMon: data.tenMon,
+        soLuongMon: data.soLuongMon,
+        ban: data.ban,
+        khuVuc: data.khuVuc,
+      });
+      setIsCancelModalVisible(true);
     });
 
     // Cleanup khi component unmount
@@ -88,8 +156,6 @@ const FoodOrderScreen: React.FC = () => {
       return dsChiTiet.hoanThanh; // Return completed items
     } else if (filter === 'Chưa hoàn thành') {
       return dsChiTiet.chuaHoanThanh; // Return not completed items
-    } else if (filter === 'Tất cả') {
-      return [...dsChiTiet.hoanThanh, ...dsChiTiet.chuaHoanThanh]; // Return all items
     } else {
       // Filter by dish name
       return dsChiTiet.theoTenMon[filter] || [];
@@ -98,16 +164,16 @@ const FoodOrderScreen: React.FC = () => {
 
   const renderItem = ({item}: {item: ChiTietHoaDon}) => (
     <ItemChiTietHoaDon
-      tenMon={item.id_monAn?.tenMon}
-      trangThai={item.trangThai}
-      soLuong={item.soLuongMon}
-      ghiChu={item.ghiChu}
+      tenMon={item?.id_monAn?.tenMon}
+      trangThai={item?.trangThai}
+      soLuong={item?.soLuongMon}
+      ghiChu={item?.ghiChu}
       onClick={() => {
         capNhatTtMon(item);
       }}
-      anhMonAn={item.id_monAn?.anhMonAn}
-      ban={item.ban?.tenBan}
-      khuVuc={item.khuVuc?.tenKhuVuc}
+      anhMonAn={item?.id_monAn?.anhMonAn}
+      ban={item?.ban?.tenBan}
+      khuVuc={item?.khuVuc?.tenKhuVuc}
     />
   );
 
@@ -173,25 +239,84 @@ const FoodOrderScreen: React.FC = () => {
             />
           </View>
 
-          <FlatList
-            data={filteredChiTiet}
-            keyExtractor={item => item._id!}
-            renderItem={renderItem}
-            extraData={filter}
-            contentContainerStyle={{paddingBottom: 20}}
-            initialNumToRender={10} // Tăng tốc render
-            windowSize={5} // Hiển thị trước và sau 5 item
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={() => {
-                  setIsRefreshing(true);
-                  fetchChiTietHoaDon(true); // Làm mới danh sách
-                }}
-                colors={[colors.blue, colors.orange]} // Màu sắc hiệu ứng
-              />
-            }
-          />
+          {filter === 'Chưa hoàn thành' &&
+          dsChiTiet.chuaHoanThanh.length === 0 ? (
+            // Hiển thị thông báo khi không còn món ăn chưa hoàn thành
+            <View style={styles.noPendingContainer}>
+              <Text style={styles.noPendingText}>
+                Tất cả món ăn đã được hoàn thành
+              </Text>
+            </View>
+          ) : (
+            // Hiển thị danh sách FlatList nếu có dữ liệu
+            <FlatList
+              data={filteredChiTiet}
+              keyExtractor={item => item._id!}
+              renderItem={renderItem}
+              extraData={filter}
+              contentContainerStyle={{paddingBottom: 20}}
+              initialNumToRender={10} // Tăng tốc render
+              windowSize={5} // Hiển thị trước và sau 5 item
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={() => {
+                    setIsRefreshing(true);
+                    fetchChiTietHoaDon(true); // Làm mới danh sách
+                  }}
+                  colors={[colors.blue, colors.orange]} // Màu sắc hiệu ứng
+                />
+              }
+            />
+          )}
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isCancelModalVisible}
+            onRequestClose={() => setIsCancelModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Yêu Cầu Hủy Món</Text>
+                {currentCancellationRequest && (
+                  <>
+                    <Text style={styles.modalText}>
+                      <Text style={styles.boldText}>Tên Món:</Text>{' '}
+                      {currentCancellationRequest.tenMon}
+                    </Text>
+                    <Text style={styles.modalText}>
+                      <Text style={styles.boldText}>Số Lượng:</Text>{' '}
+                      {currentCancellationRequest.soLuongMon}
+                    </Text>
+                    <Text style={styles.modalText}>
+                      <Text style={styles.boldText}>Bàn:</Text>{' '}
+                      {currentCancellationRequest.ban}
+                    </Text>
+                    <Text style={styles.modalText}>
+                      <Text style={styles.boldText}>Khu Vực:</Text>{' '}
+                      {currentCancellationRequest.khuVuc}
+                    </Text>
+                    <View style={styles.modalButtons}>
+                      <TouchableOpacity
+                        style={[styles.button, styles.confirmButton]}
+                        onPress={() => handleRespondCancellation(true)}>
+                        <Text style={styles.buttonText}>Xác nhận</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.button, styles.rejectButton]}
+                        onPress={() => handleRespondCancellation(false)}>
+                        <Text style={styles.buttonText}>Từ chối</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setIsCancelModalVisible(false)}>
+                  <Text style={styles.closeButtonText}>Đóng</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </>
       )}
     </SafeAreaView>
@@ -207,6 +332,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center', // Căn giữa theo chiều dọc
   },
   errorText: {
     color: 'red',
@@ -253,5 +379,74 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginTop: 20,
+  },
+  noPendingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  noPendingText: {
+    fontSize: 18,
+    color: colors.primary,
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalText: {
+    fontSize: 16,
+    marginVertical: 5,
+    textAlign: 'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  confirmButton: {
+    backgroundColor: '#28a745',
+  },
+  rejectButton: {
+    backgroundColor: '#dc3545',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 15,
+    backgroundColor: '#6c757d',
+    borderRadius: 5,
+    paddingVertical: 10,
+    width: '100%',
+  },
+  closeButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
   },
 });

@@ -1,9 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {View, StyleSheet, Image} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -16,6 +12,7 @@ import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import SpaceComponent from '../screens/QuanLyThucDon/Hoa/components/SpaceComponent';
+import { useToast } from '../customcomponent/CustomToast';
 
 export interface UserLogin {
   _id: string;
@@ -40,6 +37,7 @@ export interface UserLogin {
 const CustomDrawer = (props: any) => {
   const {userInfo} = props;
   const navigation = useNavigation();
+  const {showToast} = useToast();
 
   const logOut = async () => {
     try {
@@ -51,7 +49,7 @@ const CustomDrawer = (props: any) => {
         index: 0,
         routes: [{name: 'Login'}],
       });
-      console.log('Đăng xuất thành công');
+      showToast('check', 'Đăng xuất thành công.', '#D1E4B3', 2000);
     } catch (error) {
       console.error('Đăng xuất thất bại:', error);
     }
@@ -104,7 +102,7 @@ const CustomDrawer = (props: any) => {
       </DrawerContentScrollView>
       <DrawerItem
         icon={() => <Icon name="logout" size={23} color={colors.black} />}
-        label="Logout"
+        label="Đăng xuất"
         onPress={logOut}
       />
     </View>

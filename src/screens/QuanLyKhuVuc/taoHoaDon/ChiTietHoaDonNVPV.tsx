@@ -117,8 +117,6 @@ const ChiTietHoaDonNVPV = (props: Props) => {
     }
   }, [chiTietStatus]);
 
-  //END VUA FIX
-
   let totalBillCal = chiTietHoaDons.reduce((total: number, item: any) => {
     return (total += item.giaTien);
   }, 0);
@@ -161,8 +159,16 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   useEffect(() => {
     const socket = io('https://tce-restaurant-api.onrender.com');
 
-    socket.on('hoanThanhMon', () => {
+    console.log(hoaDon);
+
+    socket.emit('NhanDien', {
+      role: 'PhucVuBan',
+      id_ban: hoaDon?.id_ban,
+    });
+
+    socket.on('hoanThanhMon', data => {
       dispatch(fetchChiTietHoaDon(hoaDon._id) as any);
+      showToast('check', `${data.msg}`, 'white', 2500);
     });
 
     // Cleanup khi component unmount
@@ -198,32 +204,8 @@ const ChiTietHoaDonNVPV = (props: Props) => {
   );
 
   //DELETE
-  const handleDeleteChiTietHoaDon = async (item: ChiTietHoaDon) => {
-    setIsLoadingModal(true);
-    const data = {
-      soLuongMon: 0,
-      giaTien: 0,
-    };
-    const result = await dispatch(
-      updateChiTietHoaDonThunk({
-        id: item._id as any,
-        formData: data as any,
-      }) as any,
-    );
-    if (result.type.endsWith('fulfilled')) {
-      setIsLoadingModal(false);
-      const resultFetch = await dispatch(
-        fetchChiTietHoaDon(hoaDon._id as any) as any,
-      );
-      setIsLoadingModal(true);
-      if (resultFetch.type.endsWith('fulfilled')) {
-        setIsLoadingModal(false);
-        showToast('check', 'Xóa món thành công.', 'white', 1500);
-      }
-    } else {
-      setIsLoadingModal(false);
-      console.log(result.payload);
-    }
+  const guiYeuCauHuyMon = async (item: ChiTietHoaDon) => {
+    showToast('remove', `Tính năng đăng được phát triển`, 'white', 2000);
   };
 
   const renderItem = ({item}: {item: ChiTietHoaDon}) => {
@@ -267,7 +249,7 @@ const ChiTietHoaDonNVPV = (props: Props) => {
           style={hoaStyles.buttonDelete}
           onPress={() => {
             if (item.trangThai === false) {
-              handleDeleteChiTietHoaDon(item);
+              guiYeuCauHuyMon(item);
             } else {
               showToast(
                 'remove',

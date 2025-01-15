@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {RootState} from '../../../store/store';
 import LoadingModal from 'react-native-loading-modal';
 import {UserLogin} from '../../../navigation/CustomDrawer';
-import {useToast} from '../../../customcomponent/CustomToast';
+import { useToast } from '../../../customcomponent/CustomToast';
 
 interface Props {
   visible: boolean;
