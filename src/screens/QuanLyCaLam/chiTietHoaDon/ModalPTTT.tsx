@@ -28,7 +28,7 @@ import {RootState} from '../../../store/store';
 import {capNhatBanThunk} from '../../../store/Thunks/banThunks';
 import LoadingModal from 'react-native-loading-modal';
 import {UserLogin} from '../../../navigation/CustomDrawer';
-import { useToast } from '../../../customcomponent/CustomToast';
+import {useToast} from '../../../customcomponent/CustomToast';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -118,18 +118,20 @@ const ModalPTTT = React.memo((props: Props) => {
       tienGiamGia: discount ? discount : hoaDon.tienGiamGia,
       thoiGianRa: new Date().toISOString(),
     };
-    const result = await thanhToanHoaDon(
-      hoaDon._id as string,
-      formData.tienGiamGia as number,
-      formData.hinhThucThanhToan,
-      new Date(formData.thoiGianRa),
-      formData.id_nhanVien,
-    );
-    if (result.ok) {
+    try {
+      const result = await thanhToanHoaDon(
+        hoaDon._id as string,
+        formData.tienGiamGia as number,
+        formData.hinhThucThanhToan,
+        new Date(formData.thoiGianRa),
+        formData.id_nhanVien,
+      );
+
+      // Assuming thanhToanHoaDon throws an error if not ok, no need to check result.ok
       setIsLoadingModal(false);
       showToast('check', 'Thanh toán hóa đơn thành công.', '#D1E4B3', 2000);
       onChange && onChange(true);
-      //xu ly trang thai ban
+      // Xử lý trạng thái bàn
       if (banSelected) {
         setIsLoadingModal(true);
         const updateBan = await dispatch(
@@ -144,12 +146,19 @@ const ModalPTTT = React.memo((props: Props) => {
         );
         if (updateBan.type.endsWith('fulfilled')) {
           setIsLoadingModal(false);
+        } else {
+          throw new Error('Cập nhật trạng thái bàn không thành công.');
         }
       }
       onClose();
-      navigation.goBack();
-    } else {
-      ToastAndroid.show('Thanh toán thất bại', ToastAndroid.SHORT);
+    } catch (error: any) {
+      console.log('Error during thanh toan hoa don:', error);
+      setIsLoadingModal(false);
+      // Display the error message from the backend or a generic message
+      const errorMessage =
+        error.msg || 'Có món ăn chưa hoàn thành, không thể hoàn thành hóa đơn!';
+      showToast('remove', errorMessage, 'white', 2000);
+      onClose();
     }
   };
   return (

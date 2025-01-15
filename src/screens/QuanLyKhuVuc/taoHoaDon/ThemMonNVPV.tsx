@@ -35,6 +35,7 @@ import ModalMonTuChonNVPV from './ModalMonTuChonNVPV';
 import React from 'react';
 import {UserLogin} from '../../../navigation/CustomDrawer';
 import {fetchDanhMucVaMonAn} from '../../../store/Thunks/danhMucThunks';
+import { useToast } from '../../../customcomponent/CustomToast';
 
 interface Props {
   route?: any;
@@ -58,6 +59,7 @@ const ThemMonNVPV = (props: Props) => {
   const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   const [showNoResult, setShowNoResult] = useState(false);
+  const {showToast} = useToast();
 
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
@@ -383,9 +385,11 @@ const ThemMonNVPV = (props: Props) => {
                       }),
                     ).then(action => {
                       if (addNewChiTietHoaDon.fulfilled.match(action)) {
-                        ToastAndroid.show(
+                        showToast(
+                          'check',
                           'Thêm món thành công',
-                          ToastAndroid.SHORT,
+                          '#D1E4B3',
+                          2000,
                         );
                         dispatch(fetchChiTietHoaDon(hoaDon._id));
                         setTimeout(() => {
@@ -393,9 +397,11 @@ const ThemMonNVPV = (props: Props) => {
                           setIsLoadingModal(false);
                         }, 500);
                       } else {
-                        ToastAndroid.show(
+                        showToast(
+                          'remove',
                           'Thêm món thất bại',
-                          ToastAndroid.SHORT,
+                          '#D1E4B3',
+                          2000,
                         );
                         setTimeout(() => {
                           setIsLoadingModal(false);

@@ -248,7 +248,7 @@ export const thanhToanHoaDon = async (
       console.log(error.msg);
       throw new Error(error.msg);
     }
-    return response;
+    return response.json();
   } catch (error) {
     console.log('Lỗi thanh toán Hóa Đơn: ', error);
     throw error;

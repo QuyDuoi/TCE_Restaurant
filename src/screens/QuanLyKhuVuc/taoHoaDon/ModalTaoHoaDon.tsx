@@ -130,7 +130,7 @@ const ModalTaoHoaDon = (props: Props) => {
       </ModalComponent>
       <LoadingModal
         modalVisible={isLoadingModal}
-        title="Đang tạo hóa đơn ..."
+        title="Đang tạo ..."
         color={colors.orange}
       />
     </>
